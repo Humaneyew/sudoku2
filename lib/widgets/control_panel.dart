@@ -57,22 +57,26 @@ class ControlPanel extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildActionButton(
+              context,
               icon: Icons.undo,
               label: "Отмена",
               onTap: () => app.undoMove(),
             ),
             _buildActionButton(
+              context,
               icon: Icons.clear,
               label: "Стереть",
               onTap: () => app.eraseCell(),
             ),
             _buildActionButton(
+              context,
               icon: Icons.edit,
               label: app.notesMode ? "Заметки" : "Нотатки",
               active: app.notesMode,
               onTap: () => app.toggleNotesMode(),
             ),
             _buildActionButton(
+              context,
               icon: Icons.lightbulb,
               label: "Подсказка (${app.hintsLeft})",
               disabled: app.hintsLeft <= 0,
@@ -84,30 +88,35 @@ class ControlPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildActionButton(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
     bool active = false,
     bool disabled = false,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final iconColor = disabled
+        ? theme.disabledColor
+        : (active ? colorScheme.primary : colorScheme.onSurface);
+
     return Column(
       children: [
         IconButton(
           onPressed: disabled ? null : onTap,
           icon: Icon(
             icon,
-            color: disabled
-                ? Colors.grey
-                : (active ? Colors.blueAccent : Colors.white),
+            color: iconColor,
           ),
         ),
         Text(
           label,
           style: TextStyle(
             color: disabled
-                ? Colors.grey
-                : (active ? Colors.blueAccent : Colors.white),
+                ? theme.disabledColor
+                : (active ? colorScheme.primary : colorScheme.onSurface),
             fontSize: 12,
           ),
         ),

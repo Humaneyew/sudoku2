@@ -23,19 +23,31 @@ class SettingsPage extends StatelessWidget {
             title: const Text("Системная"),
             value: AppTheme.system,
             groupValue: app.theme,
-            onChanged: (v) => v != null ? app.setTheme(v) : null,
+            onChanged: (v) {
+              if (v != null) {
+                app.setTheme(v);
+              }
+            },
           ),
           RadioListTile<AppTheme>(
             title: const Text("Светлая"),
             value: AppTheme.light,
             groupValue: app.theme,
-            onChanged: (v) => v != null ? app.setTheme(v) : null,
+            onChanged: (v) {
+              if (v != null) {
+                app.setTheme(v);
+              }
+            },
           ),
           RadioListTile<AppTheme>(
             title: const Text("Тёмная"),
             value: AppTheme.dark,
             groupValue: app.theme,
-            onChanged: (v) => v != null ? app.setTheme(v) : null,
+            onChanged: (v) {
+              if (v != null) {
+                app.setTheme(v);
+              }
+            },
           ),
           const Divider(height: 32),
 
@@ -45,7 +57,11 @@ class SettingsPage extends StatelessWidget {
               title: Text(lang.nameLocal),
               value: lang,
               groupValue: app.lang,
-              onChanged: (v) => v != null ? app.setLang(v) : null,
+              onChanged: (v) {
+                if (v != null) {
+                  app.setLang(v);
+                }
+              },
             ),
           ),
           const Divider(height: 32),

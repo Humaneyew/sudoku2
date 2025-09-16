@@ -5,6 +5,7 @@ import 'models.dart';
 import 'home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChangeNotifierProvider(
       create: (_) => AppState()..load(),

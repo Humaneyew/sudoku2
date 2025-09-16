@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'models.dart';
-import 'game_screen.dart';
+import 'game_page.dart';
 import 'stats_page.dart';
 import 'settings_page.dart';
 
@@ -11,8 +11,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sudoku"),
@@ -66,7 +64,7 @@ class HomeScreen extends StatelessWidget {
           app.startGame(diff);
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const GameScreen()),
+            MaterialPageRoute(builder: (_) => const GamePage()),
           );
         },
         child: Text(title, style: const TextStyle(fontSize: 18)),
