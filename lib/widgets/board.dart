@@ -25,7 +25,7 @@ class Board extends StatelessWidget {
         itemCount: 81,
         itemBuilder: (context, i) {
           final value = game.board[i];
-          final given = game.givens[i] != 0;
+          final given = game.given[i];
           final isSelected = app.selectedCell == i;
 
           // Проверка на ошибку (если пользователь ввёл неверное значение)

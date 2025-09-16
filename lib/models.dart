@@ -104,6 +104,8 @@ class Stats {
 
 /// Главное состояние приложения
 class AppState extends ChangeNotifier {
+  static const int _maxHints = 3;
+
   AppTheme theme = AppTheme.system;
   AppLanguage lang = AppLanguage.en;
   GameState? current;
@@ -111,7 +113,11 @@ class AppState extends ChangeNotifier {
 
   int? selectedCell;
   bool notesMode = false;
-  int hintsLeft = 3;
+  int hintsLeft = _maxHints;
+  bool soundsEnabled = true;
+  bool musicEnabled = true;
+
+  final List<_Move> _history = [];
 
   /// Загружаем сохранённые данные
   Future<void> load() async {
@@ -120,6 +126,23 @@ class AppState extends ChangeNotifier {
     if (statsJson != null) {
       stats = Stats.fromJson(jsonDecode(statsJson));
     }
+
+    final themeName = prefs.getString("theme");
+    if (themeName != null) {
+      try {
+        theme = AppTheme.values.byName(themeName);
+      } catch (_) {}
+    }
+
+    final langName = prefs.getString("lang");
+    if (langName != null) {
+      try {
+        lang = AppLanguage.values.byName(langName);
+      } catch (_) {}
+    }
+
+    soundsEnabled = prefs.getBool("soundsEnabled") ?? soundsEnabled;
+    musicEnabled = prefs.getBool("musicEnabled") ?? musicEnabled;
     notifyListeners();
   }
 
@@ -136,20 +159,66 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setTheme(AppTheme value) {
+    if (theme == value) return;
+    theme = value;
+    _persist((prefs) async {
+      await prefs.setString("theme", value.name);
+    });
+    notifyListeners();
+  }
+
+  void setLang(AppLanguage value) {
+    if (lang == value) return;
+    lang = value;
+    _persist((prefs) async {
+      await prefs.setString("lang", value.name);
+    });
+    notifyListeners();
+  }
+
+  void toggleSounds(bool enabled) {
+    if (soundsEnabled == enabled) return;
+    soundsEnabled = enabled;
+    _persist((prefs) async {
+      await prefs.setBool("soundsEnabled", enabled);
+    });
+    notifyListeners();
+  }
+
+  void toggleMusic(bool enabled) {
+    if (musicEnabled == enabled) return;
+    musicEnabled = enabled;
+    _persist((prefs) async {
+      await prefs.setBool("musicEnabled", enabled);
+    });
+    notifyListeners();
+  }
+
   /// Запуск новой игры
   void startGame(Difficulty diff) {
-    final givens = puzzles[diff]!.first;
-    final solution = solutions[diff]!.first;
+    final available = puzzles[diff];
+    if (available == null || available.isEmpty) {
+      current = null;
+      selectedCell = null;
+      notesMode = false;
+      hintsLeft = _maxHints;
+      _history.clear();
+      notifyListeners();
+      return;
+    }
 
+    final puzzle = available.first;
     current = GameState(
-      board: List.of(givens),
-      solution: List.of(solution),
-      given: givens.map((v) => v != 0).toList(),
+      board: List.of(puzzle.board),
+      solution: List.of(puzzle.solution),
+      given: puzzle.board.map((v) => v != 0).toList(),
     );
 
     selectedCell = null;
     notesMode = false;
-    hintsLeft = 3;
+    hintsLeft = _maxHints;
+    _history.clear();
 
     notifyListeners();
   }
@@ -165,6 +234,10 @@ class AppState extends ChangeNotifier {
     if (current == null) return;
     if (current!.given[index]) return;
 
+    final previous = current!.board[index];
+    if (previous == value) return;
+
+    _history.add(_Move(index, previous));
     current!.board[index] = value;
     notifyListeners();
   }
@@ -180,7 +253,12 @@ class AppState extends ChangeNotifier {
     if (current == null || selectedCell == null) return;
     if (current!.given[selectedCell!]) return;
 
-    current!.board[selectedCell!] = 0;
+    final idx = selectedCell!;
+    final previous = current!.board[idx];
+    if (previous == 0) return;
+
+    _history.add(_Move(idx, previous));
+    current!.board[idx] = 0;
     notifyListeners();
   }
 
@@ -188,9 +266,15 @@ class AppState extends ChangeNotifier {
   void useHint() {
     if (current == null || selectedCell == null) return;
     if (hintsLeft <= 0) return;
+    if (current!.given[selectedCell!]) return;
 
     final idx = selectedCell!;
-    current!.board[idx] = current!.solution[idx];
+    final previous = current!.board[idx];
+    final correct = current!.solution[idx];
+    if (previous == correct) return;
+
+    _history.add(_Move(idx, previous, consumedHint: true));
+    current!.board[idx] = correct;
     hintsLeft--;
 
     notifyListeners();
@@ -202,9 +286,38 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Отмена последнего хода
+  void undoMove() {
+    if (current == null || _history.isEmpty) return;
+
+    final last = _history.removeLast();
+    if (current!.given[last.index]) {
+      return;
+    }
+
+    current!.board[last.index] = last.previousValue;
+    selectedCell = last.index;
+    if (last.consumedHint && hintsLeft < _maxHints) {
+      hintsLeft++;
+    }
+    notifyListeners();
+  }
+
   /// Подсчёт оставшихся чисел
   int countRemaining(int number) {
     if (current == null) return 9;
     return 9 - current!.board.where((v) => v == number).length;
   }
+
+  void _persist(Future<void> Function(SharedPreferences prefs) save) {
+    SharedPreferences.getInstance().then(save);
+  }
+}
+
+class _Move {
+  final int index;
+  final int previousValue;
+  final bool consumedHint;
+
+  _Move(this.index, this.previousValue, {this.consumedHint = false});
 }
