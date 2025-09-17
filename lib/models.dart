@@ -1,161 +1,270 @@
 import 'dart:convert';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'puzzles.dart';
 
-/// Уровни сложности
-enum Difficulty { beginner, medium, high, expert, master }
+/// Уровни сложности, используемые в приложении.
+enum Difficulty { beginner, novice, medium, high, expert, master }
 
 extension DifficultyX on Difficulty {
+  /// Человекочитаемое название уровня сложности (украинский язык).
   String get title => switch (this) {
-    Difficulty.beginner => "Новичок",
-    Difficulty.medium => "Средний",
-    Difficulty.high => "Высокий",
-    Difficulty.expert => "Эксперт",
-    Difficulty.master => "Мастер",
-  };
+        Difficulty.beginner => 'Початківець',
+        Difficulty.novice => 'Новачок',
+        Difficulty.medium => 'Середній',
+        Difficulty.high => 'Високий',
+        Difficulty.expert => 'Експерт',
+        Difficulty.master => 'Майстер',
+      };
+
+  /// Короткая подпись, которая хорошо подходит для бейджей и карточек.
+  String get shortLabel => switch (this) {
+        Difficulty.beginner => 'Поч.',
+        Difficulty.novice => 'Нов.',
+        Difficulty.medium => 'Сер.',
+        Difficulty.high => 'Вис.',
+        Difficulty.expert => 'Експ.',
+        Difficulty.master => 'Майст.',
+      };
 }
 
-/// Темы приложения
+/// Темы приложения.
 enum AppTheme { system, light, dark }
 
-/// Поддерживаемые языки
+/// Поддерживаемые языки интерфейса.
 enum AppLanguage { en, ru, uk, de, fr, zh, hi }
 
 extension AppLanguageX on AppLanguage {
   String get nameLocal => switch (this) {
-    AppLanguage.en => "English",
-    AppLanguage.ru => "Русский",
-    AppLanguage.uk => "Українська",
-    AppLanguage.de => "Deutsch",
-    AppLanguage.fr => "Français",
-    AppLanguage.zh => "中文",
-    AppLanguage.hi => "हिन्दी",
-  };
+        AppLanguage.en => 'English',
+        AppLanguage.ru => 'Русский',
+        AppLanguage.uk => 'Українська',
+        AppLanguage.de => 'Deutsch',
+        AppLanguage.fr => 'Français',
+        AppLanguage.zh => '中文',
+        AppLanguage.hi => 'हिन्दी',
+      };
 }
 
-/// Класс состояния игры
+/// Состояние активной игры.
 class GameState {
   final List<int> board;
   final List<int> solution;
   final List<bool> given;
+  final List<Set<int>> notes;
 
   GameState({
     required this.board,
     required this.solution,
     required this.given,
+    required this.notes,
   });
 }
 
-/// Статистика игрока
-class Stats {
-  int gamesPlayed;
+/// Хранит статистику для конкретного уровня сложности.
+class DifficultyStats {
+  int gamesStarted;
   int gamesWon;
+  int flawlessWins;
   int bestTimeMs;
   int totalTimeMs;
-  int streak;
+  int winsWithTime;
+  int currentStreak;
   int bestStreak;
+  int level;
+  int rank;
+  int progressCurrent;
+  int progressTarget;
+  double? overrideWinRate;
 
-  Stats({
-    this.gamesPlayed = 0,
+  DifficultyStats({
+    this.gamesStarted = 0,
     this.gamesWon = 0,
+    this.flawlessWins = 0,
     this.bestTimeMs = 0,
     this.totalTimeMs = 0,
-    this.streak = 0,
+    this.winsWithTime = 0,
+    this.currentStreak = 0,
     this.bestStreak = 0,
+    this.level = 1,
+    this.rank = 1,
+    this.progressCurrent = 0,
+    this.progressTarget = 1,
+    this.overrideWinRate,
   });
 
-  double get winRate =>
-      gamesPlayed == 0 ? 0 : gamesWon / gamesPlayed;
+  double get winRate => overrideWinRate ??
+      (gamesStarted == 0 ? 0 : gamesWon / gamesStarted);
 
-  String get bestTimeText =>
-      bestTimeMs == 0 ? "-" : _fmt(bestTimeMs);
+  String get winRateText => '${(winRate * 100).round()}%';
 
-  String get avgTimeText =>
-      gamesWon == 0 ? "-" : _fmt(totalTimeMs ~/ gamesWon);
+  String get bestTimeText => bestTimeMs == 0 ? '--:--' : _formatTime(bestTimeMs);
 
-  int get rank => (gamesWon ~/ 5) + 1;
+  String get averageTimeText => winsWithTime == 0
+      ? '--:--'
+      : _formatTime(totalTimeMs ~/ math.max(1, winsWithTime));
 
-  static String _fmt(int ms) {
-    final sec = ms ~/ 1000;
-    final min = sec ~/ 60;
-    final s = sec % 60;
-    return "${min}m ${s}s";
-  }
+  String get progressText => '$progressCurrent / $progressTarget';
 
   Map<String, dynamic> toJson() => {
-    "gamesPlayed": gamesPlayed,
-    "gamesWon": gamesWon,
-    "bestTimeMs": bestTimeMs,
-    "totalTimeMs": totalTimeMs,
-    "streak": streak,
-    "bestStreak": bestStreak,
-  };
+        'gamesStarted': gamesStarted,
+        'gamesWon': gamesWon,
+        'flawlessWins': flawlessWins,
+        'bestTimeMs': bestTimeMs,
+        'totalTimeMs': totalTimeMs,
+        'winsWithTime': winsWithTime,
+        'currentStreak': currentStreak,
+        'bestStreak': bestStreak,
+        'level': level,
+        'rank': rank,
+        'progressCurrent': progressCurrent,
+        'progressTarget': progressTarget,
+        'overrideWinRate': overrideWinRate,
+      };
 
-  factory Stats.fromJson(Map<String, dynamic> json) => Stats(
-    gamesPlayed: json["gamesPlayed"] ?? 0,
-    gamesWon: json["gamesWon"] ?? 0,
-    bestTimeMs: json["bestTimeMs"] ?? 0,
-    totalTimeMs: json["totalTimeMs"] ?? 0,
-    streak: json["streak"] ?? 0,
-    bestStreak: json["bestStreak"] ?? 0,
-  );
+  factory DifficultyStats.fromJson(Map<String, dynamic> json) => DifficultyStats(
+        gamesStarted: json['gamesStarted'] ?? 0,
+        gamesWon: json['gamesWon'] ?? 0,
+        flawlessWins: json['flawlessWins'] ?? 0,
+        bestTimeMs: json['bestTimeMs'] ?? 0,
+        totalTimeMs: json['totalTimeMs'] ?? 0,
+        winsWithTime: json['winsWithTime'] ?? 0,
+        currentStreak: json['currentStreak'] ?? 0,
+        bestStreak: json['bestStreak'] ?? 0,
+        level: json['level'] ?? 1,
+        rank: json['rank'] ?? 1,
+        progressCurrent: json['progressCurrent'] ?? 0,
+        progressTarget: json['progressTarget'] ?? 1,
+        overrideWinRate: (json['overrideWinRate'] as num?)?.toDouble(),
+      );
+
+  static String _formatTime(int ms) {
+    final seconds = ms ~/ 1000;
+    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final secs = (seconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$secs';
+  }
 }
 
-/// Главное состояние приложения
+/// Глобальное состояние приложения.
 class AppState extends ChangeNotifier {
   static const int _maxHints = 3;
+  static const int _maxLives = 3;
 
   AppTheme theme = AppTheme.system;
-  AppLanguage lang = AppLanguage.en;
-  GameState? current;
-  Stats stats = Stats();
+  AppLanguage lang = AppLanguage.uk;
 
+  Map<Difficulty, DifficultyStats> statsByDifficulty = _defaultStats();
+
+  GameState? current;
+  Difficulty? currentDifficulty;
+  Difficulty featuredDifficulty = Difficulty.beginner;
+
+  int totalStars = 0;
+  int battleWinRate = 87;
+  int championshipScore = 4473;
+  int dailyStreak = 0;
+  int heartBonus = 1;
+
+  int currentScore = 0;
   int? selectedCell;
   bool notesMode = false;
+  bool autoNotes = false;
   int hintsLeft = _maxHints;
+  int livesLeft = _maxLives;
   bool soundsEnabled = true;
   bool musicEnabled = true;
 
+  bool _madeMistake = false;
+  bool _gameCompleted = false;
+  int _sessionId = 0;
+  DateTime? _startedAt;
+
   final List<_Move> _history = [];
 
-  /// Загружаем сохранённые данные
+  /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    final statsJson = prefs.getString("stats");
-    if (statsJson != null) {
-      stats = Stats.fromJson(jsonDecode(statsJson));
+
+    final profileJson = prefs.getString('profile');
+    if (profileJson != null) {
+      try {
+        final map = jsonDecode(profileJson) as Map<String, dynamic>;
+        dailyStreak = map['dailyStreak'] ?? dailyStreak;
+        totalStars = map['totalStars'] ?? totalStars;
+        championshipScore = map['championshipScore'] ?? championshipScore;
+        battleWinRate = map['battleWinRate'] ?? battleWinRate;
+        heartBonus = map['heartBonus'] ?? heartBonus;
+
+        final statsMap = map['stats'] as Map<String, dynamic>?;
+        if (statsMap != null) {
+          final parsed = <Difficulty, DifficultyStats>{};
+          for (final entry in statsMap.entries) {
+            final key = Difficulty.values.firstWhere(
+              (d) => d.name == entry.key,
+              orElse: () => Difficulty.beginner,
+            );
+            parsed[key] = DifficultyStats.fromJson(
+                (entry.value as Map).cast<String, dynamic>());
+          }
+          statsByDifficulty = {
+            for (final diff in Difficulty.values)
+              diff: parsed[diff] ?? _defaultStats()[diff]!,
+          };
+        }
+      } catch (_) {}
     }
 
-    final themeName = prefs.getString("theme");
+    final themeName = prefs.getString('theme');
     if (themeName != null) {
       try {
         theme = AppTheme.values.byName(themeName);
       } catch (_) {}
     }
 
-    final langName = prefs.getString("lang");
+    final langName = prefs.getString('lang');
     if (langName != null) {
       try {
         lang = AppLanguage.values.byName(langName);
       } catch (_) {}
     }
 
-    soundsEnabled = prefs.getBool("soundsEnabled") ?? soundsEnabled;
-    musicEnabled = prefs.getBool("musicEnabled") ?? musicEnabled;
+    soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
+    musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
+
     notifyListeners();
   }
 
-  /// Сохраняем статистику
-  Future<void> saveStats() async {
+  /// Сохраняем статистику и прочие данные.
+  Future<void> saveProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("stats", jsonEncode(stats.toJson()));
+    final statsJson = {
+      for (final entry in statsByDifficulty.entries)
+        entry.key.name: entry.value.toJson(),
+    };
+    final profile = jsonEncode({
+      'dailyStreak': dailyStreak,
+      'totalStars': totalStars,
+      'championshipScore': championshipScore,
+      'battleWinRate': battleWinRate,
+      'heartBonus': heartBonus,
+      'stats': statsJson,
+    });
+    await prefs.setString('profile', profile);
   }
 
-  /// Сброс статистики
+  /// Полный сброс статистики к значениям по умолчанию.
   void resetStats() {
-    stats = Stats();
-    saveStats();
+    statsByDifficulty = _defaultStats();
+    dailyStreak = 0;
+    totalStars = 0;
+    championshipScore = 4473;
+    battleWinRate = 87;
+    heartBonus = 1;
+    saveProfile();
     notifyListeners();
   }
 
@@ -163,7 +272,7 @@ class AppState extends ChangeNotifier {
     if (theme == value) return;
     theme = value;
     _persist((prefs) async {
-      await prefs.setString("theme", value.name);
+      await prefs.setString('theme', value.name);
     });
     notifyListeners();
   }
@@ -172,7 +281,7 @@ class AppState extends ChangeNotifier {
     if (lang == value) return;
     lang = value;
     _persist((prefs) async {
-      await prefs.setString("lang", value.name);
+      await prefs.setString('lang', value.name);
     });
     notifyListeners();
   }
@@ -181,7 +290,7 @@ class AppState extends ChangeNotifier {
     if (soundsEnabled == enabled) return;
     soundsEnabled = enabled;
     _persist((prefs) async {
-      await prefs.setBool("soundsEnabled", enabled);
+      await prefs.setBool('soundsEnabled', enabled);
     });
     notifyListeners();
   }
@@ -190,123 +299,414 @@ class AppState extends ChangeNotifier {
     if (musicEnabled == enabled) return;
     musicEnabled = enabled;
     _persist((prefs) async {
-      await prefs.setBool("musicEnabled", enabled);
+      await prefs.setBool('musicEnabled', enabled);
     });
     notifyListeners();
   }
 
-  /// Запуск новой игры
+  /// Запуск новой игры выбранного уровня сложности.
   void startGame(Difficulty diff) {
-    final available = puzzles[diff];
+    final available = puzzles[diff] ?? puzzles[Difficulty.beginner];
     if (available == null || available.isEmpty) {
       current = null;
       selectedCell = null;
       notesMode = false;
+      autoNotes = false;
       hintsLeft = _maxHints;
+      livesLeft = _maxLives;
       _history.clear();
       notifyListeners();
       return;
     }
 
-    final puzzle = available.first;
+    final index = DateTime.now().millisecondsSinceEpoch % available.length;
+    final puzzle = available[index];
+
     current = GameState(
       board: List.of(puzzle.board),
       solution: List.of(puzzle.solution),
       given: puzzle.board.map((v) => v != 0).toList(),
+      notes: List.generate(81, (_) => <int>{}),
     );
 
+    currentDifficulty = diff;
+    featuredDifficulty = diff;
+    _sessionId++;
+    currentScore = 0;
     selectedCell = null;
     notesMode = false;
+    autoNotes = false;
     hintsLeft = _maxHints;
+    livesLeft = _maxLives;
+    _madeMistake = false;
+    _gameCompleted = false;
     _history.clear();
+    _startedAt = DateTime.now();
 
+    statsByDifficulty[diff]?.gamesStarted++;
+    saveProfile();
     notifyListeners();
   }
 
-  /// Проверка правильности хода
-  bool isMoveValid(int index, int value) {
-    if (current == null) return false;
-    return current!.solution[index] == value;
+  int get sessionId => _sessionId;
+
+  DateTime? get startedAt => _startedAt;
+
+  bool get hasActiveGame => current != null;
+
+  bool get isOutOfLives => livesLeft <= 0;
+
+  bool get isSolved {
+    final game = current;
+    if (game == null) return false;
+    for (var i = 0; i < 81; i++) {
+      if (game.board[i] != game.solution[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  /// Сделать ход
-  void makeMove(int index, int value) {
-    if (current == null) return;
-    if (current!.given[index]) return;
+  bool get gameCompleted => _gameCompleted;
 
-    final previous = current!.board[index];
-    if (previous == value) return;
+  DifficultyStats statsFor(Difficulty diff) =>
+      statsByDifficulty[diff] ?? DifficultyStats();
 
-    _history.add(_Move(index, previous));
-    current!.board[index] = value;
-    notifyListeners();
+  Difficulty get featuredStatsDifficulty {
+    if (currentDifficulty != null) {
+      return currentDifficulty!;
+    }
+    return featuredDifficulty;
   }
 
-  /// Выбрать ячейку
   void selectCell(int index) {
+    if (current == null) return;
     selectedCell = index;
     notifyListeners();
   }
 
-  /// Стереть значение
+  void handleNumberInput(int number) {
+    final idx = selectedCell;
+    if (current == null || idx == null) return;
+    if (notesMode) {
+      toggleNoteAt(idx, number);
+    } else {
+      makeMove(idx, number);
+    }
+  }
+
+  void makeMove(int index, int value) {
+    final game = current;
+    if (game == null) return;
+    if (game.given[index]) return;
+    if (isOutOfLives) return;
+
+    final previousValue = game.board[index];
+    final previousNotes = _cloneNotes(index);
+    if (previousValue == value) return;
+
+    final correct = isMoveValid(index, value);
+    var consumedLife = false;
+
+    if (!correct) {
+      livesLeft = math.max(0, livesLeft - 1);
+      consumedLife = true;
+      _madeMistake = true;
+    } else {
+      currentScore += 12;
+    }
+
+    _history.add(_Move(
+      index: index,
+      previousValue: previousValue,
+      previousNotes: previousNotes,
+      consumedLife: consumedLife,
+    ));
+
+    game.board[index] = value;
+    game.notes[index].clear();
+
+    if (correct && autoNotes) {
+      _cleanupAutoNotes(index, value);
+    }
+
+    notifyListeners();
+  }
+
+  void toggleNoteAt(int index, int value) {
+    final game = current;
+    if (game == null) return;
+    if (game.given[index]) return;
+
+    final previousNotes = _cloneNotes(index);
+    final notes = game.notes[index];
+    if (notes.contains(value)) {
+      notes.remove(value);
+    } else {
+      notes.add(value);
+    }
+
+    _history.add(_Move(
+      index: index,
+      previousValue: game.board[index],
+      previousNotes: previousNotes,
+      noteChange: true,
+    ));
+
+    notifyListeners();
+  }
+
   void eraseCell() {
-    if (current == null || selectedCell == null) return;
-    if (current!.given[selectedCell!]) return;
+    final game = current;
+    final idx = selectedCell;
+    if (game == null || idx == null) return;
+    if (game.given[idx]) return;
+    if (game.board[idx] == 0 && game.notes[idx].isEmpty) return;
 
-    final idx = selectedCell!;
-    final previous = current!.board[idx];
-    if (previous == 0) return;
+    final previousValue = game.board[idx];
+    final previousNotes = _cloneNotes(idx);
 
-    _history.add(_Move(idx, previous));
-    current!.board[idx] = 0;
+    _history.add(_Move(
+      index: idx,
+      previousValue: previousValue,
+      previousNotes: previousNotes,
+    ));
+
+    game.board[idx] = 0;
+    game.notes[idx].clear();
     notifyListeners();
   }
 
-  /// Подсказка
   void useHint() {
-    if (current == null || selectedCell == null) return;
+    final game = current;
+    final idx = selectedCell;
+    if (game == null || idx == null) return;
+    if (game.given[idx]) return;
     if (hintsLeft <= 0) return;
-    if (current!.given[selectedCell!]) return;
 
-    final idx = selectedCell!;
-    final previous = current!.board[idx];
-    final correct = current!.solution[idx];
-    if (previous == correct) return;
+    final previousValue = game.board[idx];
+    final previousNotes = _cloneNotes(idx);
+    final correct = game.solution[idx];
+    if (previousValue == correct) return;
 
-    _history.add(_Move(idx, previous, consumedHint: true));
-    current!.board[idx] = correct;
-    hintsLeft--;
+    _history.add(_Move(
+      index: idx,
+      previousValue: previousValue,
+      previousNotes: previousNotes,
+      consumedHint: true,
+    ));
 
+    game.board[idx] = correct;
+    game.notes[idx].clear();
+    hintsLeft = math.max(0, hintsLeft - 1);
+    currentScore += 8;
+    if (autoNotes) {
+      _cleanupAutoNotes(idx, correct);
+    }
     notifyListeners();
   }
 
-  /// Переключение заметок
   void toggleNotesMode() {
     notesMode = !notesMode;
     notifyListeners();
   }
 
-  /// Отмена последнего хода
-  void undoMove() {
-    if (current == null || _history.isEmpty) return;
-
-    final last = _history.removeLast();
-    if (current!.given[last.index]) {
-      return;
-    }
-
-    current!.board[last.index] = last.previousValue;
-    selectedCell = last.index;
-    if (last.consumedHint && hintsLeft < _maxHints) {
-      hintsLeft++;
-    }
+  void toggleAutoNotes() {
+    autoNotes = !autoNotes;
     notifyListeners();
   }
 
-  /// Подсчёт оставшихся чисел
+  void undoMove() {
+    final game = current;
+    if (game == null || _history.isEmpty) return;
+
+    final last = _history.removeLast();
+    game.board[last.index] = last.previousValue;
+    game.notes[last.index]
+      ..clear()
+      ..addAll(last.previousNotes);
+
+    if (last.consumedHint) {
+      hintsLeft = math.min(_maxHints, hintsLeft + 1);
+    }
+
+    if (last.consumedLife) {
+      livesLeft = math.min(_maxLives, livesLeft + 1);
+    }
+
+    selectedCell = last.index;
+    notifyListeners();
+  }
+
+  void restoreOneLife() {
+    livesLeft = math.max(1, livesLeft);
+    notifyListeners();
+  }
+
+  /// Завершение партии (вызывается, когда все клетки заполнены корректно).
+  void completeGame(int elapsedMs) {
+    if (current == null) return;
+    if (_gameCompleted) return;
+    if (!isSolved) return;
+
+    _gameCompleted = true;
+    totalStars += 1;
+
+    final diff = currentDifficulty;
+    if (diff != null) {
+      final stats = statsByDifficulty[diff];
+      if (stats != null) {
+        stats.gamesWon++;
+        stats.winsWithTime++;
+        stats.totalTimeMs += elapsedMs;
+        if (stats.bestTimeMs == 0 || elapsedMs < stats.bestTimeMs) {
+          stats.bestTimeMs = elapsedMs;
+        }
+        if (!_madeMistake) {
+          stats.flawlessWins++;
+        }
+        stats.currentStreak++;
+        stats.bestStreak = math.max(stats.bestStreak, stats.currentStreak);
+        stats.progressCurrent = math.min(
+          stats.progressTarget,
+          stats.progressCurrent + 1,
+        );
+        if (stats.progressCurrent >= stats.progressTarget) {
+          stats.level++;
+          stats.rank = math.max(1, stats.rank - 1);
+          stats.progressCurrent = 0;
+          stats.progressTarget += stats.level ~/ 2 + 5;
+          heartBonus = 1;
+        }
+      }
+    }
+
+    saveProfile();
+    notifyListeners();
+  }
+
+  void registerFailure() {
+    final diff = currentDifficulty;
+    if (diff != null) {
+      final stats = statsByDifficulty[diff];
+      if (stats != null) {
+        stats.currentStreak = 0;
+      }
+    }
+    saveProfile();
+    notifyListeners();
+  }
+
+  void abandonGame() {
+    current = null;
+    currentDifficulty = null;
+    currentScore = 0;
+    selectedCell = null;
+    notesMode = false;
+    autoNotes = false;
+    hintsLeft = _maxHints;
+    livesLeft = _maxLives;
+    _madeMistake = false;
+    _gameCompleted = false;
+    _history.clear();
+    notifyListeners();
+  }
+
+  /// Подсчёт оставшихся чисел для панели управления.
   int countRemaining(int number) {
-    if (current == null) return 9;
-    return 9 - current!.board.where((v) => v == number).length;
+    final game = current;
+    if (game == null) return 9;
+    return 9 - game.board.where((v) => v == number).length;
+  }
+
+  int? get selectedValue {
+    final idx = selectedCell;
+    final game = current;
+    if (idx == null || game == null) return null;
+    final value = game.board[idx];
+    return value == 0 ? null : value;
+  }
+
+  bool isMoveValid(int index, int value) {
+    final game = current;
+    if (game == null) return false;
+    if (value == 0) return true;
+    return game.solution[index] == value;
+  }
+
+  bool hasConflict(int index) {
+    final game = current;
+    if (game == null) return false;
+    final value = game.board[index];
+    if (value == 0) return false;
+
+    for (final peer in _peersOf(index)) {
+      if (peer != index && game.board[peer] == value) {
+        return true;
+      }
+    }
+    return !isMoveValid(index, value);
+  }
+
+  bool isPeerOfSelected(int index) {
+    final selected = selectedCell;
+    if (selected == null || selected == index) return false;
+    return _peersOf(selected).contains(index);
+  }
+
+  bool isSameAsSelectedValue(int index) {
+    final selected = selectedCell;
+    final game = current;
+    if (selected == null || game == null) return false;
+    if (game.board[selected] == 0) return false;
+    return game.board[index] == game.board[selected];
+  }
+
+  List<int> rowIndices(int index) {
+    final row = index ~/ 9;
+    return List.generate(9, (i) => row * 9 + i);
+  }
+
+  List<int> columnIndices(int index) {
+    final col = index % 9;
+    return List.generate(9, (i) => col + i * 9);
+  }
+
+  List<int> boxIndices(int index) {
+    final row = index ~/ 9;
+    final col = index % 9;
+    final startRow = (row ~/ 3) * 3;
+    final startCol = (col ~/ 3) * 3;
+    final indices = <int>[];
+    for (var r = startRow; r < startRow + 3; r++) {
+      for (var c = startCol; c < startCol + 3; c++) {
+        indices.add(r * 9 + c);
+      }
+    }
+    return indices;
+  }
+
+  Set<int> _peersOf(int index) {
+    final peers = <int>{}
+      ..addAll(rowIndices(index))
+      ..addAll(columnIndices(index))
+      ..addAll(boxIndices(index));
+    peers.remove(index);
+    return peers;
+  }
+
+  Set<int> _cloneNotes(int index) {
+    final game = current;
+    if (game == null) return <int>{};
+    return {...game.notes[index]};
+  }
+
+  void _cleanupAutoNotes(int index, int value) {
+    final game = current;
+    if (game == null) return;
+    for (final peer in _peersOf(index)) {
+      game.notes[peer].remove(value);
+    }
   }
 
   void _persist(Future<void> Function(SharedPreferences prefs) save) {
@@ -317,7 +717,112 @@ class AppState extends ChangeNotifier {
 class _Move {
   final int index;
   final int previousValue;
+  final Set<int> previousNotes;
   final bool consumedHint;
+  final bool consumedLife;
+  final bool noteChange;
 
-  _Move(this.index, this.previousValue, {this.consumedHint = false});
+  _Move({
+    required this.index,
+    required this.previousValue,
+    required this.previousNotes,
+    this.consumedHint = false,
+    this.consumedLife = false,
+    this.noteChange = false,
+  });
 }
+
+int _ms(int minutes, int seconds) => (minutes * 60 + seconds) * 1000;
+
+Map<Difficulty, DifficultyStats> _defaultStats() => {
+      Difficulty.beginner: DifficultyStats(
+        gamesStarted: 28,
+        gamesWon: 18,
+        flawlessWins: 6,
+        bestTimeMs: _ms(0, 48),
+        totalTimeMs: _ms(6, 40) * 18,
+        winsWithTime: 18,
+        currentStreak: 4,
+        bestStreak: 9,
+        level: 3,
+        rank: 1,
+        progressCurrent: 12,
+        progressTarget: 20,
+        overrideWinRate: 0.64,
+      ),
+      Difficulty.novice: DifficultyStats(
+        gamesStarted: 52,
+        gamesWon: 24,
+        flawlessWins: 8,
+        bestTimeMs: _ms(1, 32),
+        totalTimeMs: _ms(4, 15) * 24,
+        winsWithTime: 24,
+        currentStreak: 2,
+        bestStreak: 7,
+        level: 8,
+        rank: 1,
+        progressCurrent: 18,
+        progressTarget: 60,
+        overrideWinRate: 0.46,
+      ),
+      Difficulty.medium: DifficultyStats(
+        gamesStarted: 148,
+        gamesWon: 65,
+        flawlessWins: 9,
+        bestTimeMs: _ms(2, 44),
+        totalTimeMs: _ms(7, 20) * 65,
+        winsWithTime: 65,
+        currentStreak: 5,
+        bestStreak: 12,
+        level: 24,
+        rank: 4,
+        progressCurrent: 54,
+        progressTarget: 180,
+        overrideWinRate: 0.44,
+      ),
+      Difficulty.high: DifficultyStats(
+        gamesStarted: 65,
+        gamesWon: 30,
+        flawlessWins: 3,
+        bestTimeMs: _ms(2, 51),
+        totalTimeMs: _ms(8, 59) * 30,
+        winsWithTime: 30,
+        currentStreak: 3,
+        bestStreak: 11,
+        level: 42,
+        rank: 7,
+        progressCurrent: 58,
+        progressTarget: 200,
+        overrideWinRate: 0.46,
+      ),
+      Difficulty.expert: DifficultyStats(
+        gamesStarted: 210,
+        gamesWon: 88,
+        flawlessWins: 15,
+        bestTimeMs: _ms(3, 18),
+        totalTimeMs: _ms(9, 42) * 88,
+        winsWithTime: 88,
+        currentStreak: 1,
+        bestStreak: 9,
+        level: 118,
+        rank: 14,
+        progressCurrent: 342,
+        progressTarget: 640,
+        overrideWinRate: 0.42,
+      ),
+      Difficulty.master: DifficultyStats(
+        gamesStarted: 1835,
+        gamesWon: 692,
+        flawlessWins: 42,
+        bestTimeMs: _ms(2, 8),
+        totalTimeMs: _ms(5, 46) * 692,
+        winsWithTime: 692,
+        currentStreak: 1,
+        bestStreak: 24,
+        level: 693,
+        rank: 81,
+        progressCurrent: 530,
+        progressTarget: 531,
+        overrideWinRate: 0.42,
+      ),
+    };
