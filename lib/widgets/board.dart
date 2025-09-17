@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../models.dart';
 
-const _kHighlightDuration = Duration(milliseconds: 150);
 class Board extends StatefulWidget {
   const Board({super.key});
 
@@ -222,7 +221,6 @@ class _BoardState extends State<Board> with TickerProviderStateMixin {
                               incorrect: incorrect,
                               highlightCandidate: highlightCandidate,
                               victoryIntensity: victoryIntensity,
-                              reduceMotion: reduceMotion,
                               onTap: () => app.selectCell(index),
                             );
                           },
@@ -247,7 +245,7 @@ class _BoardState extends State<Board> with TickerProviderStateMixin {
   }
 }
 
-class _BoardCell extends StatefulWidget {
+class _BoardCell extends StatelessWidget {
   final int index;
   final int value;
   final Set<int> notes;
@@ -259,7 +257,6 @@ class _BoardCell extends StatefulWidget {
   final bool incorrect;
   final bool highlightCandidate;
   final double victoryIntensity;
-  final bool reduceMotion;
   final VoidCallback onTap;
 
   const _BoardCell({
@@ -274,201 +271,75 @@ class _BoardCell extends StatefulWidget {
     required this.incorrect,
     required this.highlightCandidate,
     required this.victoryIntensity,
-    required this.reduceMotion,
     required this.onTap,
   });
 
-  @override
-  State<_BoardCell> createState() => _BoardCellState();
-}
-
-class _BoardCellState extends State<_BoardCell> with TickerProviderStateMixin {
-  late final AnimationController _correctController;
-  late final AnimationController _shakeController;
-  late final Animation<double> _scaleAnimation;
-  late final Animation<double> _glowAnimation;
-  late final Listenable _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    _correctController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-    );
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.12).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
-        weight: 55,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.12, end: 1.0).chain(
-          CurveTween(curve: Curves.easeIn),
-        ),
-        weight: 45,
-      ),
-    ]).animate(_correctController);
-    _glowAnimation = CurvedAnimation(
-      parent: _correctController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ).drive(Tween<double>(begin: 0.5, end: 0.0));
-
-    _shakeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-    );
-
-    _animations = Listenable.merge([
-      _correctController,
-      _shakeController,
-    ]);
-  }
-
-  @override
-  void dispose() {
-    _correctController.dispose();
-    _shakeController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant _BoardCell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.reduceMotion) {
-      if (_correctController.isAnimating) {
-        _correctController.stop();
-      }
-      if (_shakeController.isAnimating) {
-        _shakeController.stop();
-      }
-      return;
-    }
-
-    if (widget.value != oldWidget.value) {
-      _correctController.stop();
-      _shakeController.stop();
-
-      if (widget.value != 0 && !widget.given) {
-        if (widget.incorrect) {
-          _shakeController.forward(from: 0);
-        } else {
-          _correctController.forward(from: 0);
-        }
-      }
-    }
-  }
+  bool get _hasCorrectEntry => value != 0 && !given && !incorrect;
 
   @override
   Widget build(BuildContext context) {
-    final border = _cellBorder(widget.index);
-    final theme = Theme.of(context);
-    final surfaceColor = theme.colorScheme.surface;
-    final primaryColor = theme.colorScheme.primary;
-    final selectedHighlightColor = primaryColor.withOpacity(0.22);
-    final relatedHighlightColor = primaryColor.withOpacity(0.12);
-    final sameValueHighlightColor = primaryColor.withOpacity(0.16);
-    final candidateHighlightColor = primaryColor.withOpacity(0.1);
-    final conflictHighlightColor = theme.colorScheme.error.withOpacity(0.16);
+    const correctEntryColor = Color(0xFFE8F0FF);
+    const selectionBorderColor = Color(0xFFCBD5E1);
+    const candidateHighlightColor = Color(0x112563EB);
+    const peerHighlightColor = Color(0x0C1F2937);
+    const sameValueHighlightColor = Color(0x152563EB);
+    const conflictHighlightColor = Color(0x1AE25562);
+
+    final border = _cellBorder(index);
+    final baseColor = _hasCorrectEntry ? correctEntryColor : Colors.white;
 
     return GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedBuilder(
-        animation: _animations,
-        builder: (context, child) {
-          final scale = widget.reduceMotion || widget.value == 0
-              ? 1.0
-              : _scaleAnimation.value;
-          final shakeOffset = widget.reduceMotion
-              ? 0.0
-              : math.sin(_shakeController.value * math.pi * 4) *
-                  5 *
-                  (1 - _shakeController.value);
-          final glowOpacity =
-              widget.reduceMotion ? 0.0 : _glowAnimation.value;
-
-          return Transform.translate(
-            offset: Offset(shakeOffset, 0),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: surfaceColor,
-                    border: border,
-                  ),
-                ),
-                _HighlightLayer(
-                  active: widget.highlightCandidate,
-                  color: candidateHighlightColor,
-                  reduceMotion: widget.reduceMotion,
-                ),
-                _HighlightLayer(
-                  active: widget.isPeer,
-                  color: relatedHighlightColor,
-                  reduceMotion: widget.reduceMotion,
-                ),
-                _HighlightLayer(
-                  active: widget.sameValue,
-                  color: sameValueHighlightColor,
-                  reduceMotion: widget.reduceMotion,
-                ),
-                _HighlightLayer(
-                  active: widget.isSelected,
-                  color: selectedHighlightColor,
-                  reduceMotion: widget.reduceMotion,
-                ),
-                _HighlightLayer(
-                  active: widget.conflict,
-                  color: conflictHighlightColor,
-                  reduceMotion: widget.reduceMotion,
-                ),
-                if (widget.victoryIntensity > 0)
-                  Positioned.fill(
-                    child: Opacity(
-                      opacity: widget.victoryIntensity * 0.6,
-                      child: const DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFFF4CC),
-                        ),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: baseColor,
+          border: border,
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (highlightCandidate)
+              const _HighlightLayer(color: candidateHighlightColor),
+            if (isPeer) const _HighlightLayer(color: peerHighlightColor),
+            if (sameValue)
+              const _HighlightLayer(color: sameValueHighlightColor),
+            if (conflict)
+              const _HighlightLayer(color: conflictHighlightColor),
+            if (victoryIntensity > 0)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: victoryIntensity * 0.6,
+                    child: const DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFF4CC),
                       ),
                     ),
                   ),
-                if (!widget.reduceMotion && glowOpacity > 0)
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            center: Alignment.center,
-                            radius: 0.8,
-                            colors: [
-                              const Color(0x663B82F6)
-                                  .withOpacity(glowOpacity),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                Center(
-                  child: Transform.scale(
-                    scale: scale,
-                    child: child,
-                  ),
                 ),
-              ],
+              ),
+            Center(
+              child: _CellContent(
+                value: value,
+                notes: notes,
+                given: given,
+                incorrect: incorrect,
+              ),
             ),
-          );
-        },
-        child: _AnimatedCellContent(
-          value: widget.value,
-          notes: widget.notes,
-          given: widget.given,
-          incorrect: widget.incorrect,
-          reduceMotion: widget.reduceMotion,
+            if (isSelected)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: selectionBorderColor,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -476,53 +347,40 @@ class _BoardCellState extends State<_BoardCell> with TickerProviderStateMixin {
 }
 
 class _HighlightLayer extends StatelessWidget {
-  final bool active;
   final Color color;
-  final bool reduceMotion;
 
-  const _HighlightLayer({
-    required this.active,
-    required this.color,
-    required this.reduceMotion,
-  });
+  const _HighlightLayer({required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Positioned.fill(
-      child: AnimatedContainer(
-        duration: reduceMotion ? Duration.zero : _kHighlightDuration,
-        curve: Curves.easeOut,
-        color: active ? color : Colors.transparent,
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(color: color),
+        ),
       ),
     );
   }
 }
 
-class _AnimatedCellContent extends StatelessWidget {
+class _CellContent extends StatelessWidget {
   final int value;
   final Set<int> notes;
   final bool given;
   final bool incorrect;
-  final bool reduceMotion;
 
-  const _AnimatedCellContent({
+  const _CellContent({
     required this.value,
     required this.notes,
     required this.given,
     required this.incorrect,
-    required this.reduceMotion,
   });
 
   @override
   Widget build(BuildContext context) {
-    final duration =
-        reduceMotion ? Duration.zero : const Duration(milliseconds: 150);
-
-    Widget child;
     if (value != 0) {
-      child = Text(
+      return Text(
         value.toString(),
-        key: ValueKey('value-$value-${given ? 1 : 0}-${incorrect ? 1 : 0}'),
         style: TextStyle(
           fontSize: 22,
           fontWeight: given ? FontWeight.w700 : FontWeight.w600,
@@ -533,30 +391,16 @@ class _AnimatedCellContent extends StatelessWidget {
                   : const Color(0xFF2563EB)),
         ),
       );
-    } else if (notes.isEmpty) {
-      child = const SizedBox(key: ValueKey('empty'));
-    } else {
-      final sorted = notes.toList()..sort();
-      child = _NotesGrid(
-        notes: notes,
-        key: ValueKey('notes-${sorted.join('-')}'),
-      );
     }
 
-    return AnimatedSwitcher(
-      duration: duration,
-      switchInCurve: Curves.easeOut,
-      switchOutCurve: Curves.easeIn,
-      transitionBuilder: (child, animation) {
-        if (reduceMotion) {
-          return child;
-        }
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      },
-      child: child,
+    if (notes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final sorted = notes.toList()..sort();
+    return _NotesGrid(
+      notes: notes,
+      key: ValueKey('notes-${sorted.join('-')}'),
     );
   }
 }
@@ -595,25 +439,35 @@ class _NotesGrid extends StatelessWidget {
 }
 
 Border _cellBorder(int index) {
+  const thinLineColor = Color(0xFFD1D5DB);
+  const boldLineColor = Color(0xFF9CA3AF);
+  const thinLineWidth = 0.5;
+  const boldLineWidth = 1.2;
+
   final row = index ~/ 9;
   final col = index % 9;
 
+  final topIsBold = row % 3 == 0;
+  final leftIsBold = col % 3 == 0;
+  final rightIsBold = col == 8;
+  final bottomIsBold = row == 8;
+
   return Border(
     top: BorderSide(
-      color: const Color(0xFFB4C1E0),
-      width: row % 3 == 0 ? 1.6 : 0.5,
+      color: topIsBold ? boldLineColor : thinLineColor,
+      width: topIsBold ? boldLineWidth : thinLineWidth,
     ),
     left: BorderSide(
-      color: const Color(0xFFB4C1E0),
-      width: col % 3 == 0 ? 1.6 : 0.5,
+      color: leftIsBold ? boldLineColor : thinLineColor,
+      width: leftIsBold ? boldLineWidth : thinLineWidth,
     ),
     right: BorderSide(
-      color: const Color(0xFFB4C1E0),
-      width: col == 8 ? 1.6 : 0.5,
+      color: rightIsBold ? boldLineColor : thinLineColor,
+      width: rightIsBold ? boldLineWidth : thinLineWidth,
     ),
     bottom: BorderSide(
-      color: const Color(0xFFB4C1E0),
-      width: row == 8 ? 1.6 : 0.5,
+      color: bottomIsBold ? boldLineColor : thinLineColor,
+      width: bottomIsBold ? boldLineWidth : thinLineWidth,
     ),
   );
 }
