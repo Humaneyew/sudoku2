@@ -204,7 +204,7 @@ Border _cellBorder(int index) {
   const thinLineColor = Color(0xFFD3D3D3);
   const boldLineColor = Color(0xFF555555);
   const thinLineWidth = 0.5;
-  const boldLineWidth = 1.2;
+  const boldLineWidth = 1.6;
 
   final row = index ~/ 9;
   final col = index % 9;

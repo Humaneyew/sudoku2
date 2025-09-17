@@ -112,8 +112,7 @@ class _GamePageState extends State<GamePage> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
                 child: const Column(
                   children: [
                     Board(),
