@@ -34,59 +34,45 @@ class _ActionRow extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x121B1D3A),
-            blurRadius: 16,
-            offset: Offset(0, 10),
+    return Row(
+      children: [
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.undo_rounded,
+            label: l10n.undo,
+            onPressed: app.undoMove,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ActionButton(
-              icon: Icons.undo_rounded,
-              label: l10n.undo,
-              onPressed: app.undoMove,
-            ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.backspace_outlined,
+            label: l10n.erase,
+            onPressed: app.eraseCell,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _ActionButton(
-              icon: Icons.backspace_outlined,
-              label: l10n.erase,
-              onPressed: app.eraseCell,
-            ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.edit_note,
+            label: l10n.notes,
+            onPressed: app.toggleNotesMode,
+            active: app.notesMode,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _ActionButton(
-              icon: Icons.edit_note,
-              label: l10n.notes,
-              onPressed: app.toggleNotesMode,
-              active: app.notesMode,
-            ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.lightbulb_outline,
+            label: l10n.hint,
+            onPressed: app.hintsLeft > 0 ? app.useHint : null,
+            badge: app.hintsLeft.toString(),
+            badgeColor: app.hintsLeft > 0
+                ? const Color(0xFFFFB347)
+                : theme.disabledColor,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _ActionButton(
-              icon: Icons.lightbulb_outline,
-              label: l10n.hint,
-              onPressed: app.hintsLeft > 0 ? app.useHint : null,
-              badge: app.hintsLeft.toString(),
-              badgeColor: app.hintsLeft > 0
-                  ? const Color(0xFFFFB347)
-                  : theme.disabledColor,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -111,67 +97,89 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const primaryBlue = Color(0xFF3B82F6);
     final enabled = onPressed != null;
-    final accent = const Color(0xFF2563EB);
-    final background = active ? const Color(0xFFE0F0FF) : Colors.white;
-    final disabledBackground = const Color(0xFFF4F6FB);
-    final borderColor = active ? const Color(0xFF9DBAFD) : const Color(0xFFE1E6F5);
+    final isActive = enabled && active;
+    final background = isActive ? const Color(0xFFE0F0FF) : Colors.white;
+    final borderColor = isActive ? const Color(0xFF9CC8FF) : const Color(0xFFE1E6F5);
     final effectiveBorder = enabled ? borderColor : const Color(0xFFE9ECF6);
-    final textColor = enabled ? const Color(0xFF1F2437) : theme.disabledColor;
-    final iconColor = enabled ? accent : theme.disabledColor;
-    final buttonBackground = enabled ? background : disabledBackground;
-    final badgeForeground =
-        enabled ? (badgeColor ?? accent) : theme.disabledColor;
+    final textColor = isActive
+        ? primaryBlue
+        : enabled
+            ? const Color(0xFF1F2437)
+            : theme.disabledColor;
+    final iconColor = isActive
+        ? primaryBlue
+        : enabled
+            ? const Color(0xFF1F2437)
+            : theme.disabledColor;
+    final badgeForeground = enabled ? (badgeColor ?? primaryBlue) : theme.disabledColor;
+    final showBadge = badge != null && badge!.isNotEmpty;
 
     return SizedBox(
-      height: 52,
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          backgroundColor: buttonBackground,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: effectiveBorder),
-          ),
+      height: 84,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: effectiveBorder),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 20, color: iconColor),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: enabled ? onPressed : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+              child: Stack(
+                children: [
+                  if (showBadge)
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badgeForeground.withOpacity(enabled ? 0.18 : 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: badgeForeground,
+                          ),
+                        ),
+                      ),
+                    ),
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, size: 26, color: iconColor),
+                        const SizedBox(height: 8),
+                        Text(
+                          label,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            if (badge != null) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: badgeForeground.withOpacity(0.14),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  badge!,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: badgeForeground,
-                  ),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
