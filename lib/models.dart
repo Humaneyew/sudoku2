@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'puzzles.dart';
@@ -177,6 +178,7 @@ class AppState extends ChangeNotifier {
   int livesLeft = _maxLives;
   bool soundsEnabled = true;
   bool musicEnabled = true;
+  bool vibrationEnabled = true;
 
   bool _madeMistake = false;
   bool _gameCompleted = false;
@@ -234,6 +236,7 @@ class AppState extends ChangeNotifier {
 
     soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
     musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
+    vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
 
     notifyListeners();
   }
@@ -300,6 +303,15 @@ class AppState extends ChangeNotifier {
     musicEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('musicEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void toggleVibration(bool enabled) {
+    if (vibrationEnabled == enabled) return;
+    vibrationEnabled = enabled;
+    _persist((prefs) async {
+      await prefs.setBool('vibrationEnabled', enabled);
     });
     notifyListeners();
   }
@@ -414,6 +426,7 @@ class AppState extends ChangeNotifier {
       _madeMistake = true;
     } else {
       currentScore += 12;
+      _handleCorrectFeedback();
     }
 
     _history.add(_Move(
@@ -551,6 +564,7 @@ class AppState extends ChangeNotifier {
 
     _gameCompleted = true;
     totalStars += 1;
+    _handleVictoryFeedback();
 
     final diff = currentDifficulty;
     if (diff != null) {
@@ -586,6 +600,7 @@ class AppState extends ChangeNotifier {
   }
 
   void registerFailure() {
+    _handleDefeatFeedback();
     final diff = currentDifficulty;
     if (diff != null) {
       final stats = statsByDifficulty[diff];
@@ -707,6 +722,31 @@ class AppState extends ChangeNotifier {
     for (final peer in _peersOf(index)) {
       game.notes[peer].remove(value);
     }
+  }
+
+  void _handleCorrectFeedback() {
+    _playSound(SystemSoundType.click);
+    _triggerVibration(HapticFeedback.selectionClick);
+  }
+
+  void _handleVictoryFeedback() {
+    _playSound(SystemSoundType.alert);
+    _triggerVibration(HapticFeedback.mediumImpact);
+  }
+
+  void _handleDefeatFeedback() {
+    _playSound(SystemSoundType.alert);
+    _triggerVibration(HapticFeedback.heavyImpact);
+  }
+
+  void _playSound(SystemSoundType type) {
+    if (!soundsEnabled) return;
+    SystemSound.play(type);
+  }
+
+  void _triggerVibration(Future<void> Function() callback) {
+    if (!vibrationEnabled) return;
+    callback();
   }
 
   void _persist(Future<void> Function(SharedPreferences prefs) save) {

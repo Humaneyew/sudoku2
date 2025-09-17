@@ -74,6 +74,12 @@ class SettingsPage extends StatelessWidget {
             secondary: const Icon(Icons.volume_up),
           ),
           SwitchListTile(
+            title: const Text("Вибрация"),
+            value: app.vibrationEnabled,
+            onChanged: (v) => app.toggleVibration(v),
+            secondary: const Icon(Icons.vibration),
+          ),
+          SwitchListTile(
             title: const Text("Фоновая музыка"),
             value: app.musicEnabled,
             onChanged: (v) => app.toggleMusic(v),
