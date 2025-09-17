@@ -321,23 +321,28 @@ class _ChallengeCarousel extends StatelessWidget {
 
     return SizedBox(
       height: carouselHeight,
-      child: ListView.separated(
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         clipBehavior: Clip.none,
-        itemCount: cards.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 16),
-        itemBuilder: (context, index) => SizedBox(
-          width: cardWidth,
-          height: carouselHeight,
-          child: FittedBox(
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: originalCardWidth,
-              height: 170,
-              child: _ChallengeCard(data: cards[index]),
-            ),
-          ),
+        child: Row(
+          children: [
+            for (var index = 0; index < cards.length; index++) ...[
+              if (index != 0) const SizedBox(width: 16),
+              SizedBox(
+                width: cardWidth,
+                height: carouselHeight,
+                child: FittedBox(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: originalCardWidth,
+                    height: 170,
+                    child: _ChallengeCard(data: cards[index]),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
