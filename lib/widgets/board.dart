@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../models.dart';
 
 const _kHighlightDuration = Duration(milliseconds: 150);
+const _kSelectedHighlightColor = Color(0xFFE0F0FF);
+const _kRelatedHighlightColor = Color(0x4DE0F0FF);
 
 class Board extends StatefulWidget {
   const Board({super.key});
@@ -391,22 +393,22 @@ class _BoardCellState extends State<_BoardCell> with TickerProviderStateMixin {
                 ),
                 _HighlightLayer(
                   active: widget.highlightCandidate,
-                  color: const Color(0xFFE8F2FF),
+                  color: _kRelatedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.isPeer,
-                  color: const Color(0xFFF2F5FF),
+                  color: _kRelatedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.sameValue,
-                  color: const Color(0xFFDAE8FF),
+                  color: _kRelatedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.isSelected,
-                  color: const Color(0xFFC7DBFF),
+                  color: _kSelectedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
