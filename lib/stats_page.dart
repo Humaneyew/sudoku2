@@ -24,6 +24,7 @@ class _StatsTabState extends State<StatsTab> {
     final app = context.watch<AppState>();
     final stats = app.statsFor(_selected);
     final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -47,7 +48,7 @@ class _StatsTabState extends State<StatsTab> {
             rows: [
               _StatRowData(
                 icon: Icons.play_circle_outline,
-                color: const Color(0xFF4B5CF5),
+                color: primary,
                 label: 'Початі ігри',
                 value: stats.gamesStarted.toString(),
               ),
@@ -77,7 +78,7 @@ class _StatsTabState extends State<StatsTab> {
             rows: [
               _StatRowData(
                 icon: Icons.timer_outlined,
-                color: const Color(0xFF4B5CF5),
+                color: primary,
                 label: 'Кращий час',
                 value: stats.bestTimeText,
               ),
@@ -101,7 +102,7 @@ class _StatsTabState extends State<StatsTab> {
               ),
               _StatRowData(
                 icon: Icons.auto_graph_outlined,
-                color: const Color(0xFF4B5CF5),
+                color: primary,
                 label: 'Найкраща серія',
                 value: stats.bestStreak.toString(),
               ),
@@ -124,6 +125,8 @@ class _DifficultySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -133,12 +136,12 @@ class _DifficultySelector extends StatelessWidget {
             label: Text(diff.title),
             selected: diff == selected,
             onSelected: (_) => onChanged(diff),
-            selectedColor: const Color(0xFF4B5CF5),
+            selectedColor: primary,
             labelStyle: TextStyle(
               color: diff == selected ? Colors.white : const Color(0xFF4C5472),
               fontWeight: FontWeight.w600,
             ),
-            backgroundColor: const Color(0xFFE9ECFB),
+            backgroundColor: const Color(0xFFE0ECFF),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
             ),
@@ -243,9 +246,9 @@ class _StatRow extends StatelessWidget {
         ),
         Text(
           data.value,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF4B5CF5),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 import 'models.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('uk');
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => AppState()..load(),
@@ -22,10 +25,12 @@ class SudokuApp extends StatelessWidget {
     final app = context.watch<AppState>();
 
     final light = _buildLightTheme();
+    const primaryBlue = Color(0xFF3B82F6);
+    const navigationSelected = Color(0xFF5B9BFA);
     final dark = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4B5CF5),
+        seedColor: primaryBlue,
         brightness: Brightness.dark,
       ),
       scaffoldBackgroundColor: const Color(0xFF0F111A),
@@ -34,10 +39,10 @@ class SudokuApp extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Color(0xFF161A2A),
-        selectedItemColor: Color(0xFF6C82FF),
-        unselectedItemColor: Color(0xFF59607A),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: const Color(0xFF161A2A),
+        selectedItemColor: navigationSelected,
+        unselectedItemColor: const Color(0xFF59607A),
       ),
     );
 
@@ -57,8 +62,8 @@ class SudokuApp extends StatelessWidget {
   }
 
   ThemeData _buildLightTheme() {
-    const primary = Color(0xFF4B5CF5);
-    const background = Color(0xFFF3F5FC);
+    const primary = Color(0xFF3B82F6);
+    const background = Color(0xFFEAF2FF);
     const surface = Colors.white;
 
     final base = ThemeData(
@@ -88,7 +93,7 @@ class SudokuApp extends StatelessWidget {
         bodyColor: const Color(0xFF1F2437),
         displayColor: const Color(0xFF1F2437),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -96,10 +101,10 @@ class SudokuApp extends StatelessWidget {
         ),
       ),
       dividerColor: const Color(0xFFE4E7F5),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surface,
         selectedItemColor: primary,
-        unselectedItemColor: Color(0xFF9AA3B9),
+        unselectedItemColor: const Color(0xFF9AA3B9),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
       ),

@@ -216,7 +216,7 @@ class _GamePageState extends State<GamePage> {
                           _victoryShown = false;
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4B5CF5),
+                          backgroundColor: const Color(0xFF3B82F6),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -397,7 +397,7 @@ class _HeaderButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(icon, color: const Color(0xFF4B5CF5)),
+        child: Icon(icon, color: const Color(0xFF3B82F6)),
       ),
     );
   }
@@ -442,7 +442,7 @@ class _StatusBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFE9ECFB),
+              color: const Color(0xFFD8E6FF),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
@@ -454,7 +454,7 @@ class _StatusBar extends StatelessWidget {
                   stars.toString(),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF4B5CF5),
+                    color: Color(0xFF3B82F6),
                   ),
                 ),
               ],
