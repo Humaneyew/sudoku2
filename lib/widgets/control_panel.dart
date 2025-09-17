@@ -215,7 +215,7 @@ class _NumberPad extends StatelessWidget {
     final theme = Theme.of(context);
     final highlighted = app.highlightedNumber;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    final hideCompleted = app.hideCompletedNumbers;
+    final notesMode = app.notesMode;
 
     return Container(
       decoration: BoxDecoration(
@@ -239,13 +239,13 @@ class _NumberPad extends StatelessWidget {
                 remaining: app.countRemaining(i + 1),
                 selected: selected == i + 1,
                 highlighted: highlighted == i + 1,
-                enabled:
-                    !hideCompleted || !app.isNumberCompleted(i + 1),
+                enabled: !app.isNumberCompleted(i + 1),
                 onTap: () => app.handleNumberInput(i + 1),
                 onHighlightStart: () => app.setHighlightedNumber(i + 1),
                 onHighlightEnd: () => app.setHighlightedNumber(null),
                 theme: theme,
                 reduceMotion: reduceMotion,
+                notesMode: notesMode,
               ),
             ),
         ],
@@ -265,6 +265,7 @@ class _NumberButton extends StatelessWidget {
   final VoidCallback onHighlightEnd;
   final ThemeData theme;
   final bool reduceMotion;
+  final bool notesMode;
 
   const _NumberButton({
     required this.number,
@@ -277,6 +278,7 @@ class _NumberButton extends StatelessWidget {
     required this.onHighlightEnd,
     required this.theme,
     required this.reduceMotion,
+    required this.notesMode,
   });
 
   @override
@@ -297,12 +299,15 @@ class _NumberButton extends StatelessWidget {
             : isHighlighted
                 ? const Color(0xFF9DBAFD)
                 : const Color(0xFFE2E5F3);
-    final textColor = enabled
-        ? const Color(0xFF1F2437)
-        : theme.disabledColor;
+    final textColor = !enabled
+        ? theme.disabledColor
+        : notesMode && !isSelected && !isHighlighted
+            ? const Color(0xFF6B7280)
+            : const Color(0xFF1F2437);
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
+    final numberFontSize = notesMode ? 18.0 : 20.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -343,7 +348,7 @@ class _NumberButton extends StatelessWidget {
                 Text(
                   number.toString(),
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: numberFontSize,
                     fontWeight: FontWeight.w700,
                     color: textColor,
                   ),

@@ -221,7 +221,6 @@ class AppState extends ChangeNotifier {
   bool soundsEnabled = true;
   bool musicEnabled = true;
   bool vibrationEnabled = true;
-  bool hideCompletedNumbers = false;
   int? highlightedNumber;
   DigitStyle digitStyle = DigitStyle.medium;
 
@@ -289,9 +288,6 @@ class AppState extends ChangeNotifier {
     soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
     musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
     vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
-    hideCompletedNumbers =
-        prefs.getBool('hideCompletedNumbers') ?? hideCompletedNumbers;
-
     final savedGame = prefs.getString('currentGame');
     if (savedGame != null) {
       try {
@@ -434,15 +430,6 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
-    });
-    notifyListeners();
-  }
-
-  void toggleHideCompletedNumbers(bool enabled) {
-    if (hideCompletedNumbers == enabled) return;
-    hideCompletedNumbers = enabled;
-    _persist((prefs) async {
-      await prefs.setBool('hideCompletedNumbers', enabled);
     });
     notifyListeners();
   }

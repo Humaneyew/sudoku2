@@ -107,12 +107,6 @@ class SettingsPage extends StatelessWidget {
           const Divider(height: 32),
 
           _sectionTitle(l10n.miscSectionTitle),
-          SwitchListTile(
-            title: Text(l10n.hideCompletedNumbersLabel),
-            value: app.hideCompletedNumbers,
-            onChanged: app.toggleHideCompletedNumbers,
-            secondary: const Icon(Icons.visibility_off_outlined),
-          ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(l10n.aboutApp),
