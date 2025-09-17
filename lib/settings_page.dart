@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
+
+const _appVersion = '1.0.0';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -9,18 +12,19 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Настройки"),
+        title: Text(l10n.settingsTitle),
         centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _sectionTitle("Тема приложения"),
+          _sectionTitle(l10n.themeSectionTitle),
           RadioListTile<AppTheme>(
-            title: const Text("Системная"),
+            title: Text(l10n.themeSystem),
             value: AppTheme.system,
             groupValue: app.theme,
             onChanged: (v) {
@@ -30,7 +34,7 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           RadioListTile<AppTheme>(
-            title: const Text("Светлая"),
+            title: Text(l10n.themeLight),
             value: AppTheme.light,
             groupValue: app.theme,
             onChanged: (v) {
@@ -40,7 +44,7 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           RadioListTile<AppTheme>(
-            title: const Text("Тёмная"),
+            title: Text(l10n.themeDark),
             value: AppTheme.dark,
             groupValue: app.theme,
             onChanged: (v) {
@@ -51,10 +55,10 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(height: 32),
 
-          _sectionTitle("Язык"),
+          _sectionTitle(l10n.languageSectionTitle),
           ...AppLanguage.values.map(
                 (lang) => RadioListTile<AppLanguage>(
-              title: Text(lang.nameLocal),
+              title: Text(lang.displayName(l10n)),
               value: lang,
               groupValue: app.lang,
               onChanged: (v) {
@@ -66,38 +70,38 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(height: 32),
 
-          _sectionTitle("Звуки и музыка"),
+          _sectionTitle(l10n.audioSectionTitle),
           SwitchListTile(
-            title: const Text("Звуковые эффекты"),
+            title: Text(l10n.soundsEffectsLabel),
             value: app.soundsEnabled,
             onChanged: (v) => app.toggleSounds(v),
             secondary: const Icon(Icons.volume_up),
           ),
           SwitchListTile(
-            title: const Text("Вибрация"),
+            title: Text(l10n.vibrationLabel),
             value: app.vibrationEnabled,
             onChanged: (v) => app.toggleVibration(v),
             secondary: const Icon(Icons.vibration),
           ),
           SwitchListTile(
-            title: const Text("Фоновая музыка"),
+            title: Text(l10n.musicLabel),
             value: app.musicEnabled,
             onChanged: (v) => app.toggleMusic(v),
             secondary: const Icon(Icons.music_note),
           ),
           const Divider(height: 32),
 
-          _sectionTitle("Разное"),
+          _sectionTitle(l10n.miscSectionTitle),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: const Text("О приложении"),
-            subtitle: const Text("Версия 1.0.0"),
+            title: Text(l10n.aboutApp),
+            subtitle: Text(l10n.versionLabel(_appVersion)),
             onTap: () {
               showAboutDialog(
                 context: context,
-                applicationName: "Sudoku Deluxe",
-                applicationVersion: "1.0.0",
-                applicationLegalese: "© 2025 Sudoku Inc.",
+                applicationName: l10n.appTitle,
+                applicationVersion: _appVersion,
+                applicationLegalese: l10n.aboutLegalese,
               );
             },
           ),

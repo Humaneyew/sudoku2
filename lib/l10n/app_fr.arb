@@ -1,0 +1,154 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Sudoku Maître",
+  "navHome": "Accueil",
+  "navDaily": "Défi quotidien",
+  "navStats": "Statistiques",
+  "dailyStreak": "Série quotidienne",
+  "selectDifficultyTitle": "Choisissez la difficulté",
+  "selectDifficultyDailyChallenge": "Défi quotidien",
+  "playAction": "Jouer",
+  "championshipTitle": "Championnat",
+  "championshipScore": "Score {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "battleTitle": "Duel",
+  "battleWinRate": "Taux de victoire {percent}%",
+  "@battleWinRate": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "Commencer",
+  "levelHeading": "Niveau {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "Progression du rang",
+  "rankLabel": "Rang {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "Nouvelle partie",
+  "weeklyProgress": "Progression hebdomadaire",
+  "rewardsTitle": "Récompenses",
+  "rewardNoMistakesTitle": "Terminez le défi sans erreur",
+  "rewardExtraHearts": "+{count, plural, one {# cœur} other {# cœurs}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "Terminez trois défis d'affilée",
+  "rewardUniqueTrophy": "Trophée unique",
+  "rewardSevenDayTitle": "Maintenez une série de 7 jours",
+  "rewardStars": "+{count, plural, one {# étoile} other {# étoiles}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "Casse-tête du jour",
+  "todayPuzzleDescription": "Terminez le sudoku pour gagner une récompense supplémentaire et prolonger votre série.",
+  "continueAction": "Continuer",
+  "adMessage": "Annonce : Trouvez les objets cachés ! Jouez maintenant.",
+  "adPlay": "Jouer",
+  "undo": "Annuler",
+  "erase": "Effacer",
+  "autoNotes": "Notes auto",
+  "statusOn": "ACTIF",
+  "statusOff": "ARRÊT",
+  "notes": "Notes",
+  "hint": "Indice",
+  "gameScreenTitle": "Sudoku",
+  "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
+  "victoryTitle": "Félicitations !",
+  "victoryMessage": "Énigme résolue en {time}.",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "Accueil",
+  "playAnother": "Rejouer",
+  "outOfLivesTitle": "Plus de cœurs",
+  "outOfLivesDescription": "Restaurez un cœur rouge pour continuer.",
+  "restoreLifeAction": "Restaurer 1 cœur rouge",
+  "cancelAction": "Annuler",
+  "settingsTitle": "Paramètres",
+  "themeSectionTitle": "Thème",
+  "themeSystem": "Système",
+  "themeLight": "Clair",
+  "themeDark": "Sombre",
+  "languageSectionTitle": "Langue",
+  "audioSectionTitle": "Son & musique",
+  "soundsEffectsLabel": "Effets sonores",
+  "vibrationLabel": "Vibration",
+  "musicLabel": "Musique de fond",
+  "miscSectionTitle": "Autre",
+  "aboutApp": "À propos",
+  "versionLabel": "Version {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "statsTitle": "Statistiques",
+  "statsGamesSection": "Parties",
+  "statsGamesStarted": "Parties lancées",
+  "statsGamesWon": "Parties gagnées",
+  "statsWinRate": "Taux de victoire",
+  "statsFlawless": "Fin sans erreur",
+  "statsTimeSection": "Temps",
+  "statsBestTime": "Meilleur temps",
+  "statsAverageTime": "Temps moyen",
+  "statsStreakSection": "Série",
+  "statsCurrentStreak": "Série actuelle",
+  "statsBestStreak": "Meilleure série",
+  "difficultyBeginner": "Débutant",
+  "difficultyBeginnerShort": "Déb.",
+  "difficultyNovice": "Novice",
+  "difficultyNoviceShort": "Nov.",
+  "difficultyMedium": "Intermédiaire",
+  "difficultyMediumShort": "Inter.",
+  "difficultyHigh": "Difficile",
+  "difficultyHighShort": "Diff.",
+  "difficultyExpert": "Expert",
+  "difficultyExpertShort": "Exp.",
+  "difficultyMaster": "Maître",
+  "difficultyMasterShort": "Maît."
+}

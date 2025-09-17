@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
 import 'settings_page.dart';
@@ -48,12 +49,13 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final game = app.current;
+    final l10n = AppLocalizations.of(context)!;
 
     if (game == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Судоку')),
-        body: const Center(
-          child: Text('Немає активної гри. Поверніться на головний екран.'),
+        appBar: AppBar(title: Text(l10n.gameScreenTitle)),
+        body: Center(
+          child: Text(l10n.noActiveGameMessage),
         ),
       );
     }
@@ -77,7 +79,7 @@ class _GamePageState extends State<GamePage> {
     });
 
     final difficulty =
-        (app.currentDifficulty ?? app.featuredStatsDifficulty).title;
+        (app.currentDifficulty ?? app.featuredStatsDifficulty).title(l10n);
 
     return Scaffold(
       body: SafeArea(
@@ -151,6 +153,7 @@ class _GamePageState extends State<GamePage> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return Dialog(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
@@ -173,16 +176,16 @@ class _GamePageState extends State<GamePage> {
                   child: const Icon(Icons.emoji_events, color: Colors.white, size: 36),
                 ),
                 const SizedBox(height: 18),
-                const Text(
-                  'Вітаємо!',
-                  style: TextStyle(
+                Text(
+                  l10n.victoryTitle,
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Головоломку розв’язано за ${_formatTime(elapsedMs)}.',
+                  l10n.victoryMessage(_formatTime(elapsedMs)),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFF6D7392),
@@ -198,7 +201,7 @@ class _GamePageState extends State<GamePage> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
-                        child: const Text('На головну'),
+                        child: Text(l10n.backToHome),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -223,7 +226,7 @@ class _GamePageState extends State<GamePage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: const Text('Ще одну'),
+                        child: Text(l10n.playAnother),
                       ),
                     ),
                   ],
@@ -241,6 +244,7 @@ class _GamePageState extends State<GamePage> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return Dialog(
           insetPadding: const EdgeInsets.symmetric(horizontal: 36),
           backgroundColor: Colors.white,
@@ -264,18 +268,18 @@ class _GamePageState extends State<GamePage> {
                   child: const Icon(Icons.favorite, color: Colors.white, size: 40),
                 ),
                 const SizedBox(height: 18),
-                const Text(
-                  'Ви втратили всі серця',
-                  style: TextStyle(
+                Text(
+                  l10n.outOfLivesTitle,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Відновіть 1 червоне серце, щоб продовжити гру.',
+                Text(
+                  l10n.outOfLivesDescription,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF6D7392),
                   ),
                 ),
@@ -292,12 +296,12 @@ class _GamePageState extends State<GamePage> {
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
-                    child: const Text('Відновити 1 червоне серце'),
+                    child: Text(l10n.restoreLifeAction),
                   ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Відмовлятися'),
+                  child: Text(l10n.cancelAction),
                 ),
               ],
             ),

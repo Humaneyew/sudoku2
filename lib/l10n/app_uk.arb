@@ -1,0 +1,154 @@
+{
+  "@@locale": "uk",
+  "appTitle": "Судоку Майстер",
+  "navHome": "Головна",
+  "navDaily": "Щоденний виклик",
+  "navStats": "Статистика",
+  "dailyStreak": "Ланцюг днів",
+  "selectDifficultyTitle": "Виберіть складність",
+  "selectDifficultyDailyChallenge": "Щоденний виклик",
+  "playAction": "Грати",
+  "championshipTitle": "Чемпіонат",
+  "championshipScore": "Рахунок {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "battleTitle": "Битва",
+  "battleWinRate": "Відсоток перемог {percent}%",
+  "@battleWinRate": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "Почати",
+  "levelHeading": "Рівень {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "Прогрес рангу",
+  "rankLabel": "Ранг {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "Нова гра",
+  "weeklyProgress": "Тижневий прогрес",
+  "rewardsTitle": "Нагороди",
+  "rewardNoMistakesTitle": "Завершіть виклик без помилок",
+  "rewardExtraHearts": "+{count, plural, one {# серце} few {# серця} many {# сердець} other {# серця}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "Виконайте три виклики поспіль",
+  "rewardUniqueTrophy": "Унікальний трофей",
+  "rewardSevenDayTitle": "Підтримуйте серію 7 днів",
+  "rewardStars": "+{count, plural, one {# зірка} few {# зірки} many {# зірок} other {# зірки}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "Сьогоднішня головоломка",
+  "todayPuzzleDescription": "Завершіть судоку, щоб отримати додаткову нагороду та продовжити серію.",
+  "continueAction": "Продовжити",
+  "adMessage": "Реклама: Знайди приховані об'єкти! Грай зараз.",
+  "adPlay": "Грати",
+  "undo": "Скасувати",
+  "erase": "Стерти",
+  "autoNotes": "Автоматичні нотатки",
+  "statusOn": "УВІМК",
+  "statusOff": "ВИМК",
+  "notes": "Нотатки",
+  "hint": "Підказка",
+  "gameScreenTitle": "Судоку",
+  "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
+  "victoryTitle": "Вітаємо!",
+  "victoryMessage": "Головоломку розв'язано за {time}.",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "На головну",
+  "playAnother": "Ще одну",
+  "outOfLivesTitle": "Ви втратили всі серця",
+  "outOfLivesDescription": "Відновіть одне червоне серце, щоб продовжити гру.",
+  "restoreLifeAction": "Відновити 1 червоне серце",
+  "cancelAction": "Скасувати",
+  "settingsTitle": "Налаштування",
+  "themeSectionTitle": "Тема",
+  "themeSystem": "Системна",
+  "themeLight": "Світла",
+  "themeDark": "Темна",
+  "languageSectionTitle": "Мова",
+  "audioSectionTitle": "Звуки та музика",
+  "soundsEffectsLabel": "Звукові ефекти",
+  "vibrationLabel": "Вібрація",
+  "musicLabel": "Фонова музика",
+  "miscSectionTitle": "Інше",
+  "aboutApp": "Про застосунок",
+  "versionLabel": "Версія {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "statsTitle": "Статистика",
+  "statsGamesSection": "Ігри",
+  "statsGamesStarted": "Розпочаті ігри",
+  "statsGamesWon": "Виграні ігри",
+  "statsWinRate": "Відсоток перемог",
+  "statsFlawless": "Безпомилкові завершення",
+  "statsTimeSection": "Час",
+  "statsBestTime": "Найкращий час",
+  "statsAverageTime": "Середній час",
+  "statsStreakSection": "Серія",
+  "statsCurrentStreak": "Поточна серія",
+  "statsBestStreak": "Найкраща серія",
+  "difficultyBeginner": "Початківець",
+  "difficultyBeginnerShort": "Поч.",
+  "difficultyNovice": "Новачок",
+  "difficultyNoviceShort": "Нов.",
+  "difficultyMedium": "Середній",
+  "difficultyMediumShort": "Сер.",
+  "difficultyHigh": "Високий",
+  "difficultyHighShort": "Вис.",
+  "difficultyExpert": "Експерт",
+  "difficultyExpertShort": "Експ.",
+  "difficultyMaster": "Майстер",
+  "difficultyMasterShort": "Майст."
+}

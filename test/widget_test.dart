@@ -6,13 +6,18 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sudoku2/main.dart';
 import 'package:sudoku2/models.dart';
 
 void main() {
-  testWidgets('Главный экран отображает список уровней', (tester) async {
+  testWidgets('Домашний экран отображает основные секции', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await initializeDateFormatting('uk');
+
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => AppState(),
@@ -20,7 +25,9 @@ void main() {
       ),
     );
 
-    expect(find.text('Выберите уровень сложности:'), findsOneWidget);
-    expect(find.text('Новичок'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Судоку Майстер'), findsOneWidget);
+    expect(find.text('Щоденний виклик'), findsWidgets);
   });
 }

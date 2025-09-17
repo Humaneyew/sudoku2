@@ -1,0 +1,154 @@
+{
+  "@@locale": "hi",
+  "appTitle": "सुडोकू मास्टर",
+  "navHome": "होम",
+  "navDaily": "दैनिक चुनौती",
+  "navStats": "आँकड़े",
+  "dailyStreak": "दैनिक श्रृंखला",
+  "selectDifficultyTitle": "कठिनाई चुनें",
+  "selectDifficultyDailyChallenge": "दैनिक चुनौती",
+  "playAction": "खेलें",
+  "championshipTitle": "चैम्पियनशिप",
+  "championshipScore": "स्कोर {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "battleTitle": "बैटल",
+  "battleWinRate": "जीत दर {percent}%",
+  "@battleWinRate": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "शुरू करें",
+  "levelHeading": "स्तर {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "रैंक प्रगति",
+  "rankLabel": "रैंक {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "नया खेल",
+  "weeklyProgress": "साप्ताहिक प्रगति",
+  "rewardsTitle": "इनाम",
+  "rewardNoMistakesTitle": "बिना गलती के चुनौती पूरी करें",
+  "rewardExtraHearts": "+{count, plural, one {# दिल} other {# दिल}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "लगातार तीन चुनौतियाँ पूरी करें",
+  "rewardUniqueTrophy": "विशेष ट्रॉफी",
+  "rewardSevenDayTitle": "7-दिन की श्रृंखला बनाए रखें",
+  "rewardStars": "+{count, plural, one {# तारा} other {# तारे}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "आज की पहेली",
+  "todayPuzzleDescription": "अतिरिक्त इनाम पाने और श्रृंखला बनाए रखने के लिए सुडोकू पूरा करें।",
+  "continueAction": "जारी रखें",
+  "adMessage": "विज्ञापन: छिपी वस्तुएँ खोजें! अभी खेलें।",
+  "adPlay": "खेलें",
+  "undo": "पूर्ववत् करें",
+  "erase": "मिटाएँ",
+  "autoNotes": "स्वचालित नोट्स",
+  "statusOn": "चालू",
+  "statusOff": "बंद",
+  "notes": "नोट्स",
+  "hint": "संकेत",
+  "gameScreenTitle": "सुडोकू",
+  "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
+  "victoryTitle": "बधाई!",
+  "victoryMessage": "{time} में पहेली हल हुई।",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "होम",
+  "playAnother": "फिर से खेलें",
+  "outOfLivesTitle": "दिल समाप्त",
+  "outOfLivesDescription": "खेल जारी रखने के लिए एक लाल दिल पुनर्स्थापित करें।",
+  "restoreLifeAction": "1 लाल दिल पुनर्स्थापित करें",
+  "cancelAction": "रद्द करें",
+  "settingsTitle": "सेटिंग्स",
+  "themeSectionTitle": "थीम",
+  "themeSystem": "सिस्टम",
+  "themeLight": "हल्का",
+  "themeDark": "गहरा",
+  "languageSectionTitle": "भाषा",
+  "audioSectionTitle": "ध्वनि और संगीत",
+  "soundsEffectsLabel": "ध्वनि प्रभाव",
+  "vibrationLabel": "कंपन",
+  "musicLabel": "पृष्ठभूमि संगीत",
+  "miscSectionTitle": "अन्य",
+  "aboutApp": "ऐप के बारे में",
+  "versionLabel": "संस्करण {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "statsTitle": "आँकड़े",
+  "statsGamesSection": "खेल",
+  "statsGamesStarted": "शुरू किए गए खेल",
+  "statsGamesWon": "जीते गए खेल",
+  "statsWinRate": "जीत दर",
+  "statsFlawless": "बिना गलती की जीतें",
+  "statsTimeSection": "समय",
+  "statsBestTime": "सर्वश्रेष्ठ समय",
+  "statsAverageTime": "औसत समय",
+  "statsStreakSection": "श्रृंखला",
+  "statsCurrentStreak": "वर्तमान श्रृंखला",
+  "statsBestStreak": "सर्वश्रेष्ठ श्रृंखला",
+  "difficultyBeginner": "शुरुआती",
+  "difficultyBeginnerShort": "शुरु.",
+  "difficultyNovice": "नवागंतुक",
+  "difficultyNoviceShort": "नवा.",
+  "difficultyMedium": "मध्यम",
+  "difficultyMediumShort": "मध्.",
+  "difficultyHigh": "कठिन",
+  "difficultyHighShort": "कठि.",
+  "difficultyExpert": "विशेषज्ञ",
+  "difficultyExpertShort": "विशे.",
+  "difficultyMaster": "मास्टर",
+  "difficultyMasterShort": "मास्."
+}

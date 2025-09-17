@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models.dart';
 
@@ -31,6 +32,7 @@ class _ActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -49,33 +51,33 @@ class _ActionRow extends StatelessWidget {
         children: [
           _ActionButton(
             icon: Icons.undo_rounded,
-            label: 'Скасувати',
+            label: l10n.undo,
             onTap: app.undoMove,
           ),
           _ActionButton(
             icon: Icons.backspace_outlined,
-            label: 'Стерти',
+            label: l10n.erase,
             onTap: app.eraseCell,
           ),
           _ActionButton(
             icon: Icons.auto_awesome,
-            label: 'Автоматичні нотатки',
+            label: l10n.autoNotes,
             onTap: app.toggleAutoNotes,
-            chipLabel: app.autoNotes ? 'УВІМК' : 'ВИМК',
+            chipLabel: app.autoNotes ? l10n.statusOn : l10n.statusOff,
             chipColor:
                 app.autoNotes ? const Color(0xFF3B82F6) : theme.disabledColor,
           ),
           _ActionButton(
             icon: Icons.edit_note,
-            label: 'Нотатки',
+            label: l10n.notes,
             onTap: app.toggleNotesMode,
-            chipLabel: app.notesMode ? 'УВІМК' : 'ВИМК',
+            chipLabel: app.notesMode ? l10n.statusOn : l10n.statusOff,
             chipColor:
                 app.notesMode ? const Color(0xFF3B82F6) : theme.disabledColor,
           ),
           _ActionButton(
             icon: Icons.lightbulb_outline,
-            label: 'Підказка',
+            label: l10n.hint,
             onTap: app.hintsLeft > 0 ? app.useHint : null,
             chipLabel: app.hintsLeft.toString(),
             chipColor: app.hintsLeft > 0
@@ -268,6 +270,7 @@ class _AdBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -278,21 +281,21 @@ class _AdBanner extends StatelessWidget {
         ),
       ),
       child: Row(
-        children: const [
-          Icon(Icons.play_circle_fill, color: Colors.white),
-          SizedBox(width: 12),
+        children: [
+          const Icon(Icons.play_circle_fill, color: Colors.white),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Реклама: Знайди приховані об’єкти! Грай зараз.',
-              style: TextStyle(
+              l10n.adMessage,
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           Text(
-            'Play',
-            style: TextStyle(
+            l10n.adPlay,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'puzzles.dart';
@@ -11,24 +12,24 @@ import 'puzzles.dart';
 enum Difficulty { beginner, novice, medium, high, expert, master }
 
 extension DifficultyX on Difficulty {
-  /// Человекочитаемое название уровня сложности (украинский язык).
-  String get title => switch (this) {
-        Difficulty.beginner => 'Початківець',
-        Difficulty.novice => 'Новачок',
-        Difficulty.medium => 'Середній',
-        Difficulty.high => 'Високий',
-        Difficulty.expert => 'Експерт',
-        Difficulty.master => 'Майстер',
+  /// Человекочитаемое название уровня сложности.
+  String title(AppLocalizations l10n) => switch (this) {
+        Difficulty.beginner => l10n.difficultyBeginner,
+        Difficulty.novice => l10n.difficultyNovice,
+        Difficulty.medium => l10n.difficultyMedium,
+        Difficulty.high => l10n.difficultyHigh,
+        Difficulty.expert => l10n.difficultyExpert,
+        Difficulty.master => l10n.difficultyMaster,
       };
 
   /// Короткая подпись, которая хорошо подходит для бейджей и карточек.
-  String get shortLabel => switch (this) {
-        Difficulty.beginner => 'Поч.',
-        Difficulty.novice => 'Нов.',
-        Difficulty.medium => 'Сер.',
-        Difficulty.high => 'Вис.',
-        Difficulty.expert => 'Експ.',
-        Difficulty.master => 'Майст.',
+  String shortLabel(AppLocalizations l10n) => switch (this) {
+        Difficulty.beginner => l10n.difficultyBeginnerShort,
+        Difficulty.novice => l10n.difficultyNoviceShort,
+        Difficulty.medium => l10n.difficultyMediumShort,
+        Difficulty.high => l10n.difficultyHighShort,
+        Difficulty.expert => l10n.difficultyExpertShort,
+        Difficulty.master => l10n.difficultyMasterShort,
       };
 }
 
@@ -39,14 +40,29 @@ enum AppTheme { system, light, dark }
 enum AppLanguage { en, ru, uk, de, fr, zh, hi }
 
 extension AppLanguageX on AppLanguage {
-  String get nameLocal => switch (this) {
-        AppLanguage.en => 'English',
-        AppLanguage.ru => 'Русский',
-        AppLanguage.uk => 'Українська',
-        AppLanguage.de => 'Deutsch',
-        AppLanguage.fr => 'Français',
-        AppLanguage.zh => '中文',
-        AppLanguage.hi => 'हिन्दी',
+  /// Локаль, соответствующая языку приложения.
+  Locale get locale => switch (this) {
+        AppLanguage.en => const Locale('en'),
+        AppLanguage.ru => const Locale('ru'),
+        AppLanguage.uk => const Locale('uk'),
+        AppLanguage.de => const Locale('de'),
+        AppLanguage.fr => const Locale('fr'),
+        AppLanguage.zh => const Locale('zh'),
+        AppLanguage.hi => const Locale('hi'),
+      };
+
+  /// Строковое представление локали (подходит для форматирования дат).
+  String get localeCode => locale.languageCode;
+
+  /// Название языка для отображения в настройках.
+  String displayName(AppLocalizations l10n) => switch (this) {
+        AppLanguage.en => l10n.languageEnglish,
+        AppLanguage.ru => l10n.languageRussian,
+        AppLanguage.uk => l10n.languageUkrainian,
+        AppLanguage.de => l10n.languageGerman,
+        AppLanguage.fr => l10n.languageFrench,
+        AppLanguage.zh => l10n.languageChinese,
+        AppLanguage.hi => l10n.languageHindi,
       };
 }
 

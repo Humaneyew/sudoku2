@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'game_page.dart';
 import 'models.dart';
@@ -51,21 +52,22 @@ class _BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BottomNavigationBar(
       currentIndex: index,
       onTap: onChanged,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_rounded),
-          label: 'Головна',
+          icon: const Icon(Icons.home_rounded),
+          label: l10n.navHome,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_month_rounded),
-          label: 'Щоденний виклик',
+          icon: const Icon(Icons.calendar_month_rounded),
+          label: l10n.navDaily,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.bar_chart_rounded),
-          label: 'Статистика',
+          icon: const Icon(Icons.bar_chart_rounded),
+          label: l10n.navStats,
         ),
       ],
     );
@@ -81,6 +83,7 @@ class _HomeTab extends StatelessWidget {
     final theme = Theme.of(context);
     final difficulty = app.featuredStatsDifficulty;
     final stats = app.statsFor(difficulty);
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -100,7 +103,7 @@ class _HomeTab extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           Text(
-            'Судоку Майстер',
+            l10n.appTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
               letterSpacing: -0.5,
@@ -122,6 +125,7 @@ class _HomeTab extends StatelessWidget {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
+    final l10n = AppLocalizations.of(context)!;
     final difficulty = await showModalBottomSheet<Difficulty>(
       context: context,
       backgroundColor: Colors.white,
@@ -131,6 +135,7 @@ class _HomeTab extends StatelessWidget {
       builder: (context) {
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
+        final sheetL10n = AppLocalizations.of(context)!;
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -147,7 +152,7 @@ class _HomeTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Виберіть складність',
+                sheetL10n.selectDifficultyTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
@@ -156,7 +161,7 @@ class _HomeTab extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Щоденний виклик',
+                  sheetL10n.selectDifficultyDailyChallenge,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: const Color(0xFF79819C),
                       ),
@@ -164,8 +169,8 @@ class _HomeTab extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _DifficultyTile(
-                title: 'Щоденне виклик',
-                rankLabel: 'Ранг 1',
+                title: sheetL10n.navDaily,
+                rankLabel: sheetL10n.rankLabel(1),
                 progress: '—',
                 isActive: false,
                 onTap: () => Navigator.pop(context, Difficulty.beginner),
@@ -180,8 +185,8 @@ class _HomeTab extends StatelessWidget {
                     final diff = items[index];
                     final stats = app.statsFor(diff);
                     return _DifficultyTile(
-                      title: diff.title,
-                      rankLabel: 'Ранг ${stats.rank}',
+                      title: diff.title(sheetL10n),
+                      rankLabel: sheetL10n.rankLabel(stats.rank),
                       progress: stats.progressText,
                       isActive: diff == selected,
                       onTap: () => Navigator.pop(context, diff),
@@ -291,31 +296,32 @@ class _ChallengeCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = DateFormat('d MMMM', 'uk');
+    final l10n = AppLocalizations.of(context)!;
+    final formatter = DateFormat('d MMMM', l10n.localeName);
     final today = formatter.format(DateTime.now());
 
     final cards = [
       _ChallengeCardData(
-        title: 'Щоденне виклик',
+        title: l10n.navDaily,
         subtitle: today,
-        buttonLabel: 'Грати',
+        buttonLabel: l10n.playAction,
         gradient: const [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
         icon: Icons.emoji_events,
         onPressed: () {},
       ),
       _ChallengeCardData(
-        title: 'Чемпіонат',
-        subtitle: 'Рахунок $championshipScore',
-        buttonLabel: 'Грати',
+        title: l10n.championshipTitle,
+        subtitle: l10n.championshipScore(championshipScore),
+        buttonLabel: l10n.playAction,
         gradient: const [Color(0xFFFFB2D0), Color(0xFFE55D87)],
         icon: Icons.workspace_premium_outlined,
         onPressed: () {},
         badge: '2G',
       ),
       _ChallengeCardData(
-        title: 'Битва',
-        subtitle: 'Win Rate ${battleWinRate}%',
-        buttonLabel: 'Почати',
+        title: l10n.battleTitle,
+        subtitle: l10n.battleWinRate(battleWinRate),
+        buttonLabel: l10n.startAction,
         gradient: const [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
         icon: Icons.sports_esports_outlined,
         onPressed: () {},
@@ -457,6 +463,7 @@ class _DailyChain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
@@ -476,7 +483,7 @@ class _DailyChain extends StatelessWidget {
           const Icon(Icons.local_fire_department, color: Color(0xFFFF713B)),
           const SizedBox(width: 8),
           Text(
-            'Ланцюг днів',
+            l10n.dailyStreak,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -518,6 +525,8 @@ class _ProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final difficultyTitle = difficulty.title(l10n);
 
     return Container(
       width: double.infinity,
@@ -544,14 +553,14 @@ class _ProgressCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Рівень ${stats.level} — ${difficulty.title}',
+                      l10n.levelHeading(stats.level, difficultyTitle),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      '${stats.bestTimeText} — ${difficulty.title}',
+                      '${stats.bestTimeText} — $difficultyTitle',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: const Color(0xFF6D7392),
                       ),
@@ -564,7 +573,7 @@ class _ProgressCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Прогрес рангу',
+            l10n.rankProgress,
             style: theme.textTheme.labelLarge?.copyWith(
               color: const Color(0xFF8187A5),
             ),
@@ -587,7 +596,7 @@ class _ProgressCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ранг ${stats.rank}',
+                l10n.rankLabel(stats.rank),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -613,9 +622,9 @@ class _ProgressCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
-              child: const Text(
-                'Нова гра',
-                style: TextStyle(
+              child: Text(
+                l10n.newGame,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -737,7 +746,8 @@ class _DailyChallengesTab extends StatelessWidget {
     final today = DateTime.now();
     final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
     final days = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
-    final formatter = DateFormat('E', 'uk');
+    final l10n = AppLocalizations.of(context)!;
+    final formatter = DateFormat('E', l10n.localeName);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -745,18 +755,18 @@ class _DailyChallengesTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Щоденний виклик',
+            l10n.navDaily,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 20),
           _DailyHeroCard(
-            dateLabel: DateFormat('d MMMM', 'uk').format(today),
+            dateLabel: DateFormat('d MMMM', l10n.localeName).format(today),
           ),
           const SizedBox(height: 28),
           Text(
-            'Тижневий прогрес',
+            l10n.weeklyProgress,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -776,28 +786,28 @@ class _DailyChallengesTab extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           Text(
-            'Нагороди',
+            l10n.rewardsTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 12),
-          const _RewardTile(
+          _RewardTile(
             icon: Icons.favorite_outline,
-            title: 'Завершіть виклик без помилок',
-            reward: '+1 серце',
+            title: l10n.rewardNoMistakesTitle,
+            reward: l10n.rewardExtraHearts(1),
           ),
           const SizedBox(height: 12),
-          const _RewardTile(
+          _RewardTile(
             icon: Icons.emoji_events_outlined,
-            title: 'Закінчіть три виклики поспіль',
-            reward: 'Унікальний трофей',
+            title: l10n.rewardThreeInRowTitle,
+            reward: l10n.rewardUniqueTrophy,
           ),
           const SizedBox(height: 12),
-          const _RewardTile(
+          _RewardTile(
             icon: Icons.local_fire_department_outlined,
-            title: 'Підтримуйте серію 7 днів',
-            reward: '+50 зірок',
+            title: l10n.rewardSevenDayTitle,
+            reward: l10n.rewardStars(50),
           ),
         ],
       ),
@@ -812,6 +822,7 @@ class _DailyHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -838,18 +849,18 @@ class _DailyHeroCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          const Text(
-            'Сьогоднішня головоломка',
-            style: TextStyle(
+          Text(
+            l10n.todayPuzzle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Завершіть судоку, щоб зібрати додаткову нагороду та продовжити серію.',
-            style: TextStyle(
+          Text(
+            l10n.todayPuzzleDescription,
+            style: const TextStyle(
               color: Colors.white70,
               fontSize: 14,
             ),
@@ -867,9 +878,9 @@ class _DailyHeroCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text(
-                'Продовжити',
-                style: TextStyle(fontWeight: FontWeight.w700),
+              child: Text(
+                l10n.continueAction,
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
           ),

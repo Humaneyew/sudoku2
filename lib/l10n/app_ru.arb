@@ -1,0 +1,154 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Судоку Мастер",
+  "navHome": "Главная",
+  "navDaily": "Ежедневный вызов",
+  "navStats": "Статистика",
+  "dailyStreak": "Серия дней",
+  "selectDifficultyTitle": "Выберите сложность",
+  "selectDifficultyDailyChallenge": "Ежедневный вызов",
+  "playAction": "Играть",
+  "championshipTitle": "Чемпионат",
+  "championshipScore": "Счёт {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "battleTitle": "Битва",
+  "battleWinRate": "Процент побед {percent}%",
+  "@battleWinRate": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "Начать",
+  "levelHeading": "Уровень {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "Прогресс ранга",
+  "rankLabel": "Ранг {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "Новая игра",
+  "weeklyProgress": "Недельный прогресс",
+  "rewardsTitle": "Награды",
+  "rewardNoMistakesTitle": "Пройдите вызов без ошибок",
+  "rewardExtraHearts": "+{count, plural, one {# сердце} few {# сердца} many {# сердец} other {# сердца}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "Выполните три вызова подряд",
+  "rewardUniqueTrophy": "Уникальный трофей",
+  "rewardSevenDayTitle": "Поддерживайте серию 7 дней",
+  "rewardStars": "+{count, plural, one {# звезда} few {# звезды} many {# звёзд} other {# звезды}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "Сегодняшняя головоломка",
+  "todayPuzzleDescription": "Решите судоку, чтобы получить дополнительную награду и продолжить серию.",
+  "continueAction": "Продолжить",
+  "adMessage": "Реклама: Найди скрытые объекты! Играй сейчас.",
+  "adPlay": "Играть",
+  "undo": "Отменить",
+  "erase": "Стереть",
+  "autoNotes": "Автозаметки",
+  "statusOn": "ВКЛ",
+  "statusOff": "ВЫКЛ",
+  "notes": "Заметки",
+  "hint": "Подсказка",
+  "gameScreenTitle": "Судоку",
+  "noActiveGameMessage": "Нет активной игры. Вернитесь на главный экран.",
+  "victoryTitle": "Поздравляем!",
+  "victoryMessage": "Головоломка решена за {time}.",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "На главную",
+  "playAnother": "Ещё одну",
+  "outOfLivesTitle": "Сердца закончились",
+  "outOfLivesDescription": "Восстановите одно красное сердце, чтобы продолжить игру.",
+  "restoreLifeAction": "Восстановить 1 красное сердце",
+  "cancelAction": "Отмена",
+  "settingsTitle": "Настройки",
+  "themeSectionTitle": "Тема",
+  "themeSystem": "Системная",
+  "themeLight": "Светлая",
+  "themeDark": "Тёмная",
+  "languageSectionTitle": "Язык",
+  "audioSectionTitle": "Звук и музыка",
+  "soundsEffectsLabel": "Звуковые эффекты",
+  "vibrationLabel": "Вибрация",
+  "musicLabel": "Фоновая музыка",
+  "miscSectionTitle": "Другое",
+  "aboutApp": "О приложении",
+  "versionLabel": "Версия {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "statsTitle": "Статистика",
+  "statsGamesSection": "Игры",
+  "statsGamesStarted": "Начатые игры",
+  "statsGamesWon": "Выигранные игры",
+  "statsWinRate": "Процент побед",
+  "statsFlawless": "Победы без ошибок",
+  "statsTimeSection": "Время",
+  "statsBestTime": "Лучшее время",
+  "statsAverageTime": "Среднее время",
+  "statsStreakSection": "Серия",
+  "statsCurrentStreak": "Текущая серия",
+  "statsBestStreak": "Лучшая серия",
+  "difficultyBeginner": "Новичок",
+  "difficultyBeginnerShort": "Нов.",
+  "difficultyNovice": "Любитель",
+  "difficultyNoviceShort": "Люб.",
+  "difficultyMedium": "Средний",
+  "difficultyMediumShort": "Ср.",
+  "difficultyHigh": "Сложный",
+  "difficultyHighShort": "Слж.",
+  "difficultyExpert": "Эксперт",
+  "difficultyExpertShort": "Эксп.",
+  "difficultyMaster": "Мастер",
+  "difficultyMasterShort": "Маст."
+}
