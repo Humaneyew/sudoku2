@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
 
@@ -25,6 +26,7 @@ class _StatsTabState extends State<StatsTab> {
     final stats = app.statsFor(_selected);
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -32,7 +34,7 @@ class _StatsTabState extends State<StatsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Статистика',
+            l10n.statsTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -44,66 +46,66 @@ class _StatsTabState extends State<StatsTab> {
           ),
           const SizedBox(height: 24),
           _StatsSection(
-            title: 'Ігри',
+            title: l10n.statsGamesSection,
             rows: [
               _StatRowData(
                 icon: Icons.play_circle_outline,
                 color: primary,
-                label: 'Початі ігри',
+                label: l10n.statsGamesStarted,
                 value: stats.gamesStarted.toString(),
               ),
               _StatRowData(
                 icon: Icons.emoji_events_outlined,
                 color: const Color(0xFF6ACB8A),
-                label: 'Виграні ігри',
+                label: l10n.statsGamesWon,
                 value: stats.gamesWon.toString(),
               ),
               _StatRowData(
                 icon: Icons.pie_chart_outline,
                 color: const Color(0xFFE8736D),
-                label: 'Відсоток перемог',
+                label: l10n.statsWinRate,
                 value: stats.winRateText,
               ),
               _StatRowData(
                 icon: Icons.shield_moon_outlined,
                 color: const Color(0xFFFFB347),
-                label: 'Завершення без помилок',
+                label: l10n.statsFlawless,
                 value: stats.flawlessWins.toString(),
               ),
             ],
           ),
           const SizedBox(height: 24),
           _StatsSection(
-            title: 'Час',
+            title: l10n.statsTimeSection,
             rows: [
               _StatRowData(
                 icon: Icons.timer_outlined,
                 color: primary,
-                label: 'Кращий час',
+                label: l10n.statsBestTime,
                 value: stats.bestTimeText,
               ),
               _StatRowData(
                 icon: Icons.hourglass_bottom,
                 color: const Color(0xFF6D7392),
-                label: 'Середній час',
+                label: l10n.statsAverageTime,
                 value: stats.averageTimeText,
               ),
             ],
           ),
           const SizedBox(height: 24),
           _StatsSection(
-            title: 'Серія',
+            title: l10n.statsStreakSection,
             rows: [
               _StatRowData(
                 icon: Icons.bolt_outlined,
                 color: const Color(0xFFFB923C),
-                label: 'Поточна серія',
+                label: l10n.statsCurrentStreak,
                 value: stats.currentStreak.toString(),
               ),
               _StatRowData(
                 icon: Icons.auto_graph_outlined,
                 color: primary,
-                label: 'Найкраща серія',
+                label: l10n.statsBestStreak,
                 value: stats.bestStreak.toString(),
               ),
             ],
@@ -127,13 +129,14 @@ class _DifficultySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context)!;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
         for (final diff in Difficulty.values)
           ChoiceChip(
-            label: Text(diff.title),
+            label: Text(diff.title(l10n)),
             selected: diff == selected,
             onSelected: (_) => onChanged(diff),
             selectedColor: primary,

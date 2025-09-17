@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'home_screen.dart';
 import 'models.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('uk');
+  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi'];
+  await Future.wait(locales.map(initializeDateFormatting));
 
   runApp(
     ChangeNotifierProvider(
@@ -47,8 +50,15 @@ class SudokuApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: 'Sudoku Master',
-      locale: const Locale('uk'),
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      locale: app.lang.locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       themeMode: switch (app.theme) {
         AppTheme.system => ThemeMode.system,
         AppTheme.light => ThemeMode.light,

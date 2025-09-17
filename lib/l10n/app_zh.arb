@@ -1,0 +1,154 @@
+{
+  "@@locale": "zh",
+  "appTitle": "数独大师",
+  "navHome": "首页",
+  "navDaily": "每日挑战",
+  "navStats": "统计",
+  "dailyStreak": "连续天数",
+  "selectDifficultyTitle": "选择难度",
+  "selectDifficultyDailyChallenge": "每日挑战",
+  "playAction": "游玩",
+  "championshipTitle": "锦标赛",
+  "championshipScore": "得分 {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "battleTitle": "对战",
+  "battleWinRate": "胜率 {percent}%",
+  "@battleWinRate": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "开始",
+  "levelHeading": "等级 {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "段位进度",
+  "rankLabel": "段位 {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "新游戏",
+  "weeklyProgress": "每周进度",
+  "rewardsTitle": "奖励",
+  "rewardNoMistakesTitle": "无错误完成挑战",
+  "rewardExtraHearts": "+{count, plural, other {# 颗心}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "连续完成三次挑战",
+  "rewardUniqueTrophy": "专属奖杯",
+  "rewardSevenDayTitle": "保持 7 天连胜",
+  "rewardStars": "+{count, plural, other {# 颗星}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "今日谜题",
+  "todayPuzzleDescription": "完成数独即可获得额外奖励并保持连胜。",
+  "continueAction": "继续",
+  "adMessage": "广告：寻找隐藏物品！立即游玩。",
+  "adPlay": "游玩",
+  "undo": "撤销",
+  "erase": "清除",
+  "autoNotes": "自动笔记",
+  "statusOn": "开启",
+  "statusOff": "关闭",
+  "notes": "笔记",
+  "hint": "提示",
+  "gameScreenTitle": "数独",
+  "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
+  "victoryTitle": "恭喜！",
+  "victoryMessage": "在 {time} 内完成谜题。",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "首页",
+  "playAnother": "再来一局",
+  "outOfLivesTitle": "心已用完",
+  "outOfLivesDescription": "恢复一个红心以继续游戏。",
+  "restoreLifeAction": "恢复 1 个红心",
+  "cancelAction": "取消",
+  "settingsTitle": "设置",
+  "themeSectionTitle": "主题",
+  "themeSystem": "跟随系统",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+  "languageSectionTitle": "语言",
+  "audioSectionTitle": "声音与音乐",
+  "soundsEffectsLabel": "音效",
+  "vibrationLabel": "震动",
+  "musicLabel": "背景音乐",
+  "miscSectionTitle": "其他",
+  "aboutApp": "关于",
+  "versionLabel": "版本 {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "statsTitle": "统计",
+  "statsGamesSection": "对局",
+  "statsGamesStarted": "开始的对局",
+  "statsGamesWon": "获胜的对局",
+  "statsWinRate": "胜率",
+  "statsFlawless": "完美通关",
+  "statsTimeSection": "时间",
+  "statsBestTime": "最佳时间",
+  "statsAverageTime": "平均时间",
+  "statsStreakSection": "连胜",
+  "statsCurrentStreak": "当前连胜",
+  "statsBestStreak": "最高连胜",
+  "difficultyBeginner": "入门",
+  "difficultyBeginnerShort": "入门",
+  "difficultyNovice": "新手",
+  "difficultyNoviceShort": "新手",
+  "difficultyMedium": "中等",
+  "difficultyMediumShort": "中等",
+  "difficultyHigh": "困难",
+  "difficultyHighShort": "困难",
+  "difficultyExpert": "专家",
+  "difficultyExpertShort": "专家",
+  "difficultyMaster": "大师",
+  "difficultyMasterShort": "大师"
+}
