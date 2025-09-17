@@ -145,6 +145,7 @@ class _HomeTab extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
                 width: 40,
@@ -160,44 +161,25 @@ class _HomeTab extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  sheetL10n.selectDifficultyDailyChallenge,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF79819C),
-                      ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              _DifficultyTile(
-                title: sheetL10n.navDaily,
-                rankLabel: sheetL10n.rankLabel(1),
-                progress: '—',
-                isActive: false,
-                onTap: () => Navigator.pop(context, Difficulty.novice),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 320,
-                child: ListView.separated(
-                  itemCount: items.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final diff = items[index];
-                    final stats = app.statsFor(diff);
-                    return _DifficultyTile(
-                      title: diff.title(sheetL10n),
-                      rankLabel: sheetL10n.rankLabel(stats.rank),
-                      progress: stats.progressText,
-                      isActive: diff == selected,
-                      onTap: () => Navigator.pop(context, diff),
-                    );
-                  },
-                ),
-              ),
+              ...List.generate(items.length, (index) {
+                final diff = items[index];
+                final stats = app.statsFor(diff);
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index < items.length - 1 ? 12.0 : 0.0,
+                  ),
+                  child: _DifficultyTile(
+                    title: diff.title(sheetL10n),
+                    rankLabel: sheetL10n.rankLabel(stats.rank),
+                    progress: stats.progressText,
+                    isActive: diff == selected,
+                    onTap: () => Navigator.pop(context, diff),
+                  ),
+                );
+              }),
             ],
           ),
         );
