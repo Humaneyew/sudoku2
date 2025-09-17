@@ -83,6 +83,16 @@
   "statusOff": "बंद",
   "notes": "नोट्स",
   "hint": "संकेत",
+  "undoAdTitle": "पूर्ववत करने के लिए विज्ञापन देखें",
+  "undoAdDescription": "अपनी पिछली चाल पूर्ववत करने के लिए यह छोटा विज्ञापन देखें।",
+  "undoAdCountdown": "विज्ञापन {seconds} सेकंड में समाप्त होगा",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "सुडोकू",
   "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
   "victoryTitle": "बधाई!",
@@ -115,6 +125,7 @@
   "vibrationLabel": "कंपन",
   "musicLabel": "पृष्ठभूमि संगीत",
   "miscSectionTitle": "अन्य",
+  "hideCompletedNumbersLabel": "प्रयुक्त अंकों को छुपाएँ",
   "aboutApp": "ऐप के बारे में",
   "versionLabel": "संस्करण {version}",
   "@versionLabel": {

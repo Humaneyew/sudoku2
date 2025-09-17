@@ -83,6 +83,16 @@
   "statusOff": "OFF",
   "notes": "Notes",
   "hint": "Hint",
+  "undoAdTitle": "Watch ad to undo",
+  "undoAdDescription": "Watch this short ad to undo your last move.",
+  "undoAdCountdown": "Ad ends in {seconds}s",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "No active game. Return to the home screen.",
   "victoryTitle": "Congratulations!",
@@ -115,6 +125,7 @@
   "vibrationLabel": "Vibration",
   "musicLabel": "Background music",
   "miscSectionTitle": "Other",
+  "hideCompletedNumbersLabel": "Hide completed digits",
   "aboutApp": "About",
   "versionLabel": "Version {version}",
   "@versionLabel": {

@@ -83,6 +83,16 @@
   "statusOff": "AUS",
   "notes": "Notizen",
   "hint": "Tipp",
+  "undoAdTitle": "Werbung ansehen zum Rückgängig machen",
+  "undoAdDescription": "Sieh dir diese kurze Werbung an, um deinen letzten Zug rückgängig zu machen.",
+  "undoAdCountdown": "Werbung endet in {seconds} s",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "Kein aktives Spiel. Kehre zum Startbildschirm zurück.",
   "victoryTitle": "Glückwunsch!",
@@ -115,6 +125,7 @@
   "vibrationLabel": "Vibration",
   "musicLabel": "Hintergrundmusik",
   "miscSectionTitle": "Sonstiges",
+  "hideCompletedNumbersLabel": "Verwendete Ziffern ausblenden",
   "aboutApp": "Über",
   "versionLabel": "Version {version}",
   "@versionLabel": {

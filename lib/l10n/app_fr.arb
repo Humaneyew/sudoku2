@@ -83,6 +83,16 @@
   "statusOff": "ARRÊT",
   "notes": "Notes",
   "hint": "Indice",
+  "undoAdTitle": "Voir une pub pour annuler",
+  "undoAdDescription": "Regardez cette courte publicité pour annuler votre dernier coup.",
+  "undoAdCountdown": "La pub se termine dans {seconds} s",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
   "victoryTitle": "Félicitations !",
@@ -115,6 +125,7 @@
   "vibrationLabel": "Vibration",
   "musicLabel": "Musique de fond",
   "miscSectionTitle": "Autre",
+  "hideCompletedNumbersLabel": "Masquer les chiffres utilisés",
   "aboutApp": "À propos",
   "versionLabel": "Version {version}",
   "@versionLabel": {

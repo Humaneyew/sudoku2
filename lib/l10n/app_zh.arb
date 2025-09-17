@@ -83,6 +83,16 @@
   "statusOff": "关闭",
   "notes": "笔记",
   "hint": "提示",
+  "undoAdTitle": "观看广告以撤销",
+  "undoAdDescription": "观看短广告即可撤销上一步。",
+  "undoAdCountdown": "广告将在 {seconds} 秒后结束",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "数独",
   "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
   "victoryTitle": "恭喜！",
@@ -115,6 +125,7 @@
   "vibrationLabel": "震动",
   "musicLabel": "背景音乐",
   "miscSectionTitle": "其他",
+  "hideCompletedNumbersLabel": "隐藏已用数字",
   "aboutApp": "关于",
   "versionLabel": "版本 {version}",
   "@versionLabel": {
