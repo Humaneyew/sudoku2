@@ -56,10 +56,10 @@ class Board extends StatelessWidget {
                     index: index,
                     value: value,
                     notes: notes,
-                    given: given,
                     isSelected: isSelected,
                     sameValue: sameValue,
                     incorrect: incorrect,
+                    digitStyle: app.digitStyle,
                     onTap: () => app.selectCell(index),
                   );
                 },
@@ -76,30 +76,32 @@ class _BoardCell extends StatelessWidget {
   final int index;
   final int value;
   final Set<int> notes;
-  final bool given;
   final bool isSelected;
   final bool sameValue;
   final bool incorrect;
+  final DigitStyle digitStyle;
   final VoidCallback onTap;
 
   const _BoardCell({
     required this.index,
     required this.value,
     required this.notes,
-    required this.given,
     required this.isSelected,
     required this.sameValue,
     required this.incorrect,
+    required this.digitStyle,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final border = _cellBorder(index);
-    final highlightSameValue = value != 0 && sameValue;
-    final backgroundColor = (isSelected || highlightSameValue)
-        ? const Color(0xFFB0C4DE)
-        : Colors.white;
+    final highlightSameValue = value != 0 && sameValue && !isSelected;
+    final backgroundColor = isSelected
+        ? const Color(0xFFD6EAF8)
+        : highlightSameValue
+            ? const Color(0xFFEAF2FB)
+            : Colors.white;
 
     return GestureDetector(
       onTap: onTap,
@@ -112,8 +114,8 @@ class _BoardCell extends StatelessWidget {
           child: _CellContent(
             value: value,
             notes: notes,
-            given: given,
             incorrect: incorrect,
+            digitStyle: digitStyle,
           ),
         ),
       ),
@@ -124,14 +126,14 @@ class _BoardCell extends StatelessWidget {
 class _CellContent extends StatelessWidget {
   final int value;
   final Set<int> notes;
-  final bool given;
   final bool incorrect;
+  final DigitStyle digitStyle;
 
   const _CellContent({
     required this.value,
     required this.notes,
-    required this.given,
     required this.incorrect,
+    required this.digitStyle,
   });
 
   @override
@@ -140,9 +142,9 @@ class _CellContent extends StatelessWidget {
       return Text(
         value.toString(),
         style: TextStyle(
-          fontSize: 22,
-          fontWeight: given ? FontWeight.w700 : FontWeight.w600,
-          color: incorrect ? const Color(0xFFFF0000) : Colors.black,
+          fontSize: digitStyle.fontSize,
+          fontWeight: digitStyle.fontWeight,
+          color: incorrect ? const Color(0xFFE74C3C) : Colors.black,
         ),
       );
     }
