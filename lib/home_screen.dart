@@ -87,14 +87,17 @@ class _HomeTab extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _TopBar(
-            onSettingsTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsPage()),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _TopBar(
+              onSettingsTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              ),
             ),
           ),
           const SizedBox(height: 24),
@@ -103,25 +106,35 @@ class _HomeTab extends StatelessWidget {
             championshipScore: app.championshipScore,
           ),
           const SizedBox(height: 32),
-          Text(
-            l10n.appTitle,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.appTitle,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _DailyChain(streak: app.dailyStreak),
+                const SizedBox(height: 18),
+                _ProgressCard(
+                  stats: stats,
+                  onNewGame: () => _openDifficultySheet(context),
+                  onContinue: app.hasUnfinishedGame
+                      ? () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const GamePage(),
+                            ),
+                          )
+                      : null,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          _DailyChain(streak: app.dailyStreak),
-          const SizedBox(height: 18),
-          _ProgressCard(
-            stats: stats,
-            onNewGame: () => _openDifficultySheet(context),
-            onContinue: app.hasUnfinishedGame
-                ? () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const GamePage()),
-                    )
-                : null,
           ),
         ],
       ),
@@ -300,14 +313,18 @@ class _ChallengeCarousel extends StatelessWidget {
       ),
     ];
 
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
       height: 170,
-      child: ListView.separated(
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(right: 24),
-        itemBuilder: (context, index) => _ChallengeCard(data: cards[index]),
-        separatorBuilder: (_, __) => const SizedBox(width: 16),
+        padding: EdgeInsets.zero,
         itemCount: cards.length,
+        itemBuilder: (context, index) => SizedBox(
+          width: screenWidth,
+          child: _ChallengeCard(data: cards[index]),
+        ),
       ),
     );
   }
@@ -341,7 +358,7 @@ class _ChallengeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240,
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
         gradient: LinearGradient(
