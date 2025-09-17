@@ -254,6 +254,75 @@ class AppState extends ChangeNotifier {
     musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
     vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
 
+    final savedGame = prefs.getString('currentGame');
+    if (savedGame != null) {
+      try {
+        final map = jsonDecode(savedGame) as Map<String, dynamic>;
+        final diffName = map['difficulty'] as String?;
+        final diff = diffName == null
+            ? null
+            : Difficulty.values.firstWhere(
+                (d) => d.name == diffName,
+                orElse: () => Difficulty.beginner,
+              );
+        final board = (map['board'] as List?)?.map((e) => e as int).toList();
+        final solution =
+            (map['solution'] as List?)?.map((e) => e as int).toList();
+        final givenList =
+            (map['given'] as List?)?.map((e) => e as bool).toList();
+        final notesJson = map['notes'] as List?;
+        final historyJson = map['history'] as List?;
+        final startedAt = map['startedAt'] as String?;
+
+        if (diff != null &&
+            board != null &&
+            solution != null &&
+            givenList != null &&
+            board.length == 81 &&
+            solution.length == 81 &&
+            givenList.length == 81) {
+          final notes = List<Set<int>>.generate(81, (index) {
+            if (notesJson != null && index < notesJson.length) {
+              final entry = notesJson[index];
+              if (entry is List) {
+                return entry.map((e) => e as int).toSet();
+              }
+            }
+            return <int>{};
+          });
+
+          current = GameState(
+            board: board,
+            solution: solution,
+            given: givenList,
+            notes: notes,
+          );
+
+          currentDifficulty = diff;
+          featuredDifficulty = diff;
+          _sessionId = (map['sessionId'] as num?)?.toInt() ?? _sessionId;
+          currentScore = (map['currentScore'] as num?)?.toInt() ?? currentScore;
+          selectedCell = (map['selectedCell'] as num?)?.toInt();
+          notesMode = map['notesMode'] as bool? ?? notesMode;
+          autoNotes = map['autoNotes'] as bool? ?? autoNotes;
+          hintsLeft = (map['hintsLeft'] as num?)?.toInt() ?? hintsLeft;
+          livesLeft = (map['livesLeft'] as num?)?.toInt() ?? livesLeft;
+          _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
+          _gameCompleted = false;
+          _startedAt = startedAt == null ? _startedAt : DateTime.tryParse(startedAt);
+
+          _history
+            ..clear()
+            ..addAll(
+              historyJson
+                      ?.whereType<Map>()
+                      .map((e) => _Move.fromJson(e.cast<String, dynamic>())) ??
+                  const Iterable<_Move>.empty(),
+            );
+        }
+      } catch (_) {}
+    }
+
     notifyListeners();
   }
 
@@ -343,6 +412,7 @@ class AppState extends ChangeNotifier {
       hintsLeft = _maxHints;
       livesLeft = _maxLives;
       _history.clear();
+      _clearSavedGame();
       notifyListeners();
       return;
     }
@@ -372,6 +442,7 @@ class AppState extends ChangeNotifier {
     _startedAt = DateTime.now();
 
     statsByDifficulty[diff]?.gamesStarted++;
+    _saveCurrentGame();
     saveProfile();
     notifyListeners();
   }
@@ -381,6 +452,8 @@ class AppState extends ChangeNotifier {
   DateTime? get startedAt => _startedAt;
 
   bool get hasActiveGame => current != null;
+
+  bool get hasUnfinishedGame => current != null && !_gameCompleted;
 
   bool get isOutOfLives => livesLeft <= 0;
 
@@ -459,6 +532,7 @@ class AppState extends ChangeNotifier {
       _cleanupAutoNotes(index, value);
     }
 
+    _saveCurrentGame();
     notifyListeners();
   }
 
@@ -482,6 +556,7 @@ class AppState extends ChangeNotifier {
       noteChange: true,
     ));
 
+    _saveCurrentGame();
     notifyListeners();
   }
 
@@ -503,6 +578,7 @@ class AppState extends ChangeNotifier {
 
     game.board[idx] = 0;
     game.notes[idx].clear();
+    _saveCurrentGame();
     notifyListeners();
   }
 
@@ -532,16 +608,21 @@ class AppState extends ChangeNotifier {
     if (autoNotes) {
       _cleanupAutoNotes(idx, correct);
     }
+    _saveCurrentGame();
     notifyListeners();
   }
 
   void toggleNotesMode() {
+    if (current == null) return;
     notesMode = !notesMode;
+    _saveCurrentGame();
     notifyListeners();
   }
 
   void toggleAutoNotes() {
+    if (current == null) return;
     autoNotes = !autoNotes;
+    _saveCurrentGame();
     notifyListeners();
   }
 
@@ -564,11 +645,13 @@ class AppState extends ChangeNotifier {
     }
 
     selectedCell = last.index;
+    _saveCurrentGame();
     notifyListeners();
   }
 
   void restoreOneLife() {
     livesLeft = math.max(1, livesLeft);
+    _saveCurrentGame();
     notifyListeners();
   }
 
@@ -611,6 +694,7 @@ class AppState extends ChangeNotifier {
       }
     }
 
+    _clearSavedGame();
     saveProfile();
     notifyListeners();
   }
@@ -624,6 +708,7 @@ class AppState extends ChangeNotifier {
         stats.currentStreak = 0;
       }
     }
+    _clearSavedGame();
     saveProfile();
     notifyListeners();
   }
@@ -640,6 +725,7 @@ class AppState extends ChangeNotifier {
     _madeMistake = false;
     _gameCompleted = false;
     _history.clear();
+    _clearSavedGame();
     notifyListeners();
   }
 
@@ -765,6 +851,43 @@ class AppState extends ChangeNotifier {
     callback();
   }
 
+  void _saveCurrentGame() {
+    final game = current;
+    final diff = currentDifficulty;
+    if (game == null || diff == null || _gameCompleted) {
+      _clearSavedGame();
+      return;
+    }
+
+    final data = {
+      'difficulty': diff.name,
+      'board': game.board,
+      'solution': game.solution,
+      'given': game.given,
+      'notes': game.notes.map((set) => set.toList()).toList(),
+      'currentScore': currentScore,
+      'selectedCell': selectedCell,
+      'notesMode': notesMode,
+      'autoNotes': autoNotes,
+      'hintsLeft': hintsLeft,
+      'livesLeft': livesLeft,
+      'madeMistake': _madeMistake,
+      'startedAt': _startedAt?.toIso8601String(),
+      'sessionId': _sessionId,
+      'history': _history.map((move) => move.toJson()).toList(),
+    };
+
+    _persist((prefs) async {
+      await prefs.setString('currentGame', jsonEncode(data));
+    });
+  }
+
+  void _clearSavedGame() {
+    _persist((prefs) async {
+      await prefs.remove('currentGame');
+    });
+  }
+
   void _persist(Future<void> Function(SharedPreferences prefs) save) {
     SharedPreferences.getInstance().then(save);
   }
@@ -786,6 +909,27 @@ class _Move {
     this.consumedLife = false,
     this.noteChange = false,
   });
+
+  Map<String, dynamic> toJson() => {
+        'index': index,
+        'previousValue': previousValue,
+        'previousNotes': previousNotes.toList(),
+        'consumedHint': consumedHint,
+        'consumedLife': consumedLife,
+        'noteChange': noteChange,
+      };
+
+  factory _Move.fromJson(Map<String, dynamic> json) => _Move(
+        index: (json['index'] as num?)?.toInt() ?? 0,
+        previousValue: (json['previousValue'] as num?)?.toInt() ?? 0,
+        previousNotes: ((json['previousNotes'] as List?)
+                ?.map((e) => (e as num).toInt())
+                .toSet()) ??
+            <int>{},
+        consumedHint: json['consumedHint'] as bool? ?? false,
+        consumedLife: json['consumedLife'] as bool? ?? false,
+        noteChange: json['noteChange'] as bool? ?? false,
+      );
 }
 
 Map<Difficulty, DifficultyStats> _defaultStats() => {
