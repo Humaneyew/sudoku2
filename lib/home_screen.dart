@@ -113,7 +113,6 @@ class _HomeTab extends StatelessWidget {
           _DailyChain(streak: app.dailyStreak),
           const SizedBox(height: 18),
           _ProgressCard(
-            difficulty: difficulty,
             stats: stats,
             onNewGame: () => _openDifficultySheet(context),
             onContinue: app.hasUnfinishedGame
@@ -122,7 +121,6 @@ class _HomeTab extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const GamePage()),
                     )
                 : null,
-            heartBonus: app.heartBonus,
           ),
         ],
       ),
@@ -496,25 +494,20 @@ class _DailyChain extends StatelessWidget {
 }
 
 class _ProgressCard extends StatelessWidget {
-  final Difficulty difficulty;
   final DifficultyStats stats;
   final VoidCallback onNewGame;
   final VoidCallback? onContinue;
-  final int heartBonus;
 
   const _ProgressCard({
-    required this.difficulty,
     required this.stats,
     required this.onNewGame,
     this.onContinue,
-    required this.heartBonus,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final difficultyTitle = difficulty.title(l10n);
 
     return Container(
       width: double.infinity,
@@ -533,33 +526,6 @@ class _ProgressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.levelHeading(stats.level, difficultyTitle),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${stats.bestTimeText} — $difficultyTitle',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF6D7392),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _HeartBonusChip(amount: heartBonus),
-            ],
-          ),
-          const SizedBox(height: 20),
           Text(
             l10n.rankProgress,
             style: theme.textTheme.labelLarge?.copyWith(
@@ -580,22 +546,11 @@ class _ProgressCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l10n.rankLabel(stats.rank),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                stats.progressText,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF6D7392),
-                ),
-              ),
-            ],
+          Text(
+            l10n.rankLabel(stats.rank),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 24),
           if (onContinue != null) ...[
@@ -641,37 +596,6 @@ class _ProgressCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeartBonusChip extends StatelessWidget {
-  final int amount;
-
-  const _HeartBonusChip({required this.amount});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFEEF0),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.favorite, color: Color(0xFFE25562), size: 18),
-          const SizedBox(width: 6),
-          Text(
-            '+$amount',
-            style: const TextStyle(
-              color: Color(0xFFE25562),
-              fontWeight: FontWeight.w700,
             ),
           ),
         ],
