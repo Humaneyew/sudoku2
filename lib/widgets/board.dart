@@ -6,9 +6,6 @@ import 'package:provider/provider.dart';
 import '../models.dart';
 
 const _kHighlightDuration = Duration(milliseconds: 150);
-const _kSelectedHighlightColor = Color(0xFFE0F0FF);
-const _kRelatedHighlightColor = Color(0x4DE0F0FF);
-
 class Board extends StatefulWidget {
   const Board({super.key});
 
@@ -140,6 +137,9 @@ class _BoardState extends State<Board> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
 
+    final theme = Theme.of(context);
+    final surfaceColor = theme.colorScheme.surface;
+
     return Consumer<AppState>(
       builder: (context, app, _) {
         final game = app.current;
@@ -151,7 +151,7 @@ class _BoardState extends State<Board> with TickerProviderStateMixin {
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: surfaceColor,
             borderRadius: BorderRadius.circular(28),
             boxShadow: const [
               BoxShadow(
@@ -363,6 +363,14 @@ class _BoardCellState extends State<_BoardCell> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final border = _cellBorder(widget.index);
+    final theme = Theme.of(context);
+    final surfaceColor = theme.colorScheme.surface;
+    final primaryColor = theme.colorScheme.primary;
+    final selectedHighlightColor = primaryColor.withOpacity(0.22);
+    final relatedHighlightColor = primaryColor.withOpacity(0.12);
+    final sameValueHighlightColor = primaryColor.withOpacity(0.16);
+    final candidateHighlightColor = primaryColor.withOpacity(0.1);
+    final conflictHighlightColor = theme.colorScheme.error.withOpacity(0.16);
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -387,33 +395,33 @@ class _BoardCellState extends State<_BoardCell> with TickerProviderStateMixin {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: surfaceColor,
                     border: border,
                   ),
                 ),
                 _HighlightLayer(
                   active: widget.highlightCandidate,
-                  color: _kRelatedHighlightColor,
+                  color: candidateHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.isPeer,
-                  color: _kRelatedHighlightColor,
+                  color: relatedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.sameValue,
-                  color: _kRelatedHighlightColor,
+                  color: sameValueHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.isSelected,
-                  color: _kSelectedHighlightColor,
+                  color: selectedHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 _HighlightLayer(
                   active: widget.conflict,
-                  color: const Color(0xFFFFE4E8),
+                  color: conflictHighlightColor,
                   reduceMotion: widget.reduceMotion,
                 ),
                 if (widget.victoryIntensity > 0)
