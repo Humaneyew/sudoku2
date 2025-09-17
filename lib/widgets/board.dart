@@ -53,7 +53,7 @@ class _BoardState extends State<Board> with TickerProviderStateMixin {
         ),
         weight: 40,
       ),
-      const TweenSequenceItem(
+      TweenSequenceItem(
         tween: ConstantTween<double>(0.65),
         weight: 20,
       ),
