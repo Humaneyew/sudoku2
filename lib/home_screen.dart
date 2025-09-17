@@ -313,11 +313,14 @@ class _ChallengeCarousel extends StatelessWidget {
       ),
     ];
 
+    const scale = 0.7;
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth - 48;
+    final originalCardWidth = screenWidth - 48;
+    final cardWidth = originalCardWidth * scale;
+    final carouselHeight = 170 * scale;
 
     return SizedBox(
-      height: 170,
+      height: carouselHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -326,7 +329,15 @@ class _ChallengeCarousel extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 16),
         itemBuilder: (context, index) => SizedBox(
           width: cardWidth,
-          child: _ChallengeCard(data: cards[index]),
+          height: carouselHeight,
+          child: FittedBox(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: originalCardWidth,
+              height: 170,
+              child: _ChallengeCard(data: cards[index]),
+            ),
+          ),
         ),
       ),
     );
