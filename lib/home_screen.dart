@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: SafeArea(
+        minimum: const EdgeInsets.only(bottom: 16),
         child: IndexedStack(
           index: _index,
           children: pages,
@@ -133,6 +134,7 @@ class _HomeTab extends StatelessWidget {
     final difficulty = await showModalBottomSheet<Difficulty>(
       context: context,
       backgroundColor: Colors.white,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
@@ -141,46 +143,50 @@ class _HomeTab extends StatelessWidget {
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
 
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD7DBEB),
-                  borderRadius: BorderRadius.circular(4),
+        return SafeArea(
+          top: false,
+          bottom: true,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD7DBEB),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                sheetL10n.selectDifficultyTitle,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                const SizedBox(height: 16),
+                Text(
+                  sheetL10n.selectDifficultyTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                ...List.generate(items.length, (index) {
+                  final diff = items[index];
+                  final stats = app.statsFor(diff);
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index < items.length - 1 ? 12.0 : 0.0,
                     ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              ...List.generate(items.length, (index) {
-                final diff = items[index];
-                final stats = app.statsFor(diff);
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index < items.length - 1 ? 12.0 : 0.0,
-                  ),
-                  child: _DifficultyTile(
-                    title: diff.title(sheetL10n),
-                    rankLabel: sheetL10n.rankLabel(stats.rank),
-                    progress: stats.progressText,
-                    isActive: diff == selected,
-                    onTap: () => Navigator.pop(context, diff),
-                  ),
-                );
-              }),
-            ],
+                    child: _DifficultyTile(
+                      title: diff.title(sheetL10n),
+                      rankLabel: sheetL10n.rankLabel(stats.rank),
+                      progress: stats.progressText,
+                      isActive: diff == selected,
+                      onTap: () => Navigator.pop(context, diff),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         );
       },
