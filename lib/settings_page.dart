@@ -55,6 +55,21 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(height: 32),
 
+          _sectionTitle(l10n.digitStyleSectionTitle),
+          ...DigitStyle.values.map(
+            (style) => RadioListTile<DigitStyle>(
+              title: Text(style.displayName(l10n)),
+              value: style,
+              groupValue: app.digitStyle,
+              onChanged: (value) {
+                if (value != null) {
+                  app.setDigitStyle(value);
+                }
+              },
+            ),
+          ),
+          const Divider(height: 32),
+
           _sectionTitle(l10n.languageSectionTitle),
           ...AppLanguage.values.map(
                 (lang) => RadioListTile<AppLanguage>(

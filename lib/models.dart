@@ -37,6 +37,9 @@ enum AppTheme { system, light, dark }
 /// Поддерживаемые языки интерфейса.
 enum AppLanguage { en, ru, uk, de, fr, zh, hi }
 
+/// Доступные стили отображения цифр на игровом поле.
+enum DigitStyle { thin, medium, bold }
+
 extension AppLanguageX on AppLanguage {
   /// Локаль, соответствующая языку приложения.
   Locale get locale => switch (this) {
@@ -61,6 +64,29 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.fr => l10n.languageFrench,
         AppLanguage.zh => l10n.languageChinese,
         AppLanguage.hi => l10n.languageHindi,
+      };
+}
+
+extension DigitStyleX on DigitStyle {
+  /// Размер шрифта для выбранного стиля цифр.
+  double get fontSize => switch (this) {
+        DigitStyle.thin => 18,
+        DigitStyle.medium => 20,
+        DigitStyle.bold => 22,
+      };
+
+  /// Насыщенность шрифта для выбранного стиля цифр.
+  FontWeight get fontWeight => switch (this) {
+        DigitStyle.thin => FontWeight.w400,
+        DigitStyle.medium => FontWeight.w500,
+        DigitStyle.bold => FontWeight.w700,
+      };
+
+  /// Отображаемое название для настроек.
+  String displayName(AppLocalizations l10n) => switch (this) {
+        DigitStyle.thin => l10n.digitStyleThin,
+        DigitStyle.medium => l10n.digitStyleMedium,
+        DigitStyle.bold => l10n.digitStyleBold,
       };
 }
 
@@ -196,6 +222,7 @@ class AppState extends ChangeNotifier {
   bool musicEnabled = true;
   bool vibrationEnabled = true;
   int? highlightedNumber;
+  DigitStyle digitStyle = DigitStyle.medium;
 
   bool _madeMistake = false;
   bool _gameCompleted = false;
@@ -248,6 +275,13 @@ class AppState extends ChangeNotifier {
     if (langName != null) {
       try {
         lang = AppLanguage.values.byName(langName);
+      } catch (_) {}
+    }
+
+    final digitStyleName = prefs.getString('digitStyle');
+    if (digitStyleName != null) {
+      try {
+        digitStyle = DigitStyle.values.byName(digitStyleName);
       } catch (_) {}
     }
 
@@ -397,6 +431,15 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void setDigitStyle(DigitStyle value) {
+    if (digitStyle == value) return;
+    digitStyle = value;
+    _persist((prefs) async {
+      await prefs.setString('digitStyle', value.name);
     });
     notifyListeners();
   }
