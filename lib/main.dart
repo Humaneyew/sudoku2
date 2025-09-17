@@ -13,10 +13,13 @@ Future<void> main() async {
   const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi'];
   await Future.wait(locales.map(initializeDateFormatting));
 
+  final appState = AppState();
+  await appState.load();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AppState()..load()),
+        ChangeNotifierProvider.value(value: appState),
         ChangeNotifierProvider(create: (_) => UndoAdController()),
       ],
       child: const SudokuApp(),
