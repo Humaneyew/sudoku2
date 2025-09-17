@@ -190,7 +190,6 @@ class AppState extends ChangeNotifier {
   int currentScore = 0;
   int? selectedCell;
   bool notesMode = false;
-  bool autoNotes = false;
   int hintsLeft = _maxHints;
   int livesLeft = _maxLives;
   bool soundsEnabled = true;
@@ -306,7 +305,6 @@ class AppState extends ChangeNotifier {
           currentScore = (map['currentScore'] as num?)?.toInt() ?? currentScore;
           selectedCell = (map['selectedCell'] as num?)?.toInt();
           notesMode = map['notesMode'] as bool? ?? notesMode;
-          autoNotes = map['autoNotes'] as bool? ?? autoNotes;
           hintsLeft = (map['hintsLeft'] as num?)?.toInt() ?? hintsLeft;
           livesLeft = (map['livesLeft'] as num?)?.toInt() ?? livesLeft;
           _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
@@ -420,7 +418,6 @@ class AppState extends ChangeNotifier {
       current = null;
       selectedCell = null;
       notesMode = false;
-      autoNotes = false;
       hintsLeft = _maxHints;
       livesLeft = _maxLives;
       _history.clear();
@@ -445,7 +442,6 @@ class AppState extends ChangeNotifier {
     currentScore = 0;
     selectedCell = null;
     notesMode = false;
-    autoNotes = false;
     hintsLeft = _maxHints;
     livesLeft = _maxLives;
     highlightedNumber = null;
@@ -547,10 +543,6 @@ class AppState extends ChangeNotifier {
     game.board[index] = value;
     game.notes[index].clear();
 
-    if (correct && autoNotes) {
-      _cleanupAutoNotes(index, value);
-    }
-
     _saveCurrentGame();
     notifyListeners();
   }
@@ -624,9 +616,6 @@ class AppState extends ChangeNotifier {
     game.notes[idx].clear();
     hintsLeft = math.max(0, hintsLeft - 1);
     currentScore += 8;
-    if (autoNotes) {
-      _cleanupAutoNotes(idx, correct);
-    }
     _saveCurrentGame();
     notifyListeners();
   }
@@ -634,13 +623,6 @@ class AppState extends ChangeNotifier {
   void toggleNotesMode() {
     if (current == null) return;
     notesMode = !notesMode;
-    _saveCurrentGame();
-    notifyListeners();
-  }
-
-  void toggleAutoNotes() {
-    if (current == null) return;
-    autoNotes = !autoNotes;
     _saveCurrentGame();
     notifyListeners();
   }
@@ -738,7 +720,6 @@ class AppState extends ChangeNotifier {
     currentScore = 0;
     selectedCell = null;
     notesMode = false;
-    autoNotes = false;
     hintsLeft = _maxHints;
     livesLeft = _maxLives;
     _madeMistake = false;
@@ -846,14 +827,6 @@ class AppState extends ChangeNotifier {
     return {...game.notes[index]};
   }
 
-  void _cleanupAutoNotes(int index, int value) {
-    final game = current;
-    if (game == null) return;
-    for (final peer in _peersOf(index)) {
-      game.notes[peer].remove(value);
-    }
-  }
-
   void _handleCorrectFeedback() {
     _playSound(SystemSoundType.click);
     _triggerVibration(HapticFeedback.selectionClick);
@@ -896,7 +869,6 @@ class AppState extends ChangeNotifier {
       'currentScore': currentScore,
       'selectedCell': selectedCell,
       'notesMode': notesMode,
-      'autoNotes': autoNotes,
       'hintsLeft': hintsLeft,
       'livesLeft': livesLeft,
       'madeMistake': _madeMistake,

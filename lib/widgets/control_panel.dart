@@ -49,40 +49,41 @@ class _ActionRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _ActionButton(
-            icon: Icons.undo_rounded,
-            label: l10n.undo,
-            onTap: app.undoMove,
+          Expanded(
+            child: _ActionButton(
+              icon: Icons.undo_rounded,
+              label: l10n.undo,
+              onPressed: app.undoMove,
+            ),
           ),
-          _ActionButton(
-            icon: Icons.backspace_outlined,
-            label: l10n.erase,
-            onTap: app.eraseCell,
+          const SizedBox(width: 12),
+          Expanded(
+            child: _ActionButton(
+              icon: Icons.backspace_outlined,
+              label: l10n.erase,
+              onPressed: app.eraseCell,
+            ),
           ),
-          _ActionButton(
-            icon: Icons.auto_awesome,
-            label: l10n.autoNotes,
-            onTap: app.toggleAutoNotes,
-            chipLabel: app.autoNotes ? l10n.statusOn : l10n.statusOff,
-            chipColor:
-                app.autoNotes ? const Color(0xFF3B82F6) : theme.disabledColor,
+          const SizedBox(width: 12),
+          Expanded(
+            child: _ActionButton(
+              icon: Icons.edit_note,
+              label: l10n.notes,
+              onPressed: app.toggleNotesMode,
+              active: app.notesMode,
+            ),
           ),
-          _ActionButton(
-            icon: Icons.edit_note,
-            label: l10n.notes,
-            onTap: app.toggleNotesMode,
-            chipLabel: app.notesMode ? l10n.statusOn : l10n.statusOff,
-            chipColor:
-                app.notesMode ? const Color(0xFF3B82F6) : theme.disabledColor,
-          ),
-          _ActionButton(
-            icon: Icons.lightbulb_outline,
-            label: l10n.hint,
-            onTap: app.hintsLeft > 0 ? app.useHint : null,
-            chipLabel: app.hintsLeft.toString(),
-            chipColor: app.hintsLeft > 0
-                ? const Color(0xFFFFB347)
-                : theme.disabledColor,
+          const SizedBox(width: 12),
+          Expanded(
+            child: _ActionButton(
+              icon: Icons.lightbulb_outline,
+              label: l10n.hint,
+              onPressed: app.hintsLeft > 0 ? app.useHint : null,
+              badge: app.hintsLeft.toString(),
+              badgeColor: app.hintsLeft > 0
+                  ? const Color(0xFFFFB347)
+                  : theme.disabledColor,
+            ),
           ),
         ],
       ),
@@ -93,66 +94,79 @@ class _ActionRow extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
-  final VoidCallback? onTap;
-  final String? chipLabel;
-  final Color? chipColor;
+  final VoidCallback? onPressed;
+  final String? badge;
+  final Color? badgeColor;
+  final bool active;
 
   const _ActionButton({
     required this.icon,
     required this.label,
-    this.onTap,
-    this.chipLabel,
-    this.chipColor,
+    this.onPressed,
+    this.badge,
+    this.badgeColor,
+    this.active = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = onTap == null
-        ? theme.disabledColor
-        : const Color(0xFF3B82F6);
+    final enabled = onPressed != null;
+    final accent = const Color(0xFF2563EB);
+    final background = active ? const Color(0xFFE0F0FF) : Colors.white;
+    final disabledBackground = const Color(0xFFF4F6FB);
+    final borderColor = active ? const Color(0xFF9DBAFD) : const Color(0xFFE1E6F5);
+    final effectiveBorder = enabled ? borderColor : const Color(0xFFE9ECF6);
+    final textColor = enabled ? const Color(0xFF1F2437) : theme.disabledColor;
+    final iconColor = enabled ? accent : theme.disabledColor;
+    final buttonBackground = enabled ? background : disabledBackground;
+    final badgeForeground =
+        enabled ? (badgeColor ?? accent) : theme.disabledColor;
 
-    return Expanded(
-      child: InkResponse(
-        onTap: onTap,
-        radius: 32,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return SizedBox(
+      height: 52,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: buttonBackground,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: effectiveBorder),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color(0xFFD8E6FF),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF48506C),
+            Icon(icon, size: 20, color: iconColor),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
               ),
             ),
-            if (chipLabel != null) ...[
-              const SizedBox(height: 6),
+            if (badge != null) ...[
+              const SizedBox(width: 8),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (chipColor ?? theme.disabledColor).withOpacity(0.15),
+                  color: badgeForeground.withOpacity(0.14),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  chipLabel!,
+                  badge!,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: chipColor ?? theme.disabledColor,
+                    color: badgeForeground,
                   ),
                 ),
               ),

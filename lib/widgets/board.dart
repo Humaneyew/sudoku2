@@ -478,23 +478,11 @@ class _HighlightLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = DecoratedBox(
-      decoration: BoxDecoration(color: color),
-    );
-
-    if (reduceMotion) {
-      if (!active) {
-        return const SizedBox.shrink();
-      }
-      return Positioned.fill(child: box);
-    }
-
     return Positioned.fill(
-      child: AnimatedOpacity(
-        opacity: active ? 1 : 0,
-        duration: _kHighlightDuration,
+      child: AnimatedContainer(
+        duration: reduceMotion ? Duration.zero : _kHighlightDuration,
         curve: Curves.easeOut,
-        child: box,
+        color: active ? color : Colors.transparent,
       ),
     );
   }
