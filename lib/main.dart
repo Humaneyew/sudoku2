@@ -47,7 +47,7 @@ class SudokuApp extends StatelessWidget {
         selectedItemColor: navigationSelected,
         unselectedItemColor: const Color(0xFF59607A),
       ),
-    );
+    ).copyWith(pageTransitionsTheme: _pageTransitionsTheme);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
@@ -117,6 +117,60 @@ class SudokuApp extends StatelessWidget {
         unselectedItemColor: const Color(0xFF9AA3B9),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
+      ),
+      pageTransitionsTheme: _pageTransitionsTheme,
+    );
+  }
+}
+
+const _pageTransitionsTheme = PageTransitionsTheme(
+  builders: {
+    TargetPlatform.android: _SudokuPageTransitionsBuilder(),
+    TargetPlatform.iOS: _SudokuPageTransitionsBuilder(),
+    TargetPlatform.linux: _SudokuPageTransitionsBuilder(),
+    TargetPlatform.macOS: _SudokuPageTransitionsBuilder(),
+    TargetPlatform.windows: _SudokuPageTransitionsBuilder(),
+  },
+);
+
+class _SudokuPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _SudokuPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (reduceMotion) {
+      return child;
+    }
+
+    final primary = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final secondary = CurvedAnimation(
+      parent: secondaryAnimation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1, 0),
+        end: Offset.zero,
+      ).animate(primary),
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: Offset.zero,
+          end: const Offset(-0.25, 0),
+        ).animate(secondary),
+        child: child,
       ),
     );
   }
