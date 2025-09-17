@@ -117,13 +117,11 @@ class _BoardCell extends StatelessWidget {
           color: backgroundColor,
           border: border,
         ),
-        child: Center(
-          child: _CellContent(
-            value: value,
-            notes: notes,
-            incorrect: incorrect,
-            digitStyle: digitStyle,
-          ),
+        child: _CellContent(
+          value: value,
+          notes: notes,
+          incorrect: incorrect,
+          digitStyle: digitStyle,
         ),
       ),
     );
@@ -146,12 +144,14 @@ class _CellContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (value != 0) {
-      return Text(
-        value.toString(),
-        style: TextStyle(
-          fontSize: digitStyle.fontSize,
-          fontWeight: digitStyle.fontWeight,
-          color: incorrect ? const Color(0xFFE74C3C) : Colors.black,
+      return Center(
+        child: Text(
+          value.toString(),
+          style: TextStyle(
+            fontSize: digitStyle.fontSize,
+            fontWeight: digitStyle.fontWeight,
+            color: incorrect ? const Color(0xFFE74C3C) : Colors.black,
+          ),
         ),
       );
     }
@@ -175,27 +175,26 @@ class _NotesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 4,
-        runSpacing: 2,
-        children: [
-          for (var i = 1; i <= 9; i++)
-            SizedBox(
-              width: 14,
-              child: Text(
-                notes.contains(i) ? i.toString() : '',
-                textAlign: TextAlign.center,
+    final sorted = notes.toList()..sort();
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Wrap(
+          spacing: 4,
+          runSpacing: 2,
+          children: [
+            for (final note in sorted)
+              Text(
+                note.toString(),
                 style: const TextStyle(
                   fontSize: 10,
                   color: Color(0xFF96A0C4),
                   fontWeight: FontWeight.w600,
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
