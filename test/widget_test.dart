@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sudoku2/main.dart';
 import 'package:sudoku2/models.dart';
+import 'package:sudoku2/undo_ad_controller.dart';
 
 void main() {
   testWidgets('Домашний экран отображает основные секции', (tester) async {
@@ -19,8 +20,11 @@ void main() {
     await initializeDateFormatting('uk');
 
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (_) => AppState(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppState()),
+          ChangeNotifierProvider(create: (_) => UndoAdController()),
+        ],
         child: const SudokuApp(),
       ),
     );
