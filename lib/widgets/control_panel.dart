@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models.dart';
+import '../undo_ad_controller.dart';
 
 class ControlPanel extends StatelessWidget {
   const ControlPanel({super.key});
@@ -33,6 +34,10 @@ class _ActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final undoAds = context.watch<UndoAdController>();
+    final canUndoMove = app.canUndoMove;
+    final useUndoAd = undoAds.useAdFlow;
+    final undoEnabled = canUndoMove && (!useUndoAd || undoAds.isAdAvailable);
 
     return Row(
       children: [
@@ -40,7 +45,20 @@ class _ActionRow extends StatelessWidget {
           child: _ActionButton(
             icon: Icons.undo_rounded,
             label: l10n.undo,
-            onPressed: app.undoMove,
+            onPressed: undoEnabled
+                ? () async {
+                    if (useUndoAd) {
+                      final shown = await undoAds.showAd(context);
+                      if (!shown) {
+                        return;
+                      }
+                      if (!app.canUndoMove) {
+                        return;
+                      }
+                    }
+                    app.undoMove();
+                  }
+                : null,
           ),
         ),
         const SizedBox(width: 12),
@@ -197,6 +215,7 @@ class _NumberPad extends StatelessWidget {
     final theme = Theme.of(context);
     final highlighted = app.highlightedNumber;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final hideCompleted = app.hideCompletedNumbers;
 
     return Container(
       decoration: BoxDecoration(
@@ -220,6 +239,8 @@ class _NumberPad extends StatelessWidget {
                 remaining: app.countRemaining(i + 1),
                 selected: selected == i + 1,
                 highlighted: highlighted == i + 1,
+                enabled:
+                    !hideCompleted || !app.isNumberCompleted(i + 1),
                 onTap: () => app.handleNumberInput(i + 1),
                 onHighlightStart: () => app.setHighlightedNumber(i + 1),
                 onHighlightEnd: () => app.setHighlightedNumber(null),
@@ -238,6 +259,7 @@ class _NumberButton extends StatelessWidget {
   final int remaining;
   final bool selected;
   final bool highlighted;
+  final bool enabled;
   final VoidCallback onTap;
   final VoidCallback onHighlightStart;
   final VoidCallback onHighlightEnd;
@@ -249,6 +271,7 @@ class _NumberButton extends StatelessWidget {
     required this.remaining,
     required this.selected,
     required this.highlighted,
+    required this.enabled,
     required this.onTap,
     required this.onHighlightStart,
     required this.onHighlightEnd,
@@ -258,72 +281,86 @@ class _NumberButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = selected
-        ? const Color(0xFFC7DBFF)
-        : highlighted
-            ? const Color(0xFFE6F0FF)
-            : Colors.white;
-    final borderColor = selected
-        ? const Color(0xFF3B82F6)
-        : highlighted
-            ? const Color(0xFF9DBAFD)
-            : const Color(0xFFE2E5F3);
-    final textColor = const Color(0xFF1F2437);
+    final isSelected = enabled && selected;
+    final isHighlighted = enabled && highlighted;
+    final background = !enabled
+        ? const Color(0xFFF3F5FB)
+        : isSelected
+            ? const Color(0xFFC7DBFF)
+            : isHighlighted
+                ? const Color(0xFFE6F0FF)
+                : Colors.white;
+    final borderColor = !enabled
+        ? const Color(0xFFE2E5F3)
+        : isSelected
+            ? const Color(0xFF3B82F6)
+            : isHighlighted
+                ? const Color(0xFF9DBAFD)
+                : const Color(0xFFE2E5F3);
+    final textColor = enabled
+        ? const Color(0xFF1F2437)
+        : theme.disabledColor;
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTapDown: (_) => onHighlightStart(),
-        onTapCancel: onHighlightEnd,
-        onTap: () {
-          onHighlightEnd();
-          onTap();
-        },
-        child: AnimatedContainer(
-          duration: duration,
-          curve: Curves.easeOut,
-          height: 64,
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: borderColor),
-            boxShadow: selected
-                ? const [
-                    BoxShadow(
-                      color: Color(0x1A3B82F6),
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                number.toString(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
+      child: AnimatedOpacity(
+        duration: duration,
+        opacity: enabled ? 1.0 : 0.0,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTapDown: enabled ? (_) => onHighlightStart() : null,
+          onTapCancel: enabled ? onHighlightEnd : null,
+          onTap: enabled
+              ? () {
+                  onHighlightEnd();
+                  onTap();
+                }
+              : null,
+          child: AnimatedContainer(
+            duration: duration,
+            curve: Curves.easeOut,
+            height: 64,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: borderColor),
+              boxShadow: isSelected
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x1A3B82F6),
+                        blurRadius: 12,
+                        offset: Offset(0, 6),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  number.toString(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              AnimatedDefaultTextStyle(
-                duration: duration,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: highlighted
-                      ? const Color(0xFF3B82F6)
-                      : theme.disabledColor,
+                const SizedBox(height: 4),
+                AnimatedDefaultTextStyle(
+                  duration: duration,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isHighlighted
+                        ? const Color(0xFF3B82F6)
+                        : theme.disabledColor,
+                  ),
+                  child: Text(remaining.toString()),
                 ),
-                child: Text(remaining.toString()),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

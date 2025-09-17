@@ -83,6 +83,16 @@
   "statusOff": "ВИМК",
   "notes": "Нотатки",
   "hint": "Підказка",
+  "undoAdTitle": "Перегляд реклами для скасування",
+  "undoAdDescription": "Перегляньте коротку рекламу, щоб скасувати останній хід.",
+  "undoAdCountdown": "Реклама завершиться через {seconds} с",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Судоку",
   "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
   "victoryTitle": "Вітаємо!",
@@ -115,6 +125,7 @@
   "vibrationLabel": "Вібрація",
   "musicLabel": "Фонова музика",
   "miscSectionTitle": "Інше",
+  "hideCompletedNumbersLabel": "Прибирати використані цифри",
   "aboutApp": "Про застосунок",
   "versionLabel": "Версія {version}",
   "@versionLabel": {

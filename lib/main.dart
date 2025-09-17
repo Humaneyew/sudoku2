@@ -6,6 +6,7 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'home_screen.dart';
 import 'models.dart';
+import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,8 +14,11 @@ Future<void> main() async {
   await Future.wait(locales.map(initializeDateFormatting));
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppState()..load(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppState()..load()),
+        ChangeNotifierProvider(create: (_) => UndoAdController()),
+      ],
       child: const SudokuApp(),
     ),
   );

@@ -118,6 +118,12 @@ abstract class AppLocalizations {
 
   String get hint;
 
+  String get undoAdTitle;
+
+  String get undoAdDescription;
+
+  String undoAdCountdown(int seconds);
+
   String get gameScreenTitle;
 
   String get noActiveGameMessage;
@@ -148,6 +154,14 @@ abstract class AppLocalizations {
 
   String get themeDark;
 
+  String get digitStyleSectionTitle;
+
+  String get digitStyleThin;
+
+  String get digitStyleMedium;
+
+  String get digitStyleBold;
+
   String get languageSectionTitle;
 
   String get audioSectionTitle;
@@ -159,6 +173,8 @@ abstract class AppLocalizations {
   String get musicLabel;
 
   String get miscSectionTitle;
+
+  String get hideCompletedNumbersLabel;
 
   String get aboutApp;
 
@@ -423,6 +439,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get hint => "Tipp";
 
   @override
+  String get undoAdTitle => "Werbung ansehen zum Rückgängig machen";
+
+  @override
+  String get undoAdDescription => "Sieh dir diese kurze Werbung an, um deinen letzten Zug rückgängig zu machen.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "Werbung endet in ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -470,6 +497,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get themeDark => "Dunkel";
 
   @override
+  String get digitStyleSectionTitle => "Ziffernstil";
+
+  @override
+  String get digitStyleThin => "Dünn";
+
+  @override
+  String get digitStyleMedium => "Mittel";
+
+  @override
+  String get digitStyleBold => "Fett";
+
+  @override
   String get languageSectionTitle => "Sprache";
 
   @override
@@ -486,6 +525,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Sonstiges";
+
+  @override
+  String get hideCompletedNumbersLabel => "Verwendete Ziffern ausblenden";
 
   @override
   String get aboutApp => "Über";
@@ -728,6 +770,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hint => "Hint";
 
   @override
+  String get undoAdTitle => "Watch ad to undo";
+
+  @override
+  String get undoAdDescription => "Watch this short ad to undo your last move.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "Ad ends in ${seconds}s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -775,6 +828,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => "Dark";
 
   @override
+  String get digitStyleSectionTitle => "Digit style";
+
+  @override
+  String get digitStyleThin => "Thin";
+
+  @override
+  String get digitStyleMedium => "Medium";
+
+  @override
+  String get digitStyleBold => "Bold";
+
+  @override
   String get languageSectionTitle => "Language";
 
   @override
@@ -791,6 +856,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Other";
+
+  @override
+  String get hideCompletedNumbersLabel => "Hide completed digits";
 
   @override
   String get aboutApp => "About";
@@ -1033,6 +1101,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get hint => "Indice";
 
   @override
+  String get undoAdTitle => "Voir une pub pour annuler";
+
+  @override
+  String get undoAdDescription => "Regardez cette courte publicité pour annuler votre dernier coup.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "La pub se termine dans ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -1080,6 +1159,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeDark => "Sombre";
 
   @override
+  String get digitStyleSectionTitle => "Style des chiffres";
+
+  @override
+  String get digitStyleThin => "Fin";
+
+  @override
+  String get digitStyleMedium => "Moyen";
+
+  @override
+  String get digitStyleBold => "Gras";
+
+  @override
   String get languageSectionTitle => "Langue";
 
   @override
@@ -1096,6 +1187,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Autre";
+
+  @override
+  String get hideCompletedNumbersLabel => "Masquer les chiffres utilisés";
 
   @override
   String get aboutApp => "À propos";
@@ -1338,6 +1432,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get hint => "संकेत";
 
   @override
+  String get undoAdTitle => "पूर्ववत करने के लिए विज्ञापन देखें";
+
+  @override
+  String get undoAdDescription => "अपनी पिछली चाल पूर्ववत करने के लिए यह छोटा विज्ञापन देखें।";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "विज्ञापन ${seconds} सेकंड में समाप्त होगा";
+  }
+
+  @override
   String get gameScreenTitle => "सुडोकू";
 
   @override
@@ -1385,6 +1490,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get themeDark => "गहरा";
 
   @override
+  String get digitStyleSectionTitle => "अंकों की शैली";
+
+  @override
+  String get digitStyleThin => "पतला";
+
+  @override
+  String get digitStyleMedium => "मध्यम";
+
+  @override
+  String get digitStyleBold => "मोटा";
+
+  @override
   String get languageSectionTitle => "भाषा";
 
   @override
@@ -1401,6 +1518,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "अन्य";
+
+  @override
+  String get hideCompletedNumbersLabel => "प्रयुक्त अंकों को छुपाएँ";
 
   @override
   String get aboutApp => "ऐप के बारे में";
@@ -1647,6 +1767,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hint => "Подсказка";
 
   @override
+  String get undoAdTitle => "Смотреть рекламу для отмены";
+
+  @override
+  String get undoAdDescription => "Посмотрите короткую рекламу, чтобы отменить последний ход.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "Реклама завершится через ${seconds} с";
+  }
+
+  @override
   String get gameScreenTitle => "Судоку";
 
   @override
@@ -1694,6 +1825,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get themeDark => "Тёмная";
 
   @override
+  String get digitStyleSectionTitle => "Стиль цифр";
+
+  @override
+  String get digitStyleThin => "Тонкий";
+
+  @override
+  String get digitStyleMedium => "Средний";
+
+  @override
+  String get digitStyleBold => "Жирный";
+
+  @override
   String get languageSectionTitle => "Язык";
 
   @override
@@ -1710,6 +1853,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Другое";
+
+  @override
+  String get hideCompletedNumbersLabel => "Убирать использованные цифры";
 
   @override
   String get aboutApp => "О приложении";
@@ -1956,6 +2102,17 @@ class AppLocalizationsUk extends AppLocalizations {
   String get hint => "Підказка";
 
   @override
+  String get undoAdTitle => "Перегляд реклами для скасування";
+
+  @override
+  String get undoAdDescription => "Перегляньте коротку рекламу, щоб скасувати останній хід.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "Реклама завершиться через ${seconds} с";
+  }
+
+  @override
   String get gameScreenTitle => "Судоку";
 
   @override
@@ -2003,6 +2160,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get themeDark => "Темна";
 
   @override
+  String get digitStyleSectionTitle => "Стиль цифр";
+
+  @override
+  String get digitStyleThin => "Тонкий";
+
+  @override
+  String get digitStyleMedium => "Середній";
+
+  @override
+  String get digitStyleBold => "Грубий";
+
+  @override
   String get languageSectionTitle => "Мова";
 
   @override
@@ -2019,6 +2188,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Інше";
+
+  @override
+  String get hideCompletedNumbersLabel => "Прибирати використані цифри";
 
   @override
   String get aboutApp => "Про застосунок";
@@ -2259,6 +2431,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hint => "提示";
 
   @override
+  String get undoAdTitle => "观看广告以撤销";
+
+  @override
+  String get undoAdDescription => "观看短广告即可撤销上一步。";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "广告将在 ${seconds} 秒后结束";
+  }
+
+  @override
   String get gameScreenTitle => "数独";
 
   @override
@@ -2306,6 +2489,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeDark => "深色";
 
   @override
+  String get digitStyleSectionTitle => "数字样式";
+
+  @override
+  String get digitStyleThin => "细";
+
+  @override
+  String get digitStyleMedium => "中等";
+
+  @override
+  String get digitStyleBold => "粗体";
+
+  @override
   String get languageSectionTitle => "语言";
 
   @override
@@ -2322,6 +2517,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "其他";
+
+  @override
+  String get hideCompletedNumbersLabel => "隐藏已用数字";
 
   @override
   String get aboutApp => "关于";

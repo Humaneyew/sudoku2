@@ -83,6 +83,16 @@
   "statusOff": "ВЫКЛ",
   "notes": "Заметки",
   "hint": "Подсказка",
+  "undoAdTitle": "Смотреть рекламу для отмены",
+  "undoAdDescription": "Посмотрите короткую рекламу, чтобы отменить последний ход.",
+  "undoAdCountdown": "Реклама завершится через {seconds} с",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Судоку",
   "noActiveGameMessage": "Нет активной игры. Вернитесь на главный экран.",
   "victoryTitle": "Поздравляем!",
@@ -115,6 +125,7 @@
   "vibrationLabel": "Вибрация",
   "musicLabel": "Фоновая музыка",
   "miscSectionTitle": "Другое",
+  "hideCompletedNumbersLabel": "Убирать использованные цифры",
   "aboutApp": "О приложении",
   "versionLabel": "Версия {version}",
   "@versionLabel": {

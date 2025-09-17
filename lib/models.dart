@@ -221,6 +221,7 @@ class AppState extends ChangeNotifier {
   bool soundsEnabled = true;
   bool musicEnabled = true;
   bool vibrationEnabled = true;
+  bool hideCompletedNumbers = false;
   int? highlightedNumber;
   DigitStyle digitStyle = DigitStyle.medium;
 
@@ -288,6 +289,8 @@ class AppState extends ChangeNotifier {
     soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
     musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
     vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
+    hideCompletedNumbers =
+        prefs.getBool('hideCompletedNumbers') ?? hideCompletedNumbers;
 
     final savedGame = prefs.getString('currentGame');
     if (savedGame != null) {
@@ -431,6 +434,15 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void toggleHideCompletedNumbers(bool enabled) {
+    if (hideCompletedNumbers == enabled) return;
+    hideCompletedNumbers = enabled;
+    _persist((prefs) async {
+      await prefs.setBool('hideCompletedNumbers', enabled);
     });
     notifyListeners();
   }
@@ -779,6 +791,21 @@ class AppState extends ChangeNotifier {
     if (game == null) return 9;
     return 9 - game.board.where((v) => v == number).length;
   }
+
+  bool isNumberCompleted(int number) {
+    final game = current;
+    if (game == null) return false;
+    final occurrences = game.board.where((v) => v == number).length;
+    if (occurrences != 9) return false;
+    for (var i = 0; i < game.board.length; i++) {
+      if (game.solution[i] == number && game.board[i] != number) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool get canUndoMove => _history.isNotEmpty;
 
   int? get selectedValue {
     final idx = selectedCell;

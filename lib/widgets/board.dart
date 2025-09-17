@@ -33,36 +33,43 @@ class Board extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: AspectRatio(
             aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: GridView.builder(
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 9,
-                ),
-                itemCount: 81,
-                itemBuilder: (context, index) {
-                  final value = game.board[index];
-                  final notes = game.notes[index];
-                  final given = game.given[index];
-                  final isSelected = app.selectedCell == index;
-                  final sameValue = app.isSameAsSelectedValue(index);
-                  final incorrect = !given &&
-                      value != 0 &&
-                      !app.isMoveValid(index, value);
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.black, width: 4),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: GridView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 9,
+                  ),
+                  itemCount: 81,
+                  itemBuilder: (context, index) {
+                    final value = game.board[index];
+                    final notes = game.notes[index];
+                    final given = game.given[index];
+                    final isSelected = app.selectedCell == index;
+                    final sameValue = app.isSameAsSelectedValue(index);
+                    final incorrect = !given &&
+                        value != 0 &&
+                        !app.isMoveValid(index, value);
 
-                  return _BoardCell(
-                    index: index,
-                    value: value,
-                    notes: notes,
-                    isSelected: isSelected,
-                    sameValue: sameValue,
-                    incorrect: incorrect,
-                    digitStyle: app.digitStyle,
-                    onTap: () => app.selectCell(index),
-                  );
-                },
+                    return _BoardCell(
+                      index: index,
+                      value: value,
+                      notes: notes,
+                      isSelected: isSelected,
+                      sameValue: sameValue,
+                      incorrect: incorrect,
+                      digitStyle: app.digitStyle,
+                      onTap: () => app.selectCell(index),
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -203,27 +210,25 @@ Border _cellBorder(int index) {
   final row = index ~/ 9;
   final col = index % 9;
 
+  final isTopEdge = row == 0;
+  final isLeftEdge = col == 0;
   final topIsBold = row % 3 == 0;
   final leftIsBold = col % 3 == 0;
-  final rightIsBold = col == 8;
-  final bottomIsBold = row == 8;
 
   return Border(
-    top: BorderSide(
-      color: topIsBold ? boldLineColor : thinLineColor,
-      width: topIsBold ? boldLineWidth : thinLineWidth,
-    ),
-    left: BorderSide(
-      color: leftIsBold ? boldLineColor : thinLineColor,
-      width: leftIsBold ? boldLineWidth : thinLineWidth,
-    ),
-    right: BorderSide(
-      color: rightIsBold ? boldLineColor : thinLineColor,
-      width: rightIsBold ? boldLineWidth : thinLineWidth,
-    ),
-    bottom: BorderSide(
-      color: bottomIsBold ? boldLineColor : thinLineColor,
-      width: bottomIsBold ? boldLineWidth : thinLineWidth,
-    ),
+    top: isTopEdge
+        ? BorderSide.none
+        : BorderSide(
+            color: topIsBold ? boldLineColor : thinLineColor,
+            width: topIsBold ? boldLineWidth : thinLineWidth,
+          ),
+    left: isLeftEdge
+        ? BorderSide.none
+        : BorderSide(
+            color: leftIsBold ? boldLineColor : thinLineColor,
+            width: leftIsBold ? boldLineWidth : thinLineWidth,
+          ),
+    right: BorderSide.none,
+    bottom: BorderSide.none,
   );
 }
