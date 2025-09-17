@@ -173,6 +173,8 @@ class _NumberPad extends StatelessWidget {
   Widget build(BuildContext context) {
     final selected = app.selectedValue;
     final theme = Theme.of(context);
+    final highlighted = app.highlightedNumber;
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
 
     return Container(
       decoration: BoxDecoration(
@@ -195,8 +197,12 @@ class _NumberPad extends StatelessWidget {
                 number: i + 1,
                 remaining: app.countRemaining(i + 1),
                 selected: selected == i + 1,
+                highlighted: highlighted == i + 1,
                 onTap: () => app.handleNumberInput(i + 1),
+                onHighlightStart: () => app.setHighlightedNumber(i + 1),
+                onHighlightEnd: () => app.setHighlightedNumber(null),
                 theme: theme,
+                reduceMotion: reduceMotion,
               ),
             ),
         ],
@@ -209,34 +215,69 @@ class _NumberButton extends StatelessWidget {
   final int number;
   final int remaining;
   final bool selected;
+  final bool highlighted;
   final VoidCallback onTap;
+  final VoidCallback onHighlightStart;
+  final VoidCallback onHighlightEnd;
   final ThemeData theme;
+  final bool reduceMotion;
 
   const _NumberButton({
     required this.number,
     required this.remaining,
     required this.selected,
+    required this.highlighted,
     required this.onTap,
+    required this.onHighlightStart,
+    required this.onHighlightEnd,
     required this.theme,
+    required this.reduceMotion,
   });
 
   @override
   Widget build(BuildContext context) {
-    final background = selected ? const Color(0xFFC7DBFF) : Colors.white;
-    final borderColor = selected ? const Color(0xFF3B82F6) : const Color(0xFFE2E5F3);
-    final textColor = selected ? const Color(0xFF1F2437) : const Color(0xFF1F2437);
+    final background = selected
+        ? const Color(0xFFC7DBFF)
+        : highlighted
+            ? const Color(0xFFE6F0FF)
+            : Colors.white;
+    final borderColor = selected
+        ? const Color(0xFF3B82F6)
+        : highlighted
+            ? const Color(0xFF9DBAFD)
+            : const Color(0xFFE2E5F3);
+    final textColor = const Color(0xFF1F2437);
+    final duration = reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 160);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: onTap,
-        child: Container(
+        onTapDown: (_) => onHighlightStart(),
+        onTapCancel: onHighlightEnd,
+        onTap: () {
+          onHighlightEnd();
+          onTap();
+        },
+        child: AnimatedContainer(
+          duration: duration,
+          curve: Curves.easeOut,
           height: 64,
           decoration: BoxDecoration(
             color: background,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: borderColor),
+            boxShadow: selected
+                ? const [
+                    BoxShadow(
+                      color: Color(0x1A3B82F6),
+                      blurRadius: 12,
+                      offset: Offset(0, 6),
+                    ),
+                  ]
+                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -250,12 +291,15 @@ class _NumberButton extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                remaining.toString(),
+              AnimatedDefaultTextStyle(
+                duration: duration,
                 style: TextStyle(
                   fontSize: 12,
-                  color: theme.disabledColor,
+                  color: highlighted
+                      ? const Color(0xFF3B82F6)
+                      : theme.disabledColor,
                 ),
+                child: Text(remaining.toString()),
               ),
             ],
           ),

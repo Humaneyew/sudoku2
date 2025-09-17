@@ -154,84 +154,98 @@ class _GamePageState extends State<GamePage> {
       barrierDismissible: false,
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
-        return Dialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
-                    ),
-                  ),
-                  child: const Icon(Icons.emoji_events, color: Colors.white, size: 36),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  l10n.victoryTitle,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.victoryMessage(_formatTime(elapsedMs)),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF6D7392),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(l10n.backToHome),
+        final reduceMotion = MediaQuery.of(context).disableAnimations;
+        final duration = reduceMotion
+            ? Duration.zero
+            : const Duration(milliseconds: 220);
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: reduceMotion ? 1.0 : 0.85, end: 1.0),
+          duration: duration,
+          curve: Curves.easeOutBack,
+          builder: (context, value, child) {
+            return Transform.scale(scale: value, child: child);
+          },
+          child: Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          final diff = app.currentDifficulty ??
-                              app.featuredStatsDifficulty;
-                          app.startGame(diff);
-                          setState(() {
-                            elapsedMs = 0;
-                          });
-                          _startTimer();
-                          _victoryShown = false;
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF3B82F6),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                    child:
+                        const Icon(Icons.emoji_events, color: Colors.white, size: 36),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    l10n.victoryTitle,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.victoryMessage(_formatTime(elapsedMs)),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF6D7392),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text(l10n.backToHome),
                         ),
-                        child: Text(l10n.playAnother),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            final diff = app.currentDifficulty ??
+                                app.featuredStatsDifficulty;
+                            app.startGame(diff);
+                            setState(() {
+                              elapsedMs = 0;
+                            });
+                            _startTimer();
+                            _victoryShown = false;
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3B82F6),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(l10n.playAnother),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -245,65 +259,82 @@ class _GamePageState extends State<GamePage> {
       barrierDismissible: false,
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
-        return Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 36),
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 88,
-                  height: 88,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
-                    ),
-                  ),
-                  child: const Icon(Icons.favorite, color: Colors.white, size: 40),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  l10n.outOfLivesTitle,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.outOfLivesDescription,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF6D7392),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF5D7A),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+        final reduceMotion = MediaQuery.of(context).disableAnimations;
+        final duration = reduceMotion
+            ? Duration.zero
+            : const Duration(milliseconds: 220);
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: reduceMotion ? 1.0 : 0.0, end: 1.0),
+          duration: duration,
+          curve: Curves.easeOut,
+          builder: (context, value, child) {
+            final scale = reduceMotion ? 1.0 : 0.95 + 0.05 * value;
+            return Opacity(
+              opacity: value,
+              child: Transform.scale(scale: scale, child: child),
+            );
+          },
+          child: Dialog(
+            insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 88,
+                    height: 88,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
                       ),
                     ),
-                    child: Text(l10n.restoreLifeAction),
+                    child: const Icon(Icons.favorite, color: Colors.white, size: 40),
                   ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: Text(l10n.cancelAction),
-                ),
-              ],
+                  const SizedBox(height: 18),
+                  Text(
+                    l10n.outOfLivesTitle,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.outOfLivesDescription,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF6D7392),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF5D7A),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: Text(l10n.restoreLifeAction),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(l10n.cancelAction),
+                  ),
+                ],
+              ),
             ),
           ),
         );

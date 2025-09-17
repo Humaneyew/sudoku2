@@ -196,6 +196,7 @@ class AppState extends ChangeNotifier {
   bool soundsEnabled = true;
   bool musicEnabled = true;
   bool vibrationEnabled = true;
+  int? highlightedNumber;
 
   bool _madeMistake = false;
   bool _gameCompleted = false;
@@ -447,6 +448,7 @@ class AppState extends ChangeNotifier {
     autoNotes = false;
     hintsLeft = _maxHints;
     livesLeft = _maxLives;
+    highlightedNumber = null;
     _madeMistake = false;
     _gameCompleted = false;
     _history.clear();
@@ -494,6 +496,12 @@ class AppState extends ChangeNotifier {
   void selectCell(int index) {
     if (current == null) return;
     selectedCell = index;
+    notifyListeners();
+  }
+
+  void setHighlightedNumber(int? number) {
+    if (highlightedNumber == number) return;
+    highlightedNumber = number;
     notifyListeners();
   }
 
@@ -736,6 +744,7 @@ class AppState extends ChangeNotifier {
     _madeMistake = false;
     _gameCompleted = false;
     _history.clear();
+    highlightedNumber = null;
     _clearSavedGame();
     notifyListeners();
   }
@@ -788,6 +797,14 @@ class AppState extends ChangeNotifier {
     if (selected == null || game == null) return false;
     if (game.board[selected] == 0) return false;
     return game.board[index] == game.board[selected];
+  }
+
+  bool isHighlightedCandidate(int index) {
+    final number = highlightedNumber;
+    final game = current;
+    if (number == null || game == null) return false;
+    if (game.board[index] != 0) return false;
+    return game.solution[index] == number;
   }
 
   List<int> rowIndices(int index) {
