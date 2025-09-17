@@ -179,7 +179,7 @@ class _HomeTab extends StatelessWidget {
                 rankLabel: sheetL10n.rankLabel(1),
                 progress: '—',
                 isActive: false,
-                onTap: () => Navigator.pop(context, Difficulty.beginner),
+                onTap: () => Navigator.pop(context, Difficulty.novice),
               ),
               const SizedBox(height: 12),
               SizedBox(

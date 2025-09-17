@@ -9,12 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'puzzles.dart';
 
 /// Уровни сложности, используемые в приложении.
-enum Difficulty { beginner, novice, medium, high, expert, master }
+enum Difficulty { novice, medium, high, expert, master }
 
 extension DifficultyX on Difficulty {
   /// Человекочитаемое название уровня сложности.
   String title(AppLocalizations l10n) => switch (this) {
-        Difficulty.beginner => l10n.difficultyBeginner,
         Difficulty.novice => l10n.difficultyNovice,
         Difficulty.medium => l10n.difficultyMedium,
         Difficulty.high => l10n.difficultyHigh,
@@ -24,7 +23,6 @@ extension DifficultyX on Difficulty {
 
   /// Короткая подпись, которая хорошо подходит для бейджей и карточек.
   String shortLabel(AppLocalizations l10n) => switch (this) {
-        Difficulty.beginner => l10n.difficultyBeginnerShort,
         Difficulty.novice => l10n.difficultyNoviceShort,
         Difficulty.medium => l10n.difficultyMediumShort,
         Difficulty.high => l10n.difficultyHighShort,
@@ -176,9 +174,12 @@ class AppState extends ChangeNotifier {
 
   Map<Difficulty, DifficultyStats> statsByDifficulty = _defaultStats();
 
+  final math.Random _random = math.Random();
+  final Map<Difficulty, List<int>> _puzzleQueues = {};
+
   GameState? current;
   Difficulty? currentDifficulty;
-  Difficulty featuredDifficulty = Difficulty.beginner;
+  Difficulty featuredDifficulty = Difficulty.novice;
 
   int totalStars = 0;
   int battleWinRate = 87;
@@ -223,7 +224,7 @@ class AppState extends ChangeNotifier {
           for (final entry in statsMap.entries) {
             final key = Difficulty.values.firstWhere(
               (d) => d.name == entry.key,
-              orElse: () => Difficulty.beginner,
+              orElse: () => Difficulty.novice,
             );
             parsed[key] = DifficultyStats.fromJson(
                 (entry.value as Map).cast<String, dynamic>());
@@ -263,7 +264,7 @@ class AppState extends ChangeNotifier {
             ? null
             : Difficulty.values.firstWhere(
                 (d) => d.name == diffName,
-                orElse: () => Difficulty.beginner,
+                orElse: () => Difficulty.novice,
               );
         final board = (map['board'] as List?)?.map((e) => e as int).toList();
         final solution =
@@ -401,9 +402,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _nextPuzzleIndex(Difficulty diff, int length) {
+    var queue = _puzzleQueues[diff];
+    if (queue == null || queue.isEmpty) {
+      queue = List<int>.generate(length, (index) => index);
+      queue.shuffle(_random);
+      _puzzleQueues[diff] = queue;
+    }
+    return queue.removeLast();
+  }
+
   /// Запуск новой игры выбранного уровня сложности.
   void startGame(Difficulty diff) {
-    final available = puzzles[diff] ?? puzzles[Difficulty.beginner];
+    final available = puzzles[diff] ?? puzzles[Difficulty.novice];
     if (available == null || available.isEmpty) {
       current = null;
       selectedCell = null;
@@ -417,7 +428,7 @@ class AppState extends ChangeNotifier {
       return;
     }
 
-    final index = DateTime.now().millisecondsSinceEpoch % available.length;
+    final index = _nextPuzzleIndex(diff, available.length);
     final puzzle = available[index];
 
     current = GameState(

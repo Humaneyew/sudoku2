@@ -140,8 +140,6 @@
   "statsStreakSection": "Серія",
   "statsCurrentStreak": "Поточна серія",
   "statsBestStreak": "Найкраща серія",
-  "difficultyBeginner": "Початківець",
-  "difficultyBeginnerShort": "Поч.",
   "difficultyNovice": "Новачок",
   "difficultyNoviceShort": "Нов.",
   "difficultyMedium": "Середній",
@@ -150,6 +148,6 @@
   "difficultyHighShort": "Вис.",
   "difficultyExpert": "Експерт",
   "difficultyExpertShort": "Експ.",
-  "difficultyMaster": "Майстер",
-  "difficultyMasterShort": "Майст."
+  "difficultyMaster": "Майстр",
+  "difficultyMasterShort": "Майстр."
 }
