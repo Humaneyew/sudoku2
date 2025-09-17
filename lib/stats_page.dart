@@ -17,7 +17,7 @@ class _StatsTabState extends State<StatsTab> {
   @override
   void initState() {
     super.initState();
-    _selected = Difficulty.beginner;
+    _selected = Difficulty.novice;
   }
 
   @override
