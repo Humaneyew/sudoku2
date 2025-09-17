@@ -29,10 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.only(bottom: 16),
-        child: IndexedStack(
-          index: _index,
-          children: pages,
-        ),
+        child: IndexedStack(index: _index, children: pages),
       ),
       bottomNavigationBar: _BottomNavBar(
         index: _index,
@@ -46,10 +43,7 @@ class _BottomNavBar extends StatelessWidget {
   final int index;
   final ValueChanged<int> onChanged;
 
-  const _BottomNavBar({
-    required this.index,
-    required this.onChanged,
-  });
+  const _BottomNavBar({required this.index, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -126,11 +120,9 @@ class _HomeTab extends StatelessWidget {
                   onNewGame: () => _openDifficultySheet(context),
                   onContinue: app.hasUnfinishedGame
                       ? () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const GamePage(),
-                            ),
-                          )
+                          context,
+                          MaterialPageRoute(builder: (_) => const GamePage()),
+                        )
                       : null,
                 ),
               ],
@@ -143,7 +135,6 @@ class _HomeTab extends StatelessWidget {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
-    final l10n = AppLocalizations.of(context)!;
     final difficulty = await showModalBottomSheet<Difficulty>(
       context: context,
       backgroundColor: Colors.white,
@@ -177,8 +168,8 @@ class _HomeTab extends StatelessWidget {
                 Text(
                   sheetL10n.selectDifficultyTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                    fontWeight: FontWeight.w700,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -225,15 +216,9 @@ class _TopBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _CircleButton(
-          icon: Icons.leaderboard_outlined,
-          onTap: () {},
-        ),
+        _CircleButton(icon: Icons.leaderboard_outlined, onTap: () {}),
         const SizedBox(width: 12),
-        _CircleButton(
-          icon: Icons.settings_outlined,
-          onTap: onSettingsTap,
-        ),
+        _CircleButton(icon: Icons.settings_outlined, onTap: onSettingsTap),
       ],
     );
   }
@@ -313,37 +298,27 @@ class _ChallengeCarousel extends StatelessWidget {
       ),
     ];
 
-    const scale = 0.7;
     final screenWidth = MediaQuery.of(context).size.width;
-    final originalCardWidth = screenWidth - 48;
-    final cardWidth = originalCardWidth * scale;
-    final carouselHeight = 170 * scale;
+    const horizontalPadding = 24.0;
+    const cardSpacing = 16.0;
+    const cardHeight = 196.0;
+    final availableWidth = screenWidth - horizontalPadding * 2;
+    final cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
 
     return SizedBox(
-      height: carouselHeight,
-      child: SingleChildScrollView(
+      height: cardHeight,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
         clipBehavior: Clip.none,
-        child: Row(
-          children: [
-            for (var index = 0; index < cards.length; index++) ...[
-              if (index != 0) const SizedBox(width: 16),
-              SizedBox(
-                width: cardWidth,
-                height: carouselHeight,
-                child: FittedBox(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    width: originalCardWidth,
-                    height: 170,
-                    child: _ChallengeCard(data: cards[index]),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
+        itemBuilder: (context, index) {
+          return SizedBox(
+            width: cardWidth,
+            child: _ChallengeCard(data: cards[index]),
+          );
+        },
+        separatorBuilder: (_, __) => const SizedBox(width: cardSpacing),
+        itemCount: cards.length,
       ),
     );
   }
@@ -406,16 +381,15 @@ class _ChallengeCard extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  data.icon,
-                  color: data.gradient.last,
-                  size: 22,
-                ),
+                child: Icon(data.icon, color: data.gradient.last, size: 22),
               ),
               const Spacer(),
               if (data.badge != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.18),
                     borderRadius: BorderRadius.circular(30),
@@ -442,10 +416,7 @@ class _ChallengeCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             data.subtitle,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 18),
           SizedBox(
@@ -471,6 +442,7 @@ class _ChallengeCard extends StatelessWidget {
     );
   }
 }
+
 class _DailyChain extends StatelessWidget {
   final int streak;
 
@@ -499,9 +471,9 @@ class _DailyChain extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             l10n.dailyStreak,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 12),
           Container(
@@ -572,8 +544,9 @@ class _ProgressCard extends StatelessWidget {
                   ? 0
                   : stats.progressCurrent / stats.progressTarget,
               backgroundColor: const Color(0xFFD8E6FF),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFF3B82F6),
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -653,7 +626,9 @@ class _DifficultyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = isActive ? const Color(0xFFFFEEF0) : Colors.white;
-    final borderColor = isActive ? const Color(0xFFE86C82) : const Color(0xFFE2E5F3);
+    final borderColor = isActive
+        ? const Color(0xFFE86C82)
+        : const Color(0xFFE2E5F3);
 
     return InkWell(
       borderRadius: BorderRadius.circular(22),
@@ -704,6 +679,7 @@ class _DifficultyTile extends StatelessWidget {
     );
   }
 }
+
 class _DailyChallengesTab extends StatelessWidget {
   const _DailyChallengesTab();
 
@@ -827,10 +803,7 @@ class _DailyHeroCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             l10n.todayPuzzleDescription,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -875,8 +848,8 @@ class _DayProgress extends StatelessWidget {
     final color = isToday
         ? const Color(0xFF3B82F6)
         : completed
-            ? const Color(0xFF6ACB8A)
-            : const Color(0xFFB0B7D3);
+        ? const Color(0xFF6ACB8A)
+        : const Color(0xFFB0B7D3);
 
     return Column(
       children: [
