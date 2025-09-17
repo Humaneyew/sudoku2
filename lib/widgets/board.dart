@@ -51,10 +51,10 @@ class Board extends StatelessWidget {
               background = const Color(0xFFF3F6FF);
             }
             if (sameValue) {
-              background = const Color(0xFFDDE7FF);
+              background = const Color(0xFFDAE8FF);
             }
             if (isSelected) {
-              background = const Color(0xFFCBD9FF);
+              background = const Color(0xFFC7DBFF);
             }
             if (conflict) {
               background = const Color(0xFFFFE4E7);
@@ -127,7 +127,7 @@ class _CellContent extends StatelessWidget {
           fontWeight: given ? FontWeight.w700 : FontWeight.w600,
           color: incorrect
               ? const Color(0xFFE25562)
-              : (given ? const Color(0xFF1F2437) : const Color(0xFF3A4BB3)),
+              : (given ? const Color(0xFF1F2437) : const Color(0xFF2563EB)),
         ),
       );
     }

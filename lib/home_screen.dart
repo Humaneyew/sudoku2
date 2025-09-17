@@ -221,7 +221,7 @@ class _TopBar extends StatelessWidget {
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [Color(0xFF4B5CF5), Color(0xFF6D7AFF)],
+              colors: [Color(0xFF3B82F6), Color(0xFF60A5FA)],
             ),
           ),
           child: const Icon(Icons.person_outline, color: Colors.white),
@@ -274,7 +274,7 @@ class _CircleButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(icon, color: const Color(0xFF4B5CF5)),
+        child: Icon(icon, color: const Color(0xFF3B82F6)),
       ),
     );
   }
@@ -316,7 +316,7 @@ class _ChallengeCarousel extends StatelessWidget {
         title: 'Битва',
         subtitle: 'Win Rate ${battleWinRate}%',
         buttonLabel: 'Почати',
-        gradient: const [Color(0xFFB1C6FF), Color(0xFF5A7CFF)],
+        gradient: const [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
         icon: Icons.sports_esports_outlined,
         onPressed: () {},
       ),
@@ -577,9 +577,9 @@ class _ProgressCard extends StatelessWidget {
               value: stats.progressTarget == 0
                   ? 0
                   : stats.progressCurrent / stats.progressTarget,
-              backgroundColor: const Color(0xFFE8EBFB),
+              backgroundColor: const Color(0xFFD8E6FF),
               valueColor:
-                  const AlwaysStoppedAnimation<Color>(Color(0xFF4B5CF5)),
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
             ),
           ),
           const SizedBox(height: 8),
@@ -606,7 +606,7 @@ class _ProgressCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onNewGame,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4B5CF5),
+                backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
@@ -861,7 +861,7 @@ class _DailyHeroCard extends StatelessWidget {
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF4E8BFF),
+                foregroundColor: const Color(0xFF3B82F6),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -895,7 +895,7 @@ class _DayProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isToday
-        ? const Color(0xFF4B5CF5)
+        ? const Color(0xFF3B82F6)
         : completed
             ? const Color(0xFF6ACB8A)
             : const Color(0xFFB0B7D3);
@@ -965,10 +965,10 @@ class _RewardTile extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: const Color(0xFFE8EBFB),
+              color: const Color(0xFFD8E6FF),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: const Color(0xFF4B5CF5)),
+            child: Icon(icon, color: const Color(0xFF3B82F6)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -983,7 +983,7 @@ class _RewardTile extends StatelessWidget {
           Text(
             reward,
             style: const TextStyle(
-              color: Color(0xFF4B5CF5),
+              color: Color(0xFF3B82F6),
               fontWeight: FontWeight.w700,
             ),
           ),

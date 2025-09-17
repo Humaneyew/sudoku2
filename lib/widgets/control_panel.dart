@@ -63,7 +63,7 @@ class _ActionRow extends StatelessWidget {
             onTap: app.toggleAutoNotes,
             chipLabel: app.autoNotes ? 'УВІМК' : 'ВИМК',
             chipColor:
-                app.autoNotes ? const Color(0xFF4B5CF5) : theme.disabledColor,
+                app.autoNotes ? const Color(0xFF3B82F6) : theme.disabledColor,
           ),
           _ActionButton(
             icon: Icons.edit_note,
@@ -71,7 +71,7 @@ class _ActionRow extends StatelessWidget {
             onTap: app.toggleNotesMode,
             chipLabel: app.notesMode ? 'УВІМК' : 'ВИМК',
             chipColor:
-                app.notesMode ? const Color(0xFF4B5CF5) : theme.disabledColor,
+                app.notesMode ? const Color(0xFF3B82F6) : theme.disabledColor,
           ),
           _ActionButton(
             icon: Icons.lightbulb_outline,
@@ -108,7 +108,7 @@ class _ActionButton extends StatelessWidget {
     final theme = Theme.of(context);
     final color = onTap == null
         ? theme.disabledColor
-        : const Color(0xFF4B5CF5);
+        : const Color(0xFF3B82F6);
 
     return Expanded(
       child: InkResponse(
@@ -121,7 +121,7 @@ class _ActionButton extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFFE9ECFB),
+                color: const Color(0xFFD8E6FF),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(icon, color: color),
@@ -220,8 +220,8 @@ class _NumberButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = selected ? const Color(0xFFCBD9FF) : Colors.white;
-    final borderColor = selected ? const Color(0xFF4B5CF5) : const Color(0xFFE2E5F3);
+    final background = selected ? const Color(0xFFC7DBFF) : Colors.white;
+    final borderColor = selected ? const Color(0xFF3B82F6) : const Color(0xFFE2E5F3);
     final textColor = selected ? const Color(0xFF1F2437) : const Color(0xFF1F2437);
 
     return Padding(
