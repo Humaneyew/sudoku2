@@ -48,6 +48,7 @@
     }
   },
   "newGame": "New game",
+  "continueGame": "Continue game",
   "weeklyProgress": "Weekly progress",
   "rewardsTitle": "Rewards",
   "rewardNoMistakesTitle": "Finish the challenge without mistakes",

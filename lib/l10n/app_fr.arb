@@ -48,6 +48,7 @@
     }
   },
   "newGame": "Nouvelle partie",
+  "continueGame": "Continuer la partie",
   "weeklyProgress": "Progression hebdomadaire",
   "rewardsTitle": "Récompenses",
   "rewardNoMistakesTitle": "Terminez le défi sans erreur",

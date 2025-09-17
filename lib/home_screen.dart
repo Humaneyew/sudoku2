@@ -116,6 +116,12 @@ class _HomeTab extends StatelessWidget {
             difficulty: difficulty,
             stats: stats,
             onNewGame: () => _openDifficultySheet(context),
+            onContinue: app.hasUnfinishedGame
+                ? () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GamePage()),
+                    )
+                : null,
             heartBonus: app.heartBonus,
           ),
         ],
@@ -218,36 +224,16 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF60A5FA)],
-            ),
-          ),
-          child: const Icon(Icons.person_outline, color: Colors.white),
+        _CircleButton(
+          icon: Icons.leaderboard_outlined,
+          onTap: () {},
         ),
-        Row(
-          children: [
-            _CircleButton(
-              icon: Icons.emoji_events_outlined,
-              onTap: () {},
-            ),
-            const SizedBox(width: 12),
-            _CircleButton(
-              icon: Icons.leaderboard_outlined,
-              onTap: () {},
-            ),
-            const SizedBox(width: 12),
-            _CircleButton(
-              icon: Icons.settings_outlined,
-              onTap: onSettingsTap,
-            ),
-          ],
+        const SizedBox(width: 12),
+        _CircleButton(
+          icon: Icons.settings_outlined,
+          onTap: onSettingsTap,
         ),
       ],
     );
@@ -513,12 +499,14 @@ class _ProgressCard extends StatelessWidget {
   final Difficulty difficulty;
   final DifficultyStats stats;
   final VoidCallback onNewGame;
+  final VoidCallback? onContinue;
   final int heartBonus;
 
   const _ProgressCard({
     required this.difficulty,
     required this.stats,
     required this.onNewGame,
+    this.onContinue,
     required this.heartBonus,
   });
 
@@ -610,6 +598,30 @@ class _ProgressCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
+          if (onContinue != null) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: onContinue,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF3B82F6),
+                  side: const BorderSide(color: Color(0xFF3B82F6)),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                child: Text(
+                  l10n.continueGame,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
