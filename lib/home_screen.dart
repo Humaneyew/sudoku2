@@ -7,6 +7,7 @@ import 'game_page.dart';
 import 'models.dart';
 import 'settings_page.dart';
 import 'stats_page.dart';
+import 'theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -137,7 +138,7 @@ class _HomeTab extends StatelessWidget {
     final app = context.read<AppState>();
     final difficulty = await showModalBottomSheet<Difficulty>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
@@ -146,6 +147,8 @@ class _HomeTab extends StatelessWidget {
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
+        final theme = Theme.of(context);
+        final scheme = theme.colorScheme;
 
         return SafeArea(
           top: false,
@@ -160,14 +163,14 @@ class _HomeTab extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD7DBEB),
+                    color: scheme.outlineVariant,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   sheetL10n.selectDifficultyTitle,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
@@ -232,6 +235,8 @@ class _CircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
     return InkResponse(
       onTap: onTap,
       radius: 28,
@@ -239,17 +244,17 @@ class _CircleButton extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.headerButtonBackground,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x1A1B1D3A),
+              color: theme.shadowColor,
               blurRadius: 12,
-              offset: Offset(0, 6),
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-        child: Icon(icon, color: const Color(0xFF3B82F6)),
+        child: Icon(icon, color: colors.headerButtonIcon),
       ),
     );
   }
@@ -351,6 +356,9 @@ class _ChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final onPrimary = scheme.onPrimary;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -360,11 +368,11 @@ class _ChallengeCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1A1B1D3A),
+            color: theme.shadowColor,
             blurRadius: 18,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -377,8 +385,8 @@ class _ChallengeCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: onPrimary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(data.icon, color: data.gradient.last, size: 22),
@@ -391,52 +399,55 @@ class _ChallengeCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
+                    color: onPrimary.withOpacity(0.18),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
                     data.badge!,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
             ],
+        ),
+        const Spacer(),
+        Text(
+          data.title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: onPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
           ),
-          const Spacer(),
-          Text(
-            data.title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          data.subtitle,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: onPrimary.withOpacity(0.7),
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 18),
+        SizedBox(
+          height: 40,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: onPrimary,
+              foregroundColor: data.gradient.last,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+            ),
+            onPressed: data.onPressed,
+            child: Text(
+              data.buttonLabel,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            data.subtitle,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: data.gradient.last,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-              ),
-              onPressed: data.onPressed,
-              child: Text(
-                data.buttonLabel,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
+        ),
         ],
       ),
     );
@@ -451,41 +462,45 @@ class _DailyChain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final accent = scheme.error;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x141B1D3A),
+            color: theme.shadowColor,
             blurRadius: 16,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.local_fire_department, color: Color(0xFFFF713B)),
+          Icon(Icons.local_fire_department, color: accent),
           const SizedBox(width: 8),
           Text(
             l10n.dailyStreak,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
+            ),
           ),
           const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFE2D5),
+              color: Color.alphaBlend(accent.withOpacity(0.16), scheme.surface),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               streak.toString(),
-              style: const TextStyle(
-                color: Color(0xFFFD6E44),
+              style: TextStyle(
+                color: accent,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -510,19 +525,20 @@ class _ProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x141B1D3A),
+            color: theme.shadowColor,
             blurRadius: 24,
-            offset: Offset(0, 16),
+            offset: const Offset(0, 16),
           ),
         ],
       ),
@@ -532,7 +548,7 @@ class _ProgressCard extends StatelessWidget {
           Text(
             l10n.rankProgress,
             style: theme.textTheme.labelLarge?.copyWith(
-              color: const Color(0xFF8187A5),
+              color: scheme.onSurface.withOpacity(0.68),
             ),
           ),
           const SizedBox(height: 8),
@@ -543,9 +559,9 @@ class _ProgressCard extends StatelessWidget {
               value: stats.progressTarget == 0
                   ? 0
                   : stats.progressCurrent / stats.progressTarget,
-              backgroundColor: const Color(0xFFD8E6FF),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF3B82F6),
+              backgroundColor: scheme.primary.withOpacity(0.12),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                scheme.primary,
               ),
             ),
           ),
@@ -554,6 +570,7 @@ class _ProgressCard extends StatelessWidget {
             l10n.rankLabel(stats.rank),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -563,8 +580,8 @@ class _ProgressCard extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: onContinue,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF3B82F6),
-                  side: const BorderSide(color: Color(0xFF3B82F6)),
+                  foregroundColor: scheme.primary,
+                  side: BorderSide(color: scheme.primary),
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),
@@ -586,8 +603,8 @@ class _ProgressCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onNewGame,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6),
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -625,10 +642,15 @@ class _DifficultyTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background = isActive ? const Color(0xFFFFEEF0) : Colors.white;
-    final borderColor = isActive
-        ? const Color(0xFFE86C82)
-        : const Color(0xFFE2E5F3);
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final background = isActive
+        ? Color.alphaBlend(scheme.primary.withOpacity(0.12), scheme.surface)
+        : scheme.surface;
+    final borderColor =
+        isActive ? scheme.primary : scheme.outlineVariant;
+    final titleColor = isActive ? scheme.primary : scheme.onSurface;
+    final mutedColor = scheme.onSurface.withOpacity(0.68);
 
     return InkWell(
       borderRadius: BorderRadius.circular(22),
@@ -648,18 +670,16 @@ class _DifficultyTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isActive
-                          ? const Color(0xFFE25562)
-                          : const Color(0xFF1F2437),
+                      color: titleColor,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     rankLabel,
-                    style: const TextStyle(
-                      color: Color(0xFF7A81A0),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: mutedColor,
                       fontSize: 12,
                     ),
                   ),
@@ -668,8 +688,8 @@ class _DifficultyTile extends StatelessWidget {
             ),
             Text(
               progress,
-              style: const TextStyle(
-                color: Color(0xFF7A81A0),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: mutedColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -766,6 +786,9 @@ class _DailyHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final onPrimary = scheme.onPrimary;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -783,19 +806,21 @@ class _DailyHeroCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: onPrimary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               dateLabel,
-              style: const TextStyle(color: Colors.white70),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: onPrimary.withOpacity(0.7),
+              ),
             ),
           ),
           const SizedBox(height: 18),
           Text(
             l10n.todayPuzzle,
-            style: const TextStyle(
-              color: Colors.white,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: onPrimary,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
@@ -803,7 +828,10 @@ class _DailyHeroCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             l10n.todayPuzzleDescription,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: onPrimary.withOpacity(0.7),
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -811,8 +839,8 @@ class _DailyHeroCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF3B82F6),
+                backgroundColor: onPrimary,
+                foregroundColor: scheme.primary,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -845,18 +873,24 @@ class _DayProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isToday
-        ? const Color(0xFF3B82F6)
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final baseColor = isToday
+        ? scheme.primary
         : completed
-        ? const Color(0xFF6ACB8A)
-        : const Color(0xFFB0B7D3);
+            ? scheme.secondary
+            : scheme.outlineVariant;
+    final background =
+        Color.alphaBlend(baseColor.withOpacity(0.15), scheme.surface);
+    final textColor =
+        isToday || completed ? baseColor : scheme.onSurface.withOpacity(0.7);
 
     return Column(
       children: [
         Text(
           label.toUpperCase(),
-          style: const TextStyle(
-            color: Color(0xFF7B83A6),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurface.withOpacity(0.6),
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -866,14 +900,14 @@ class _DayProgress extends StatelessWidget {
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
+            color: background,
             borderRadius: BorderRadius.circular(18),
           ),
           alignment: Alignment.center,
           child: Text(
             day.toString(),
-            style: TextStyle(
-              color: color,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: textColor,
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),
@@ -897,16 +931,18 @@ class _RewardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0F1B1D3A),
+            color: theme.shadowColor,
             blurRadius: 18,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -916,25 +952,25 @@ class _RewardTile extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: const Color(0xFFD8E6FF),
+              color: scheme.primary.withOpacity(0.12),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: const Color(0xFF3B82F6)),
+            child: Icon(icon, color: scheme.primary),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1F2437),
+                color: scheme.onSurface,
               ),
             ),
           ),
           Text(
             reward,
-            style: const TextStyle(
-              color: Color(0xFF3B82F6),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: scheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),

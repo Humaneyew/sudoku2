@@ -195,6 +195,10 @@ class _ThemeConfig {
   final Color primary;
   final Color onPrimary;
   final Color onSurface;
+  final Color secondary;
+  final Color onSecondary;
+  final Color error;
+  final Color onError;
   final Color outline;
   final Color outlineVariant;
   final SudokuColors colors;
@@ -206,6 +210,10 @@ class _ThemeConfig {
     required this.primary,
     required this.onPrimary,
     required this.onSurface,
+    required this.secondary,
+    required this.onSecondary,
+    required this.error,
+    required this.onError,
     required this.outline,
     required this.outlineVariant,
     required this.colors,
@@ -216,24 +224,28 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
   SudokuTheme.white: _ThemeConfig(
     brightness: Brightness.light,
     background: const Color(0xFFF7FAFF),
-    surface: Colors.white,
+    surface: const Color(0xFFFFFFFF),
     primary: const Color(0xFF2563EB),
-    onPrimary: Colors.white,
+    onPrimary: const Color(0xFFFFFFFF),
     onSurface: const Color(0xFF172036),
+    secondary: const Color(0xFF6ACB8A),
+    onSecondary: const Color(0xFFFFFFFF),
+    error: const Color(0xFFE74C3C),
+    onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFDDE5F6),
     outlineVariant: const Color(0xFFE8EDF9),
     colors: const SudokuColors(
-      boardInner: Colors.white,
+      boardInner: Color(0xFFFFFFFF),
       boardBorder: Color(0xFFC7D3F4),
       selectedCell: Color(0xFFD9E7FF),
       sameNumberCell: Color(0xFFF1F5FF),
       noteColor: Color(0xFF7C8CB2),
-      headerButtonBackground: Colors.white,
+      headerButtonBackground: Color(0xFFFFFFFF),
       headerButtonIcon: Color(0xFF2563EB),
       actionButtonActiveBackground: Color(0xFFE1ECFF),
       actionButtonActiveBorder: Color(0xFF90B5FF),
       actionButtonBadgeColor: Color(0xFF1D4ED8),
-      numberPadBackground: Colors.white,
+      numberPadBackground: Color(0xFFFFFFFF),
       numberPadBorder: Color(0xFFE2E8F7),
       numberPadSelectedBackground: Color(0xFFC6DAFF),
       numberPadSelectedBorder: Color(0xFF1D4ED8),
@@ -251,8 +263,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     background: const Color(0xFFF8F0DE),
     surface: const Color(0xFFFFF7E8),
     primary: const Color(0xFF3E8B6D),
-    onPrimary: Colors.white,
+    onPrimary: const Color(0xFFFFFFFF),
     onSurface: const Color(0xFF5A4529),
+    secondary: const Color(0xFF8AB89A),
+    onSecondary: const Color(0xFFFFFFFF),
+    error: const Color(0xFFE74C3C),
+    onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFE8DCC3),
     outlineVariant: const Color(0xFFF2E7CF),
     colors: const SudokuColors(
@@ -284,8 +300,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     background: const Color(0xFFE6F7F1),
     surface: const Color(0xFFF3FBF7),
     primary: const Color(0xFF2F8D6A),
-    onPrimary: Colors.white,
+    onPrimary: const Color(0xFFFFFFFF),
     onSurface: const Color(0xFF153D2A),
+    secondary: const Color(0xFF78B894),
+    onSecondary: const Color(0xFFFFFFFF),
+    error: const Color(0xFFE74C3C),
+    onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFCFE7DF),
     outlineVariant: const Color(0xFFE2F1EC),
     colors: const SudokuColors(
@@ -317,8 +337,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     background: const Color(0xFF121212),
     surface: const Color(0xFF1E1E1E),
     primary: const Color(0xFF3D82FF),
-    onPrimary: Colors.white,
+    onPrimary: const Color(0xFFFFFFFF),
     onSurface: const Color(0xFFE0E0E0),
+    secondary: const Color(0xFFE86C82),
+    onSecondary: const Color(0xFFFFFFFF),
+    error: const Color(0xFFFF5D7A),
+    onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFF2A2A2A),
     outlineVariant: const Color(0xFF242424),
     colors: const SudokuColors(
@@ -355,8 +379,8 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
   ).copyWith(
     primary: config.primary,
     onPrimary: config.onPrimary,
-    secondary: config.primary,
-    onSecondary: config.onPrimary,
+    secondary: config.secondary,
+    onSecondary: config.onSecondary,
     tertiary: config.primary,
     onTertiary: config.onPrimary,
     background: config.background,
@@ -370,8 +394,8 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
     onSurfaceVariant: config.onSurface.withOpacity(0.72),
     outline: config.outline,
     outlineVariant: config.outlineVariant,
-    error: const Color(0xFFE74C3C),
-    onError: Colors.white,
+    error: config.error,
+    onError: config.onError,
     surfaceTint: Colors.transparent,
   );
 

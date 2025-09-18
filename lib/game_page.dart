@@ -167,7 +167,7 @@ class _GamePageState extends State<GamePage> {
             return Transform.scale(scale: value, child: child);
           },
           child: Dialog(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
@@ -185,8 +185,11 @@ class _GamePageState extends State<GamePage> {
                         colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
                       ),
                     ),
-                    child:
-                        const Icon(Icons.emoji_events, color: Colors.white, size: 36),
+                    child: Icon(
+                      Icons.emoji_events,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 36,
+                    ),
                   ),
                   const SizedBox(height: 18),
                   Text(
@@ -200,8 +203,11 @@ class _GamePageState extends State<GamePage> {
                   Text(
                     l10n.victoryMessage(_formatTime(elapsedMs)),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF6D7392),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                       fontSize: 14,
                     ),
                   ),
@@ -232,8 +238,10 @@ class _GamePageState extends State<GamePage> {
                             _victoryShown = false;
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3B82F6),
-                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -277,7 +285,7 @@ class _GamePageState extends State<GamePage> {
           },
           child: Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 36),
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32),
             ),
@@ -295,7 +303,11 @@ class _GamePageState extends State<GamePage> {
                         colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
                       ),
                     ),
-                    child: const Icon(Icons.favorite, color: Colors.white, size: 40),
+                    child: Icon(
+                      Icons.favorite,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 40,
+                    ),
                   ),
                   const SizedBox(height: 18),
                   Text(
@@ -309,8 +321,11 @@ class _GamePageState extends State<GamePage> {
                   Text(
                     l10n.outOfLivesDescription,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF6D7392),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -319,8 +334,10 @@ class _GamePageState extends State<GamePage> {
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context, true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF5D7A),
-                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.error,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onError,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -502,9 +519,9 @@ class _StatusBar extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.star_rounded,
-                  color: Color(0xFFFFB347),
+                  color: scheme.secondary,
                   size: 20,
                 ),
                 const SizedBox(width: 6),
@@ -534,7 +551,8 @@ class _HeartsIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final inactive = theme.colorScheme.outlineVariant;
+    final scheme = theme.colorScheme;
+    final inactive = scheme.outlineVariant;
     return Row(
       children: List.generate(3, (index) {
         final active = index < lives;
@@ -543,7 +561,7 @@ class _HeartsIndicator extends StatelessWidget {
           child: Icon(
             Icons.favorite,
             size: 24,
-            color: active ? const Color(0xFFE25562) : inactive,
+            color: active ? scheme.error : inactive,
           ),
         );
       }),

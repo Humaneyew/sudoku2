@@ -25,7 +25,14 @@ class _StatsTabState extends State<StatsTab> {
     final app = context.watch<AppState>();
     final stats = app.statsFor(_selected);
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    final scheme = theme.colorScheme;
+    final primary = scheme.primary;
+    Color blend(Color a, Color b, double t) => Color.lerp(a, b, t) ?? a;
+    final winsAccent = scheme.secondary;
+    final rateAccent = blend(scheme.error, scheme.secondary, 0.5);
+    final flawlessAccent = blend(scheme.primary, scheme.onSurface, 0.3);
+    final averageTimeAccent = blend(scheme.primary, scheme.onSurface, 0.4);
+    final currentStreakAccent = blend(scheme.error, scheme.secondary, 0.35);
     final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
@@ -56,19 +63,19 @@ class _StatsTabState extends State<StatsTab> {
               ),
               _StatRowData(
                 icon: Icons.emoji_events_outlined,
-                color: const Color(0xFF6ACB8A),
+                color: winsAccent,
                 label: l10n.statsGamesWon,
                 value: stats.gamesWon.toString(),
               ),
               _StatRowData(
                 icon: Icons.pie_chart_outline,
-                color: const Color(0xFFE8736D),
+                color: rateAccent,
                 label: l10n.statsWinRate,
                 value: stats.winRateText,
               ),
               _StatRowData(
                 icon: Icons.shield_moon_outlined,
-                color: const Color(0xFFFFB347),
+                color: flawlessAccent,
                 label: l10n.statsFlawless,
                 value: stats.flawlessWins.toString(),
               ),
@@ -86,7 +93,7 @@ class _StatsTabState extends State<StatsTab> {
               ),
               _StatRowData(
                 icon: Icons.hourglass_bottom,
-                color: const Color(0xFF6D7392),
+                color: averageTimeAccent,
                 label: l10n.statsAverageTime,
                 value: stats.averageTimeText,
               ),
@@ -98,13 +105,13 @@ class _StatsTabState extends State<StatsTab> {
             rows: [
               _StatRowData(
                 icon: Icons.bolt_outlined,
-                color: const Color(0xFFFB923C),
+                color: currentStreakAccent,
                 label: l10n.statsCurrentStreak,
                 value: stats.currentStreak.toString(),
               ),
               _StatRowData(
                 icon: Icons.auto_graph_outlined,
-                color: primary,
+                color: winsAccent,
                 label: l10n.statsBestStreak,
                 value: stats.bestStreak.toString(),
               ),
@@ -128,7 +135,7 @@ class _DifficultySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    final scheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Wrap(
       spacing: 8,
@@ -139,12 +146,16 @@ class _DifficultySelector extends StatelessWidget {
             label: Text(diff.title(l10n)),
             selected: diff == selected,
             onSelected: (_) => onChanged(diff),
-            selectedColor: primary,
-            labelStyle: TextStyle(
-              color: diff == selected ? Colors.white : const Color(0xFF4C5472),
+            selectedColor: scheme.primary,
+            checkmarkColor: scheme.onPrimary,
+            labelStyle: theme.textTheme.labelLarge?.copyWith(
+              color: diff == selected ? scheme.onPrimary : scheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
-            backgroundColor: const Color(0xFFE0ECFF),
+            backgroundColor: scheme.surfaceVariant,
+            side: BorderSide(
+              color: diff == selected ? scheme.primary : scheme.outlineVariant,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
             ),
@@ -163,18 +174,19 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x121B1D3A),
+            color: theme.shadowColor,
             blurRadius: 18,
-            offset: Offset(0, 12),
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -185,6 +197,7 @@ class _StatsSection extends StatelessWidget {
             title,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -195,7 +208,7 @@ class _StatsSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Divider(
                   height: 1,
-                  color: theme.dividerColor?.withOpacity(0.4),
+                  color: scheme.outlineVariant,
                 ),
               ),
           ],
@@ -226,6 +239,8 @@ class _StatRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Row(
       children: [
         Container(
@@ -241,17 +256,17 @@ class _StatRow extends StatelessWidget {
         Expanded(
           child: Text(
             data.label,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2437),
+              color: scheme.onSurface,
             ),
           ),
         ),
         Text(
           data.value,
-          style: TextStyle(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.primary,
+            color: scheme.primary,
           ),
         ),
       ],
