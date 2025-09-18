@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -233,6 +234,7 @@ class AppState extends ChangeNotifier {
   DateTime? _startedAt;
 
   final List<_Move> _history = [];
+  Timer? _saveDebounce;
 
   /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
@@ -606,7 +608,7 @@ class AppState extends ChangeNotifier {
     _startedAt = DateTime.now();
 
     statsByDifficulty[Difficulty.medium]?.gamesStarted++;
-    _saveCurrentGame();
+    scheduleSave();
     saveProfile();
     notifyListeners();
   }
@@ -653,7 +655,7 @@ class AppState extends ChangeNotifier {
     _startedAt = DateTime.now();
 
     statsByDifficulty[diff]?.gamesStarted++;
-    _saveCurrentGame();
+    scheduleSave();
     saveProfile();
     notifyListeners();
   }
@@ -680,7 +682,7 @@ class AppState extends ChangeNotifier {
     _sessionId++;
     _startedAt = DateTime.now();
 
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -786,7 +788,7 @@ class AppState extends ChangeNotifier {
     game.board[index] = value;
     game.notes[index].clear();
 
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -810,7 +812,7 @@ class AppState extends ChangeNotifier {
       noteChange: true,
     ));
 
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -832,7 +834,7 @@ class AppState extends ChangeNotifier {
 
     game.board[idx] = 0;
     game.notes[idx].clear();
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -859,14 +861,14 @@ class AppState extends ChangeNotifier {
     game.notes[idx].clear();
     hintsLeft = math.max(0, hintsLeft - 1);
     currentScore += 8;
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
   void toggleNotesMode() {
     if (current == null) return;
     notesMode = !notesMode;
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -889,13 +891,13 @@ class AppState extends ChangeNotifier {
     }
 
     selectedCell = last.index;
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
   void restoreOneLife() {
     livesLeft = math.max(1, livesLeft);
-    _saveCurrentGame();
+    scheduleSave();
     notifyListeners();
   }
 
@@ -1158,6 +1160,17 @@ class AppState extends ChangeNotifier {
 
   static String _dateKey(DateTime date) =>
       '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+  void save() {
+    _saveDebounce?.cancel();
+    _saveDebounce = null;
+    _saveCurrentGame();
+  }
+
+  void scheduleSave() {
+    _saveDebounce?.cancel();
+    _saveDebounce = Timer(const Duration(milliseconds: 400), save);
+  }
 
   void _saveCurrentGame() {
     final game = current;
