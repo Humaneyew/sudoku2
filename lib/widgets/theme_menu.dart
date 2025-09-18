@@ -27,6 +27,12 @@ class _ThemeDialog extends StatelessWidget {
         child: Consumer<AppState>(
           builder: (context, app, _) {
             final activeTheme = app.resolvedTheme();
+            const themeOptions = [
+              SudokuTheme.white,
+              SudokuTheme.cream,
+              SudokuTheme.green,
+              SudokuTheme.black,
+            ];
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,15 +49,15 @@ class _ThemeDialog extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   child: Row(
                     children: [
-                      for (var i = 0; i < SudokuTheme.values.length; i++)
+                      for (var i = 0; i < themeOptions.length; i++)
                         Padding(
                           padding: EdgeInsets.only(
-                            right: i == SudokuTheme.values.length - 1 ? 0 : 12,
+                            right: i == themeOptions.length - 1 ? 0 : 12,
                           ),
                           child: _ThemeCircle(
-                            option: SudokuTheme.values[i],
-                            active: SudokuTheme.values[i] == activeTheme,
-                            onTap: () => app.setTheme(SudokuTheme.values[i]),
+                            option: themeOptions[i],
+                            active: themeOptions[i] == activeTheme,
+                            onTap: () => app.setTheme(themeOptions[i]),
                           ),
                         ),
                     ],

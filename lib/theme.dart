@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Список доступных цветовых тем приложения.
-enum SudokuTheme { white, cream, green, black, purple }
+enum SudokuTheme { white, cream, green, black }
 
 extension SudokuThemeL10n on SudokuTheme {
   /// Название темы для отображения пользователю.
@@ -16,8 +16,6 @@ extension SudokuThemeL10n on SudokuTheme {
         return l10n.themeGreen;
       case SudokuTheme.black:
         return l10n.themeBlack;
-      case SudokuTheme.purple:
-        return l10n.themePurple;
     }
   }
 }
@@ -345,39 +343,6 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemaining: Color(0xFF808894),
       numberPadRemainingHighlight: Color(0xFF3D82FF),
       shadowColor: Color(0x66000000),
-    ),
-  ),
-  SudokuTheme.purple: _ThemeConfig(
-    brightness: Brightness.dark,
-    background: const Color(0xFF2B0040),
-    surface: const Color(0xFF3B005A),
-    primary: const Color(0xFF9B4DFF),
-    onPrimary: Colors.white,
-    onSurface: Colors.white,
-    outline: const Color(0xFF5C1C8F),
-    outlineVariant: const Color(0xFF4A1574),
-    colors: const SudokuColors(
-      boardInner: Color(0xFF3B005A),
-      boardBorder: Color(0xFF5D1B8C),
-      selectedCell: Color(0xFF5F1E94),
-      sameNumberCell: Color(0xFF4C1876),
-      noteColor: Color(0xFFE5C9FF),
-      headerButtonBackground: Color(0xFF4A1574),
-      headerButtonIcon: Color(0xFFCFB0FF),
-      actionButtonActiveBackground: Color(0xFF61219A),
-      actionButtonActiveBorder: Color(0xFF9B4DFF),
-      actionButtonBadgeColor: Color(0xFFCFB0FF),
-      numberPadBackground: Color(0xFF3B005A),
-      numberPadBorder: Color(0xFF541B86),
-      numberPadSelectedBackground: Color(0xFF6A25A6),
-      numberPadSelectedBorder: Color(0xFFD6B5FF),
-      numberPadHighlightBackground: Color(0xFF4F177E),
-      numberPadHighlightBorder: Color(0xFFA365FF),
-      numberPadDisabledBackground: Color(0xFF2D003F),
-      numberPadDisabledText: Color(0xFF8F70C0),
-      numberPadRemaining: Color(0xFFDAB9FF),
-      numberPadRemainingHighlight: Color(0xFF9B4DFF),
-      shadowColor: Color(0x99000000),
     ),
   ),
 };
