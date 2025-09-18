@@ -30,7 +30,8 @@ class StatsTab extends StatefulWidget {
   State<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab> {
+class _StatsTabState extends State<StatsTab>
+    with AutomaticKeepAliveClientMixin<StatsTab> {
   late Difficulty _selected;
 
   @override
@@ -40,7 +41,11 @@ class _StatsTabState extends State<StatsTab> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final app = context.watch<AppState>();
     final stats = app.statsFor(_selected);
     final theme = Theme.of(context);

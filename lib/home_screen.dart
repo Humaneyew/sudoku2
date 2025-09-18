@@ -70,11 +70,20 @@ class _BottomNavBar extends StatelessWidget {
   }
 }
 
-class _HomeTab extends StatelessWidget {
+class _HomeTab extends StatefulWidget {
   const _HomeTab();
 
   @override
+  State<_HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final app = context.watch<AppState>();
     final theme = Theme.of(context);
     final difficulty = app.featuredStatsDifficulty;
@@ -740,7 +749,9 @@ class _DailyChallengesTab extends StatefulWidget {
 }
 
 class _DailyChallengesTabState extends State<_DailyChallengesTab>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin<_DailyChallengesTab>,
+        AutomaticKeepAliveClientMixin<_DailyChallengesTab> {
   late DateTime _visibleMonth;
   late int _preferredDay;
   DateTime? _selectedDate;
@@ -891,7 +902,11 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final app = context.watch<AppState>();
     final sudokuTheme = app.resolvedTheme();
     final l10n = AppLocalizations.of(context)!;
