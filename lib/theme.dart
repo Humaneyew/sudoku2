@@ -628,5 +628,8 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
 
 /// Цвет, который используется для предпросмотра темы в меню выбора.
 Color themePreviewColor(SudokuTheme theme) {
+  if (theme == SudokuTheme.black) {
+    return const Color(0xFF000000);
+  }
   return _themeConfigs[theme]!.primary;
 }
