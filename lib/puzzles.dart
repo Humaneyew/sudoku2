@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'models.dart';
 
 /// Класс одной головоломки судоку
@@ -12021,3 +12023,83 @@ final Map<Difficulty, List<Puzzle>> puzzles = {
     ),
   ],
 };
+
+Puzzle generateDailyPuzzle(DateTime date) {
+  final normalized = DateTime(date.year, date.month, date.day);
+  final pool = puzzles.values.expand((list) => list).toList(growable: false);
+  if (pool.isEmpty) {
+    throw StateError('No puzzles available for daily challenge.');
+  }
+
+  final random = math.Random(_seedForDate(normalized));
+  final base = pool[random.nextInt(pool.length)];
+  final digitMap = _generateDigitMapping(random);
+  final rowOrder = _generateRowOrder(random);
+  final colOrder = _generateColOrder(random);
+
+  return Puzzle(
+    _transformBoard(base.board, digitMap, rowOrder, colOrder),
+    _transformBoard(base.solution, digitMap, rowOrder, colOrder),
+  );
+}
+
+List<int> _transformBoard(
+  List<int> source,
+  List<int> digitMap,
+  List<int> rowOrder,
+  List<int> colOrder,
+) {
+  final result = List<int>.filled(81, 0);
+  for (var newRow = 0; newRow < 9; newRow++) {
+    final originalRow = rowOrder[newRow];
+    for (var newCol = 0; newCol < 9; newCol++) {
+      final originalCol = colOrder[newCol];
+      final value = source[originalRow * 9 + originalCol];
+      result[newRow * 9 + newCol] = value == 0 ? 0 : digitMap[value - 1];
+    }
+  }
+  return result;
+}
+
+List<int> _generateDigitMapping(math.Random random) {
+  final digits = List<int>.generate(9, (index) => index + 1);
+  digits.shuffle(random);
+  return digits;
+}
+
+List<int> _generateRowOrder(math.Random random) {
+  final bands = [0, 1, 2];
+  bands.shuffle(random);
+  final order = <int>[];
+  for (final band in bands) {
+    final rows = [0, 1, 2];
+    rows.shuffle(random);
+    for (final offset in rows) {
+      order.add(band * 3 + offset);
+    }
+  }
+  return order;
+}
+
+List<int> _generateColOrder(math.Random random) {
+  final stacks = [0, 1, 2];
+  stacks.shuffle(random);
+  final order = <int>[];
+  for (final stack in stacks) {
+    final cols = [0, 1, 2];
+    cols.shuffle(random);
+    for (final offset in cols) {
+      order.add(stack * 3 + offset);
+    }
+  }
+  return order;
+}
+
+int _seedForDate(DateTime date) {
+  final base = DateTime.utc(date.year, date.month, date.day)
+          .millisecondsSinceEpoch ~/
+      Duration.millisecondsPerDay;
+  var hash = base ^ 0x9E3779B9;
+  hash ^= (hash >> 16);
+  return hash & 0x7fffffff;
+}
