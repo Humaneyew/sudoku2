@@ -20,56 +20,59 @@ class Board extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: colors.shadowColor,
-                blurRadius: 24,
-                offset: Offset(0, 16),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(16),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: colors.boardInner,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colors.boardBorder, width: 4),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GridView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 9,
-                  ),
-                  itemCount: 81,
-                  itemBuilder: (context, index) {
-                    final value = game.board[index];
-                    final notes = game.notes[index];
-                    final given = game.given[index];
-                    final isSelected = app.selectedCell == index;
-                    final sameValue = app.isSameAsSelectedValue(index);
-                    final incorrect =
-                        !given && value != 0 && !app.isMoveValid(index, value);
+        return RepaintBoundary(
+          key: const ValueKey('board-root'),
+          child: Container(
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.shadowColor,
+                  blurRadius: 24,
+                  offset: Offset(0, 16),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colors.boardInner,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colors.boardBorder, width: 4),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: GridView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 9,
+                    ),
+                    itemCount: 81,
+                    itemBuilder: (context, index) {
+                      final value = game.board[index];
+                      final notes = game.notes[index];
+                      final given = game.given[index];
+                      final isSelected = app.selectedCell == index;
+                      final sameValue = app.isSameAsSelectedValue(index);
+                      final incorrect =
+                          !given && value != 0 && !app.isMoveValid(index, value);
 
-                    return _BoardCell(
-                      index: index,
-                      value: value,
-                      notes: notes,
-                      isSelected: isSelected,
-                      sameValue: sameValue,
-                      incorrect: incorrect,
-                      fontScale: app.fontScale,
-                      onTap: () => app.selectCell(index),
-                    );
-                  },
+                      return _BoardCell(
+                        index: index,
+                        value: value,
+                        notes: notes,
+                        isSelected: isSelected,
+                        sameValue: sameValue,
+                        incorrect: incorrect,
+                        fontScale: app.fontScale,
+                        onTap: () => app.selectCell(index),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
