@@ -4,6 +4,25 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
 
+class StatsPage extends StatelessWidget {
+  const StatsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.statsTitle),
+        centerTitle: true,
+      ),
+      body: const SafeArea(
+        bottom: false,
+        child: StatsTab(),
+      ),
+    );
+  }
+}
+
 class StatsTab extends StatefulWidget {
   const StatsTab({super.key});
 
