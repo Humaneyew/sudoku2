@@ -893,6 +893,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
+    final sudokuTheme = app.resolvedTheme();
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -1117,6 +1118,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                   past: isPast,
                                   completed: app.isDailyCompleted(date),
                                   locked: locked,
+                                  sudokuTheme: sudokuTheme,
                                   onTap: locked ? null : () => _onSelect(date),
                                 ),
                               );
@@ -1171,6 +1173,7 @@ class _CalendarDayButton extends StatelessWidget {
   final bool past;
   final bool completed;
   final bool locked;
+  final SudokuTheme sudokuTheme;
   final VoidCallback? onTap;
 
   const _CalendarDayButton({
@@ -1180,6 +1183,7 @@ class _CalendarDayButton extends StatelessWidget {
     required this.past,
     required this.completed,
     required this.locked,
+    required this.sudokuTheme,
     required this.onTap,
   });
 
@@ -1191,7 +1195,15 @@ class _CalendarDayButton extends StatelessWidget {
       return scheme.onPrimary;
     }
     if (completed || past) {
-      return scheme.secondary;
+      switch (sudokuTheme) {
+        case SudokuTheme.white:
+          return Colors.black;
+        case SudokuTheme.black:
+          return Colors.white;
+        case SudokuTheme.cream:
+        case SudokuTheme.green:
+          return scheme.secondary;
+      }
     }
     return scheme.onSurface;
   }
