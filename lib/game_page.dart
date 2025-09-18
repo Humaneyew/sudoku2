@@ -158,6 +158,8 @@ class _GamePageState extends State<GamePage> {
         final duration = reduceMotion
             ? Duration.zero
             : const Duration(milliseconds: 220);
+        final theme = Theme.of(context);
+        final colors = theme.extension<SudokuColors>()!;
 
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: reduceMotion ? 1.0 : 0.85, end: 1.0),
@@ -167,7 +169,7 @@ class _GamePageState extends State<GamePage> {
             return Transform.scale(scale: value, child: child);
           },
           child: Dialog(
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: theme.colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
@@ -179,15 +181,13 @@ class _GamePageState extends State<GamePage> {
                   Container(
                     width: 72,
                     height: 72,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
-                      ),
+                      gradient: colors.victoryBadgeGradient,
                     ),
                     child: Icon(
                       Icons.emoji_events,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: theme.colorScheme.onPrimary,
                       size: 36,
                     ),
                   ),
@@ -203,11 +203,8 @@ class _GamePageState extends State<GamePage> {
                   Text(
                     l10n.victoryMessage(_formatTime(elapsedMs)),
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                       fontSize: 14,
                     ),
                   ),
@@ -271,6 +268,8 @@ class _GamePageState extends State<GamePage> {
         final duration = reduceMotion
             ? Duration.zero
             : const Duration(milliseconds: 220);
+        final theme = Theme.of(context);
+        final colors = theme.extension<SudokuColors>()!;
 
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: reduceMotion ? 1.0 : 0.0, end: 1.0),
@@ -285,7 +284,7 @@ class _GamePageState extends State<GamePage> {
           },
           child: Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 36),
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: theme.colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32),
             ),
@@ -297,15 +296,13 @@ class _GamePageState extends State<GamePage> {
                   Container(
                     width: 88,
                     height: 88,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
-                      ),
+                      gradient: colors.failureBadgeGradient,
                     ),
                     child: Icon(
                       Icons.favorite,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: theme.colorScheme.onPrimary,
                       size: 40,
                     ),
                   ),
@@ -321,11 +318,8 @@ class _GamePageState extends State<GamePage> {
                   Text(
                     l10n.outOfLivesDescription,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.7),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -334,10 +328,8 @@ class _GamePageState extends State<GamePage> {
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context, true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.error,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onError,
+                        backgroundColor: theme.colorScheme.error,
+                        foregroundColor: theme.colorScheme.onError,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),

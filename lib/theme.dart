@@ -43,6 +43,12 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
   final Color numberPadRemaining;
   final Color numberPadRemainingHighlight;
   final Color shadowColor;
+  final LinearGradient dailyChallengeGradient;
+  final LinearGradient championshipChallengeGradient;
+  final LinearGradient battleChallengeGradient;
+  final LinearGradient dailyHeroGradient;
+  final LinearGradient victoryBadgeGradient;
+  final LinearGradient failureBadgeGradient;
 
   const SudokuColors({
     required this.boardInner,
@@ -66,6 +72,12 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     required this.numberPadRemaining,
     required this.numberPadRemainingHighlight,
     required this.shadowColor,
+    required this.dailyChallengeGradient,
+    required this.championshipChallengeGradient,
+    required this.battleChallengeGradient,
+    required this.dailyHeroGradient,
+    required this.victoryBadgeGradient,
+    required this.failureBadgeGradient,
   });
 
   @override
@@ -91,6 +103,12 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     Color? numberPadRemaining,
     Color? numberPadRemainingHighlight,
     Color? shadowColor,
+    LinearGradient? dailyChallengeGradient,
+    LinearGradient? championshipChallengeGradient,
+    LinearGradient? battleChallengeGradient,
+    LinearGradient? dailyHeroGradient,
+    LinearGradient? victoryBadgeGradient,
+    LinearGradient? failureBadgeGradient,
   }) {
     return SudokuColors(
       boardInner: boardInner ?? this.boardInner,
@@ -125,6 +143,17 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
       numberPadRemainingHighlight: numberPadRemainingHighlight ??
           this.numberPadRemainingHighlight,
       shadowColor: shadowColor ?? this.shadowColor,
+      dailyChallengeGradient:
+          dailyChallengeGradient ?? this.dailyChallengeGradient,
+      championshipChallengeGradient: championshipChallengeGradient ??
+          this.championshipChallengeGradient,
+      battleChallengeGradient:
+          battleChallengeGradient ?? this.battleChallengeGradient,
+      dailyHeroGradient: dailyHeroGradient ?? this.dailyHeroGradient,
+      victoryBadgeGradient:
+          victoryBadgeGradient ?? this.victoryBadgeGradient,
+      failureBadgeGradient:
+          failureBadgeGradient ?? this.failureBadgeGradient,
     );
   }
 
@@ -138,6 +167,13 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     }
 
     Color _lerp(Color a, Color b) => Color.lerp(a, b, t) ?? b;
+    LinearGradient _lerpGradient(LinearGradient a, LinearGradient b) {
+      final result = Gradient.lerp(a, b, t);
+      if (result is LinearGradient) {
+        return result;
+      }
+      return b;
+    }
 
     return SudokuColors(
       boardInner: _lerp(boardInner, other.boardInner),
@@ -184,6 +220,19 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
         other.numberPadRemainingHighlight,
       ),
       shadowColor: _lerp(shadowColor, other.shadowColor),
+      dailyChallengeGradient:
+          _lerpGradient(dailyChallengeGradient, other.dailyChallengeGradient),
+      championshipChallengeGradient: _lerpGradient(
+        championshipChallengeGradient,
+        other.championshipChallengeGradient,
+      ),
+      battleChallengeGradient:
+          _lerpGradient(battleChallengeGradient, other.battleChallengeGradient),
+      dailyHeroGradient: _lerpGradient(dailyHeroGradient, other.dailyHeroGradient),
+      victoryBadgeGradient:
+          _lerpGradient(victoryBadgeGradient, other.victoryBadgeGradient),
+      failureBadgeGradient:
+          _lerpGradient(failureBadgeGradient, other.failureBadgeGradient),
     );
   }
 }
@@ -256,6 +305,32 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemaining: Color(0xFF8893AD),
       numberPadRemainingHighlight: Color(0xFF1D4ED8),
       shadowColor: Color(0x141B1D3A),
+      dailyChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      championshipChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      battleChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      dailyHeroGradient: const LinearGradient(
+        colors: [Color(0xFF9AD3FF), Color(0xFF4E8BFF)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      victoryBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
+      ),
+      failureBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
+      ),
     ),
   ),
   SudokuTheme.cream: _ThemeConfig(
@@ -293,6 +368,32 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemaining: Color(0xFFB39663),
       numberPadRemainingHighlight: Color(0xFF2F7457),
       shadowColor: Color(0x1A7B5E2F),
+      dailyChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      championshipChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      battleChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      dailyHeroGradient: const LinearGradient(
+        colors: [Color(0xFF9AD3FF), Color(0xFF4E8BFF)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      victoryBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
+      ),
+      failureBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
+      ),
     ),
   ),
   SudokuTheme.green: _ThemeConfig(
@@ -330,6 +431,32 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemaining: Color(0xFF779C86),
       numberPadRemainingHighlight: Color(0xFF1F7252),
       shadowColor: Color(0x14304933),
+      dailyChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      championshipChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      battleChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      dailyHeroGradient: const LinearGradient(
+        colors: [Color(0xFF9AD3FF), Color(0xFF4E8BFF)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      victoryBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
+      ),
+      failureBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
+      ),
     ),
   ),
   SudokuTheme.black: _ThemeConfig(
@@ -367,6 +494,32 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemaining: Color(0xFF808894),
       numberPadRemainingHighlight: Color(0xFF3D82FF),
       shadowColor: Color(0x66000000),
+      dailyChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      championshipChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      battleChallengeGradient: const LinearGradient(
+        colors: [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      dailyHeroGradient: const LinearGradient(
+        colors: [Color(0xFF9AD3FF), Color(0xFF4E8BFF)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      victoryBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFFC26F), Color(0xFFFF8A5B)],
+      ),
+      failureBadgeGradient: const LinearGradient(
+        colors: [Color(0xFFFF8095), Color(0xFFFF4D6D)],
+      ),
     ),
   ),
 };
