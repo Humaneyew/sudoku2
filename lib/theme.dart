@@ -435,7 +435,7 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
       ),
     ),
     cardColor: config.surface,
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: config.surface,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
@@ -443,7 +443,7 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
         borderRadius: BorderRadius.circular(24),
       ),
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: config.surface,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
