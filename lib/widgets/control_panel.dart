@@ -239,6 +239,7 @@ class _NumberPad extends StatelessWidget {
     final highlighted = app.highlightedNumber;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final notesMode = app.notesMode;
+    final fontScale = app.fontScale;
 
     return Container(
       decoration: BoxDecoration(
@@ -270,6 +271,7 @@ class _NumberPad extends StatelessWidget {
                 reduceMotion: reduceMotion,
                 notesMode: notesMode,
                 colors: colors,
+                fontScale: fontScale,
               ),
             ),
         ],
@@ -291,6 +293,7 @@ class _NumberButton extends StatelessWidget {
   final bool reduceMotion;
   final bool notesMode;
   final SudokuColors colors;
+  final double fontScale;
 
   const _NumberButton({
     required this.number,
@@ -305,6 +308,7 @@ class _NumberButton extends StatelessWidget {
     required this.reduceMotion,
     required this.notesMode,
     required this.colors,
+    required this.fontScale,
   });
 
   @override
@@ -334,7 +338,7 @@ class _NumberButton extends StatelessWidget {
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
-    final numberFontSize = notesMode ? 18.0 : 20.0;
+    final numberFontSize = (notesMode ? 18.0 : 20.0) * fontScale;
     final remainingColor = !enabled
         ? colors.numberPadDisabledText
         : isHighlighted
@@ -365,32 +369,34 @@ class _NumberButton extends StatelessWidget {
                   onTap();
                 }
               : null,
-            child: AnimatedContainer(
-              duration: duration,
-              curve: Curves.easeOut,
-              height: 64,
-              decoration: BoxDecoration(
-                color: background,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: borderColor),
-                boxShadow: shadow,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                  number.toString(),
+          child: AnimatedContainer(
+            duration: duration,
+            curve: Curves.easeOut,
+            height: 64,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: borderColor),
+              boxShadow: shadow,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedDefaultTextStyle(
+                  duration: duration,
+                  curve: Curves.easeOut,
                   style: TextStyle(
                     fontSize: numberFontSize,
                     fontWeight: FontWeight.w700,
                     color: textColor,
                   ),
+                  child: Text(number.toString()),
                 ),
                 const SizedBox(height: 4),
                 AnimatedDefaultTextStyle(
                   duration: duration,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12 * fontScale,
                     color: remainingColor,
                   ),
                   child: Text(remaining.toString()),
