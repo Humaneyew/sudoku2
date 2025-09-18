@@ -11,23 +11,22 @@ class ControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _ActionRow(app: app),
-        const SizedBox(height: 20),
-        _NumberPad(app: app),
-      ],
+    return RepaintBoundary(
+      key: const ValueKey('control-panel'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: const [
+          _ActionRow(),
+          SizedBox(height: 20),
+          _NumberPad(),
+        ],
+      ),
     );
   }
 }
 
 class _ActionRow extends StatelessWidget {
-  final AppState app;
-
-  const _ActionRow({required this.app});
+  const _ActionRow();
 
   @override
   Widget build(BuildContext context) {
@@ -35,58 +34,82 @@ class _ActionRow extends StatelessWidget {
     final scheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final undoAds = context.watch<UndoAdController>();
-    final canUndoMove = app.canUndoMove;
     final useUndoAd = undoAds.useAdFlow;
-    final undoEnabled = canUndoMove && (!useUndoAd || undoAds.isAdAvailable);
 
     return Row(
       children: [
         Expanded(
-          child: _ActionButton(
-            icon: Icons.undo_rounded,
-            label: l10n.undo,
-            onPressed: undoEnabled
-                ? () async {
-                    if (useUndoAd) {
-                      final shown = await undoAds.showAd(context);
-                      if (!shown) {
-                        return;
+          child: Selector<AppState, bool>(
+            selector: (_, app) => app.canUndoMove,
+            builder: (context, canUndo, __) {
+              final undoEnabled =
+                  canUndo && (!useUndoAd || undoAds.isAdAvailable);
+              return _ActionButton(
+                key: const ValueKey('action-undo'),
+                icon: Icons.undo_rounded,
+                label: l10n.undo,
+                onPressed: undoEnabled
+                    ? () async {
+                        final app = context.read<AppState>();
+                        if (useUndoAd) {
+                          final shown = await undoAds.showAd(context);
+                          if (!shown) {
+                            return;
+                          }
+                          if (!app.canUndoMove) {
+                            return;
+                          }
+                        }
+                        app.undoMove();
                       }
-                      if (!app.canUndoMove) {
-                        return;
-                      }
-                    }
-                    app.undoMove();
-                  }
-                : null,
+                    : null,
+              );
+            },
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _ActionButton(
-            icon: Icons.backspace_outlined,
-            label: l10n.erase,
-            onPressed: app.eraseCell,
+          child: Selector<AppState, bool>(
+            selector: (_, app) => app.canErase,
+            builder: (context, canErase, __) => _ActionButton(
+              key: const ValueKey('action-erase'),
+              icon: Icons.backspace_outlined,
+              label: l10n.erase,
+              onPressed:
+                  canErase ? context.read<AppState>().eraseCell : null,
+            ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _ActionButton(
-            icon: Icons.edit_note,
-            label: l10n.notes,
-            onPressed: app.toggleNotesMode,
-            active: app.notesMode,
+          child: Selector<AppState, bool>(
+            selector: (_, app) => app.isNotesMode,
+            builder: (context, notesMode, __) => _ActionButton(
+              key: const ValueKey('action-notes'),
+              icon: Icons.edit_note,
+              label: l10n.notes,
+              onPressed: context.read<AppState>().toggleNotesMode,
+              active: notesMode,
+            ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _ActionButton(
-            icon: Icons.lightbulb_outline,
-            label: l10n.hint,
-            onPressed: app.hintsLeft > 0 ? app.useHint : null,
-            badge: app.hintsLeft.toString(),
-            badgeColor:
-                app.hintsLeft > 0 ? scheme.secondary : theme.disabledColor,
+          child: Selector<AppState, int>(
+            selector: (_, app) => app.hintsLeft,
+            builder: (context, hintsLeft, __) {
+              final enabled = hintsLeft > 0;
+              return _ActionButton(
+                key: const ValueKey('action-hint'),
+                icon: Icons.lightbulb_outline,
+                label: l10n.hint,
+                onPressed:
+                    enabled ? context.read<AppState>().useHint : null,
+                badge: hintsLeft.toString(),
+                badgeColor:
+                    enabled ? scheme.secondary : theme.disabledColor,
+              );
+            },
           ),
         ),
       ],
@@ -103,6 +126,7 @@ class _ActionButton extends StatelessWidget {
   final bool active;
 
   const _ActionButton({
+    super.key,
     required this.icon,
     required this.label,
     this.onPressed,
@@ -154,7 +178,7 @@ class _ActionButton extends StatelessWidget {
         curve: Curves.easeOut,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
           border: Border.all(color: effectiveBorder),
           boxShadow: isActive
               ? [
@@ -169,7 +193,7 @@ class _ActionButton extends StatelessWidget {
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
             onTap: enabled ? onPressed : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -186,7 +210,8 @@ class _ActionButton extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: badgeBackground,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
                         ),
                         child: Text(
                           badge!,
@@ -226,30 +251,64 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-class _NumberPad extends StatelessWidget {
-  final AppState app;
+class _DigitVM {
+  final int remaining;
+  final bool selected;
+  final bool highlighted;
+  final bool enabled;
+  final bool notesMode;
+  final double fontScale;
 
-  const _NumberPad({required this.app});
+  const _DigitVM({
+    required this.remaining,
+    required this.selected,
+    required this.highlighted,
+    required this.enabled,
+    required this.notesMode,
+    required this.fontScale,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is _DigitVM &&
+            other.remaining == remaining &&
+            other.selected == selected &&
+            other.highlighted == highlighted &&
+            other.enabled == enabled &&
+            other.notesMode == notesMode &&
+            other.fontScale == fontScale;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        remaining,
+        selected,
+        highlighted,
+        enabled,
+        notesMode,
+        fontScale,
+      );
+}
+
+class _NumberPad extends StatelessWidget {
+  const _NumberPad();
 
   @override
   Widget build(BuildContext context) {
-    final selected = app.selectedValue;
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
-    final highlighted = app.highlightedNumber;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
-    final notesMode = app.notesMode;
-    final fontScale = app.fontScale;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.numberPadBackground,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: const BorderRadius.all(Radius.circular(28)),
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
             blurRadius: 20,
-            offset: Offset(0, 12),
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -258,24 +317,62 @@ class _NumberPad extends StatelessWidget {
         children: [
           for (var i = 0; i < 9; i++)
             Expanded(
-              child: _NumberButton(
+              child: _DigitButton(
                 number: i + 1,
-                remaining: app.countRemaining(i + 1),
-                selected: selected == i + 1,
-                highlighted: highlighted == i + 1,
-                enabled: !app.isNumberCompleted(i + 1),
-                onTap: () => app.handleNumberInput(i + 1),
-                onHighlightStart: () => app.setHighlightedNumber(i + 1),
-                onHighlightEnd: () => app.setHighlightedNumber(null),
                 theme: theme,
-                reduceMotion: reduceMotion,
-                notesMode: notesMode,
                 colors: colors,
-                fontScale: fontScale,
+                reduceMotion: reduceMotion,
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+class _DigitButton extends StatelessWidget {
+  final int number;
+  final ThemeData theme;
+  final SudokuColors colors;
+  final bool reduceMotion;
+
+  const _DigitButton({
+    required this.number,
+    required this.theme,
+    required this.colors,
+    required this.reduceMotion,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<AppState, _DigitVM>(
+      selector: (_, app) => _DigitVM(
+        remaining: app.countRemaining(number),
+        selected: app.selectedValue == number,
+        highlighted: app.highlightedNumber == number,
+        enabled: !app.isNumberCompleted(number),
+        notesMode: app.isNotesMode,
+        fontScale: app.fontScale,
+      ),
+      builder: (context, vm, __) {
+        final app = context.read<AppState>();
+        return _NumberButton(
+          key: ValueKey('digit-$number'),
+          number: number,
+          remaining: vm.remaining,
+          selected: vm.selected,
+          highlighted: vm.highlighted,
+          enabled: vm.enabled,
+          onTap: () => app.handleNumberInput(number),
+          onHighlightStart: () => app.setHighlightedNumber(number),
+          onHighlightEnd: () => app.setHighlightedNumber(null),
+          theme: theme,
+          reduceMotion: reduceMotion,
+          notesMode: vm.notesMode,
+          colors: colors,
+          fontScale: vm.fontScale,
+        );
+      },
     );
   }
 }
@@ -296,6 +393,7 @@ class _NumberButton extends StatelessWidget {
   final double fontScale;
 
   const _NumberButton({
+    super.key,
     required this.number,
     required this.remaining,
     required this.selected,
@@ -360,7 +458,7 @@ class _NumberButton extends StatelessWidget {
         duration: duration,
         opacity: enabled ? 1.0 : 0.0,
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: const BorderRadius.all(Radius.circular(18)),
           onTapDown: enabled ? (_) => onHighlightStart() : null,
           onTapCancel: enabled ? onHighlightEnd : null,
           onTap: enabled
@@ -375,7 +473,7 @@ class _NumberButton extends StatelessWidget {
             height: 64,
             decoration: BoxDecoration(
               color: background,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: const BorderRadius.all(Radius.circular(18)),
               border: Border.all(color: borderColor),
               boxShadow: shadow,
             ),

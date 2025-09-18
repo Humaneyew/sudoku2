@@ -1005,6 +1005,19 @@ class AppState extends ChangeNotifier {
 
   bool get canUndoMove => _history.isNotEmpty;
 
+  bool get canErase {
+    final game = current;
+    final idx = selectedCell;
+    if (game == null || idx == null) return false;
+    if (game.given[idx]) return false;
+    if (game.board[idx] == 0 && game.notes[idx].isEmpty) return false;
+    return true;
+  }
+
+  bool get isNotesMode => notesMode;
+
+  bool get canUseHint => hintsLeft > 0;
+
   int? get selectedValue {
     final idx = selectedCell;
     final game = current;
