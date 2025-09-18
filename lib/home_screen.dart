@@ -81,6 +81,20 @@ class _HomeTab extends StatelessWidget {
     final stats = app.statsFor(difficulty);
     final l10n = AppLocalizations.of(context)!;
 
+    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.5,
+    );
+
+    double titlePlaceholderHeight = 12;
+    if (titleStyle != null) {
+      final textPainter = TextPainter(
+        text: TextSpan(text: l10n.appTitle, style: titleStyle),
+        textDirection: Directionality.of(context),
+      )..layout();
+      titlePlaceholderHeight += textPainter.height;
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
@@ -89,6 +103,12 @@ class _HomeTab extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _TopBar(
+              title: l10n.appTitle,
+              titleStyle: titleStyle,
+              onStatsTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const StatsPage()),
+              ),
               onSettingsTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SettingsPage()),
@@ -106,14 +126,7 @@ class _HomeTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.appTitle,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 12),
+                SizedBox(height: titlePlaceholderHeight),
                 _DailyChain(streak: app.dailyStreak),
                 const SizedBox(height: 18),
                 _ProgressCard(
@@ -210,16 +223,33 @@ class _HomeTab extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
+  final String title;
+  final TextStyle? titleStyle;
+  final VoidCallback onStatsTap;
   final VoidCallback onSettingsTap;
 
-  const _TopBar({required this.onSettingsTap});
+  const _TopBar({
+    required this.title,
+    required this.titleStyle,
+    required this.onStatsTap,
+    required this.onSettingsTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CircleButton(icon: Icons.leaderboard_outlined, onTap: () {}),
+        Expanded(
+          child: Text(
+            title,
+            style: titleStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 12),
+        _CircleButton(icon: Icons.leaderboard_outlined, onTap: onStatsTap),
         const SizedBox(width: 12),
         _CircleButton(icon: Icons.settings_outlined, onTap: onSettingsTap),
       ],
