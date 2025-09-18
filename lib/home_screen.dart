@@ -166,11 +166,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (context) {
+        final theme = Theme.of(context);
+        final cs = theme.colorScheme;
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
-        final theme = Theme.of(context);
-        final scheme = theme.colorScheme;
 
         return SafeArea(
           top: false,
@@ -185,8 +185,8 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: scheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(4),
+                    color: cs.outlineVariant,
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -206,6 +206,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                       bottom: index < items.length - 1 ? 12.0 : 0.0,
                     ),
                     child: _DifficultyTile(
+                      key: ValueKey(_difficultyKey(diff)),
                       title: diff.title(sheetL10n),
                       rankLabel: sheetL10n.rankLabel(stats.rank),
                       progress: stats.progressText,
@@ -228,6 +229,21 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
     );
+  }
+}
+
+String _difficultyKey(Difficulty difficulty) {
+  switch (difficulty) {
+    case Difficulty.novice:
+      return 'home-diff-beginner';
+    case Difficulty.medium:
+      return 'home-diff-intermediate';
+    case Difficulty.high:
+      return 'home-diff-advanced';
+    case Difficulty.expert:
+      return 'home-diff-expert';
+    case Difficulty.master:
+      return 'home-diff-master';
   }
 }
 
@@ -284,7 +300,7 @@ class _CircleButton extends StatelessWidget {
         height: 48,
         decoration: BoxDecoration(
           color: colors.headerButtonBackground,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: const BorderRadius.all(Radius.circular(24)),
           boxShadow: [
             BoxShadow(
               color: theme.shadowColor,
@@ -310,10 +326,11 @@ class _ChallengeCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final formatter = DateFormat('d MMMM', l10n.localeName);
     final today = formatter.format(DateTime.now());
-    final colors = Theme.of(context).extension<SudokuColors>()!;
+    final colors = theme.extension<SudokuColors>()!;
 
     final cards = [
       _ChallengeCardData(
@@ -397,12 +414,12 @@ class _ChallengeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final onPrimary = scheme.onPrimary;
+    final cs = theme.colorScheme;
+    final onPrimary = cs.onPrimary;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: const BorderRadius.all(Radius.circular(28)),
         gradient: data.gradient,
         boxShadow: [
           BoxShadow(
@@ -440,7 +457,7 @@ class _ChallengeCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: onPrimary.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: const BorderRadius.all(Radius.circular(30)),
                   ),
                   child: Text(
                     data.badge!,
@@ -476,8 +493,8 @@ class _ChallengeCard extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: onPrimary,
               foregroundColor: data.gradient.colors.last,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(18)),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24),
             ),
@@ -501,15 +518,15 @@ class _DailyChain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final accent = scheme.error;
+    final cs = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    final accent = cs.error;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        color: cs.surface,
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
@@ -527,15 +544,15 @@ class _DailyChain extends StatelessWidget {
             l10n.dailyStreak,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
           const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Color.alphaBlend(accent.withOpacity(0.16), scheme.surface),
-              borderRadius: BorderRadius.circular(16),
+              color: Color.alphaBlend(accent.withOpacity(0.16), cs.surface),
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
             ),
             child: Text(
               streak.toString(),
@@ -565,15 +582,15 @@ class _ProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        color: cs.surface,
+        borderRadius: const BorderRadius.all(Radius.circular(28)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
@@ -588,20 +605,20 @@ class _ProgressCard extends StatelessWidget {
           Text(
             l10n.rankProgress,
             style: theme.textTheme.labelLarge?.copyWith(
-              color: scheme.onSurface.withOpacity(0.68),
+              color: cs.onSurface.withOpacity(0.68),
             ),
           ),
           const SizedBox(height: 8),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
             child: LinearProgressIndicator(
               minHeight: 10,
               value: stats.progressTarget == 0
                   ? 0
                   : stats.progressCurrent / stats.progressTarget,
-              backgroundColor: scheme.primary.withOpacity(0.12),
+              backgroundColor: cs.primary.withOpacity(0.12),
               valueColor: AlwaysStoppedAnimation<Color>(
-                scheme.primary,
+                cs.primary,
               ),
             ),
           ),
@@ -610,7 +627,7 @@ class _ProgressCard extends StatelessWidget {
             l10n.rankLabel(stats.rank),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -618,13 +635,14 @@ class _ProgressCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
+                key: const ValueKey('home-continue'),
                 onPressed: onContinue,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: scheme.primary,
-                  side: BorderSide(color: scheme.primary),
+                  foregroundColor: cs.primary,
+                  side: BorderSide(color: cs.primary),
                   padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
                   ),
                 ),
                 child: Text(
@@ -643,11 +661,11 @@ class _ProgressCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onNewGame,
               style: ElevatedButton.styleFrom(
-                backgroundColor: scheme.primary,
-                foregroundColor: scheme.onPrimary,
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18)),
                 ),
               ),
               child: Text(
@@ -683,23 +701,22 @@ class _DifficultyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final background = isActive
-        ? Color.alphaBlend(scheme.primary.withOpacity(0.12), scheme.surface)
-        : scheme.surface;
-    final borderColor =
-        isActive ? scheme.primary : scheme.outlineVariant;
-    final titleColor = isActive ? scheme.primary : scheme.onSurface;
-    final mutedColor = scheme.onSurface.withOpacity(0.68);
+        ? Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface)
+        : cs.surface;
+    final borderColor = isActive ? cs.primary : cs.outlineVariant;
+    final titleColor = isActive ? cs.primary : cs.onSurface;
+    final mutedColor = cs.onSurface.withOpacity(0.68);
 
     return InkWell(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: const BorderRadius.all(Radius.circular(22)),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: const BorderRadius.all(Radius.circular(22)),
           border: Border.all(color: borderColor),
         ),
         child: Row(
@@ -909,9 +926,9 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     super.build(context);
     final app = context.watch<AppState>();
     final sudokuTheme = app.resolvedTheme();
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
@@ -941,18 +958,18 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final canPlay =
         currentSelected != null && !currentSelected.isAfter(normalizedToday);
 
-    final surfaceColor = scheme.surface;
+    final surfaceColor = cs.surface;
     final headerGradient = LinearGradient(
       colors: [
-        scheme.primary,
-        Color.lerp(scheme.primary, scheme.onPrimary, 0.25) ?? scheme.primary,
+        cs.primary,
+        Color.lerp(cs.primary, cs.onPrimary, 0.25) ?? cs.primary,
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
 
     return Container(
-      color: scheme.background,
+      color: cs.background,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -975,18 +992,18 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                     opacity: _trophyOpacity,
                     child: ScaleTransition(
                       scale: _trophyScale,
-                      child: Container(
-                        width: 110,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          color: scheme.onPrimary.withOpacity(0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.emoji_events_rounded,
-                          color: scheme.onPrimary,
-                          size: 60,
-                        ),
+                        child: Container(
+                          width: 110,
+                          height: 110,
+                          decoration: BoxDecoration(
+                            color: cs.onPrimary.withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.emoji_events_rounded,
+                            color: cs.onPrimary,
+                            size: 60,
+                          ),
                       ),
                     ),
                   ),
@@ -1003,7 +1020,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                             l10n.navDaily,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.headlineMedium?.copyWith(
-                              color: scheme.onPrimary,
+                              color: cs.onPrimary,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.4,
                             ),
@@ -1022,7 +1039,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               Text(
                                 '$headerProgress/$challengeGoal',
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  color: scheme.onPrimary,
+                                  color: cs.onPrimary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -1047,7 +1064,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                       padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
                       decoration: BoxDecoration(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(28),
+                        borderRadius: const BorderRadius.all(Radius.circular(28)),
                         boxShadow: [
                           BoxShadow(
                             color: theme.shadowColor,
@@ -1072,7 +1089,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w700,
-                                    color: scheme.onSurface,
+                                    color: cs.onSurface,
                                   ),
                                 ),
                               ),
@@ -1094,7 +1111,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                     label.toUpperCase(),
                                     style: theme.textTheme.labelSmall?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: scheme.onSurface,
+                                      color: cs.onSurface,
                                     ),
                                   ),
                                 ),
@@ -1147,19 +1164,19 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                   ? () => _startDaily(app, currentSelected)
                                   : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: scheme.primary,
-                                foregroundColor: scheme.onPrimary,
+                                backgroundColor: cs.primary,
+                                foregroundColor: cs.onPrimary,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(22)),
                                 ),
                                 elevation: 0,
                               ),
                               child: Text(
                                 l10n.playAction,
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  color: scheme.onPrimary,
+                                  color: cs.onPrimary,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.1,
                                 ),
@@ -1226,16 +1243,16 @@ class _CalendarDayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final textColor = _resolveTextColor(scheme);
+    final cs = theme.colorScheme;
+    final textColor = _resolveTextColor(cs);
     final textStyle = (theme.textTheme.titleSmall ?? const TextStyle()).copyWith(
       fontWeight: FontWeight.w700,
       color: textColor,
     );
-    final indicatorColor = selected ? scheme.onPrimary : scheme.secondary;
+    final indicatorColor = selected ? cs.onPrimary : cs.secondary;
     final border = today
         ? Border.all(
-            color: selected ? scheme.onPrimary : scheme.primary,
+            color: selected ? cs.onPrimary : cs.primary,
             width: 3,
           )
         : null;
@@ -1248,7 +1265,7 @@ class _CalendarDayButton extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: selected ? scheme.primary : Colors.transparent,
+          color: selected ? cs.primary : Colors.transparent,
           border: border,
         ),
         padding: const EdgeInsets.all(4),

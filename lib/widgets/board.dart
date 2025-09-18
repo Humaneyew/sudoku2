@@ -10,8 +10,9 @@ class Board extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
-    final surfaceColor = theme.colorScheme.surface;
+    final surfaceColor = cs.surface;
 
     return Consumer<AppState>(
       builder: (context, app, _) {
@@ -25,7 +26,7 @@ class Board extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: surfaceColor,
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: const BorderRadius.all(Radius.circular(28)),
               boxShadow: [
                 BoxShadow(
                   color: colors.shadowColor,
@@ -40,11 +41,11 @@ class Board extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: colors.boardInner,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
                   border: Border.all(color: colors.boardBorder, width: 4),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
                   child: GridView.builder(
                     padding: EdgeInsets.zero,
                     physics: const NeverScrollableScrollPhysics(),
@@ -107,14 +108,15 @@ class _BoardCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
     final baseInner = colors.boardInner;
     final thinColor = Color.alphaBlend(
-      theme.colorScheme.onSurface.withOpacity(0.08),
+      cs.onSurface.withOpacity(0.08),
       baseInner,
     );
     final boldColor = Color.alphaBlend(
-      theme.colorScheme.onSurface.withOpacity(0.18),
+      cs.onSurface.withOpacity(0.18),
       baseInner,
     );
     final border = _cellBorder(index, thinColor, boldColor);
@@ -159,8 +161,9 @@ class _CellContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
-    final onSurface = theme.colorScheme.onSurface;
+    final onSurface = cs.onSurface;
     if (value != 0) {
       return Center(
         child: AnimatedDefaultTextStyle(
@@ -169,7 +172,7 @@ class _CellContent extends StatelessWidget {
           style: TextStyle(
             fontSize: 20 * fontScale,
             fontWeight: FontWeight.w600,
-            color: incorrect ? theme.colorScheme.error : onSurface,
+            color: incorrect ? cs.error : onSurface,
           ),
           child: Text(value.toString()),
         ),
@@ -198,7 +201,8 @@ class _NotesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sorted = notes.toList()..sort();
-    final colors = Theme.of(context).extension<SudokuColors>()!;
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(

@@ -93,8 +93,12 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
     _secondsLeft = widget.duration.inSeconds;
     if (_secondsLeft <= 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          Navigator.of(context).pop();
+        if (!mounted) {
+          return;
+        }
+        final navigator = Navigator.of(context, rootNavigator: true);
+        if (navigator.canPop()) {
+          navigator.pop();
         }
       });
       return;
@@ -113,7 +117,13 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
 
       if (remaining <= 0) {
         timer.cancel();
-        Navigator.of(context).pop();
+        if (!mounted) {
+          return;
+        }
+        final navigator = Navigator.of(context, rootNavigator: true);
+        if (navigator.canPop()) {
+          navigator.pop();
+        }
       }
     });
   }
@@ -127,7 +137,8 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    final cs = theme.colorScheme;
+    final primary = cs.primary;
 
     final total = widget.duration.inSeconds;
     final seconds = (_secondsLeft.clamp(0, total)).toInt();
@@ -135,7 +146,7 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: const BorderRadius.all(Radius.circular(24)),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Padding(
@@ -165,7 +176,7 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
             ),
             const SizedBox(height: 24),
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
               child: LinearProgressIndicator(
                 value: progress.clamp(0.0, 1.0),
                 minHeight: 10,
