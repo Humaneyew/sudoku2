@@ -11,7 +11,7 @@ import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi', 'ka'];
+  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi'];
   await Future.wait(locales.map(initializeDateFormatting));
 
   final appState = AppState();
