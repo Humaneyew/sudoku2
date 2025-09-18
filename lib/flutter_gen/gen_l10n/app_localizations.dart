@@ -154,6 +154,20 @@ abstract class AppLocalizations {
 
   String get themeDark;
 
+  String get themeWhite;
+
+  String get themeCream;
+
+  String get themeGreen;
+
+  String get themeBlack;
+
+  String get themePurple;
+
+  String get themeSyncWithSystem;
+
+  String get themeFontSize;
+
   String get digitStyleSectionTitle;
 
   String get digitStyleThin;
@@ -497,6 +511,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get themeDark => "Dunkel";
 
   @override
+  String get themeWhite => "Weiß";
+
+  @override
+  String get themeCream => "Creme";
+
+  @override
+  String get themeGreen => "Grün";
+
+  @override
+  String get themeBlack => "Schwarz";
+
+  @override
+  String get themePurple => "Violett";
+
+  @override
+  String get themeSyncWithSystem =>
+      "Mit dem Dunkelmodus des Systems synchronisieren";
+
+  @override
+  String get themeFontSize => "Schriftgröße";
+
+  @override
   String get digitStyleSectionTitle => "Ziffernstil";
 
   @override
@@ -826,6 +862,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => "Dark";
+
+  @override
+  String get themeWhite => "White";
+
+  @override
+  String get themeCream => "Cream";
+
+  @override
+  String get themeGreen => "Green";
+
+  @override
+  String get themeBlack => "Black";
+
+  @override
+  String get themePurple => "Purple";
+
+  @override
+  String get themeSyncWithSystem => "Sync with system dark mode";
+
+  @override
+  String get themeFontSize => "Font size";
 
   @override
   String get digitStyleSectionTitle => "Digit style";
@@ -1159,6 +1216,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeDark => "Sombre";
 
   @override
+  String get themeWhite => "Blanc";
+
+  @override
+  String get themeCream => "Crème";
+
+  @override
+  String get themeGreen => "Vert";
+
+  @override
+  String get themeBlack => "Noir";
+
+  @override
+  String get themePurple => "Violet";
+
+  @override
+  String get themeSyncWithSystem =>
+      "Synchroniser avec le mode sombre du système";
+
+  @override
+  String get themeFontSize => "Taille de police";
+
+  @override
   String get digitStyleSectionTitle => "Style des chiffres";
 
   @override
@@ -1488,6 +1567,27 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get themeDark => "गहरा";
+
+  @override
+  String get themeWhite => "सफेद";
+
+  @override
+  String get themeCream => "क्रीम";
+
+  @override
+  String get themeGreen => "हरा";
+
+  @override
+  String get themeBlack => "काला";
+
+  @override
+  String get themePurple => "बैंगनी";
+
+  @override
+  String get themeSyncWithSystem => "सिस्टम के डार्क मोड से सिंक करें";
+
+  @override
+  String get themeFontSize => "फ़ॉन्ट आकार";
 
   @override
   String get digitStyleSectionTitle => "अंकों की शैली";
@@ -1825,6 +1925,28 @@ class AppLocalizationsRu extends AppLocalizations {
   String get themeDark => "Тёмная";
 
   @override
+  String get themeWhite => "Белая";
+
+  @override
+  String get themeCream => "Кремовая";
+
+  @override
+  String get themeGreen => "Зелёная";
+
+  @override
+  String get themeBlack => "Чёрная";
+
+  @override
+  String get themePurple => "Фиолетовая";
+
+  @override
+  String get themeSyncWithSystem =>
+      "Синхронизация с тёмным режимом системы";
+
+  @override
+  String get themeFontSize => "Размер шрифта";
+
+  @override
   String get digitStyleSectionTitle => "Стиль цифр";
 
   @override
@@ -2160,6 +2282,28 @@ class AppLocalizationsUk extends AppLocalizations {
   String get themeDark => "Темна";
 
   @override
+  String get themeWhite => "Біла";
+
+  @override
+  String get themeCream => "Кремова";
+
+  @override
+  String get themeGreen => "Зелена";
+
+  @override
+  String get themeBlack => "Чорна";
+
+  @override
+  String get themePurple => "Фіолетова";
+
+  @override
+  String get themeSyncWithSystem =>
+      "Синхронізація з темним режимом системи";
+
+  @override
+  String get themeFontSize => "Розмір шрифту";
+
+  @override
   String get digitStyleSectionTitle => "Стиль цифр";
 
   @override
@@ -2487,6 +2631,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeDark => "深色";
+
+  @override
+  String get themeWhite => "白色";
+
+  @override
+  String get themeCream => "米色";
+
+  @override
+  String get themeGreen => "绿色";
+
+  @override
+  String get themeBlack => "黑色";
+
+  @override
+  String get themePurple => "紫色";
+
+  @override
+  String get themeSyncWithSystem => "跟随系统深色模式";
+
+  @override
+  String get themeFontSize => "字体大小";
 
   @override
   String get digitStyleSectionTitle => "数字样式";

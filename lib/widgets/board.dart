@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models.dart';
+import '../theme.dart';
 
 class Board extends StatelessWidget {
   const Board({super.key});
@@ -9,6 +10,7 @@ class Board extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
     final surfaceColor = theme.colorScheme.surface;
 
     return Consumer<AppState>(
@@ -22,9 +24,9 @@ class Board extends StatelessWidget {
           decoration: BoxDecoration(
             color: surfaceColor,
             borderRadius: BorderRadius.circular(28),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Color(0x141B1D3A),
+                color: colors.shadowColor,
                 blurRadius: 24,
                 offset: Offset(0, 16),
               ),
@@ -35,9 +37,9 @@ class Board extends StatelessWidget {
             aspectRatio: 1,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colors.boardInner,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black, width: 4),
+                border: Border.all(color: colors.boardBorder, width: 4),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
@@ -54,9 +56,8 @@ class Board extends StatelessWidget {
                     final given = game.given[index];
                     final isSelected = app.selectedCell == index;
                     final sameValue = app.isSameAsSelectedValue(index);
-                    final incorrect = !given &&
-                        value != 0 &&
-                        !app.isMoveValid(index, value);
+                    final incorrect =
+                        !given && value != 0 && !app.isMoveValid(index, value);
 
                     return _BoardCell(
                       index: index,
@@ -102,13 +103,24 @@ class _BoardCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final border = _cellBorder(index);
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
+    final baseInner = colors.boardInner;
+    final thinColor = Color.alphaBlend(
+      theme.colorScheme.onSurface.withOpacity(0.08),
+      baseInner,
+    );
+    final boldColor = Color.alphaBlend(
+      theme.colorScheme.onSurface.withOpacity(0.18),
+      baseInner,
+    );
+    final border = _cellBorder(index, thinColor, boldColor);
     final highlightSameValue = value != 0 && sameValue && !isSelected;
     final backgroundColor = isSelected
-        ? const Color(0xFFD6EAF8)
+        ? colors.selectedCell
         : highlightSameValue
-            ? const Color(0xFFEAF2FB)
-            : Colors.white;
+            ? colors.sameNumberCell
+            : colors.boardInner;
 
     return GestureDetector(
       onTap: onTap,
@@ -143,6 +155,9 @@ class _CellContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
+    final onSurface = theme.colorScheme.onSurface;
     if (value != 0) {
       return Center(
         child: Text(
@@ -150,7 +165,7 @@ class _CellContent extends StatelessWidget {
           style: TextStyle(
             fontSize: digitStyle.fontSize,
             fontWeight: digitStyle.fontWeight,
-            color: incorrect ? const Color(0xFFE74C3C) : Colors.black,
+            color: incorrect ? theme.colorScheme.error : onSurface,
           ),
         ),
       );
@@ -176,6 +191,7 @@ class _NotesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sorted = notes.toList()..sort();
+    final colors = Theme.of(context).extension<SudokuColors>()!;
     return Align(
       alignment: Alignment.topLeft,
       child: Padding(
@@ -184,15 +200,15 @@ class _NotesGrid extends StatelessWidget {
           spacing: 4,
           runSpacing: 2,
           children: [
-            for (final note in sorted)
-              Text(
-                note.toString(),
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF96A0C4),
-                  fontWeight: FontWeight.w600,
-                ),
+          for (final note in sorted)
+            Text(
+              note.toString(),
+              style: TextStyle(
+                fontSize: 10,
+                color: colors.noteColor,
+                fontWeight: FontWeight.w600,
               ),
+            ),
           ],
         ),
       ),
@@ -200,9 +216,7 @@ class _NotesGrid extends StatelessWidget {
   }
 }
 
-Border _cellBorder(int index) {
-  const thinLineColor = Color(0xFFD3D3D3);
-  const boldLineColor = Color(0xFF555555);
+Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
   const thinLineWidth = 0.5;
   const boldLineWidth = 1.6;
 

@@ -3,10 +3,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'puzzles.dart';
+import 'theme.dart';
 
 /// Уровни сложности, используемые в приложении.
 enum Difficulty { novice, medium, high, expert, master }
@@ -30,9 +31,6 @@ extension DifficultyX on Difficulty {
         Difficulty.master => l10n.difficultyMasterShort,
       };
 }
-
-/// Темы приложения.
-enum AppTheme { system, light, dark }
 
 /// Поддерживаемые языки интерфейса.
 enum AppLanguage { en, ru, uk, de, fr, zh, hi }
@@ -194,9 +192,13 @@ class DifficultyStats {
 class AppState extends ChangeNotifier {
   static const int _maxHints = 3;
   static const int _maxLives = 3;
+  static const double minFontScale = 0.85;
+  static const double maxFontScale = 1.25;
 
-  AppTheme theme = AppTheme.system;
+  SudokuTheme theme = SudokuTheme.white;
   AppLanguage lang = AppLanguage.uk;
+  bool syncWithSystemTheme = false;
+  double fontScale = 1.0;
 
   Map<Difficulty, DifficultyStats> statsByDifficulty = _defaultStats();
 
@@ -264,12 +266,31 @@ class AppState extends ChangeNotifier {
       } catch (_) {}
     }
 
-    final themeName = prefs.getString('theme');
+    final themeName = prefs.getString('themeV2') ?? prefs.getString('theme');
     if (themeName != null) {
       try {
-        theme = AppTheme.values.byName(themeName);
-      } catch (_) {}
+        theme = SudokuTheme.values.byName(themeName);
+      } catch (_) {
+        switch (themeName) {
+          case 'light':
+            theme = SudokuTheme.white;
+            break;
+          case 'dark':
+            theme = SudokuTheme.black;
+            break;
+          case 'system':
+            syncWithSystemTheme = true;
+            theme = SudokuTheme.white;
+            break;
+        }
+      }
     }
+
+    syncWithSystemTheme =
+        prefs.getBool('syncWithSystemTheme') ?? syncWithSystemTheme;
+    fontScale = ((prefs.getDouble('fontScale') ?? fontScale)
+            .clamp(minFontScale, maxFontScale))
+        .toDouble();
 
     final langName = prefs.getString('lang');
     if (langName != null) {
@@ -389,13 +410,52 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setTheme(AppTheme value) {
-    if (theme == value) return;
+  void setTheme(SudokuTheme value) {
+    final wasSynced = syncWithSystemTheme;
+    if (theme == value && !wasSynced) return;
     theme = value;
+    if (wasSynced) {
+      syncWithSystemTheme = false;
+    }
     _persist((prefs) async {
-      await prefs.setString('theme', value.name);
+      await prefs.setString('themeV2', value.name);
+      if (wasSynced) {
+        await prefs.setBool('syncWithSystemTheme', false);
+      }
     });
     notifyListeners();
+  }
+
+  void setSyncWithSystemTheme(bool value) {
+    if (syncWithSystemTheme == value) return;
+    syncWithSystemTheme = value;
+    _persist((prefs) async {
+      await prefs.setBool('syncWithSystemTheme', value);
+    });
+    notifyListeners();
+  }
+
+  void setFontScale(double value) {
+    final clamped = value.clamp(minFontScale, maxFontScale).toDouble();
+    if ((fontScale - clamped).abs() < 0.001) return;
+    fontScale = clamped;
+    _persist((prefs) async {
+      await prefs.setDouble('fontScale', fontScale);
+    });
+    notifyListeners();
+  }
+
+  SudokuTheme resolvedTheme(Brightness platformBrightness) {
+    if (syncWithSystemTheme) {
+      return platformBrightness == Brightness.dark
+          ? SudokuTheme.black
+          : SudokuTheme.white;
+    }
+    return theme;
+  }
+
+  String resolvedThemeName(AppLocalizations l10n, Brightness brightness) {
+    return resolvedTheme(brightness).label(l10n);
   }
 
   void setLang(AppLanguage value) {
@@ -495,6 +555,32 @@ class AppState extends ChangeNotifier {
     statsByDifficulty[diff]?.gamesStarted++;
     _saveCurrentGame();
     saveProfile();
+    notifyListeners();
+  }
+
+  /// Перезапуск текущей головоломки без смены задачи.
+  void restartCurrentPuzzle() {
+    final game = current;
+    if (game == null) return;
+
+    for (var i = 0; i < game.board.length; i++) {
+      game.board[i] = game.given[i] ? game.solution[i] : 0;
+      game.notes[i].clear();
+    }
+
+    currentScore = 0;
+    selectedCell = null;
+    notesMode = false;
+    hintsLeft = _maxHints;
+    livesLeft = _maxLives;
+    highlightedNumber = null;
+    _madeMistake = false;
+    _gameCompleted = false;
+    _history.clear();
+    _sessionId++;
+    _startedAt = DateTime.now();
+
+    _saveCurrentGame();
     notifyListeners();
   }
 
