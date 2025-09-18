@@ -164,9 +164,9 @@ class _ThemeCircle extends StatelessWidget {
               ),
             ),
             if (active)
-              const Icon(
+              Icon(
                 Icons.check,
-                color: Colors.white,
+                color: scheme.onPrimary,
                 size: 22,
               ),
           ],
