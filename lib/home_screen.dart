@@ -739,11 +739,17 @@ class _DailyChallengesTab extends StatefulWidget {
   State<_DailyChallengesTab> createState() => _DailyChallengesTabState();
 }
 
-class _DailyChallengesTabState extends State<_DailyChallengesTab> {
+class _DailyChallengesTabState extends State<_DailyChallengesTab>
+    with SingleTickerProviderStateMixin {
   late DateTime _visibleMonth;
   late int _preferredDay;
   DateTime? _selectedDate;
   bool _initialized = false;
+  late final AnimationController _introController;
+  late final Animation<double> _trophyScale;
+  late final Animation<double> _trophyOpacity;
+  late final Animation<Offset> _calendarOffset;
+  late final Animation<double> _calendarOpacity;
 
   @override
   void initState() {
@@ -752,6 +758,38 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab> {
     _visibleMonth = DateTime(now.year, now.month);
     _preferredDay = now.day;
     _selectedDate = DateTime(now.year, now.month, now.day);
+
+    _introController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+    _trophyScale = CurvedAnimation(
+      parent: _introController,
+      curve: Curves.easeOutBack,
+    );
+    _trophyOpacity = CurvedAnimation(
+      parent: _introController,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+    );
+    _calendarOffset = Tween<Offset>(
+      begin: const Offset(0, 0.15),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _introController,
+        curve: const Interval(0.35, 1.0, curve: Curves.easeOut),
+      ),
+    );
+    _calendarOpacity = CurvedAnimation(
+      parent: _introController,
+      curve: const Interval(0.35, 1.0, curve: Curves.easeIn),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _introController.forward();
+      }
+    });
   }
 
   @override
@@ -832,6 +870,12 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab> {
   }
 
   @override
+  void dispose() {
+    _introController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final l10n = AppLocalizations.of(context)!;
@@ -864,167 +908,203 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab> {
     final canPlay =
         currentSelected != null && !currentSelected.isAfter(normalizedToday);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  Icons.emoji_events_rounded,
-                  color: scheme.onPrimaryContainer,
-                  size: 32,
+    final surfaceColor = theme.colorScheme.surface;
+    const gradientColors = <Color>[
+      Color(0xFF1F3C88),
+      Color(0xFF3D7BF6),
+    ];
+
+    return Container(
+      color: theme.colorScheme.surfaceVariant.withOpacity(0.1),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(
+                24,
+                MediaQuery.of(context).padding.top + 32,
+                24,
+                120,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.navDaily,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${l10n.dailyStreak}: ${app.dailyStreak}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7) ??
-                            scheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.event_available_outlined,
-                        color: scheme.primary,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '$progress/$monthDays',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
+                  FadeTransition(
+                    opacity: _trophyOpacity,
+                    child: ScaleTransition(
+                      scale: _trophyScale,
+                      child: Container(
+                        width: 110,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.emoji_events_rounded,
+                          color: Colors.white,
+                          size: 60,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 20),
                   Text(
-                    monthLabel,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
+                    l10n.navDaily,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.4,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left_rounded),
-                onPressed: () => _changeMonth(-1),
-              ),
-              Expanded(
-                child: Text(
-                  monthLabel,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right_rounded),
-                onPressed: canGoNext ? () => _changeMonth(1) : null,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: List.generate(7, (index) {
-              final label = weekdayFormatter.format(DateTime(2020, 1, 6 + index));
-              return Expanded(
-                child: Center(
-                  child: Text(
-                    label.toUpperCase(),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSurfaceVariant,
+            ),
+            Transform.translate(
+              offset: const Offset(0, -80),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: SlideTransition(
+                  position: _calendarOffset,
+                  child: FadeTransition(
+                    opacity: _calendarOpacity,
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
+                      decoration: BoxDecoration(
+                        color: surfaceColor,
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 30,
+                            offset: const Offset(0, 18),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              IconButton(
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(Icons.chevron_left_rounded),
+                                onPressed: () => _changeMonth(-1),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  '$monthLabel $progress/$monthDays',
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(Icons.chevron_right_rounded),
+                                onPressed: canGoNext ? () => _changeMonth(1) : null,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: List.generate(7, (index) {
+                              final label =
+                                  weekdayFormatter.format(DateTime(2020, 1, 6 + index));
+                              return Expanded(
+                                child: Center(
+                                  child: Text(
+                                    label.toUpperCase(),
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                          const SizedBox(height: 16),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: totalCells,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 7,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                            ),
+                            itemBuilder: (context, index) {
+                              final day = index - leadingEmpty + 1;
+                              if (day < 1 || day > monthDays) {
+                                return const SizedBox.shrink();
+                              }
+                              final date =
+                                  DateTime(_visibleMonth.year, _visibleMonth.month, day);
+                              final locked = date.isAfter(normalizedToday);
+                              return AspectRatio(
+                                aspectRatio: 1,
+                                child: _CalendarDayButton(
+                                  date: date,
+                                  selected: currentSelected != null &&
+                                      DateUtils.isSameDay(currentSelected, date),
+                                  today: DateUtils.isSameDay(date, normalizedToday),
+                                  completed: app.isDailyCompleted(date),
+                                  locked: locked,
+                                  onTap: locked ? null : () => _onSelect(date),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 28),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: canPlay && currentSelected != null
+                                  ? () => _startDaily(app, currentSelected)
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: scheme.primary,
+                                foregroundColor: scheme.onPrimary,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                l10n.playAction,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: scheme.onPrimary,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              );
-            }),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: totalCells,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-            ),
-            itemBuilder: (context, index) {
-              final day = index - leadingEmpty + 1;
-              if (day < 1 || day > monthDays) {
-                return const SizedBox.shrink();
-              }
-              final date = DateTime(_visibleMonth.year, _visibleMonth.month, day);
-              final locked = date.isAfter(normalizedToday);
-              return AspectRatio(
-                aspectRatio: 1,
-                child: _CalendarDayButton(
-                  date: date,
-                  selected:
-                      currentSelected != null && DateUtils.isSameDay(currentSelected, date),
-                  today: DateUtils.isSameDay(date, normalizedToday),
-                  completed: app.isDailyCompleted(date),
-                  locked: locked,
-                  onTap: locked ? null : () => _onSelect(date),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed:
-                canPlay && currentSelected != null ? () => _startDaily(app, currentSelected) : null,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
               ),
             ),
-            child: Text(
-              l10n.playAction,
-              style: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -1051,65 +1131,57 @@ class _CalendarDayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final borderRadius = BorderRadius.circular(14);
+    final textStyle = theme.textTheme.titleSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+    );
 
-    Color background = Colors.transparent;
-    Color textColor = scheme.onSurface;
-    Border? border;
-    Widget? badge;
+    final textColor = locked
+        ? scheme.onSurfaceVariant.withOpacity(0.35)
+        : (selected ? scheme.onPrimary : scheme.onSurface);
 
-    if (completed) {
-      background = scheme.primary;
-      textColor = scheme.onPrimary;
-      if (selected) {
-        border = Border.all(color: scheme.onPrimary, width: 2);
-      }
-      badge = Icon(
-        Icons.check_rounded,
-        size: 16,
-        color: scheme.onPrimary,
-      );
-    } else if (selected) {
-      background = scheme.primary.withOpacity(0.1);
-      textColor = scheme.primary;
-      border = Border.all(color: scheme.primary, width: 2);
-    } else if (today) {
-      border = Border.all(color: scheme.primary, width: 1.5);
-    }
-
-    if (locked && !completed) {
-      textColor = scheme.onSurface.withOpacity(0.3);
-    }
-
-    return AnimatedContainer(
+    return AnimatedScale(
       duration: const Duration(milliseconds: 200),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: borderRadius,
-        border: border,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: borderRadius,
-          onTap: locked ? null : onTap,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                '${date.day}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
+      curve: Curves.easeOutBack,
+      scale: selected ? 1.08 : 1.0,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: selected ? scheme.primary : Colors.transparent,
+          border: today
+              ? Border.all(
+                  color: selected ? scheme.onPrimary : scheme.primary,
+                  width: 3,
+                )
+              : null,
+        ),
+        padding: const EdgeInsets.all(4),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: locked ? null : onTap,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${date.day}',
+                  style: textStyle?.copyWith(color: textColor),
                 ),
-              ),
-              if (badge != null)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: badge,
-                ),
-            ],
+                if (completed)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: selected ? scheme.onPrimary : scheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

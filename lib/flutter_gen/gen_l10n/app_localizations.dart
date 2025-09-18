@@ -315,7 +315,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navHome => "Startseite";
 
   @override
-  String get navDaily => "Tägliche Herausforderung";
+  String get navDaily => "Herausforderung";
 
   @override
   String get navStats => "Statistiken";
@@ -327,7 +327,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectDifficultyTitle => "Schwierigkeitsgrad wählen";
 
   @override
-  String get selectDifficultyDailyChallenge => "Tägliche Herausforderung";
+  String get selectDifficultyDailyChallenge => "Herausforderung";
 
   @override
   String get playAction => "Spielen";
@@ -658,7 +658,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navHome => "Home";
 
   @override
-  String get navDaily => "Daily Challenge";
+  String get navDaily => "Challenge";
 
   @override
   String get navStats => "Statistics";
@@ -670,7 +670,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectDifficultyTitle => "Choose difficulty";
 
   @override
-  String get selectDifficultyDailyChallenge => "Daily challenge";
+  String get selectDifficultyDailyChallenge => "Challenge";
 
   @override
   String get playAction => "Play";
@@ -1001,7 +1001,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get navHome => "Accueil";
 
   @override
-  String get navDaily => "Défi quotidien";
+  String get navDaily => "Défi";
 
   @override
   String get navStats => "Statistiques";
@@ -1013,7 +1013,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectDifficultyTitle => "Choisissez la difficulté";
 
   @override
-  String get selectDifficultyDailyChallenge => "Défi quotidien";
+  String get selectDifficultyDailyChallenge => "Défi";
 
   @override
   String get playAction => "Jouer";
@@ -1344,7 +1344,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get navHome => "होम";
 
   @override
-  String get navDaily => "दैनिक चुनौती";
+  String get navDaily => "चुनौती";
 
   @override
   String get navStats => "आँकड़े";
@@ -1356,7 +1356,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get selectDifficultyTitle => "कठिनाई चुनें";
 
   @override
-  String get selectDifficultyDailyChallenge => "दैनिक चुनौती";
+  String get selectDifficultyDailyChallenge => "चुनौती";
 
   @override
   String get playAction => "खेलें";
@@ -1687,7 +1687,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get navHome => "Главная";
 
   @override
-  String get navDaily => "Ежедневное испытание";
+  String get navDaily => "Испытание";
 
   @override
   String get navStats => "Статистика";
@@ -1699,7 +1699,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get selectDifficultyTitle => "Выберите сложность";
 
   @override
-  String get selectDifficultyDailyChallenge => "Ежедневное испытание";
+  String get selectDifficultyDailyChallenge => "Испытание";
 
   @override
   String get playAction => "Играть";
@@ -2034,7 +2034,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get navHome => "Головна";
 
   @override
-  String get navDaily => "Щоденний виклик";
+  String get navDaily => "Виклик";
 
   @override
   String get navStats => "Статистика";
@@ -2046,7 +2046,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get selectDifficultyTitle => "Виберіть складність";
 
   @override
-  String get selectDifficultyDailyChallenge => "Щоденний виклик";
+  String get selectDifficultyDailyChallenge => "Виклик";
 
   @override
   String get playAction => "Грати";
@@ -2381,7 +2381,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navHome => "首页";
 
   @override
-  String get navDaily => "每日挑战";
+  String get navDaily => "挑战";
 
   @override
   String get navStats => "统计";
@@ -2393,7 +2393,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectDifficultyTitle => "选择难度";
 
   @override
-  String get selectDifficultyDailyChallenge => "每日挑战";
+  String get selectDifficultyDailyChallenge => "挑战";
 
   @override
   String get playAction => "游玩";
