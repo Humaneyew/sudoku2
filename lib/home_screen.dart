@@ -274,13 +274,14 @@ class _ChallengeCarousel extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final formatter = DateFormat('d MMMM', l10n.localeName);
     final today = formatter.format(DateTime.now());
+    final colors = Theme.of(context).extension<SudokuColors>()!;
 
     final cards = [
       _ChallengeCardData(
         title: l10n.navDaily,
         subtitle: today,
         buttonLabel: l10n.playAction,
-        gradient: const [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        gradient: colors.dailyChallengeGradient,
         icon: Icons.emoji_events,
         onPressed: () {},
       ),
@@ -288,7 +289,7 @@ class _ChallengeCarousel extends StatelessWidget {
         title: l10n.championshipTitle,
         subtitle: l10n.championshipScore(championshipScore),
         buttonLabel: l10n.playAction,
-        gradient: const [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        gradient: colors.championshipChallengeGradient,
         icon: Icons.workspace_premium_outlined,
         onPressed: () {},
         badge: '2G',
@@ -297,7 +298,7 @@ class _ChallengeCarousel extends StatelessWidget {
         title: l10n.battleTitle,
         subtitle: l10n.battleWinRate(battleWinRate),
         buttonLabel: l10n.startAction,
-        gradient: const [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        gradient: colors.battleChallengeGradient,
         icon: Icons.sports_esports_outlined,
         onPressed: () {},
       ),
@@ -333,7 +334,7 @@ class _ChallengeCardData {
   final String title;
   final String subtitle;
   final String buttonLabel;
-  final List<Color> gradient;
+  final LinearGradient gradient;
   final IconData icon;
   final VoidCallback onPressed;
   final String? badge;
@@ -363,11 +364,7 @@ class _ChallengeCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: data.gradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: data.gradient,
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
@@ -389,7 +386,11 @@ class _ChallengeCard extends StatelessWidget {
                   color: onPrimary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(data.icon, color: data.gradient.last, size: 22),
+                child: Icon(
+                  data.icon,
+                  color: data.gradient.colors.last,
+                  size: 22,
+                ),
               ),
               const Spacer(),
               if (data.badge != null)
@@ -435,7 +436,7 @@ class _ChallengeCard extends StatelessWidget {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: onPrimary,
-              foregroundColor: data.gradient.last,
+              foregroundColor: data.gradient.colors.last,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
               ),
@@ -789,15 +790,12 @@ class _DailyHeroCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final onPrimary = scheme.onPrimary;
+    final colors = theme.extension<SudokuColors>()!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF9AD3FF), Color(0xFF4E8BFF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: colors.dailyHeroGradient,
         borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
