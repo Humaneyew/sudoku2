@@ -11,6 +11,14 @@ import 'widgets/board.dart';
 import 'widgets/control_panel.dart';
 import 'widgets/theme_menu.dart';
 
+final _elapsedMsExpando = Expando<int>('elapsedMs');
+
+extension _GameStateElapsedMs on GameState {
+  int get elapsedMs => _elapsedMsExpando[this] ?? 0;
+
+  set elapsedMs(int value) => _elapsedMsExpando[this] = value;
+}
+
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
 
@@ -18,9 +26,9 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> {
-  Timer? _timer;
-  int elapsedMs = 0;
+class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
+  final ValueNotifier<int> _elapsedVN = ValueNotifier<int>(0);
+  Timer? _t;
   int _observedSession = -1;
   bool _victoryShown = false;
   bool _failureShown = false;
@@ -28,24 +36,48 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
+    WidgetsBinding.instance.addObserver(this);
+    final app = context.read<AppState>();
+    final startMs = app.current?.elapsedMs ?? 0;
+    _startTimer(app, startMs);
   }
 
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      setState(() {
-        elapsedMs += 1000;
-      });
+  void _startTimer(AppState app, int startMs) {
+    _t?.cancel();
+    _elapsedVN.value = startMs;
+    final current = app.current;
+    if (current != null) {
+      current.elapsedMs = startMs;
+    }
+    _t = Timer.periodic(const Duration(seconds: 1), (_) {
+      _elapsedVN.value += 1000;
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
-    context.read<AppState>().save();
+    WidgetsBinding.instance.removeObserver(this);
+    _t?.cancel();
+
+    final app = context.read<AppState>();
+    if (app.current != null) {
+      app.current!.elapsedMs = _elapsedVN.value;
+      app.save();
+    }
+
+    _elapsedVN.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      final app = context.read<AppState>();
+      if (app.current != null) {
+        app.current!.elapsedMs = _elapsedVN.value;
+        app.save();
+      }
+    }
   }
 
   @override
@@ -67,10 +99,7 @@ class _GamePageState extends State<GamePage> {
       _observedSession = app.sessionId;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        setState(() {
-          elapsedMs = 0;
-        });
-        _startTimer();
+        _startTimer(app, app.current?.elapsedMs ?? 0);
         _victoryShown = false;
         _failureShown = false;
       });
@@ -89,14 +118,12 @@ class _GamePageState extends State<GamePage> {
         child: Column(
           children: [
             _GameHeader(
-              timeText: _formatTime(elapsedMs),
+              elapsed: _elapsedVN,
               onBack: () => Navigator.pop(context),
               onRestart: () {
                 app.restartCurrentPuzzle();
-                setState(() {
-                  elapsedMs = 0;
-                });
-                _startTimer();
+                app.current?.elapsedMs = 0;
+                _startTimer(app, 0);
               },
               onOpenTheme: () => showThemeMenu(context),
               onSettings: () => Navigator.push(
@@ -134,7 +161,9 @@ class _GamePageState extends State<GamePage> {
     if (app.current == null) return;
 
     if (app.isSolved && !app.gameCompleted) {
-      app.completeGame(elapsedMs);
+      final ms = _elapsedVN.value;
+      app.current?.elapsedMs = ms;
+      app.completeGame(ms);
       if (!_victoryShown) {
         _victoryShown = true;
         _showVictoryDialog(app);
@@ -202,7 +231,7 @@ class _GamePageState extends State<GamePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    l10n.victoryMessage(_formatTime(elapsedMs)),
+                    l10n.victoryMessage(formatDuration(_elapsedVN.value)),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.7),
@@ -229,10 +258,8 @@ class _GamePageState extends State<GamePage> {
                             final diff = app.currentDifficulty ??
                                 app.featuredStatsDifficulty;
                             app.startGame(diff);
-                            setState(() {
-                              elapsedMs = 0;
-                            });
-                            _startTimer();
+                            app.current?.elapsedMs = 0;
+                            _startTimer(app, 0);
                             _victoryShown = false;
                           },
                           style: ElevatedButton.styleFrom(
@@ -364,24 +391,24 @@ class _GamePageState extends State<GamePage> {
       }
     }
   }
+}
 
-  String _formatTime(int ms) {
-    final seconds = ms ~/ 1000;
-    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
-    final secs = (seconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$secs';
-  }
+String formatDuration(int ms) {
+  final seconds = ms ~/ 1000;
+  final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+  final secs = (seconds % 60).toString().padLeft(2, '0');
+  return '$minutes:$secs';
 }
 
 class _GameHeader extends StatelessWidget {
-  final String timeText;
+  final ValueListenable<int> elapsed;
   final VoidCallback onBack;
   final VoidCallback onRestart;
   final VoidCallback onOpenTheme;
   final VoidCallback onSettings;
 
   const _GameHeader({
-    required this.timeText,
+    required this.elapsed,
     required this.onBack,
     required this.onRestart,
     required this.onOpenTheme,
@@ -409,9 +436,12 @@ class _GameHeader extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text(
-                  timeText,
-                  style: textStyle,
+                ValueListenableBuilder<int>(
+                  valueListenable: elapsed,
+                  builder: (_, ms, __) => Text(
+                    formatDuration(ms),
+                    style: textStyle,
+                  ),
                 ),
               ],
             ),
