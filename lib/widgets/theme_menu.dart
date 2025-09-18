@@ -44,24 +44,16 @@ class _ThemeDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < themeOptions.length; i++)
-                        Padding(
-                          padding: EdgeInsets.only(
-                            right: i == themeOptions.length - 1 ? 0 : 12,
-                          ),
-                          child: _ThemeCircle(
-                            option: themeOptions[i],
-                            active: themeOptions[i] == activeTheme,
-                            onTap: () => app.setTheme(themeOptions[i]),
-                          ),
-                        ),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (final option in themeOptions)
+                      _ThemeCircle(
+                        option: option,
+                        active: option == activeTheme,
+                        onTap: () => app.setTheme(option),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -87,6 +79,7 @@ class _ThemeDialog extends StatelessWidget {
                         value: app.fontSizeSp,
                         min: AppState.minFontSizeSp,
                         max: AppState.maxFontSizeSp,
+                        divisions: AppState.fontSizeOptionsSp.length - 1,
                         onChanged: (value) =>
                             app.setFontSizeSp(value, save: false),
                         onChangeEnd: app.setFontSizeSp,

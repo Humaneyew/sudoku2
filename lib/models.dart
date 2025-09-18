@@ -192,8 +192,9 @@ class AppState extends ChangeNotifier {
 
   SudokuTheme theme = SudokuTheme.white;
   AppLanguage lang = AppLanguage.uk;
-  static const double minFontSizeSp = 12.0;
-  static const double maxFontSizeSp = 24.0;
+  static const double minFontSizeSp = 15.0;
+  static const double maxFontSizeSp = 19.0;
+  static const List<double> fontSizeOptionsSp = [15.0, 17.0, 19.0];
   static const double _baseFontSizeSp = 16.0;
   static const double minFontScale = minFontSizeSp / _baseFontSizeSp;
   static const double maxFontScale = maxFontSizeSp / _baseFontSizeSp;
@@ -286,7 +287,11 @@ class AppState extends ChangeNotifier {
     var migratedFontScale = false;
 
     if (storedScale != null) {
-      _fontScale = storedScale.clamp(minFontScale, maxFontScale).toDouble();
+      final normalized = _normalizeFontScale(storedScale);
+      if ((normalized - storedScale).abs() > 0.0001) {
+        migratedFontScale = true;
+      }
+      _fontScale = normalized;
     } else {
       FontSizeOption? option;
       final storedFontSize = prefs.getString('fontSize');
@@ -297,12 +302,12 @@ class AppState extends ChangeNotifier {
       }
 
       if (option != null) {
-        _fontScale = option.scale;
+        _fontScale = _normalizeFontScale(option.scale);
         migratedFontScale = true;
       } else {
         final legacyScale = prefs.getDouble('fontScale');
         if (legacyScale != null) {
-          _fontScale = legacyScale.clamp(minFontScale, maxFontScale).toDouble();
+          _fontScale = _normalizeFontScale(legacyScale);
           migratedFontScale = true;
         } else {
           final digitStyleName = prefs.getString('digitStyle');
@@ -318,13 +323,15 @@ class AppState extends ChangeNotifier {
                 option = FontSizeOption.medium;
             }
             if (option != null) {
-              _fontScale = option.scale;
+              _fontScale = _normalizeFontScale(option.scale);
               migratedFontScale = true;
             }
           }
         }
       }
     }
+
+    _fontScale = _normalizeFontScale(_fontScale);
 
     if (migratedFontScale) {
       await prefs.setDouble('fontScaleV2', _fontScale);
@@ -456,7 +463,7 @@ class AppState extends ChangeNotifier {
   }
 
   void setFontScale(double value, {bool save = true}) {
-    final normalized = value.clamp(minFontScale, maxFontScale).toDouble();
+    final normalized = _normalizeFontScale(value);
     if ((_fontScale - normalized).abs() < 0.001) return;
     _fontScale = normalized;
     if (save) {
@@ -470,15 +477,31 @@ class AppState extends ChangeNotifier {
   }
 
   void setFontSizeSp(double value, {bool save = true}) {
-    final scale = (value / _baseFontSizeSp)
-        .clamp(minFontScale, maxFontScale)
-        .toDouble();
-    setFontScale(scale, save: save);
+    setFontScale(value / _baseFontSizeSp, save: save);
   }
 
   double get fontScale => _fontScale;
 
   double get fontSizeSp => _fontScale * _baseFontSizeSp;
+
+  static double _normalizeFontScale(double scale) {
+    final clamped = scale.clamp(minFontScale, maxFontScale).toDouble();
+    final fontSize = clamped * _baseFontSizeSp;
+    final nearest = _nearestFontSize(fontSize);
+    return nearest / _baseFontSizeSp;
+  }
+
+  static double _nearestFontSize(double value) {
+    var nearest = fontSizeOptionsSp.first;
+    for (final option in fontSizeOptionsSp.skip(1)) {
+      final diff = (option - value).abs();
+      final nearestDiff = (nearest - value).abs();
+      if (diff < nearestDiff || (diff == nearestDiff && option > nearest)) {
+        nearest = option;
+      }
+    }
+    return nearest;
+  }
 
   SudokuTheme resolvedTheme() {
     return theme;
