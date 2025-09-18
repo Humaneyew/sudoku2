@@ -28,41 +28,13 @@ Future<void> main() async {
   );
 }
 
-class SudokuApp extends StatefulWidget {
+class SudokuApp extends StatelessWidget {
   const SudokuApp({super.key});
-
-  @override
-  State<SudokuApp> createState() => _SudokuAppState();
-}
-
-class _SudokuAppState extends State<SudokuApp> with WidgetsBindingObserver {
-  Brightness _platformBrightness =
-      WidgetsBinding.instance.platformDispatcher.platformBrightness;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangePlatformBrightness() {
-    setState(() {
-      _platformBrightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    final activeTheme = app.resolvedTheme(_platformBrightness);
+    final activeTheme = app.resolvedTheme();
     final theme = buildSudokuTheme(activeTheme)
         .copyWith(pageTransitionsTheme: _pageTransitionsTheme);
 
@@ -77,12 +49,22 @@ class _SudokuAppState extends State<SudokuApp> with WidgetsBindingObserver {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: theme,
+      themeAnimationDuration: const Duration(milliseconds: 250),
+      themeAnimationCurve: Curves.easeOutCubic,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         final media = MediaQuery.of(context);
-        return MediaQuery(
-          data: media.copyWith(textScaleFactor: app.fontScale),
-          child: child ?? const SizedBox.shrink(),
+        return TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: app.fontScale, end: app.fontScale),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          child: child,
+          builder: (context, value, animatedChild) {
+            return MediaQuery(
+              data: media.copyWith(textScaleFactor: value),
+              child: animatedChild ?? const SizedBox.shrink(),
+            );
+          },
         );
       },
       home: const HomeScreen(),

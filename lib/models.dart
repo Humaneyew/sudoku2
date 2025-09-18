@@ -35,8 +35,8 @@ extension DifficultyX on Difficulty {
 /// Поддерживаемые языки интерфейса.
 enum AppLanguage { en, ru, uk, de, fr, zh, hi }
 
-/// Доступные стили отображения цифр на игровом поле.
-enum DigitStyle { thin, medium, bold }
+/// Доступные варианты размера шрифта для интерфейса игры.
+enum FontSizeOption { extraSmall, small, medium, large, extraLarge }
 
 extension AppLanguageX on AppLanguage {
   /// Локаль, соответствующая языку приложения.
@@ -65,26 +65,23 @@ extension AppLanguageX on AppLanguage {
       };
 }
 
-extension DigitStyleX on DigitStyle {
-  /// Размер шрифта для выбранного стиля цифр.
-  double get fontSize => switch (this) {
-        DigitStyle.thin => 18,
-        DigitStyle.medium => 20,
-        DigitStyle.bold => 22,
+extension FontSizeOptionX on FontSizeOption {
+  /// Коэффициент масштабирования текста относительно базового размера.
+  double get scale => switch (this) {
+        FontSizeOption.extraSmall => 0.85,
+        FontSizeOption.small => 0.95,
+        FontSizeOption.medium => 1.0,
+        FontSizeOption.large => 1.1,
+        FontSizeOption.extraLarge => 1.25,
       };
 
-  /// Насыщенность шрифта для выбранного стиля цифр.
-  FontWeight get fontWeight => switch (this) {
-        DigitStyle.thin => FontWeight.w400,
-        DigitStyle.medium => FontWeight.w500,
-        DigitStyle.bold => FontWeight.w700,
-      };
-
-  /// Отображаемое название для настроек.
-  String displayName(AppLocalizations l10n) => switch (this) {
-        DigitStyle.thin => l10n.digitStyleThin,
-        DigitStyle.medium => l10n.digitStyleMedium,
-        DigitStyle.bold => l10n.digitStyleBold,
+  /// Название варианта размера шрифта для отображения пользователю.
+  String label(AppLocalizations l10n) => switch (this) {
+        FontSizeOption.extraSmall => l10n.fontSizeExtraSmall,
+        FontSizeOption.small => l10n.fontSizeSmall,
+        FontSizeOption.medium => l10n.fontSizeMedium,
+        FontSizeOption.large => l10n.fontSizeLarge,
+        FontSizeOption.extraLarge => l10n.fontSizeExtraLarge,
       };
 }
 
@@ -192,13 +189,10 @@ class DifficultyStats {
 class AppState extends ChangeNotifier {
   static const int _maxHints = 3;
   static const int _maxLives = 3;
-  static const double minFontScale = 0.85;
-  static const double maxFontScale = 1.25;
 
   SudokuTheme theme = SudokuTheme.white;
   AppLanguage lang = AppLanguage.uk;
-  bool syncWithSystemTheme = false;
-  double fontScale = 1.0;
+  FontSizeOption fontSize = FontSizeOption.medium;
 
   Map<Difficulty, DifficultyStats> statsByDifficulty = _defaultStats();
 
@@ -224,8 +218,6 @@ class AppState extends ChangeNotifier {
   bool musicEnabled = true;
   bool vibrationEnabled = true;
   int? highlightedNumber;
-  DigitStyle digitStyle = DigitStyle.medium;
-
   bool _madeMistake = false;
   bool _gameCompleted = false;
   int _sessionId = 0;
@@ -279,30 +271,46 @@ class AppState extends ChangeNotifier {
             theme = SudokuTheme.black;
             break;
           case 'system':
-            syncWithSystemTheme = true;
             theme = SudokuTheme.white;
             break;
         }
       }
     }
 
-    syncWithSystemTheme =
-        prefs.getBool('syncWithSystemTheme') ?? syncWithSystemTheme;
-    fontScale = ((prefs.getDouble('fontScale') ?? fontScale)
-            .clamp(minFontScale, maxFontScale))
-        .toDouble();
+    final storedFontSize = prefs.getString('fontSize');
+    if (storedFontSize != null) {
+      try {
+        fontSize = FontSizeOption.values.byName(storedFontSize);
+      } catch (_) {}
+    } else {
+      final legacyScale = prefs.getDouble('fontScale');
+      if (legacyScale != null) {
+        fontSize = _nearestFontSize(legacyScale);
+      } else {
+        final digitStyleName = prefs.getString('digitStyle');
+        if (digitStyleName != null) {
+          switch (digitStyleName) {
+            case 'thin':
+              fontSize = FontSizeOption.extraSmall;
+              break;
+            case 'bold':
+              fontSize = FontSizeOption.extraLarge;
+              break;
+            default:
+              fontSize = FontSizeOption.medium;
+          }
+        }
+      }
+    }
+
+    await prefs.remove('fontScale');
+    await prefs.remove('digitStyle');
+    await prefs.remove('syncWithSystemTheme');
 
     final langName = prefs.getString('lang');
     if (langName != null) {
       try {
         lang = AppLanguage.values.byName(langName);
-      } catch (_) {}
-    }
-
-    final digitStyleName = prefs.getString('digitStyle');
-    if (digitStyleName != null) {
-      try {
-        digitStyle = DigitStyle.values.byName(digitStyleName);
       } catch (_) {}
     }
 
@@ -411,51 +419,44 @@ class AppState extends ChangeNotifier {
   }
 
   void setTheme(SudokuTheme value) {
-    final wasSynced = syncWithSystemTheme;
-    if (theme == value && !wasSynced) return;
+    if (theme == value) return;
     theme = value;
-    if (wasSynced) {
-      syncWithSystemTheme = false;
-    }
     _persist((prefs) async {
       await prefs.setString('themeV2', value.name);
-      if (wasSynced) {
-        await prefs.setBool('syncWithSystemTheme', false);
-      }
     });
     notifyListeners();
   }
 
-  void setSyncWithSystemTheme(bool value) {
-    if (syncWithSystemTheme == value) return;
-    syncWithSystemTheme = value;
+  void setFontSize(FontSizeOption value) {
+    if (fontSize == value) return;
+    fontSize = value;
     _persist((prefs) async {
-      await prefs.setBool('syncWithSystemTheme', value);
+      await prefs.setString('fontSize', fontSize.name);
     });
     notifyListeners();
   }
 
-  void setFontScale(double value) {
-    final clamped = value.clamp(minFontScale, maxFontScale).toDouble();
-    if ((fontScale - clamped).abs() < 0.001) return;
-    fontScale = clamped;
-    _persist((prefs) async {
-      await prefs.setDouble('fontScale', fontScale);
-    });
-    notifyListeners();
-  }
+  double get fontScale => fontSize.scale;
 
-  SudokuTheme resolvedTheme(Brightness platformBrightness) {
-    if (syncWithSystemTheme) {
-      return platformBrightness == Brightness.dark
-          ? SudokuTheme.black
-          : SudokuTheme.white;
-    }
+  SudokuTheme resolvedTheme() {
     return theme;
   }
 
-  String resolvedThemeName(AppLocalizations l10n, Brightness brightness) {
-    return resolvedTheme(brightness).label(l10n);
+  String resolvedThemeName(AppLocalizations l10n) {
+    return resolvedTheme().label(l10n);
+  }
+
+  FontSizeOption _nearestFontSize(double scale) {
+    FontSizeOption closest = FontSizeOption.medium;
+    var minDiff = double.infinity;
+    for (final option in FontSizeOption.values) {
+      final diff = (option.scale - scale).abs();
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = option;
+      }
+    }
+    return closest;
   }
 
   void setLang(AppLanguage value) {
@@ -490,15 +491,6 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
-    });
-    notifyListeners();
-  }
-
-  void setDigitStyle(DigitStyle value) {
-    if (digitStyle == value) return;
-    digitStyle = value;
-    _persist((prefs) async {
-      await prefs.setString('digitStyle', value.name);
     });
     notifyListeners();
   }

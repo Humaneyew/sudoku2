@@ -66,7 +66,7 @@ class Board extends StatelessWidget {
                       isSelected: isSelected,
                       sameValue: sameValue,
                       incorrect: incorrect,
-                      digitStyle: app.digitStyle,
+                      fontScale: app.fontScale,
                       onTap: () => app.selectCell(index),
                     );
                   },
@@ -87,7 +87,7 @@ class _BoardCell extends StatelessWidget {
   final bool isSelected;
   final bool sameValue;
   final bool incorrect;
-  final DigitStyle digitStyle;
+  final double fontScale;
   final VoidCallback onTap;
 
   const _BoardCell({
@@ -97,7 +97,7 @@ class _BoardCell extends StatelessWidget {
     required this.isSelected,
     required this.sameValue,
     required this.incorrect,
-    required this.digitStyle,
+    required this.fontScale,
     required this.onTap,
   });
 
@@ -133,7 +133,7 @@ class _BoardCell extends StatelessWidget {
           value: value,
           notes: notes,
           incorrect: incorrect,
-          digitStyle: digitStyle,
+          fontScale: fontScale,
         ),
       ),
     );
@@ -144,13 +144,13 @@ class _CellContent extends StatelessWidget {
   final int value;
   final Set<int> notes;
   final bool incorrect;
-  final DigitStyle digitStyle;
+  final double fontScale;
 
   const _CellContent({
     required this.value,
     required this.notes,
     required this.incorrect,
-    required this.digitStyle,
+    required this.fontScale,
   });
 
   @override
@@ -160,13 +160,15 @@ class _CellContent extends StatelessWidget {
     final onSurface = theme.colorScheme.onSurface;
     if (value != 0) {
       return Center(
-        child: Text(
-          value.toString(),
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
           style: TextStyle(
-            fontSize: digitStyle.fontSize,
-            fontWeight: digitStyle.fontWeight,
+            fontSize: 20 * fontScale,
+            fontWeight: FontWeight.w600,
             color: incorrect ? theme.colorScheme.error : onSurface,
           ),
+          child: Text(value.toString()),
         ),
       );
     }
@@ -178,6 +180,7 @@ class _CellContent extends StatelessWidget {
     final sorted = notes.toList()..sort();
     return _NotesGrid(
       notes: notes,
+      fontScale: fontScale,
       key: ValueKey('notes-${sorted.join('-')}'),
     );
   }
@@ -185,8 +188,9 @@ class _CellContent extends StatelessWidget {
 
 class _NotesGrid extends StatelessWidget {
   final Set<int> notes;
+  final double fontScale;
 
-  const _NotesGrid({super.key, required this.notes});
+  const _NotesGrid({super.key, required this.notes, required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
@@ -200,15 +204,15 @@ class _NotesGrid extends StatelessWidget {
           spacing: 4,
           runSpacing: 2,
           children: [
-          for (final note in sorted)
-            Text(
-              note.toString(),
-              style: TextStyle(
-                fontSize: 10,
-                color: colors.noteColor,
-                fontWeight: FontWeight.w600,
+            for (final note in sorted)
+              Text(
+                note.toString(),
+                style: TextStyle(
+                  fontSize: 10 * fontScale,
+                  color: colors.noteColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
           ],
         ),
       ),

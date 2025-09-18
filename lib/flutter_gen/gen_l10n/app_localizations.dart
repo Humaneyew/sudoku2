@@ -148,12 +148,6 @@ abstract class AppLocalizations {
 
   String get themeSectionTitle;
 
-  String get themeSystem;
-
-  String get themeLight;
-
-  String get themeDark;
-
   String get themeWhite;
 
   String get themeCream;
@@ -164,17 +158,17 @@ abstract class AppLocalizations {
 
   String get themePurple;
 
-  String get themeSyncWithSystem;
-
   String get themeFontSize;
 
-  String get digitStyleSectionTitle;
+  String get fontSizeExtraSmall;
 
-  String get digitStyleThin;
+  String get fontSizeSmall;
 
-  String get digitStyleMedium;
+  String get fontSizeMedium;
 
-  String get digitStyleBold;
+  String get fontSizeLarge;
+
+  String get fontSizeExtraLarge;
 
   String get languageSectionTitle;
 
@@ -502,47 +496,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get themeSectionTitle => "Design";
 
   @override
-  String get themeSystem => "System";
-
-  @override
-  String get themeLight => "Hell";
-
-  @override
-  String get themeDark => "Dunkel";
-
-  @override
-  String get themeWhite => "Weiß";
+  String get themeWhite => "Klassisch hell";
 
   @override
   String get themeCream => "Creme";
 
   @override
-  String get themeGreen => "Grün";
+  String get themeGreen => "Mint";
 
   @override
-  String get themeBlack => "Schwarz";
+  String get themeBlack => "Dunkel";
 
   @override
-  String get themePurple => "Violett";
-
-  @override
-  String get themeSyncWithSystem =>
-      "Mit dem Dunkelmodus des Systems synchronisieren";
+  String get themePurple => "Dunkles Violett";
 
   @override
   String get themeFontSize => "Schriftgröße";
 
   @override
-  String get digitStyleSectionTitle => "Ziffernstil";
+  String get fontSizeExtraSmall => "Sehr klein";
 
   @override
-  String get digitStyleThin => "Dünn";
+  String get fontSizeSmall => "Klein";
 
   @override
-  String get digitStyleMedium => "Mittel";
+  String get fontSizeMedium => "Mittel";
 
   @override
-  String get digitStyleBold => "Fett";
+  String get fontSizeLarge => "Groß";
+
+  @override
+  String get fontSizeExtraLarge => "Sehr groß";
 
   @override
   String get languageSectionTitle => "Sprache";
@@ -855,46 +839,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeSectionTitle => "Theme";
 
   @override
-  String get themeSystem => "System";
-
-  @override
-  String get themeLight => "Light";
-
-  @override
-  String get themeDark => "Dark";
-
-  @override
-  String get themeWhite => "White";
+  String get themeWhite => "Classic Light";
 
   @override
   String get themeCream => "Cream";
 
   @override
-  String get themeGreen => "Green";
+  String get themeGreen => "Mint";
 
   @override
-  String get themeBlack => "Black";
+  String get themeBlack => "Dark";
 
   @override
-  String get themePurple => "Purple";
-
-  @override
-  String get themeSyncWithSystem => "Sync with system dark mode";
+  String get themePurple => "Purple Dark";
 
   @override
   String get themeFontSize => "Font size";
 
   @override
-  String get digitStyleSectionTitle => "Digit style";
+  String get fontSizeExtraSmall => "Extra small";
 
   @override
-  String get digitStyleThin => "Thin";
+  String get fontSizeSmall => "Small";
 
   @override
-  String get digitStyleMedium => "Medium";
+  String get fontSizeMedium => "Medium";
 
   @override
-  String get digitStyleBold => "Bold";
+  String get fontSizeLarge => "Large";
+
+  @override
+  String get fontSizeExtraLarge => "Extra large";
 
   @override
   String get languageSectionTitle => "Language";
@@ -1207,47 +1182,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeSectionTitle => "Thème";
 
   @override
-  String get themeSystem => "Système";
-
-  @override
-  String get themeLight => "Clair";
-
-  @override
-  String get themeDark => "Sombre";
-
-  @override
-  String get themeWhite => "Blanc";
+  String get themeWhite => "Classique claire";
 
   @override
   String get themeCream => "Crème";
 
   @override
-  String get themeGreen => "Vert";
+  String get themeGreen => "Menthe";
 
   @override
-  String get themeBlack => "Noir";
+  String get themeBlack => "Sombre";
 
   @override
-  String get themePurple => "Violet";
-
-  @override
-  String get themeSyncWithSystem =>
-      "Synchroniser avec le mode sombre du système";
+  String get themePurple => "Violette sombre";
 
   @override
   String get themeFontSize => "Taille de police";
 
   @override
-  String get digitStyleSectionTitle => "Style des chiffres";
+  String get fontSizeExtraSmall => "Très petite";
 
   @override
-  String get digitStyleThin => "Fin";
+  String get fontSizeSmall => "Petite";
 
   @override
-  String get digitStyleMedium => "Moyen";
+  String get fontSizeMedium => "Moyenne";
 
   @override
-  String get digitStyleBold => "Gras";
+  String get fontSizeLarge => "Grande";
+
+  @override
+  String get fontSizeExtraLarge => "Très grande";
 
   @override
   String get languageSectionTitle => "Langue";
@@ -1560,46 +1525,37 @@ class AppLocalizationsHi extends AppLocalizations {
   String get themeSectionTitle => "थीम";
 
   @override
-  String get themeSystem => "सिस्टम";
+  String get themeWhite => "क्लासिक हल्की";
 
   @override
-  String get themeLight => "हल्का";
+  String get themeCream => "क्रीमी";
 
   @override
-  String get themeDark => "गहरा";
+  String get themeGreen => "मिंट";
 
   @override
-  String get themeWhite => "सफेद";
+  String get themeBlack => "डार्क";
 
   @override
-  String get themeCream => "क्रीम";
-
-  @override
-  String get themeGreen => "हरा";
-
-  @override
-  String get themeBlack => "काला";
-
-  @override
-  String get themePurple => "बैंगनी";
-
-  @override
-  String get themeSyncWithSystem => "सिस्टम के डार्क मोड से सिंक करें";
+  String get themePurple => "गहरा बैंगनी";
 
   @override
   String get themeFontSize => "फ़ॉन्ट आकार";
 
   @override
-  String get digitStyleSectionTitle => "अंकों की शैली";
+  String get fontSizeExtraSmall => "अतिरिक्त छोटा";
 
   @override
-  String get digitStyleThin => "पतला";
+  String get fontSizeSmall => "छोटा";
 
   @override
-  String get digitStyleMedium => "मध्यम";
+  String get fontSizeMedium => "मध्यम";
 
   @override
-  String get digitStyleBold => "मोटा";
+  String get fontSizeLarge => "बड़ा";
+
+  @override
+  String get fontSizeExtraLarge => "अतिरिक्त बड़ा";
 
   @override
   String get languageSectionTitle => "भाषा";
@@ -1916,47 +1872,37 @@ class AppLocalizationsRu extends AppLocalizations {
   String get themeSectionTitle => "Тема";
 
   @override
-  String get themeSystem => "Системная";
-
-  @override
-  String get themeLight => "Светлая";
-
-  @override
-  String get themeDark => "Тёмная";
-
-  @override
-  String get themeWhite => "Белая";
+  String get themeWhite => "Классическая светлая";
 
   @override
   String get themeCream => "Кремовая";
 
   @override
-  String get themeGreen => "Зелёная";
+  String get themeGreen => "Мятная";
 
   @override
-  String get themeBlack => "Чёрная";
+  String get themeBlack => "Тёмная";
 
   @override
-  String get themePurple => "Фиолетовая";
-
-  @override
-  String get themeSyncWithSystem =>
-      "Синхронизация с тёмным режимом системы";
+  String get themePurple => "Фиолетовая тёмная";
 
   @override
   String get themeFontSize => "Размер шрифта";
 
   @override
-  String get digitStyleSectionTitle => "Стиль цифр";
+  String get fontSizeExtraSmall => "Очень маленький";
 
   @override
-  String get digitStyleThin => "Тонкий";
+  String get fontSizeSmall => "Маленький";
 
   @override
-  String get digitStyleMedium => "Средний";
+  String get fontSizeMedium => "Средний";
 
   @override
-  String get digitStyleBold => "Жирный";
+  String get fontSizeLarge => "Большой";
+
+  @override
+  String get fontSizeExtraLarge => "Очень большой";
 
   @override
   String get languageSectionTitle => "Язык";
@@ -2273,47 +2219,37 @@ class AppLocalizationsUk extends AppLocalizations {
   String get themeSectionTitle => "Тема";
 
   @override
-  String get themeSystem => "Системна";
-
-  @override
-  String get themeLight => "Світла";
-
-  @override
-  String get themeDark => "Темна";
-
-  @override
-  String get themeWhite => "Біла";
+  String get themeWhite => "Класична світла";
 
   @override
   String get themeCream => "Кремова";
 
   @override
-  String get themeGreen => "Зелена";
+  String get themeGreen => "М'ятна";
 
   @override
-  String get themeBlack => "Чорна";
+  String get themeBlack => "Темна";
 
   @override
-  String get themePurple => "Фіолетова";
-
-  @override
-  String get themeSyncWithSystem =>
-      "Синхронізація з темним режимом системи";
+  String get themePurple => "Фіолетова темна";
 
   @override
   String get themeFontSize => "Розмір шрифту";
 
   @override
-  String get digitStyleSectionTitle => "Стиль цифр";
+  String get fontSizeExtraSmall => "Дуже малий";
 
   @override
-  String get digitStyleThin => "Тонкий";
+  String get fontSizeSmall => "Малий";
 
   @override
-  String get digitStyleMedium => "Середній";
+  String get fontSizeMedium => "Середній";
 
   @override
-  String get digitStyleBold => "Грубий";
+  String get fontSizeLarge => "Великий";
+
+  @override
+  String get fontSizeExtraLarge => "Дуже великий";
 
   @override
   String get languageSectionTitle => "Мова";
@@ -2624,46 +2560,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeSectionTitle => "主题";
 
   @override
-  String get themeSystem => "跟随系统";
+  String get themeWhite => "经典浅色";
 
   @override
-  String get themeLight => "浅色";
+  String get themeCream => "奶油色";
 
   @override
-  String get themeDark => "深色";
+  String get themeGreen => "薄荷色";
 
   @override
-  String get themeWhite => "白色";
+  String get themeBlack => "深色";
 
   @override
-  String get themeCream => "米色";
-
-  @override
-  String get themeGreen => "绿色";
-
-  @override
-  String get themeBlack => "黑色";
-
-  @override
-  String get themePurple => "紫色";
-
-  @override
-  String get themeSyncWithSystem => "跟随系统深色模式";
+  String get themePurple => "暗紫色";
 
   @override
   String get themeFontSize => "字体大小";
 
   @override
-  String get digitStyleSectionTitle => "数字样式";
+  String get fontSizeExtraSmall => "特小";
 
   @override
-  String get digitStyleThin => "细";
+  String get fontSizeSmall => "小";
 
   @override
-  String get digitStyleMedium => "中等";
+  String get fontSizeMedium => "中";
 
   @override
-  String get digitStyleBold => "粗体";
+  String get fontSizeLarge => "大";
+
+  @override
+  String get fontSizeExtraLarge => "特大";
 
   @override
   String get languageSectionTitle => "语言";

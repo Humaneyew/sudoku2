@@ -14,8 +14,6 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final l10n = AppLocalizations.of(context)!;
-    final brightness = MediaQuery.platformBrightnessOf(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settingsTitle),
@@ -27,27 +25,9 @@ class SettingsPage extends StatelessWidget {
           _sectionTitle(l10n.themeSectionTitle),
           ListTile(
             leading: const Icon(Icons.palette_outlined),
-            title: Text(app.resolvedThemeName(l10n, brightness)),
-            subtitle: app.syncWithSystemTheme
-                ? Text(l10n.themeSyncWithSystem)
-                : null,
+            title: Text(app.resolvedThemeName(l10n)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => showThemeMenu(context),
-          ),
-          const Divider(height: 32),
-
-          _sectionTitle(l10n.digitStyleSectionTitle),
-          ...DigitStyle.values.map(
-            (style) => RadioListTile<DigitStyle>(
-              title: Text(style.displayName(l10n)),
-              value: style,
-              groupValue: app.digitStyle,
-              onChanged: (value) {
-                if (value != null) {
-                  app.setDigitStyle(value);
-                }
-              },
-            ),
           ),
           const Divider(height: 32),
 
