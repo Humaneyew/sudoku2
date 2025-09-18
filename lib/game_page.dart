@@ -44,6 +44,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void dispose() {
     _timer?.cancel();
+    context.read<AppState>().save();
     super.dispose();
   }
 
