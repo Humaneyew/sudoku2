@@ -691,6 +691,7 @@ class _DifficultyTile extends StatelessWidget {
   final VoidCallback onTap;
 
   const _DifficultyTile({
+    super.key,
     required this.title,
     required this.rankLabel,
     required this.progress,
