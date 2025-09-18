@@ -215,6 +215,9 @@ class AppState extends ChangeNotifier {
   int dailyStreak = 0;
   int heartBonus = 1;
 
+  final Set<String> _completedDailyChallenges = <String>{};
+  DateTime? _dailyChallengeDate;
+
   int currentScore = 0;
   int? selectedCell;
   bool notesMode = false;
@@ -234,6 +237,15 @@ class AppState extends ChangeNotifier {
   /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
+
+    _dailyChallengeDate = null;
+
+    final completedDaily = prefs.getStringList('dailyCompleted');
+    if (completedDaily != null) {
+      _completedDailyChallenges
+        ..clear()
+        ..addAll(completedDaily);
+    }
 
     final profileJson = prefs.getString('profile');
     if (profileJson != null) {
@@ -407,6 +419,11 @@ class AppState extends ChangeNotifier {
           _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
           _gameCompleted = false;
           _startedAt = startedAt == null ? _startedAt : DateTime.tryParse(startedAt);
+          final dailyDateString = map['dailyDate'] as String?;
+          final parsedDailyDate =
+              dailyDateString == null ? null : DateTime.tryParse(dailyDateString);
+          _dailyChallengeDate =
+              parsedDailyDate == null ? null : _dateOnly(parsedDailyDate);
 
           _history
             ..clear()
@@ -419,6 +436,8 @@ class AppState extends ChangeNotifier {
         }
       } catch (_) {}
     }
+
+    _recalculateDailyStreak();
 
     notifyListeners();
   }
@@ -449,6 +468,9 @@ class AppState extends ChangeNotifier {
     championshipScore = 4473;
     battleWinRate = 87;
     heartBonus = 1;
+    _completedDailyChallenges.clear();
+    _dailyChallengeDate = null;
+    _saveDailyProgress();
     saveProfile();
     notifyListeners();
   }
@@ -557,6 +579,38 @@ class AppState extends ChangeNotifier {
     return queue.removeLast();
   }
 
+  void startDailyChallenge(DateTime date) {
+    final normalized = _dateOnly(date);
+    final puzzle = generateDailyPuzzle(normalized);
+
+    current = GameState(
+      board: List.of(puzzle.board),
+      solution: List.of(puzzle.solution),
+      given: puzzle.board.map((v) => v != 0).toList(),
+      notes: List.generate(81, (_) => <int>{}),
+    );
+
+    currentDifficulty = Difficulty.medium;
+    featuredDifficulty = Difficulty.medium;
+    _dailyChallengeDate = normalized;
+    _sessionId++;
+    currentScore = 0;
+    selectedCell = null;
+    notesMode = false;
+    hintsLeft = _maxHints;
+    livesLeft = _maxLives;
+    highlightedNumber = null;
+    _madeMistake = false;
+    _gameCompleted = false;
+    _history.clear();
+    _startedAt = DateTime.now();
+
+    statsByDifficulty[Difficulty.medium]?.gamesStarted++;
+    _saveCurrentGame();
+    saveProfile();
+    notifyListeners();
+  }
+
   /// Запуск новой игры выбранного уровня сложности.
   void startGame(Difficulty diff) {
     final available = puzzles[diff] ?? puzzles[Difficulty.novice];
@@ -571,6 +625,8 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+
+    _dailyChallengeDate = null;
 
     final index = _nextPuzzleIndex(diff, available.length);
     final puzzle = available[index];
@@ -650,6 +706,21 @@ class AppState extends ChangeNotifier {
   }
 
   bool get gameCompleted => _gameCompleted;
+
+  DateTime? get activeDailyChallengeDate => _dailyChallengeDate;
+
+  bool isDailyCompleted(DateTime date) {
+    return _completedDailyChallenges.contains(_dateKey(_dateOnly(date)));
+  }
+
+  int completedDailyCount(DateTime month) {
+    final normalized = DateTime(month.year, month.month);
+    final prefix =
+        '${normalized.year.toString().padLeft(4, '0')}-${normalized.month.toString().padLeft(2, '0')}-';
+    return _completedDailyChallenges
+        .where((key) => key.startsWith(prefix))
+        .length;
+  }
 
   DifficultyStats statsFor(Difficulty diff) =>
       statsByDifficulty[diff] ?? DifficultyStats();
@@ -867,6 +938,12 @@ class AppState extends ChangeNotifier {
       }
     }
 
+    final dailyDate = _dailyChallengeDate;
+    if (dailyDate != null) {
+      _completeDailyChallenge(dailyDate);
+      _dailyChallengeDate = null;
+    }
+
     _clearSavedGame();
     saveProfile();
     notifyListeners();
@@ -881,6 +958,7 @@ class AppState extends ChangeNotifier {
         stats.currentStreak = 0;
       }
     }
+    _dailyChallengeDate = null;
     _clearSavedGame();
     saveProfile();
     notifyListeners();
@@ -898,6 +976,7 @@ class AppState extends ChangeNotifier {
     _gameCompleted = false;
     _history.clear();
     highlightedNumber = null;
+    _dailyChallengeDate = null;
     _clearSavedGame();
     notifyListeners();
   }
@@ -1039,6 +1118,47 @@ class AppState extends ChangeNotifier {
     callback();
   }
 
+  void _completeDailyChallenge(DateTime date) {
+    final normalized = _dateOnly(date);
+    final key = _dateKey(normalized);
+    final added = _completedDailyChallenges.add(key);
+    if (added) {
+      _saveDailyProgress();
+    }
+    _recalculateDailyStreak();
+  }
+
+  void _saveDailyProgress() {
+    final sorted = _completedDailyChallenges.toList()..sort();
+    _persist((prefs) async {
+      await prefs.setStringList('dailyCompleted', sorted);
+    });
+  }
+
+  void _recalculateDailyStreak() {
+    final today = _dateOnly(DateTime.now());
+    DateTime cursor = today;
+    if (!isDailyCompleted(cursor)) {
+      cursor = cursor.subtract(const Duration(days: 1));
+      if (!isDailyCompleted(cursor)) {
+        dailyStreak = 0;
+        return;
+      }
+    }
+    var streak = 0;
+    while (isDailyCompleted(cursor)) {
+      streak++;
+      cursor = cursor.subtract(const Duration(days: 1));
+    }
+    dailyStreak = streak;
+  }
+
+  static DateTime _dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
+  static String _dateKey(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
   void _saveCurrentGame() {
     final game = current;
     final diff = currentDifficulty;
@@ -1062,6 +1182,7 @@ class AppState extends ChangeNotifier {
       'startedAt': _startedAt?.toIso8601String(),
       'sessionId': _sessionId,
       'history': _history.map((move) => move.toJson()).toList(),
+      'dailyDate': _dailyChallengeDate?.toIso8601String(),
     };
 
     _persist((prefs) async {

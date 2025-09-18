@@ -731,279 +731,389 @@ class _DifficultyTile extends StatelessWidget {
   }
 }
 
-class _DailyChallengesTab extends StatelessWidget {
+
+class _DailyChallengesTab extends StatefulWidget {
   const _DailyChallengesTab();
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  State<_DailyChallengesTab> createState() => _DailyChallengesTabState();
+}
+
+class _DailyChallengesTabState extends State<_DailyChallengesTab> {
+  late DateTime _visibleMonth;
+  late int _preferredDay;
+  DateTime? _selectedDate;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _visibleMonth = DateTime(now.year, now.month);
+    _preferredDay = now.day;
+    _selectedDate = DateTime(now.year, now.month, now.day);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return;
+    _initialized = true;
+    final active = context.read<AppState>().activeDailyChallengeDate;
+    if (active != null) {
+      _visibleMonth = DateTime(active.year, active.month);
+      _preferredDay = active.day;
+      _selectedDate = active;
+    }
+  }
+
+  void _changeMonth(int delta) {
+    final target = DateTime(_visibleMonth.year, _visibleMonth.month + delta);
+    setState(() {
+      _visibleMonth = DateTime(target.year, target.month);
+      final resolved = _resolveSelectionForMonth(_visibleMonth);
+      _selectedDate = resolved;
+      if (resolved != null) {
+        _preferredDay = resolved.day;
+      }
+    });
+  }
+
+  DateTime? _resolveSelectionForMonth(DateTime month) {
+    final maxDay = _maxSelectableDay(month);
+    if (maxDay == 0) {
+      return null;
+    }
+    final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
+    var day = _preferredDay;
+    if (day < 1) {
+      day = 1;
+    }
+    if (day > daysInMonth) {
+      day = daysInMonth;
+    }
+    if (day > maxDay) {
+      day = maxDay;
+    }
+    return DateTime(month.year, month.month, day);
+  }
+
+  int _maxSelectableDay(DateTime month) {
     final today = DateTime.now();
-    final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
-    final days = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
+    final normalizedToday = DateTime(today.year, today.month, today.day);
+    if (month.year > normalizedToday.year ||
+        (month.year == normalizedToday.year && month.month > normalizedToday.month)) {
+      return 0;
+    }
+    final days = DateUtils.getDaysInMonth(month.year, month.month);
+    if (month.year == normalizedToday.year && month.month == normalizedToday.month) {
+      return normalizedToday.day;
+    }
+    return days;
+  }
+
+  void _onSelect(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+      _preferredDay = date.day;
+    });
+  }
+
+  void _startDaily(AppState app, DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    if (normalized.isAfter(DateTime.now())) {
+      return;
+    }
+    app.startDailyChallenge(normalized);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const GamePage()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.watch<AppState>();
     final l10n = AppLocalizations.of(context)!;
-    final formatter = DateFormat('E', l10n.localeName);
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    final today = DateTime.now();
+    final normalizedToday = DateTime(today.year, today.month, today.day);
+    final monthDays = DateUtils.getDaysInMonth(_visibleMonth.year, _visibleMonth.month);
+    final progress = app.completedDailyCount(_visibleMonth);
+
+    final monthFormatter = DateFormat.yMMMM(l10n.localeName);
+    final rawMonthLabel = monthFormatter.format(_visibleMonth);
+    final monthLabel = toBeginningOfSentenceCase(
+          rawMonthLabel,
+          l10n.localeName,
+        ) ??
+        rawMonthLabel;
+
+    final weekdayFormatter = DateFormat.E(l10n.localeName);
+    final currentSelected = _selectedDate;
+
+    final firstDayOfMonth = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+    final leadingEmpty = (firstDayOfMonth.weekday + 6) % 7;
+    final totalCells = ((leadingEmpty + monthDays + 6) ~/ 7) * 7;
+
+    final canGoNext = !(_visibleMonth.year == normalizedToday.year &&
+        _visibleMonth.month == normalizedToday.month);
+
+    final canPlay =
+        currentSelected != null && !currentSelected.isAfter(normalizedToday);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            l10n.navDaily,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 20),
-          _DailyHeroCard(
-            dateLabel: DateFormat('d MMMM', l10n.localeName).format(today),
-          ),
-          const SizedBox(height: 28),
-          Text(
-            l10n.weeklyProgress,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 14),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final date in days)
-                _DayProgress(
-                  label: formatter.format(date),
-                  day: date.day,
-                  isToday: date.day == today.day,
-                  completed: date.isBefore(today),
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.emoji_events_rounded,
+                  color: scheme.onPrimaryContainer,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.navDaily,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${l10n.dailyStreak}: ${app.dailyStreak}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7) ??
+                            scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.event_available_outlined,
+                        color: scheme.primary,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$progress/$monthDays',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    monthLabel,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left_rounded),
+                onPressed: () => _changeMonth(-1),
+              ),
+              Expanded(
+                child: Text(
+                  monthLabel,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right_rounded),
+                onPressed: canGoNext ? () => _changeMonth(1) : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: List.generate(7, (index) {
+              final label = weekdayFormatter.format(DateTime(2020, 1, 6 + index));
+              return Expanded(
+                child: Center(
+                  child: Text(
+                    label.toUpperCase(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 12),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: totalCells,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+            ),
+            itemBuilder: (context, index) {
+              final day = index - leadingEmpty + 1;
+              if (day < 1 || day > monthDays) {
+                return const SizedBox.shrink();
+              }
+              final date = DateTime(_visibleMonth.year, _visibleMonth.month, day);
+              final locked = date.isAfter(normalizedToday);
+              return AspectRatio(
+                aspectRatio: 1,
+                child: _CalendarDayButton(
+                  date: date,
+                  selected:
+                      currentSelected != null && DateUtils.isSameDay(currentSelected, date),
+                  today: DateUtils.isSameDay(date, normalizedToday),
+                  completed: app.isDailyCompleted(date),
+                  locked: locked,
+                  onTap: locked ? null : () => _onSelect(date),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed:
+                canPlay && currentSelected != null ? () => _startDaily(app, currentSelected) : null,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+            child: Text(
+              l10n.playAction,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CalendarDayButton extends StatelessWidget {
+  final DateTime date;
+  final bool selected;
+  final bool today;
+  final bool completed;
+  final bool locked;
+  final VoidCallback? onTap;
+
+  const _CalendarDayButton({
+    required this.date,
+    required this.selected,
+    required this.today,
+    required this.completed,
+    required this.locked,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final borderRadius = BorderRadius.circular(14);
+
+    Color background = Colors.transparent;
+    Color textColor = scheme.onSurface;
+    Border? border;
+    Widget? badge;
+
+    if (completed) {
+      background = scheme.primary;
+      textColor = scheme.onPrimary;
+      if (selected) {
+        border = Border.all(color: scheme.onPrimary, width: 2);
+      }
+      badge = Icon(
+        Icons.check_rounded,
+        size: 16,
+        color: scheme.onPrimary,
+      );
+    } else if (selected) {
+      background = scheme.primary.withOpacity(0.1);
+      textColor = scheme.primary;
+      border = Border.all(color: scheme.primary, width: 2);
+    } else if (today) {
+      border = Border.all(color: scheme.primary, width: 1.5);
+    }
+
+    if (locked && !completed) {
+      textColor = scheme.onSurface.withOpacity(0.3);
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: borderRadius,
+        border: border,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onTap: locked ? null : onTap,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Text(
+                '${date.day}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              if (badge != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: badge,
                 ),
             ],
           ),
-          const SizedBox(height: 32),
-          Text(
-            l10n.rewardsTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _RewardTile(
-            icon: Icons.favorite_outline,
-            title: l10n.rewardNoMistakesTitle,
-            reward: l10n.rewardExtraHearts(1),
-          ),
-          const SizedBox(height: 12),
-          _RewardTile(
-            icon: Icons.emoji_events_outlined,
-            title: l10n.rewardThreeInRowTitle,
-            reward: l10n.rewardUniqueTrophy,
-          ),
-          const SizedBox(height: 12),
-          _RewardTile(
-            icon: Icons.local_fire_department_outlined,
-            title: l10n.rewardSevenDayTitle,
-            reward: l10n.rewardStars(50),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DailyHeroCard extends StatelessWidget {
-  final String dateLabel;
-
-  const _DailyHeroCard({required this.dateLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final onPrimary = scheme.onPrimary;
-    final colors = theme.extension<SudokuColors>()!;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: colors.dailyHeroGradient,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: onPrimary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              dateLabel,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: onPrimary.withOpacity(0.7),
-              ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          Text(
-            l10n.todayPuzzle,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              color: onPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.todayPuzzleDescription,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: onPrimary.withOpacity(0.7),
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 160,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: onPrimary,
-                foregroundColor: scheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Text(
-                l10n.continueAction,
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DayProgress extends StatelessWidget {
-  final String label;
-  final int day;
-  final bool isToday;
-  final bool completed;
-
-  const _DayProgress({
-    required this.label,
-    required this.day,
-    required this.isToday,
-    required this.completed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final baseColor = isToday
-        ? scheme.primary
-        : completed
-            ? scheme.secondary
-            : scheme.outlineVariant;
-    final background =
-        Color.alphaBlend(baseColor.withOpacity(0.15), scheme.surface);
-    final textColor =
-        isToday || completed ? baseColor : scheme.onSurface.withOpacity(0.7);
-
-    return Column(
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurface.withOpacity(0.6),
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
         ),
-        const SizedBox(height: 8),
-        Container(
-          width: 52,
-          height: 52,
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            day.toString(),
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: textColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _RewardTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String reward;
-
-  const _RewardTile({
-    required this.icon,
-    required this.title,
-    required this.reward,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor,
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: scheme.primary.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: scheme.primary),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurface,
-              ),
-            ),
-          ),
-          Text(
-            reward,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
       ),
     );
   }
 }
+

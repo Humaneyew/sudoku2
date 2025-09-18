@@ -1687,7 +1687,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get navHome => "Главная";
 
   @override
-  String get navDaily => "Ежедневный вызов";
+  String get navDaily => "Ежедневное испытание";
 
   @override
   String get navStats => "Статистика";
@@ -1699,7 +1699,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get selectDifficultyTitle => "Выберите сложность";
 
   @override
-  String get selectDifficultyDailyChallenge => "Ежедневный вызов";
+  String get selectDifficultyDailyChallenge => "Ежедневное испытание";
 
   @override
   String get playAction => "Играть";
