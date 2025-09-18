@@ -1183,26 +1183,35 @@ class _CalendarDayButton extends StatelessWidget {
     required this.onTap,
   });
 
+  Color _resolveTextColor(ColorScheme scheme) {
+    if (locked) {
+      return scheme.onSurface.withOpacity(0.3);
+    }
+    if (selected) {
+      return scheme.onPrimary;
+    }
+    if (completed || past) {
+      return scheme.secondary;
+    }
+    return scheme.onSurface;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final textStyle = theme.textTheme.titleSmall?.copyWith(
+    final textColor = _resolveTextColor(scheme);
+    final textStyle = (theme.textTheme.titleSmall ?? const TextStyle()).copyWith(
       fontWeight: FontWeight.w700,
+      color: textColor,
     );
-
-    late final Color textColor;
-    if (locked) {
-      textColor = scheme.onSurface.withOpacity(0.3);
-    } else if (selected) {
-      textColor = scheme.onPrimary;
-    } else if (completed || past) {
-      textColor = scheme.secondary;
-    } else {
-      textColor = scheme.onSurface;
-    }
-
     final indicatorColor = selected ? scheme.onPrimary : scheme.secondary;
+    final border = today
+        ? Border.all(
+            color: selected ? scheme.onPrimary : scheme.primary,
+            width: 3,
+          )
+        : null;
 
     return AnimatedScale(
       duration: const Duration(milliseconds: 200),
@@ -1213,12 +1222,7 @@ class _CalendarDayButton extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: selected ? scheme.primary : Colors.transparent,
-          border: today
-              ? Border.all(
-                  color: selected ? scheme.onPrimary : scheme.primary,
-                  width: 3,
-                )
-              : null,
+          border: border,
         ),
         padding: const EdgeInsets.all(4),
         child: Material(
@@ -1231,7 +1235,7 @@ class _CalendarDayButton extends StatelessWidget {
               children: [
                 Text(
                   '${date.day}',
-                  style: textStyle?.copyWith(color: textColor),
+                  style: textStyle,
                 ),
                 if (completed)
                   Padding(
