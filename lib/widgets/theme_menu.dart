@@ -66,19 +66,44 @@ class _ThemeDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    for (final option in FontSizeOption.values)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: _FontSizeButton(
-                            option: option,
-                            selected: option == app.fontSize,
-                            onTap: () => app.setFontSize(option),
-                          ),
-                        ),
+                    Text(
+                      'A',
+                      style: TextStyle(
+                        fontSize: AppState.minFontSizeSp,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        value: app.fontSizeSp,
+                        min: AppState.minFontSizeSp,
+                        max: AppState.maxFontSizeSp,
+                        onChanged: (value) =>
+                            app.setFontSizeSp(value, save: false),
+                        onChangeEnd: app.setFontSizeSp,
+                      ),
+                    ),
+                    Text(
+                      'A',
+                      style: TextStyle(
+                        fontSize: AppState.maxFontSizeSp,
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
                   ],
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${app.fontSizeSp.round()} sp',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             );
@@ -139,67 +164,6 @@ class _ThemeCircle extends StatelessWidget {
                 size: 22,
               ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FontSizeButton extends StatelessWidget {
-  final FontSizeOption option;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _FontSizeButton({
-    required this.option,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-    final background = selected
-        ? scheme.primary
-        : Color.alphaBlend(
-            scheme.onSurface.withOpacity(0.04),
-            scheme.surface,
-          );
-    final borderColor = selected ? scheme.primary : scheme.outlineVariant;
-    final textColor = selected ? scheme.onPrimary : scheme.onSurface;
-
-    return Tooltip(
-      message: option.label(l10n),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: borderColor,
-                width: selected ? 2 : 1,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'A',
-                style: TextStyle(
-                  fontSize: 18 * option.scale,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );
