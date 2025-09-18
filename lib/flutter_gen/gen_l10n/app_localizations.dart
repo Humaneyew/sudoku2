@@ -22,6 +22,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('fr'),
     Locale('hi'),
+    Locale('ka'),
     Locale('ru'),
     Locale('uk'),
     Locale('zh'),
@@ -32,6 +33,7 @@ abstract class AppLocalizations {
     "en",
     "fr",
     "hi",
+    "ka",
     "ru",
     "uk",
     "zh",
@@ -204,6 +206,8 @@ abstract class AppLocalizations {
 
   String get languageHindi;
 
+  String get languageGeorgian;
+
   String get statsTitle;
 
   String get statsGamesSection;
@@ -278,6 +282,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "ka":
+      return AppLocalizationsEn();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -294,6 +300,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "ka":
+      return AppLocalizationsEn();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -580,6 +588,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
 
   @override
   String get statsTitle => "Statistiken";
@@ -925,6 +936,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
+
+  @override
   String get statsTitle => "Statistics";
 
   @override
@@ -1268,6 +1282,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
+
+  @override
   String get statsTitle => "Statistiques";
 
   @override
@@ -1609,6 +1626,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
 
   @override
   String get statsTitle => "आँकड़े";
@@ -1958,6 +1978,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
+
+  @override
   String get statsTitle => "Статистика";
 
   @override
@@ -2305,6 +2328,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
+
+  @override
   String get statsTitle => "Статистика";
 
   @override
@@ -2644,6 +2670,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული (Язык в честь семьи ცეცხლაᲫე)";
 
   @override
   String get statsTitle => "统计";

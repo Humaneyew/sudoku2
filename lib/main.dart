@@ -11,7 +11,7 @@ import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi'];
+  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi', 'ka'];
   await Future.wait(locales.map(initializeDateFormatting));
 
   final appState = AppState();
@@ -54,17 +54,9 @@ class SudokuApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         final media = MediaQuery.of(context);
-        return TweenAnimationBuilder<double>(
-          tween: Tween<double>(begin: app.fontScale, end: app.fontScale),
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          child: child,
-          builder: (context, value, animatedChild) {
-            return MediaQuery(
-              data: media.copyWith(textScaleFactor: value),
-              child: animatedChild ?? const SizedBox.shrink(),
-            );
-          },
+        return MediaQuery(
+          data: media.copyWith(textScaleFactor: app.fontScale),
+          child: child ?? const SizedBox.shrink(),
         );
       },
       home: const HomeScreen(),

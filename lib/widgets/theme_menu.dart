@@ -95,15 +95,6 @@ class _ThemeDialog extends StatelessWidget {
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${app.fontSizeSp.round()} sp',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             );
           },
