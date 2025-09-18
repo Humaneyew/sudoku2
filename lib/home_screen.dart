@@ -748,6 +748,8 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
   late final AnimationController _introController;
   late final Animation<double> _trophyScale;
   late final Animation<double> _trophyOpacity;
+  late final Animation<Offset> _headerOffset;
+  late final Animation<double> _headerOpacity;
   late final Animation<Offset> _calendarOffset;
   late final Animation<double> _calendarOpacity;
 
@@ -770,6 +772,19 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     _trophyOpacity = CurvedAnimation(
       parent: _introController,
       curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+    );
+    _headerOffset = Tween<Offset>(
+      begin: const Offset(0, 0.1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _introController,
+        curve: const Interval(0.15, 0.65, curve: Curves.easeOut),
+      ),
+    );
+    _headerOpacity = CurvedAnimation(
+      parent: _introController,
+      curve: const Interval(0.15, 0.65, curve: Curves.easeIn),
     );
     _calendarOffset = Tween<Offset>(
       begin: const Offset(0, 0.15),
@@ -886,8 +901,10 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final normalizedToday = DateTime(today.year, today.month, today.day);
     final monthDays = DateUtils.getDaysInMonth(_visibleMonth.year, _visibleMonth.month);
     final progress = app.completedDailyCount(_visibleMonth);
+    const challengeGoal = 30;
+    final headerProgress = progress.clamp(0, challengeGoal);
 
-    final monthFormatter = DateFormat.yMMMM(l10n.localeName);
+    final monthFormatter = DateFormat.MMMM(l10n.localeName);
     final rawMonthLabel = monthFormatter.format(_visibleMonth);
     final monthLabel = toBeginningOfSentenceCase(
           rawMonthLabel,
@@ -958,13 +975,45 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    l10n.navDaily,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: scheme.onPrimary,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.4,
+                  FadeTransition(
+                    opacity: _headerOpacity,
+                    child: SlideTransition(
+                      position: _headerOffset,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.navDaily,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              color: scheme.onPrimary,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.4,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.monetization_on_rounded,
+                                color: Color(0xFFFFD54F),
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '$headerProgress/$challengeGoal',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: scheme.onPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1054,6 +1103,9 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               }
                               final date =
                                   DateTime(_visibleMonth.year, _visibleMonth.month, day);
+                              final isToday =
+                                  DateUtils.isSameDay(date, normalizedToday);
+                              final isPast = date.isBefore(normalizedToday);
                               final locked = date.isAfter(normalizedToday);
                               return AspectRatio(
                                 aspectRatio: 1,
@@ -1061,7 +1113,8 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                   date: date,
                                   selected: currentSelected != null &&
                                       DateUtils.isSameDay(currentSelected, date),
-                                  today: DateUtils.isSameDay(date, normalizedToday),
+                                  today: isToday,
+                                  past: isPast,
                                   completed: app.isDailyCompleted(date),
                                   locked: locked,
                                   onTap: locked ? null : () => _onSelect(date),
@@ -1115,6 +1168,7 @@ class _CalendarDayButton extends StatelessWidget {
   final DateTime date;
   final bool selected;
   final bool today;
+  final bool past;
   final bool completed;
   final bool locked;
   final VoidCallback? onTap;
@@ -1123,6 +1177,7 @@ class _CalendarDayButton extends StatelessWidget {
     required this.date,
     required this.selected,
     required this.today,
+    required this.past,
     required this.completed,
     required this.locked,
     required this.onTap,
@@ -1141,7 +1196,7 @@ class _CalendarDayButton extends StatelessWidget {
       textColor = scheme.onSurface.withOpacity(0.3);
     } else if (selected) {
       textColor = scheme.onPrimary;
-    } else if (completed) {
+    } else if (completed || past) {
       textColor = scheme.secondary;
     } else {
       textColor = scheme.onSurface;
