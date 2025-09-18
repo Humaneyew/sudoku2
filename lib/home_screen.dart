@@ -908,14 +908,18 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final canPlay =
         currentSelected != null && !currentSelected.isAfter(normalizedToday);
 
-    final surfaceColor = theme.colorScheme.surface;
-    const gradientColors = <Color>[
-      Color(0xFF1F3C88),
-      Color(0xFF3D7BF6),
-    ];
+    final surfaceColor = scheme.surface;
+    final headerGradient = LinearGradient(
+      colors: [
+        scheme.primary,
+        Color.lerp(scheme.primary, scheme.onPrimary, 0.25) ?? scheme.primary,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
 
     return Container(
-      color: theme.colorScheme.surfaceVariant.withOpacity(0.1),
+      color: scheme.background,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -929,11 +933,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                 120,
               ),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: headerGradient,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -946,12 +946,12 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                         width: 110,
                         height: 110,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.12),
+                          color: scheme.onPrimary.withOpacity(0.12),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.emoji_events_rounded,
-                          color: Colors.white,
+                          color: scheme.onPrimary,
                           size: 60,
                         ),
                       ),
@@ -962,7 +962,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                     l10n.navDaily,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
+                      color: scheme.onPrimary,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.4,
                     ),
@@ -985,7 +985,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                         borderRadius: BorderRadius.circular(28),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: theme.shadowColor,
                             blurRadius: 30,
                             offset: const Offset(0, 18),
                           ),
@@ -1007,6 +1007,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w700,
+                                    color: scheme.onSurface,
                                   ),
                                 ),
                               ),
@@ -1028,7 +1029,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                     label.toUpperCase(),
                                     style: theme.textTheme.labelSmall?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: scheme.onSurfaceVariant,
+                                      color: scheme.onSurface,
                                     ),
                                   ),
                                 ),
@@ -1135,9 +1136,18 @@ class _CalendarDayButton extends StatelessWidget {
       fontWeight: FontWeight.w700,
     );
 
-    final textColor = locked
-        ? scheme.onSurfaceVariant.withOpacity(0.35)
-        : (selected ? scheme.onPrimary : scheme.onSurface);
+    late final Color textColor;
+    if (locked) {
+      textColor = scheme.onSurface.withOpacity(0.3);
+    } else if (selected) {
+      textColor = scheme.onPrimary;
+    } else if (completed) {
+      textColor = scheme.secondary;
+    } else {
+      textColor = scheme.onSurface;
+    }
+
+    final indicatorColor = selected ? scheme.onPrimary : scheme.secondary;
 
     return AnimatedScale(
       duration: const Duration(milliseconds: 200),
@@ -1175,7 +1185,7 @@ class _CalendarDayButton extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: selected ? scheme.onPrimary : scheme.primary,
+                        color: indicatorColor,
                         shape: BoxShape.circle,
                       ),
                     ),
