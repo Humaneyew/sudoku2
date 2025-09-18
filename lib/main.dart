@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -11,8 +13,9 @@ import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  const locales = ['en', 'ru', 'uk', 'de', 'fr', 'zh', 'hi'];
-  await Future.wait(locales.map(initializeDateFormatting));
+  final defaultLocale =
+      ui.PlatformDispatcher.instance.locale.toLanguageTag();
+  await initializeDateFormatting(defaultLocale);
 
   final appState = AppState();
   await appState.load();
