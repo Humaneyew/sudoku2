@@ -6,8 +6,10 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
 import 'settings_page.dart';
+import 'theme.dart';
 import 'widgets/board.dart';
 import 'widgets/control_panel.dart';
+import 'widgets/theme_menu.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -89,14 +91,13 @@ class _GamePageState extends State<GamePage> {
               timeText: _formatTime(elapsedMs),
               onBack: () => Navigator.pop(context),
               onRestart: () {
-                final diff =
-                    app.currentDifficulty ?? app.featuredStatsDifficulty;
-                app.startGame(diff);
+                app.restartCurrentPuzzle();
                 setState(() {
                   elapsedMs = 0;
                 });
                 _startTimer();
               },
+              onOpenTheme: () => showThemeMenu(context),
               onSettings: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const SettingsPage()),
@@ -366,17 +367,30 @@ class _GameHeader extends StatelessWidget {
   final String timeText;
   final VoidCallback onBack;
   final VoidCallback onRestart;
+  final VoidCallback onOpenTheme;
   final VoidCallback onSettings;
 
   const _GameHeader({
     required this.timeText,
     required this.onBack,
     required this.onRestart,
+    required this.onOpenTheme,
     required this.onSettings,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.headlineSmall?.copyWith(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: theme.colorScheme.onSurface,
+        ) ??
+        const TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+        );
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Row(
@@ -387,15 +401,12 @@ class _GameHeader extends StatelessWidget {
               children: [
                 Text(
                   timeText,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: textStyle,
                 ),
               ],
             ),
           ),
-          _HeaderButton(icon: Icons.pause_rounded, onTap: () {}),
+          _HeaderButton(icon: Icons.palette_outlined, onTap: onOpenTheme),
           const SizedBox(width: 12),
           _HeaderButton(icon: Icons.refresh_rounded, onTap: onRestart),
           const SizedBox(width: 12),
@@ -414,6 +425,8 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
     return InkResponse(
       radius: 28,
       onTap: onTap,
@@ -421,17 +434,17 @@ class _HeaderButton extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.headerButtonBackground,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x171B1D3A),
+              color: colors.shadowColor,
               blurRadius: 12,
               offset: Offset(0, 6),
             ),
           ],
         ),
-        child: Icon(icon, color: const Color(0xFF3B82F6)),
+        child: Icon(icon, color: colors.headerButtonIcon),
       ),
     );
   }
@@ -450,14 +463,18 @@ class _StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
+    final scheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x121B1D3A),
+            color: colors.shadowColor,
             blurRadius: 20,
             offset: Offset(0, 10),
           ),
@@ -467,28 +484,35 @@ class _StatusBar extends StatelessWidget {
         children: [
           Text(
             difficulty,
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
+            style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
+                ) ??
+                const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
           ),
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFD8E6FF),
+              color: scheme.primary.withOpacity(0.15),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Row(
               children: [
-                const Icon(Icons.star_rounded,
-                    color: Color(0xFFFFC26F), size: 20),
+                const Icon(
+                  Icons.star_rounded,
+                  color: Color(0xFFFFB347),
+                  size: 20,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   stars.toString(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF3B82F6),
+                    color: scheme.primary,
                   ),
                 ),
               ],
@@ -509,6 +533,8 @@ class _HeartsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final inactive = theme.colorScheme.outlineVariant;
     return Row(
       children: List.generate(3, (index) {
         final active = index < lives;
@@ -517,7 +543,7 @@ class _HeartsIndicator extends StatelessWidget {
           child: Icon(
             Icons.favorite,
             size: 24,
-            color: active ? const Color(0xFFE25562) : const Color(0xFFE2E5F3),
+            color: active ? const Color(0xFFE25562) : inactive,
           ),
         );
       }),

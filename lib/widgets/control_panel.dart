@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models.dart';
+import '../theme.dart';
 import '../undo_ad_controller.dart';
 
 class ControlPanel extends StatelessWidget {
@@ -18,8 +19,6 @@ class ControlPanel extends StatelessWidget {
         _ActionRow(app: app),
         const SizedBox(height: 20),
         _NumberPad(app: app),
-        const SizedBox(height: 16),
-        const _AdBanner(),
       ],
     );
   }
@@ -115,23 +114,37 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const primaryBlue = Color(0xFF3B82F6);
+    final colors = theme.extension<SudokuColors>()!;
+    final scheme = theme.colorScheme;
     final enabled = onPressed != null;
     final isActive = enabled && active;
-    final background = isActive ? const Color(0xFFE0F0FF) : Colors.white;
-    final borderColor = isActive ? const Color(0xFF9CC8FF) : const Color(0xFFE1E6F5);
-    final effectiveBorder = enabled ? borderColor : const Color(0xFFE9ECF6);
+    final background = isActive
+        ? colors.actionButtonActiveBackground
+        : scheme.surface;
+    final borderColor = isActive
+        ? colors.actionButtonActiveBorder
+        : scheme.outlineVariant;
+    final disabledBorder = Color.alphaBlend(
+      scheme.onSurface.withOpacity(0.05),
+      scheme.surface,
+    );
+    final effectiveBorder = enabled ? borderColor : disabledBorder;
+    final disabledColor = scheme.onSurface.withOpacity(0.35);
     final textColor = isActive
-        ? primaryBlue
+        ? scheme.primary
         : enabled
-            ? const Color(0xFF1F2437)
-            : theme.disabledColor;
+            ? scheme.onSurface
+            : disabledColor;
     final iconColor = isActive
-        ? primaryBlue
+        ? scheme.primary
         : enabled
-            ? const Color(0xFF1F2437)
-            : theme.disabledColor;
-    final badgeForeground = enabled ? (badgeColor ?? primaryBlue) : theme.disabledColor;
+            ? scheme.onSurface
+            : disabledColor;
+    final baseBadge = badgeColor ?? colors.actionButtonBadgeColor;
+    final badgeForeground = enabled ? baseBadge : baseBadge.withOpacity(0.4);
+    final badgeBackground = enabled
+        ? baseBadge.withOpacity(0.18)
+        : baseBadge.withOpacity(0.12);
     final showBadge = badge != null && badge!.isNotEmpty;
 
     return SizedBox(
@@ -143,6 +156,15 @@ class _ActionButton extends StatelessWidget {
           color: background,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: effectiveBorder),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: colors.shadowColor,
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+              : null,
         ),
         child: Material(
           type: MaterialType.transparency,
@@ -163,7 +185,7 @@ class _ActionButton extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: badgeForeground.withOpacity(enabled ? 0.18 : 0.12),
+                          color: badgeBackground,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -213,17 +235,18 @@ class _NumberPad extends StatelessWidget {
   Widget build(BuildContext context) {
     final selected = app.selectedValue;
     final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
     final highlighted = app.highlightedNumber;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final notesMode = app.notesMode;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.numberPadBackground,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x141B1D3A),
+            color: colors.shadowColor,
             blurRadius: 20,
             offset: Offset(0, 12),
           ),
@@ -246,6 +269,7 @@ class _NumberPad extends StatelessWidget {
                 theme: theme,
                 reduceMotion: reduceMotion,
                 notesMode: notesMode,
+                colors: colors,
               ),
             ),
         ],
@@ -266,6 +290,7 @@ class _NumberButton extends StatelessWidget {
   final ThemeData theme;
   final bool reduceMotion;
   final bool notesMode;
+  final SudokuColors colors;
 
   const _NumberButton({
     required this.number,
@@ -279,35 +304,51 @@ class _NumberButton extends StatelessWidget {
     required this.theme,
     required this.reduceMotion,
     required this.notesMode,
+    required this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
     final isSelected = enabled && selected;
     final isHighlighted = enabled && highlighted;
+    final scheme = theme.colorScheme;
     final background = !enabled
-        ? const Color(0xFFF3F5FB)
+        ? colors.numberPadDisabledBackground
         : isSelected
-            ? const Color(0xFFC7DBFF)
+            ? colors.numberPadSelectedBackground
             : isHighlighted
-                ? const Color(0xFFE6F0FF)
-                : Colors.white;
+                ? colors.numberPadHighlightBackground
+                : colors.numberPadBackground;
     final borderColor = !enabled
-        ? const Color(0xFFE2E5F3)
+        ? Color.alphaBlend(scheme.onSurface.withOpacity(0.05), colors.numberPadBackground)
         : isSelected
-            ? const Color(0xFF3B82F6)
+            ? colors.numberPadSelectedBorder
             : isHighlighted
-                ? const Color(0xFF9DBAFD)
-                : const Color(0xFFE2E5F3);
+                ? colors.numberPadHighlightBorder
+                : colors.numberPadBorder;
     final textColor = !enabled
-        ? theme.disabledColor
+        ? colors.numberPadDisabledText
         : notesMode && !isSelected && !isHighlighted
-            ? const Color(0xFF6B7280)
-            : const Color(0xFF1F2437);
+            ? scheme.onSurface.withOpacity(0.7)
+            : scheme.onSurface;
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
     final numberFontSize = notesMode ? 18.0 : 20.0;
+    final remainingColor = !enabled
+        ? colors.numberPadDisabledText
+        : isHighlighted
+            ? colors.numberPadRemainingHighlight
+            : colors.numberPadRemaining;
+    final shadow = isSelected
+        ? [
+            BoxShadow(
+              color: colors.shadowColor,
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ]
+        : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -324,28 +365,20 @@ class _NumberButton extends StatelessWidget {
                   onTap();
                 }
               : null,
-          child: AnimatedContainer(
-            duration: duration,
-            curve: Curves.easeOut,
-            height: 64,
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: borderColor),
-              boxShadow: isSelected
-                  ? const [
-                      BoxShadow(
-                        color: Color(0x1A3B82F6),
-                        blurRadius: 12,
-                        offset: Offset(0, 6),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
+            child: AnimatedContainer(
+              duration: duration,
+              curve: Curves.easeOut,
+              height: 64,
+              decoration: BoxDecoration(
+                color: background,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: borderColor),
+                boxShadow: shadow,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
                   number.toString(),
                   style: TextStyle(
                     fontSize: numberFontSize,
@@ -358,9 +391,7 @@ class _NumberButton extends StatelessWidget {
                   duration: duration,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isHighlighted
-                        ? const Color(0xFF3B82F6)
-                        : theme.disabledColor,
+                    color: remainingColor,
                   ),
                   child: Text(remaining.toString()),
                 ),
@@ -373,43 +404,3 @@ class _NumberButton extends StatelessWidget {
   }
 }
 
-class _AdBanner extends StatelessWidget {
-  const _AdBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF3F51B5), Color(0xFF2196F3)],
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.play_circle_fill, color: Colors.white),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              l10n.adMessage,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Text(
-            l10n.adPlay,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

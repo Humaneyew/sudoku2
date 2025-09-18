@@ -6,6 +6,7 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'home_screen.dart';
 import 'models.dart';
+import 'theme.dart';
 import 'undo_ad_controller.dart';
 
 Future<void> main() async {
@@ -27,34 +28,43 @@ Future<void> main() async {
   );
 }
 
-class SudokuApp extends StatelessWidget {
+class SudokuApp extends StatefulWidget {
   const SudokuApp({super.key});
+
+  @override
+  State<SudokuApp> createState() => _SudokuAppState();
+}
+
+class _SudokuAppState extends State<SudokuApp> with WidgetsBindingObserver {
+  Brightness _platformBrightness =
+      WidgetsBinding.instance.platformDispatcher.platformBrightness;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    setState(() {
+      _platformBrightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-
-    final light = _buildLightTheme();
-    const primaryBlue = Color(0xFF3B82F6);
-    const navigationSelected = Color(0xFF5B9BFA);
-    final dark = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryBlue,
-        brightness: Brightness.dark,
-      ),
-      scaffoldBackgroundColor: const Color(0xFF0F111A),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF161A2A),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: const Color(0xFF161A2A),
-        selectedItemColor: navigationSelected,
-        unselectedItemColor: const Color(0xFF59607A),
-      ),
-    ).copyWith(pageTransitionsTheme: _pageTransitionsTheme);
+    final activeTheme = app.resolvedTheme(_platformBrightness);
+    final theme = buildSudokuTheme(activeTheme)
+        .copyWith(pageTransitionsTheme: _pageTransitionsTheme);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
@@ -66,66 +76,16 @@ class SudokuApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      themeMode: switch (app.theme) {
-        AppTheme.system => ThemeMode.system,
-        AppTheme.light => ThemeMode.light,
-        AppTheme.dark => ThemeMode.dark,
-      },
-      theme: light,
-      darkTheme: dark,
+      theme: theme,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        final media = MediaQuery.of(context);
+        return MediaQuery(
+          data: media.copyWith(textScaleFactor: app.fontScale),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       home: const HomeScreen(),
-    );
-  }
-
-  ThemeData _buildLightTheme() {
-    const primary = Color(0xFF3B82F6);
-    const background = Color(0xFFEAF2FF);
-    const surface = Colors.white;
-
-    final base = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primary,
-        background: background,
-      ),
-    );
-
-    return base.copyWith(
-      scaffoldBackgroundColor: background,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: surface,
-        surfaceTintColor: surface,
-        foregroundColor: Color(0xFF1A1F36),
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF1A1F36),
-        ),
-      ),
-      textTheme: base.textTheme.apply(
-        fontFamily: 'SF Pro Display',
-        bodyColor: const Color(0xFF1F2437),
-        displayColor: const Color(0xFF1F2437),
-      ),
-      cardTheme: CardThemeData(
-        color: surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-      ),
-      dividerColor: const Color(0xFFE4E7F5),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: surface,
-        selectedItemColor: primary,
-        unselectedItemColor: const Color(0xFF9AA3B9),
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-      ),
-      pageTransitionsTheme: _pageTransitionsTheme,
     );
   }
 }

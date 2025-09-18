@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
+import 'widgets/theme_menu.dart';
 
 const _appVersion = '1.0.0';
 
@@ -13,6 +14,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final l10n = AppLocalizations.of(context)!;
+    final brightness = MediaQuery.platformBrightnessOf(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -23,35 +25,14 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _sectionTitle(l10n.themeSectionTitle),
-          RadioListTile<AppTheme>(
-            title: Text(l10n.themeSystem),
-            value: AppTheme.system,
-            groupValue: app.theme,
-            onChanged: (v) {
-              if (v != null) {
-                app.setTheme(v);
-              }
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text(l10n.themeLight),
-            value: AppTheme.light,
-            groupValue: app.theme,
-            onChanged: (v) {
-              if (v != null) {
-                app.setTheme(v);
-              }
-            },
-          ),
-          RadioListTile<AppTheme>(
-            title: Text(l10n.themeDark),
-            value: AppTheme.dark,
-            groupValue: app.theme,
-            onChanged: (v) {
-              if (v != null) {
-                app.setTheme(v);
-              }
-            },
+          ListTile(
+            leading: const Icon(Icons.palette_outlined),
+            title: Text(app.resolvedThemeName(l10n, brightness)),
+            subtitle: app.syncWithSystemTheme
+                ? Text(l10n.themeSyncWithSystem)
+                : null,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showThemeMenu(context),
           ),
           const Divider(height: 32),
 
