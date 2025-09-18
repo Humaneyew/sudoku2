@@ -17,8 +17,9 @@ class _ThemeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
@@ -71,7 +72,7 @@ class _ThemeDialog extends StatelessWidget {
                       style: TextStyle(
                         fontSize: AppState.minFontSizeSp,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: cs.onSurface.withOpacity(0.7),
                       ),
                     ),
                     Expanded(
@@ -90,7 +91,7 @@ class _ThemeDialog extends StatelessWidget {
                       style: TextStyle(
                         fontSize: AppState.maxFontSizeSp,
                         fontWeight: FontWeight.w700,
-                        color: theme.colorScheme.onSurface,
+                        color: cs.onSurface,
                       ),
                     ),
                   ],
@@ -118,9 +119,9 @@ class _ThemeCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final baseColor = themePreviewColor(option);
-    final borderColor = active ? scheme.primary : scheme.outlineVariant;
+    final borderColor = active ? cs.primary : cs.outlineVariant;
 
     return GestureDetector(
       onTap: onTap,
@@ -150,7 +151,7 @@ class _ThemeCircle extends StatelessWidget {
             if (active)
               Icon(
                 Icons.check,
-                color: scheme.onPrimary,
+                color: cs.onPrimary,
                 size: 22,
               ),
           ],

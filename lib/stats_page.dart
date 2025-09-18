@@ -49,14 +49,14 @@ class _StatsTabState extends State<StatsTab>
     final app = context.watch<AppState>();
     final stats = app.statsFor(_selected);
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final primary = scheme.primary;
+    final cs = theme.colorScheme;
+    final primary = cs.primary;
     Color blend(Color a, Color b, double t) => Color.lerp(a, b, t) ?? a;
-    final winsAccent = scheme.secondary;
-    final rateAccent = blend(scheme.error, scheme.secondary, 0.5);
-    final flawlessAccent = blend(scheme.primary, scheme.onSurface, 0.3);
-    final averageTimeAccent = blend(scheme.primary, scheme.onSurface, 0.4);
-    final currentStreakAccent = blend(scheme.error, scheme.secondary, 0.35);
+    final winsAccent = cs.secondary;
+    final rateAccent = blend(cs.error, cs.secondary, 0.5);
+    final flawlessAccent = blend(cs.primary, cs.onSurface, 0.3);
+    final averageTimeAccent = blend(cs.primary, cs.onSurface, 0.4);
+    final currentStreakAccent = blend(cs.error, cs.secondary, 0.35);
     final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
@@ -159,7 +159,7 @@ class _DifficultySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
     return Wrap(
       spacing: 8,
@@ -170,18 +170,18 @@ class _DifficultySelector extends StatelessWidget {
             label: Text(diff.title(l10n)),
             selected: diff == selected,
             onSelected: (_) => onChanged(diff),
-            selectedColor: scheme.primary,
-            checkmarkColor: scheme.onPrimary,
+            selectedColor: cs.primary,
+            checkmarkColor: cs.onPrimary,
             labelStyle: theme.textTheme.labelLarge?.copyWith(
-              color: diff == selected ? scheme.onPrimary : scheme.onSurface,
+              color: diff == selected ? cs.onPrimary : cs.onSurface,
               fontWeight: FontWeight.w600,
             ),
-            backgroundColor: scheme.surfaceVariant,
+            backgroundColor: cs.surfaceVariant,
             side: BorderSide(
-              color: diff == selected ? scheme.primary : scheme.outlineVariant,
+              color: diff == selected ? cs.primary : cs.outlineVariant,
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(18)),
             ),
           ),
       ],
@@ -198,14 +198,14 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        color: cs.surface,
+        borderRadius: const BorderRadius.all(Radius.circular(28)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
@@ -221,7 +221,7 @@ class _StatsSection extends StatelessWidget {
             title,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: scheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -232,7 +232,7 @@ class _StatsSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Divider(
                   height: 1,
-                  color: scheme.outlineVariant,
+                  color: cs.outlineVariant,
                 ),
               ),
           ],
@@ -264,7 +264,7 @@ class _StatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     return Row(
       children: [
         Container(
@@ -272,7 +272,7 @@ class _StatRow extends StatelessWidget {
           height: 46,
           decoration: BoxDecoration(
             color: data.color.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
           ),
           child: Icon(data.icon, color: data.color),
         ),
@@ -282,7 +282,7 @@ class _StatRow extends StatelessWidget {
             data.label,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
         ),
@@ -290,7 +290,7 @@ class _StatRow extends StatelessWidget {
           data.value,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: scheme.primary,
+            color: cs.primary,
           ),
         ),
       ],

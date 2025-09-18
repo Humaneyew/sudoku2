@@ -31,7 +31,7 @@ class _ActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final undoAds = context.watch<UndoAdController>();
     final useUndoAd = undoAds.useAdFlow;
@@ -106,8 +106,7 @@ class _ActionRow extends StatelessWidget {
                 onPressed:
                     enabled ? context.read<AppState>().useHint : null,
                 badge: hintsLeft.toString(),
-                badgeColor:
-                    enabled ? scheme.secondary : theme.disabledColor,
+                badgeColor: enabled ? cs.secondary : theme.disabledColor,
               );
             },
           ),
@@ -138,31 +137,31 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
-    final scheme = theme.colorScheme;
     final enabled = onPressed != null;
     final isActive = enabled && active;
     final background = isActive
         ? colors.actionButtonActiveBackground
-        : scheme.surface;
+        : cs.surface;
     final borderColor = isActive
         ? colors.actionButtonActiveBorder
-        : scheme.outlineVariant;
+        : cs.outlineVariant;
     final disabledBorder = Color.alphaBlend(
-      scheme.onSurface.withOpacity(0.05),
-      scheme.surface,
+      cs.onSurface.withOpacity(0.05),
+      cs.surface,
     );
     final effectiveBorder = enabled ? borderColor : disabledBorder;
-    final disabledColor = scheme.onSurface.withOpacity(0.35);
+    final disabledColor = cs.onSurface.withOpacity(0.35);
     final textColor = isActive
-        ? scheme.primary
+        ? cs.primary
         : enabled
-            ? scheme.onSurface
+            ? cs.onSurface
             : disabledColor;
     final iconColor = isActive
-        ? scheme.primary
+        ? cs.primary
         : enabled
-            ? scheme.onSurface
+            ? cs.onSurface
             : disabledColor;
     final baseBadge = badgeColor ?? colors.actionButtonBadgeColor;
     final badgeForeground = enabled ? baseBadge : baseBadge.withOpacity(0.4);
@@ -413,7 +412,7 @@ class _NumberButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = enabled && selected;
     final isHighlighted = enabled && highlighted;
-    final scheme = theme.colorScheme;
+    final cs = theme.colorScheme;
     final background = !enabled
         ? colors.numberPadDisabledBackground
         : isSelected
@@ -422,7 +421,10 @@ class _NumberButton extends StatelessWidget {
                 ? colors.numberPadHighlightBackground
                 : colors.numberPadBackground;
     final borderColor = !enabled
-        ? Color.alphaBlend(scheme.onSurface.withOpacity(0.05), colors.numberPadBackground)
+        ? Color.alphaBlend(
+            cs.onSurface.withOpacity(0.05),
+            colors.numberPadBackground,
+          )
         : isSelected
             ? colors.numberPadSelectedBorder
             : isHighlighted
@@ -431,8 +433,8 @@ class _NumberButton extends StatelessWidget {
     final textColor = !enabled
         ? colors.numberPadDisabledText
         : notesMode && !isSelected && !isHighlighted
-            ? scheme.onSurface.withOpacity(0.7)
-            : scheme.onSurface;
+            ? cs.onSurface.withOpacity(0.7)
+            : cs.onSurface;
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);

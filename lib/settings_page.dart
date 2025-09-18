@@ -36,6 +36,7 @@ class SettingsPage extends StatelessWidget {
           _sectionTitle(l10n.languageSectionTitle),
           ...AppLanguage.values.map(
                 (lang) => RadioListTile<AppLanguage>(
+              key: ValueKey('lang-${lang.name}'),
               title: Text(lang.displayName(l10n)),
               value: lang,
               groupValue: app.lang,
