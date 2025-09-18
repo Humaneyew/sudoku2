@@ -63,7 +63,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     final app = context.read<AppState>();
     if (app.current != null) {
       app.current!.elapsedMs = _elapsedVN.value;
-      app.save();
+      unawaited(app.save());
     }
 
     _elapsedVN.dispose();
@@ -76,7 +76,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       final app = context.read<AppState>();
       if (app.current != null) {
         app.current!.elapsedMs = _elapsedVN.value;
-        app.save();
+        unawaited(app.save());
       }
     }
   }

@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -49,6 +50,17 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.fr => const Locale('fr'),
         AppLanguage.zh => const Locale('zh'),
         AppLanguage.hi => const Locale('hi'),
+      };
+
+  /// Полный тэг локали в формате BCP 47.
+  String toLocaleTag() => switch (this) {
+        AppLanguage.en => 'en-US',
+        AppLanguage.ru => 'ru-RU',
+        AppLanguage.uk => 'uk-UA',
+        AppLanguage.de => 'de-DE',
+        AppLanguage.fr => 'fr-FR',
+        AppLanguage.zh => 'zh-CN',
+        AppLanguage.hi => 'hi-IN',
       };
 
   /// Строковое представление локали (подходит для форматирования дат).
@@ -190,6 +202,7 @@ class DifficultyStats {
 class AppState extends ChangeNotifier {
   static const int _maxHints = 3;
   static const int _maxLives = 3;
+  static final Set<String> _initedDateLocales = <String>{};
 
   SudokuTheme theme = SudokuTheme.white;
   AppLanguage lang = AppLanguage.uk;
@@ -238,209 +251,219 @@ class AppState extends ChangeNotifier {
 
   /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-    _dailyChallengeDate = null;
+      _dailyChallengeDate = null;
 
-    final completedDaily = prefs.getStringList('dailyCompleted');
-    if (completedDaily != null) {
-      _completedDailyChallenges
-        ..clear()
-        ..addAll(completedDaily);
-    }
-
-    final profileJson = prefs.getString('profile');
-    if (profileJson != null) {
-      try {
-        final map = jsonDecode(profileJson) as Map<String, dynamic>;
-        dailyStreak = map['dailyStreak'] ?? dailyStreak;
-        totalStars = map['totalStars'] ?? totalStars;
-        championshipScore = map['championshipScore'] ?? championshipScore;
-        battleWinRate = map['battleWinRate'] ?? battleWinRate;
-        heartBonus = map['heartBonus'] ?? heartBonus;
-
-        final statsMap = map['stats'] as Map<String, dynamic>?;
-        if (statsMap != null) {
-          final parsed = <Difficulty, DifficultyStats>{};
-          for (final entry in statsMap.entries) {
-            final key = Difficulty.values.firstWhere(
-              (d) => d.name == entry.key,
-              orElse: () => Difficulty.novice,
-            );
-            parsed[key] = DifficultyStats.fromJson(
-                (entry.value as Map).cast<String, dynamic>());
-          }
-          statsByDifficulty = {
-            for (final diff in Difficulty.values)
-              diff: parsed[diff] ?? _defaultStats()[diff]!,
-          };
-        }
-      } catch (_) {}
-    }
-
-    final themeName = prefs.getString('themeV2') ?? prefs.getString('theme');
-    if (themeName != null) {
-      try {
-        theme = SudokuTheme.values.byName(themeName);
-      } catch (_) {
-        switch (themeName) {
-          case 'light':
-            theme = SudokuTheme.white;
-            break;
-          case 'dark':
-            theme = SudokuTheme.black;
-            break;
-          case 'system':
-            theme = SudokuTheme.white;
-            break;
-        }
+      final completedDaily = prefs.getStringList('dailyCompleted');
+      if (completedDaily != null) {
+        _completedDailyChallenges
+          ..clear()
+          ..addAll(completedDaily);
       }
-    }
 
-    final storedScale = prefs.getDouble('fontScaleV2');
-    var migratedFontScale = false;
-
-    if (storedScale != null) {
-      final normalized = _normalizeFontScale(storedScale);
-      if ((normalized - storedScale).abs() > 0.0001) {
-        migratedFontScale = true;
-      }
-      _fontScale = normalized;
-    } else {
-      FontSizeOption? option;
-      final storedFontSize = prefs.getString('fontSize');
-      if (storedFontSize != null) {
+      final profileJson = prefs.getString('profile');
+      if (profileJson != null) {
         try {
-          option = FontSizeOption.values.byName(storedFontSize);
+          final map = jsonDecode(profileJson) as Map<String, dynamic>;
+          dailyStreak = map['dailyStreak'] ?? dailyStreak;
+          totalStars = map['totalStars'] ?? totalStars;
+          championshipScore = map['championshipScore'] ?? championshipScore;
+          battleWinRate = map['battleWinRate'] ?? battleWinRate;
+          heartBonus = map['heartBonus'] ?? heartBonus;
+
+          final statsMap = map['stats'] as Map<String, dynamic>?;
+          if (statsMap != null) {
+            final parsed = <Difficulty, DifficultyStats>{};
+            for (final entry in statsMap.entries) {
+              final key = Difficulty.values.firstWhere(
+                (d) => d.name == entry.key,
+                orElse: () => Difficulty.novice,
+              );
+              parsed[key] = DifficultyStats.fromJson(
+                  (entry.value as Map).cast<String, dynamic>());
+            }
+            statsByDifficulty = {
+              for (final diff in Difficulty.values)
+                diff: parsed[diff] ?? _defaultStats()[diff]!,
+            };
+          }
         } catch (_) {}
       }
 
-      if (option != null) {
-        _fontScale = _normalizeFontScale(option.scale);
-        migratedFontScale = true;
+      final themeName = prefs.getString('themeV2') ?? prefs.getString('theme');
+      if (themeName != null) {
+        try {
+          theme = SudokuTheme.values.byName(themeName);
+        } catch (_) {
+          switch (themeName) {
+            case 'light':
+              theme = SudokuTheme.white;
+              break;
+            case 'dark':
+              theme = SudokuTheme.black;
+              break;
+            case 'system':
+              theme = SudokuTheme.white;
+              break;
+          }
+        }
+      }
+
+      final storedScale = prefs.getDouble('fontScaleV2');
+      var migratedFontScale = false;
+
+      if (storedScale != null) {
+        final normalized = _normalizeFontScale(storedScale);
+        if ((normalized - storedScale).abs() > 0.0001) {
+          migratedFontScale = true;
+        }
+        _fontScale = normalized;
       } else {
-        final legacyScale = prefs.getDouble('fontScale');
-        if (legacyScale != null) {
-          _fontScale = _normalizeFontScale(legacyScale);
+        FontSizeOption? option;
+        final storedFontSize = prefs.getString('fontSize');
+        if (storedFontSize != null) {
+          try {
+            option = FontSizeOption.values.byName(storedFontSize);
+          } catch (_) {}
+        }
+
+        if (option != null) {
+          _fontScale = _normalizeFontScale(option.scale);
           migratedFontScale = true;
         } else {
-          final digitStyleName = prefs.getString('digitStyle');
-          if (digitStyleName != null) {
-            switch (digitStyleName) {
-              case 'thin':
-                option = FontSizeOption.extraSmall;
-                break;
-              case 'bold':
-                option = FontSizeOption.extraLarge;
-                break;
-              default:
-                option = FontSizeOption.medium;
-            }
-            if (option != null) {
-              _fontScale = _normalizeFontScale(option.scale);
-              migratedFontScale = true;
+          final legacyScale = prefs.getDouble('fontScale');
+          if (legacyScale != null) {
+            _fontScale = _normalizeFontScale(legacyScale);
+            migratedFontScale = true;
+          } else {
+            final digitStyleName = prefs.getString('digitStyle');
+            if (digitStyleName != null) {
+              switch (digitStyleName) {
+                case 'thin':
+                  option = FontSizeOption.extraSmall;
+                  break;
+                case 'bold':
+                  option = FontSizeOption.extraLarge;
+                  break;
+                default:
+                  option = FontSizeOption.medium;
+              }
+              if (option != null) {
+                _fontScale = _normalizeFontScale(option.scale);
+                migratedFontScale = true;
+              }
             }
           }
         }
       }
-    }
 
-    _fontScale = _normalizeFontScale(_fontScale);
+      _fontScale = _normalizeFontScale(_fontScale);
 
-    if (migratedFontScale) {
-      await prefs.setDouble('fontScaleV2', _fontScale);
-    }
+      if (migratedFontScale) {
+        await prefs.setDouble('fontScaleV2', _fontScale);
+      }
 
-    await prefs.remove('fontSize');
-    await prefs.remove('fontScale');
-    await prefs.remove('digitStyle');
-    await prefs.remove('syncWithSystemTheme');
+      await prefs.remove('fontSize');
+      await prefs.remove('fontScale');
+      await prefs.remove('digitStyle');
+      await prefs.remove('syncWithSystemTheme');
 
-    final langName = prefs.getString('lang');
-    if (langName != null) {
-      try {
-        lang = AppLanguage.values.byName(langName);
-      } catch (_) {}
-    }
+      final langName = prefs.getString('lang');
+      if (langName != null) {
+        try {
+          lang = AppLanguage.values.byName(langName);
+        } catch (_) {}
+      }
 
-    soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
-    musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
-    vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
-    final savedGame = prefs.getString('currentGame');
-    if (savedGame != null) {
-      try {
-        final map = jsonDecode(savedGame) as Map<String, dynamic>;
-        final diffName = map['difficulty'] as String?;
-        final diff = diffName == null
-            ? null
-            : Difficulty.values.firstWhere(
-                (d) => d.name == diffName,
-                orElse: () => Difficulty.novice,
-              );
-        final board = (map['board'] as List?)?.map((e) => e as int).toList();
-        final solution =
-            (map['solution'] as List?)?.map((e) => e as int).toList();
-        final givenList =
-            (map['given'] as List?)?.map((e) => e as bool).toList();
-        final notesJson = map['notes'] as List?;
-        final historyJson = map['history'] as List?;
-        final startedAt = map['startedAt'] as String?;
+      soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
+      musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
+      vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
+      final savedGame = prefs.getString('currentGame');
+      if (savedGame != null) {
+        try {
+          final map = jsonDecode(savedGame) as Map<String, dynamic>;
+          final diffName = map['difficulty'] as String?;
+          final diff = diffName == null
+              ? null
+              : Difficulty.values.firstWhere(
+                  (d) => d.name == diffName,
+                  orElse: () => Difficulty.novice,
+                );
+          final board = (map['board'] as List?)?.map((e) => e as int).toList();
+          final solution =
+              (map['solution'] as List?)?.map((e) => e as int).toList();
+          final givenList =
+              (map['given'] as List?)?.map((e) => e as bool).toList();
+          final notesJson = map['notes'] as List?;
+          final historyJson = map['history'] as List?;
+          final startedAt = map['startedAt'] as String?;
 
-        if (diff != null &&
-            board != null &&
-            solution != null &&
-            givenList != null &&
-            board.length == 81 &&
-            solution.length == 81 &&
-            givenList.length == 81) {
-          final notes = List<Set<int>>.generate(81, (index) {
-            if (notesJson != null && index < notesJson.length) {
-              final entry = notesJson[index];
-              if (entry is List) {
-                return entry.map((e) => e as int).toSet();
+          if (diff != null &&
+              board != null &&
+              solution != null &&
+              givenList != null &&
+              board.length == 81 &&
+              solution.length == 81 &&
+              givenList.length == 81) {
+            final notes = List<Set<int>>.generate(81, (index) {
+              if (notesJson != null && index < notesJson.length) {
+                final entry = notesJson[index];
+                if (entry is List) {
+                  return entry.map((e) => e as int).toSet();
+                }
               }
-            }
-            return <int>{};
-          });
+              return <int>{};
+            });
 
-          current = GameState(
-            board: board,
-            solution: solution,
-            given: givenList,
-            notes: notes,
-          );
-
-          currentDifficulty = diff;
-          featuredDifficulty = diff;
-          _sessionId = (map['sessionId'] as num?)?.toInt() ?? _sessionId;
-          currentScore = (map['currentScore'] as num?)?.toInt() ?? currentScore;
-          selectedCell = (map['selectedCell'] as num?)?.toInt();
-          notesMode = map['notesMode'] as bool? ?? notesMode;
-          hintsLeft = (map['hintsLeft'] as num?)?.toInt() ?? hintsLeft;
-          livesLeft = (map['livesLeft'] as num?)?.toInt() ?? livesLeft;
-          _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
-          _gameCompleted = false;
-          _startedAt = startedAt == null ? _startedAt : DateTime.tryParse(startedAt);
-          final dailyDateString = map['dailyDate'] as String?;
-          final parsedDailyDate =
-              dailyDateString == null ? null : DateTime.tryParse(dailyDateString);
-          _dailyChallengeDate =
-              parsedDailyDate == null ? null : _dateOnly(parsedDailyDate);
-
-          _history
-            ..clear()
-            ..addAll(
-              historyJson
-                      ?.whereType<Map>()
-                      .map((e) => _Move.fromJson(e.cast<String, dynamic>())) ??
-                  const Iterable<_Move>.empty(),
+            current = GameState(
+              board: board,
+              solution: solution,
+              given: givenList,
+              notes: notes,
             );
-        }
-      } catch (_) {}
+
+            currentDifficulty = diff;
+            featuredDifficulty = diff;
+            _sessionId = (map['sessionId'] as num?)?.toInt() ?? _sessionId;
+            currentScore = (map['currentScore'] as num?)?.toInt() ?? currentScore;
+            selectedCell = (map['selectedCell'] as num?)?.toInt();
+            notesMode = map['notesMode'] as bool? ?? notesMode;
+            hintsLeft = (map['hintsLeft'] as num?)?.toInt() ?? hintsLeft;
+            livesLeft = (map['livesLeft'] as num?)?.toInt() ?? livesLeft;
+            _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
+            _gameCompleted = false;
+            _startedAt =
+                startedAt == null ? _startedAt : DateTime.tryParse(startedAt);
+            final dailyDateString = map['dailyDate'] as String?;
+            final parsedDailyDate = dailyDateString == null
+                ? null
+                : DateTime.tryParse(dailyDateString);
+            _dailyChallengeDate =
+                parsedDailyDate == null ? null : _dateOnly(parsedDailyDate);
+
+            _history
+              ..clear()
+              ..addAll(
+                historyJson
+                        ?.whereType<Map>()
+                        .map((e) => _Move.fromJson(e.cast<String, dynamic>())) ??
+                    const Iterable<_Move>.empty(),
+              );
+          }
+        } catch (_) {}
+      }
+    } catch (e) {
+      assert(() {
+        debugPrint('AppState.load error: $e');
+        return true;
+      }());
     }
 
     _recalculateDailyStreak();
 
+    await _ensureDateLocaleInited(lang.toLocaleTag());
     notifyListeners();
   }
 
@@ -535,12 +558,20 @@ class AppState extends ChangeNotifier {
     return resolvedTheme().label(l10n);
   }
 
-  void setLang(AppLanguage value) {
+  Future<void> _ensureDateLocaleInited(String localeTag) async {
+    if (_initedDateLocales.contains(localeTag)) return;
+    await initializeDateFormatting(localeTag);
+    _initedDateLocales.add(localeTag);
+  }
+
+  Future<void> setLang(AppLanguage value) async {
     if (lang == value) return;
     lang = value;
     _persist((prefs) async {
       await prefs.setString('lang', value.name);
     });
+    final tag = lang.toLocaleTag();
+    await _ensureDateLocaleInited(tag);
     notifyListeners();
   }
 
@@ -1174,22 +1205,33 @@ class AppState extends ChangeNotifier {
   static String _dateKey(DateTime date) =>
       '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
-  void save() {
+  Future<void> save() async {
     _saveDebounce?.cancel();
     _saveDebounce = null;
-    _saveCurrentGame();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await _saveCurrentGame(prefs);
+    } catch (e) {
+      assert(() {
+        debugPrint('AppState.save error: $e');
+        return true;
+      }());
+    }
   }
 
   void scheduleSave() {
     _saveDebounce?.cancel();
-    _saveDebounce = Timer(const Duration(milliseconds: 400), save);
+    _saveDebounce = Timer(
+      const Duration(milliseconds: 400),
+      () => unawaited(save()),
+    );
   }
 
-  void _saveCurrentGame() {
+  Future<void> _saveCurrentGame(SharedPreferences prefs) async {
     final game = current;
     final diff = currentDifficulty;
     if (game == null || diff == null || _gameCompleted) {
-      _clearSavedGame();
+      await prefs.remove('currentGame');
       return;
     }
 
@@ -1211,9 +1253,7 @@ class AppState extends ChangeNotifier {
       'dailyDate': _dailyChallengeDate?.toIso8601String(),
     };
 
-    _persist((prefs) async {
-      await prefs.setString('currentGame', jsonEncode(data));
-    });
+    await prefs.setString('currentGame', jsonEncode(data));
   }
 
   void _clearSavedGame() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,7 +41,7 @@ class SettingsPage extends StatelessWidget {
               groupValue: app.lang,
               onChanged: (v) {
                 if (v != null) {
-                  app.setLang(v);
+                  unawaited(app.setLang(v));
                 }
               },
             ),
