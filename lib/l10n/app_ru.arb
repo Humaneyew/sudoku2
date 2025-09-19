@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.",
   "championshipRoundCompletedLabel": "Завершено",
+  "totalScore": "Общий счёт: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "Я",
+  "play": "Играть",
   "battleTitle": "Битва",
   "battleWinRate": "Процент побед {percent}%",
   "@battleWinRate": {

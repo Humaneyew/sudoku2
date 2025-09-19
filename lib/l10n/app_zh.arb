@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "进行这一轮，推动你的锦标赛征程。",
   "championshipRoundCompletedLabel": "已完成",
+  "totalScore": "总得分：{score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "我",
+  "play": "游玩",
   "battleTitle": "对战",
   "battleWinRate": "胜率 {percent}%",
   "@battleWinRate": {

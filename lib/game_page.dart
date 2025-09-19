@@ -15,6 +15,9 @@ import 'widgets/theme_menu.dart';
 
 final _elapsedMsExpando = Expando<int>('elapsedMs');
 
+const int _kInitialHints = 3;
+const int _kInitialLives = 3;
+
 extension _GameStateElapsedMs on GameState {
   int get elapsedMs => _elapsedMsExpando[this] ?? 0;
 
@@ -89,7 +92,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       return;
     }
     _gameStateScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _gameStateScheduled = false;
       if (!mounted) {
         return;
@@ -98,7 +101,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       if (app == null) {
         return;
       }
-      _handleGameState(app);
+      await _handleGameState(app);
     });
   }
 
@@ -202,20 +205,45 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     );
   }
 
-  void _handleGameState(AppState app) {
+  Future<void> _handleGameState(AppState app) async {
     if (app.current == null) return;
 
     if (app.isSolved && !app.gameCompleted) {
       final ms = _elapsedVN.value;
       app.current?.elapsedMs = ms;
       app.completeGame(ms);
-      if (!_victoryShown) {
+      ChampionshipModel? championship;
+      try {
+        championship = context.read<ChampionshipModel?>();
+      } catch (_) {
+        championship = null;
+      }
+      if (championship != null) {
+        try {
+          final difficulty = app.currentDifficulty ?? app.featuredDifficulty;
+          final mistakes =
+              (_kInitialLives - app.livesLeft).clamp(0, _kInitialLives).toInt();
+          final hintsUsed =
+              (_kInitialHints - app.hintsLeft).clamp(0, _kInitialHints).toInt();
+          final isDaily = app.activeDailyChallengeDate != null;
+          await championship.awardScoreForGame(
+            difficulty: difficulty,
+            timeMs: ms,
+            mistakes: mistakes,
+            hints: hintsUsed,
+            isDailyChallenge: isDaily,
+          );
+        } catch (_) {}
+        if (!mounted) {
+          return;
+        }
+        try {
+          championship.completeCurrentRound();
+        } catch (_) {}
+      }
+      if (!_victoryShown && mounted) {
         _victoryShown = true;
         _showVictoryDialog(app);
-        try {
-          // після успішного завершення гри
-          context.read<ChampionshipModel?>()?.completeCurrentRound();
-        } catch (_) {}
       }
     } else if (app.isOutOfLives) {
       if (!_failureShown) {

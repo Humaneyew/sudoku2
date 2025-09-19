@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "Зіграйте в цьому раунді, щоб просунутися в чемпіонаті.",
   "championshipRoundCompletedLabel": "Завершено",
+  "totalScore": "Загальний рахунок: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "Я",
+  "play": "Грати",
   "battleTitle": "Битва",
   "battleWinRate": "Відсоток перемог {percent}%",
   "@battleWinRate": {

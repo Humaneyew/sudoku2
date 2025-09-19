@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "Jouez cette manche pour booster votre parcours au championnat.",
   "championshipRoundCompletedLabel": "Terminé",
+  "totalScore": "Score total : {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "Moi",
+  "play": "Jouer",
   "battleTitle": "Duel",
   "battleWinRate": "Taux de victoire {percent}%",
   "@battleWinRate": {

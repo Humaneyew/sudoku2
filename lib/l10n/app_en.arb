@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "Play this round to boost your championship run.",
   "championshipRoundCompletedLabel": "Completed",
+  "totalScore": "Total score: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "Me",
+  "play": "Play",
   "battleTitle": "Battle",
   "battleWinRate": "Win rate {percent}%",
   "@battleWinRate": {
