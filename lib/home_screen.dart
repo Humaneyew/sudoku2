@@ -19,10 +19,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
 
+  void _onSelectTab(int index) {
+    setState(() => _index = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = [
-      const _HomeTab(),
+      _HomeTab(onOpenChallenge: () => _onSelectTab(1)),
       const _DailyChallengesTab(),
       const StatsTab(),
     ];
@@ -34,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: _BottomNavBar(
         index: _index,
-        onChanged: (value) => setState(() => _index = value),
+        onChanged: _onSelectTab,
       ),
     );
   }
@@ -71,7 +75,9 @@ class _BottomNavBar extends StatelessWidget {
 }
 
 class _HomeTab extends StatefulWidget {
-  const _HomeTab();
+  final VoidCallback onOpenChallenge;
+
+  const _HomeTab({required this.onOpenChallenge});
 
   @override
   State<_HomeTab> createState() => _HomeTabState();
@@ -128,6 +134,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           _ChallengeCarousel(
             battleWinRate: app.battleWinRate,
             championshipScore: app.championshipScore,
+            onOpenChallenge: widget.onOpenChallenge,
           ),
           const SizedBox(height: 32),
           Padding(
@@ -337,10 +344,12 @@ void _startDailyChallengeGame(BuildContext context, DateTime date) {
 class _ChallengeCarousel extends StatelessWidget {
   final int battleWinRate;
   final int championshipScore;
+  final VoidCallback onOpenChallenge;
 
   const _ChallengeCarousel({
     required this.battleWinRate,
     required this.championshipScore,
+    required this.onOpenChallenge,
   });
 
   @override
@@ -360,7 +369,7 @@ class _ChallengeCarousel extends StatelessWidget {
         buttonLabel: l10n.playAction,
         gradient: colors.dailyChallengeGradient,
         icon: Icons.emoji_events,
-        onPressed: () => _startDailyChallengeGame(context, normalizedToday),
+        onPressed: onOpenChallenge,
       ),
       _ChallengeCardData(
         title: l10n.championshipTitle,
