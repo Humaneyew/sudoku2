@@ -471,7 +471,7 @@ class _ChallengeCardData {
 class _ChallengeCard extends StatelessWidget {
   final _ChallengeCardData data;
 
-  const _ChallengeCard({required this.data});
+  const _ChallengeCard({Key? key, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
