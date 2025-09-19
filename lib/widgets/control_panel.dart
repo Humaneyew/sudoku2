@@ -71,6 +71,9 @@ class _UndoButton extends StatelessWidget {
                       final app = context.read<AppState>();
                       if (useUndoAd) {
                         final shown = await undoAds.showAd(context);
+                        if (!context.mounted) {
+                          return;
+                        }
                         if (!shown || !app.canUndoMove) {
                           return;
                         }

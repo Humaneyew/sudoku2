@@ -33,14 +33,72 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   int _observedSession = -1;
   bool _victoryShown = false;
   bool _failureShown = false;
+  AppState? _appState;
+  late final VoidCallback _appStateListener;
+  bool _gameStateScheduled = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _appStateListener = _handleAppStateChanged;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _subscribeToAppState();
+  }
+
+  void _subscribeToAppState() {
     final app = context.read<AppState>();
+    if (identical(app, _appState)) {
+      return;
+    }
+
+    _appState?.removeListener(_appStateListener);
+    _appState = app;
+    _observedSession = app.sessionId;
+    _victoryShown = false;
+    _failureShown = false;
     final startMs = app.current?.elapsedMs ?? 0;
     _startTimer(app, startMs);
+    app.addListener(_appStateListener);
+    _scheduleHandleGameState();
+  }
+
+  void _handleAppStateChanged() {
+    final app = _appState;
+    if (app == null || !mounted) {
+      return;
+    }
+
+    if (_observedSession != app.sessionId) {
+      _observedSession = app.sessionId;
+      _victoryShown = false;
+      _failureShown = false;
+      _startTimer(app, app.current?.elapsedMs ?? 0);
+    }
+
+    _scheduleHandleGameState();
+  }
+
+  void _scheduleHandleGameState() {
+    if (_gameStateScheduled) {
+      return;
+    }
+    _gameStateScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _gameStateScheduled = false;
+      if (!mounted) {
+        return;
+      }
+      final app = _appState;
+      if (app == null) {
+        return;
+      }
+      _handleGameState(app);
+    });
   }
 
   void _startTimer(AppState app, int startMs) {
@@ -60,10 +118,13 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _t?.cancel();
 
-    final app = context.read<AppState>();
-    if (app.current != null) {
-      app.current!.elapsedMs = _elapsedVN.value;
-      unawaited(app.save());
+    final app = _appState;
+    if (app != null) {
+      app.removeListener(_appStateListener);
+      if (app.current != null) {
+        app.current!.elapsedMs = _elapsedVN.value;
+        unawaited(app.save());
+      }
     }
 
     _elapsedVN.dispose();
@@ -73,7 +134,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      final app = context.read<AppState>();
+      final app = _appState ?? context.read<AppState>();
       if (app.current != null) {
         app.current!.elapsedMs = _elapsedVN.value;
         unawaited(app.save());
@@ -95,21 +156,6 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
         ),
       );
     }
-
-    if (_observedSession != app.sessionId) {
-      _observedSession = app.sessionId;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _startTimer(app, app.current?.elapsedMs ?? 0);
-        _victoryShown = false;
-        _failureShown = false;
-      });
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _handleGameState(app);
-    });
 
     return Scaffold(
       body: SafeArea(
@@ -390,6 +436,10 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
         );
       },
     );
+
+    if (!mounted) {
+      return;
+    }
 
     if (result == true) {
       app.restoreOneLife();
