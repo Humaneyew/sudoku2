@@ -17,6 +17,15 @@
       }
     }
   },
+  "toNextPlace": "距下一名还差 {points} 分",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "您是第 1 名",
   "championshipRoundDescriptionPlaceholder": "进行这一轮，推动你的锦标赛征程。",
   "championshipRoundCompletedLabel": "已完成",
   "totalScore": "总得分：{score}",
@@ -28,7 +37,7 @@
     }
   },
   "meLabel": "我",
-  "leaderboardRow": "第{rank}名，{name}，{points} 分",
+  "leaderboardRow": "第 {rank} 名。{name}。{points} 分",
   "@leaderboardRow": {
     "placeholders": {
       "rank": {
@@ -42,7 +51,7 @@
       }
     }
   },
-  "yourPosition": "我的排名第{rank}名，{points} 分",
+  "yourPosition": "我的名次 {rank}。{points} 分",
   "@yourPosition": {
     "placeholders": {
       "rank": {
@@ -55,6 +64,7 @@
   },
   "pointsShort": "分",
   "championshipAutoScroll": "自动滚动到我的位置",
+  "bestLabel": "最佳成绩",
   "play": "游玩",
   "battleTitle": "对战",
   "battleWinRate": "胜率 {percent}%",
@@ -168,6 +178,7 @@
   "vibrationLabel": "震动",
   "musicLabel": "背景音乐",
   "miscSectionTitle": "其他",
+  "championshipLocalSection": "锦标赛（本地）",
   "hideCompletedNumbersLabel": "隐藏已用数字",
   "aboutApp": "关于",
   "versionLabel": "版本 {version}",
@@ -186,6 +197,28 @@
   "languageFrench": "Français",
   "languageChinese": "中文",
   "languageHindi": "हिन्दी",
+  "export": "导出",
+  "import": "导入",
+  "resetMyScore": "重置我的得分",
+  "regenerateOpponents": "重新生成对手",
+  "confirm": "确认",
+  "cancel": "取消",
+  "done": "完成",
+  "failed": "失败",
+  "rankBadgeChasing": "第 {current} 名 • 还差 {delta} 分到第 {target} 名",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "statsTitle": "统计",
   "statsGamesSection": "对局",
   "statsGamesStarted": "开始的对局",

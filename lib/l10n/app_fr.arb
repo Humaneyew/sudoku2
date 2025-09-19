@@ -17,6 +17,15 @@
       }
     }
   },
+  "toNextPlace": "Jusqu'à la prochaine place : {points} pts",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "Vous êtes n°1",
   "championshipRoundDescriptionPlaceholder": "Jouez cette manche pour booster votre parcours au championnat.",
   "championshipRoundCompletedLabel": "Terminé",
   "totalScore": "Score total : {score}",
@@ -28,7 +37,7 @@
     }
   },
   "meLabel": "Moi",
-  "leaderboardRow": "Position {rank}, {name}, {points} points",
+  "leaderboardRow": "Place {rank}. {name}. {points} points",
   "@leaderboardRow": {
     "placeholders": {
       "rank": {
@@ -42,7 +51,7 @@
       }
     }
   },
-  "yourPosition": "Ma position {rank}, {points} points",
+  "yourPosition": "Ma place {rank}. {points} points",
   "@yourPosition": {
     "placeholders": {
       "rank": {
@@ -55,6 +64,7 @@
   },
   "pointsShort": "pts",
   "championshipAutoScroll": "Défilement auto vers ma position",
+  "bestLabel": "Meilleur",
   "play": "Jouer",
   "battleTitle": "Duel",
   "battleWinRate": "Taux de victoire {percent}%",
@@ -168,6 +178,7 @@
   "vibrationLabel": "Vibration",
   "musicLabel": "Musique de fond",
   "miscSectionTitle": "Autre",
+  "championshipLocalSection": "Championnat (local)",
   "hideCompletedNumbersLabel": "Masquer les chiffres utilisés",
   "aboutApp": "À propos",
   "versionLabel": "Version {version}",
@@ -186,6 +197,28 @@
   "languageFrench": "Français",
   "languageChinese": "中文",
   "languageHindi": "हिन्दी",
+  "export": "Exporter",
+  "import": "Importer",
+  "resetMyScore": "Réinitialiser mon score",
+  "regenerateOpponents": "Régénérer les adversaires",
+  "confirm": "Confirmer",
+  "cancel": "Annuler",
+  "done": "Terminé",
+  "failed": "Échec",
+  "rankBadgeChasing": "Rang #{current} • +{delta} vers #{target}",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "statsTitle": "Statistiques",
   "statsGamesSection": "Parties",
   "statsGamesStarted": "Parties lancées",

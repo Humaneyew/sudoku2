@@ -17,6 +17,15 @@
       }
     }
   },
+  "toNextPlace": "अगले स्थान तक: {points} अंक",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "आप नं. 1 हैं",
   "championshipRoundDescriptionPlaceholder": "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।",
   "championshipRoundCompletedLabel": "पूरा हुआ",
   "totalScore": "कुल स्कोर: {score}",
@@ -28,7 +37,7 @@
     }
   },
   "meLabel": "मैं",
-  "leaderboardRow": "स्थान {rank}, {name}, {points} अंक",
+  "leaderboardRow": "स्थान {rank}. {name}. {points} अंक",
   "@leaderboardRow": {
     "placeholders": {
       "rank": {
@@ -42,7 +51,7 @@
       }
     }
   },
-  "yourPosition": "मेरा स्थान {rank}, {points} अंक",
+  "yourPosition": "मेरा स्थान {rank}. {points} अंक",
   "@yourPosition": {
     "placeholders": {
       "rank": {
@@ -55,6 +64,7 @@
   },
   "pointsShort": "अंक",
   "championshipAutoScroll": "मेरी स्थिति तक स्वतः स्क्रॉल करें",
+  "bestLabel": "श्रेष्ठ",
   "play": "खेलें",
   "battleTitle": "बैटल",
   "battleWinRate": "जीत दर {percent}%",
@@ -168,6 +178,7 @@
   "vibrationLabel": "कंपन",
   "musicLabel": "पृष्ठभूमि संगीत",
   "miscSectionTitle": "अन्य",
+  "championshipLocalSection": "चैम्पियनशिप (स्थानीय)",
   "hideCompletedNumbersLabel": "प्रयुक्त अंकों को छुपाएँ",
   "aboutApp": "ऐप के बारे में",
   "versionLabel": "संस्करण {version}",
@@ -186,6 +197,28 @@
   "languageFrench": "Français",
   "languageChinese": "中文",
   "languageHindi": "हिन्दी",
+  "export": "निर्यात",
+  "import": "आयात",
+  "resetMyScore": "मेरा स्कोर रीसेट करें",
+  "regenerateOpponents": "प्रतिद्वंद्वी पुनः उत्पन्न करें",
+  "confirm": "पुष्टि करें",
+  "cancel": "रद्द करें",
+  "done": "पूर्ण",
+  "failed": "असफल",
+  "rankBadgeChasing": "रैंक #{current} • +{delta} से #{target}",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "statsTitle": "आँकड़े",
   "statsGamesSection": "खेल",
   "statsGamesStarted": "शुरू किए गए खेल",
