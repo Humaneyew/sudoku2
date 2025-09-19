@@ -164,6 +164,8 @@ class ChampionshipModel extends ChangeNotifier {
   static const _myScoreKey = 'champ.perma.myScore.v1';
   static const _installSeedKey = 'champ.perma.installSeed.v1';
   static const _opponentsKey = 'champ.perma.opponents.v1';
+  static const _autoScrollKey = 'champ.settings.autoScroll.v1';
+  static const _lastAwardedGameIdKey = 'champ.perma.lastAwardedGameId.v1';
   static const int _opponentsCount = 100;
 
   static const Map<Difficulty, int> _baseScoreByDifficulty = {
@@ -185,6 +187,8 @@ class ChampionshipModel extends ChangeNotifier {
 
   ChampionshipState _state;
   int _myScore = 0;
+  bool _autoScrollEnabled = true;
+  String? _lastAwardedGameId;
   Leaderboard _leaderboard = Leaderboard(
     opponents: const <Opponent>[],
     generatedAt: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
@@ -198,6 +202,8 @@ class ChampionshipModel extends ChangeNotifier {
   int get myScore => _myScore;
 
   Leaderboard get leaderboard => _leaderboard;
+
+  bool get autoScrollEnabled => _autoScrollEnabled;
 
   int get myRank {
     final opponents = _leaderboard.opponents;
@@ -259,11 +265,22 @@ class ChampionshipModel extends ChangeNotifier {
   Future<void> loadPermaLeaderboard() async {
     final prefs = await SharedPreferences.getInstance();
     _myScore = prefs.getInt(_myScoreKey) ?? 0;
+    _autoScrollEnabled = prefs.getBool(_autoScrollKey) ?? true;
+    _lastAwardedGameId = prefs.getString(_lastAwardedGameIdKey);
 
     Leaderboard? board;
     final stored = prefs.getString(_opponentsKey);
     if (stored != null) {
-      board = _decodeLeaderboard(stored);
+      try {
+        board = _decodeLeaderboard(stored);
+      } on FormatException {
+        _myScore = 0;
+        await prefs.setInt(_myScoreKey, _myScore);
+        await prefs.remove(_opponentsKey);
+        await prefs.remove(_lastAwardedGameIdKey);
+        _lastAwardedGameId = null;
+        board = null;
+      }
     }
     board ??= await _generateLeaderboard(prefs);
 
@@ -271,9 +288,12 @@ class ChampionshipModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveMyScore() async {
+  Future<void> saveMyScore({String? lastGameId}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_myScoreKey, _myScore);
+    if (lastGameId != null && lastGameId.isNotEmpty) {
+      await prefs.setString(_lastAwardedGameIdKey, lastGameId);
+    }
   }
 
   Future<int> awardScoreForGame({
@@ -281,8 +301,12 @@ class ChampionshipModel extends ChangeNotifier {
     required int timeMs,
     required int mistakes,
     required int hints,
+    required String gameId,
     bool isDailyChallenge = false,
   }) async {
+    if (_lastAwardedGameId != null && _lastAwardedGameId == gameId) {
+      return 0;
+    }
     final base = _baseScoreByDifficulty[difficulty] ?? 60;
     final normalizedTime = timeMs < 0 ? 0 : timeMs;
     final normalizedMistakes = math.max(0, mistakes);
@@ -303,9 +327,20 @@ class ChampionshipModel extends ChangeNotifier {
     }
 
     _myScore += delta;
-    await saveMyScore();
+    _lastAwardedGameId = gameId;
+    await saveMyScore(lastGameId: gameId);
     notifyListeners();
     return delta;
+  }
+
+  Future<void> setAutoScrollEnabled(bool value) async {
+    if (_autoScrollEnabled == value) {
+      return;
+    }
+    _autoScrollEnabled = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_autoScrollKey, value);
   }
 
   Future<void> saveToPrefs() async {
@@ -402,6 +437,8 @@ class ChampionshipModel extends ChangeNotifier {
         opponents: opponents,
         generatedAt: generatedAt ?? DateTime.now().toUtc(),
       );
+    } on FormatException {
+      rethrow;
     } catch (_) {
       return null;
     }

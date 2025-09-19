@@ -10,6 +10,8 @@ import '../models.dart';
 import '../theme.dart';
 import 'championship_model.dart';
 
+const double _rowExtent = 56.0;
+
 class ChampionshipPage extends StatelessWidget {
   const ChampionshipPage({super.key});
 
@@ -178,12 +180,18 @@ class _LeaderboardSection extends StatelessWidget {
             return Selector<ChampionshipModel, int>(
               selector: (_, model) => model.myScore,
               builder: (context, score, ___) {
-                return _LeaderboardListView(
-                  leaderboard: leaderboard,
-                  myRank: rank,
-                  myScore: score,
-                  localeName: localeName,
-                  meLabel: meLabel,
+                return Selector<ChampionshipModel, bool>(
+                  selector: (_, model) => model.autoScrollEnabled,
+                  builder: (context, autoScroll, ____) {
+                    return _LeaderboardListView(
+                      leaderboard: leaderboard,
+                      myRank: rank,
+                      myScore: score,
+                      localeName: localeName,
+                      meLabel: meLabel,
+                      autoScrollEnabled: autoScroll,
+                    );
+                  },
                 );
               },
             );
@@ -194,12 +202,13 @@ class _LeaderboardSection extends StatelessWidget {
   }
 }
 
-class _LeaderboardListView extends StatelessWidget {
+class _LeaderboardListView extends StatefulWidget {
   final Leaderboard leaderboard;
   final int myRank;
   final int myScore;
   final String localeName;
   final String meLabel;
+  final bool autoScrollEnabled;
 
   const _LeaderboardListView({
     required this.leaderboard,
@@ -207,119 +216,54 @@ class _LeaderboardListView extends StatelessWidget {
     required this.myScore,
     required this.localeName,
     required this.meLabel,
+    required this.autoScrollEnabled,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final opponents = leaderboard.opponents;
-    final total = opponents.length + 1;
-    final insertionIndex = (myRank.clamp(1, total)) - 1;
+  State<_LeaderboardListView> createState() => _LeaderboardListViewState();
+}
 
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: total,
-      itemBuilder: (context, index) {
-        final isLast = index == total - 1;
-        if (index == insertionIndex) {
-          return _MyLeaderboardRow(
-            key: const ValueKey('leaderboard-me'),
-            rank: index + 1,
-            score: myScore,
-            label: meLabel,
-            localeName: localeName,
-            isLast: isLast,
-          );
-        }
+class _LeaderboardListViewState extends State<_LeaderboardListView> {
+  final ScrollController _controller = ScrollController();
+  bool _highlightMe = false;
+  Timer? _highlightTimer;
 
-        final opponentIndex = index > insertionIndex ? index - 1 : index;
-        final opponent = opponents[opponentIndex];
-        return _OpponentRow(
-          key: ValueKey(opponent.id),
-          rank: index + 1,
-          opponent: opponent,
-          localeName: localeName,
-          isLast: isLast,
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (widget.autoScrollEnabled) {
+        _scrollToMe();
+      }
+    });
   }
-}
-
-class _OpponentRow extends StatelessWidget {
-  final Opponent opponent;
-  final int rank;
-  final String localeName;
-  final bool isLast;
-
-  const _OpponentRow({
-    super.key,
-    required this.opponent,
-    required this.rank,
-    required this.localeName,
-    required this.isLast,
-  });
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: isLast ? 0 : 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.outlineVariant),
-      ),
-      child: _LeaderboardRowContent(
-        rank: rank,
-        name: opponent.name,
-        score: opponent.score,
-        localeName: localeName,
-        emphasize: false,
-      ),
-    );
-  }
-}
-
-class _MyLeaderboardRow extends StatefulWidget {
-  final int rank;
-  final int score;
-  final String label;
-  final String localeName;
-  final bool isLast;
-
-  const _MyLeaderboardRow({
-    super.key,
-    required this.rank,
-    required this.score,
-    required this.label,
-    required this.localeName,
-    required this.isLast,
-  });
-
-  @override
-  State<_MyLeaderboardRow> createState() => _MyLeaderboardRowState();
-}
-
-class _MyLeaderboardRowState extends State<_MyLeaderboardRow> {
-  bool _highlight = false;
-  Timer? _timer;
-
-  @override
-  void didUpdateWidget(covariant _MyLeaderboardRow oldWidget) {
+  void didUpdateWidget(covariant _LeaderboardListView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.score > oldWidget.score) {
-      _timer?.cancel();
-      setState(() {
-        _highlight = true;
-      });
-      _timer = Timer(const Duration(milliseconds: 600), () {
+    if (widget.myScore > oldWidget.myScore) {
+      _triggerHighlight();
+    }
+
+    var shouldScroll = false;
+    if (widget.autoScrollEnabled && widget.leaderboard != oldWidget.leaderboard) {
+      shouldScroll = true;
+    }
+    if (widget.autoScrollEnabled &&
+        (widget.myScore != oldWidget.myScore || widget.myRank != oldWidget.myRank)) {
+      shouldScroll = true;
+    }
+    if (!oldWidget.autoScrollEnabled && widget.autoScrollEnabled) {
+      shouldScroll = true;
+    }
+
+    if (shouldScroll && widget.autoScrollEnabled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          setState(() {
-            _highlight = false;
-          });
+          _scrollToMe();
         }
       });
     }
@@ -327,9 +271,171 @@ class _MyLeaderboardRowState extends State<_MyLeaderboardRow> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _highlightTimer?.cancel();
+    _controller.dispose();
     super.dispose();
   }
+
+  void _triggerHighlight() {
+    _highlightTimer?.cancel();
+    setState(() {
+      _highlightMe = true;
+    });
+    _highlightTimer = Timer(const Duration(milliseconds: 420), () {
+      if (mounted) {
+        setState(() {
+          _highlightMe = false;
+        });
+      }
+    });
+  }
+
+  void _scrollToMe() {
+    if (!_controller.hasClients) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToMe();
+        }
+      });
+      return;
+    }
+    final opponents = widget.leaderboard.opponents;
+    final total = opponents.length + 1;
+    if (total <= 0) {
+      return;
+    }
+    final index = (widget.myRank.clamp(1, total)) - 1;
+    final desired = index * _rowExtent;
+    final position = _controller.position;
+    final target = desired
+        .clamp(position.minScrollExtent, position.maxScrollExtent);
+    if ((position.pixels - target).abs() < 0.5) {
+      return;
+    }
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (reduceMotion) {
+      _controller.jumpTo(target);
+    } else {
+      _controller.animateTo(
+        target,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final opponents = widget.leaderboard.opponents;
+    final total = opponents.length + 1;
+    final insertionIndex = (widget.myRank.clamp(1, total)) - 1;
+    final l10n = AppLocalizations.of(context)!;
+    final myScoreText =
+        _ScoreFormatter.format(widget.localeName, widget.myScore);
+
+    return ListView.builder(
+      controller: _controller,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemExtent: _rowExtent,
+      itemCount: total,
+      itemBuilder: (context, index) {
+        if (index == insertionIndex) {
+          final semanticsLabel =
+              l10n.yourPosition(index + 1, myScoreText);
+          return RepaintBoundary(
+            child: _MyLeaderboardRow(
+              key: const ValueKey('leaderboard-me'),
+              rank: index + 1,
+              label: widget.meLabel,
+              scoreText: myScoreText,
+              highlight: _highlightMe,
+              semanticsLabel: semanticsLabel,
+            ),
+          );
+        }
+
+        final opponentIndex = index > insertionIndex ? index - 1 : index;
+        final opponent = opponents[opponentIndex];
+        final scoreText =
+            _ScoreFormatter.format(widget.localeName, opponent.score);
+        final semanticsLabel =
+            l10n.leaderboardRow(index + 1, opponent.name, scoreText);
+        return RepaintBoundary(
+          child: _OpponentRow(
+            key: ValueKey(opponent.id),
+            rank: index + 1,
+            name: opponent.name,
+            scoreText: scoreText,
+            semanticsLabel: semanticsLabel,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _OpponentRow extends StatelessWidget {
+  final int rank;
+  final String name;
+  final String scoreText;
+  final String semanticsLabel;
+
+  const _OpponentRow({
+    super.key,
+    required this.rank,
+    required this.name,
+    required this.scoreText,
+    required this.semanticsLabel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Semantics(
+        label: semanticsLabel,
+        child: SizedBox.expand(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: cs.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: cs.outlineVariant),
+            ),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: _LeaderboardRowContent(
+                rank: rank,
+                name: name,
+                scoreText: scoreText,
+                emphasize: false,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MyLeaderboardRow extends StatelessWidget {
+  final int rank;
+  final String label;
+  final String scoreText;
+  final bool highlight;
+  final String semanticsLabel;
+
+  const _MyLeaderboardRow({
+    super.key,
+    required this.rank,
+    required this.label,
+    required this.scoreText,
+    required this.highlight,
+    required this.semanticsLabel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -339,25 +445,35 @@ class _MyLeaderboardRowState extends State<_MyLeaderboardRow> {
     final highlightColor =
         Color.alphaBlend(cs.primary.withOpacity(0.18), cs.surface);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOutCubic,
-      margin: EdgeInsets.only(bottom: widget.isLast ? 0 : 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: _highlight ? highlightColor : baseColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _highlight ? cs.primary : cs.primary.withOpacity(0.5),
-          width: 1.2,
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final duration = reduceMotion ? Duration.zero : const Duration(milliseconds: 320);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Semantics(
+        label: semanticsLabel,
+        selected: true,
+        child: SizedBox.expand(
+          child: AnimatedContainer(
+            duration: duration,
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
+              color: highlight ? highlightColor : baseColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: highlight ? cs.primary : cs.primary.withOpacity(0.5),
+                width: 1.2,
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: _LeaderboardRowContent(
+              rank: rank,
+              name: label,
+              scoreText: scoreText,
+              emphasize: true,
+            ),
+          ),
         ),
-      ),
-      child: _LeaderboardRowContent(
-        rank: widget.rank,
-        name: widget.label,
-        score: widget.score,
-        localeName: widget.localeName,
-        emphasize: true,
       ),
     );
   }
@@ -366,15 +482,13 @@ class _MyLeaderboardRowState extends State<_MyLeaderboardRow> {
 class _LeaderboardRowContent extends StatelessWidget {
   final int rank;
   final String name;
-  final int score;
-  final String localeName;
+  final String scoreText;
   final bool emphasize;
 
   const _LeaderboardRowContent({
     required this.rank,
     required this.name,
-    required this.score,
-    required this.localeName,
+    required this.scoreText,
     required this.emphasize,
   });
 
@@ -429,7 +543,7 @@ class _LeaderboardRowContent extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Text(
-          _ScoreFormatter.format(localeName, score),
+          scoreText,
           style: scoreStyle,
         ),
       ],

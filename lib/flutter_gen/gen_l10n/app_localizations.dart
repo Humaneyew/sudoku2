@@ -70,6 +70,14 @@ abstract class AppLocalizations {
 
   String get meLabel;
 
+  String leaderboardRow(int rank, String name, String points);
+
+  String yourPosition(int rank, String points);
+
+  String get pointsShort;
+
+  String get championshipAutoScroll;
+
   String get play;
 
   String get battleTitle;
@@ -363,6 +371,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get meLabel => "Ich";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Platz ${rank}, ${name}, ${points} Punkte";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Mein Platz ${rank}, ${points} Punkte";
+  }
+
+  @override
+  String get pointsShort => "Pkt.";
+
+  @override
+  String get championshipAutoScroll => "Automatisch zu meiner Position scrollen";
 
   @override
   String get play => "Spielen";
@@ -725,6 +749,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meLabel => "Me";
 
   @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Place ${rank}, ${name}, ${points} points";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "My place ${rank}, ${points} points";
+  }
+
+  @override
+  String get pointsShort => "pts";
+
+  @override
+  String get championshipAutoScroll => "Auto-scroll to my position";
+
+  @override
   String get play => "Play";
 
   @override
@@ -1083,6 +1123,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get meLabel => "Moi";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Position ${rank}, ${name}, ${points} points";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Ma position ${rank}, ${points} points";
+  }
+
+  @override
+  String get pointsShort => "pts";
+
+  @override
+  String get championshipAutoScroll => "Défilement auto vers ma position";
 
   @override
   String get play => "Jouer";
@@ -1445,6 +1501,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get meLabel => "मैं";
 
   @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "स्थान ${rank}, ${name}, ${points} अंक";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "मेरा स्थान ${rank}, ${points} अंक";
+  }
+
+  @override
+  String get pointsShort => "अंक";
+
+  @override
+  String get championshipAutoScroll => "मेरी स्थिति तक स्वतः स्क्रॉल करें";
+
+  @override
   String get play => "खेलें";
 
   @override
@@ -1803,6 +1875,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get meLabel => "Я";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Место ${rank}, ${name}, ${points} очков";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Моё место ${rank}, ${points} очков";
+  }
+
+  @override
+  String get pointsShort => "очк.";
+
+  @override
+  String get championshipAutoScroll => "Автопрокрутка к моему месту";
 
   @override
   String get play => "Играть";
@@ -2169,6 +2257,22 @@ class AppLocalizationsUk extends AppLocalizations {
   String get meLabel => "Я";
 
   @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Місце ${rank}, ${name}, ${points} очок";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Моє місце ${rank}, ${points} очок";
+  }
+
+  @override
+  String get pointsShort => "оч.";
+
+  @override
+  String get championshipAutoScroll => "Автоскрол до мого місця";
+
+  @override
   String get play => "Грати";
 
   @override
@@ -2531,6 +2635,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get meLabel => "我";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "第${rank}名，${name}，${points} 分";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "我的排名第${rank}名，${points} 分";
+  }
+
+  @override
+  String get pointsShort => "分";
+
+  @override
+  String get championshipAutoScroll => "自动滚动到我的位置";
 
   @override
   String get play => "游玩";

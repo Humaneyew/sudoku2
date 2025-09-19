@@ -245,6 +245,7 @@ class AppState extends ChangeNotifier {
   bool _gameCompleted = false;
   int _sessionId = 0;
   DateTime? _startedAt;
+  String? _currentGameId;
 
   final List<_Move> _history = [];
   Timer? _saveDebounce;
@@ -255,6 +256,7 @@ class AppState extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
 
       _dailyChallengeDate = null;
+      _currentGameId = null;
 
       final completedDaily = prefs.getStringList('dailyCompleted');
       if (completedDaily != null) {
@@ -443,6 +445,12 @@ class AppState extends ChangeNotifier {
             _dailyChallengeDate =
                 parsedDailyDate == null ? null : _dateOnly(parsedDailyDate);
 
+            _currentGameId = (map['gameId'] as String?)?.trim();
+            if (diff != null && (_currentGameId == null || _currentGameId!.isEmpty)) {
+              _currentGameId = _composeGameId(diff);
+              scheduleSave();
+            }
+
             _history
               ..clear()
               ..addAll(
@@ -612,6 +620,12 @@ class AppState extends ChangeNotifier {
     return queue.removeLast();
   }
 
+  String _composeGameId(Difficulty diff) {
+    final started = _startedAt ?? DateTime.now();
+    final timestamp = started.toUtc().microsecondsSinceEpoch;
+    return '$timestamp-${diff.name}-$_sessionId';
+  }
+
   void startDailyChallenge(DateTime date) {
     final normalized = _dateOnly(date);
     final puzzle = generateDailyPuzzle(normalized);
@@ -637,6 +651,7 @@ class AppState extends ChangeNotifier {
     _gameCompleted = false;
     _history.clear();
     _startedAt = DateTime.now();
+    _currentGameId = _composeGameId(Difficulty.medium);
 
     statsByDifficulty[Difficulty.medium]?.gamesStarted++;
     scheduleSave();
@@ -655,6 +670,7 @@ class AppState extends ChangeNotifier {
       livesLeft = _maxLives;
       _history.clear();
       _clearSavedGame();
+      _currentGameId = null;
       notifyListeners();
       return;
     }
@@ -684,6 +700,7 @@ class AppState extends ChangeNotifier {
     _gameCompleted = false;
     _history.clear();
     _startedAt = DateTime.now();
+    _currentGameId = _composeGameId(diff);
 
     statsByDifficulty[diff]?.gamesStarted++;
     scheduleSave();
@@ -712,6 +729,8 @@ class AppState extends ChangeNotifier {
     _history.clear();
     _sessionId++;
     _startedAt = DateTime.now();
+    final diff = currentDifficulty;
+    _currentGameId = diff == null ? null : _composeGameId(diff);
 
     scheduleSave();
     notifyListeners();
@@ -720,6 +739,26 @@ class AppState extends ChangeNotifier {
   int get sessionId => _sessionId;
 
   DateTime? get startedAt => _startedAt;
+
+  String? get currentGameId => _currentGameId;
+
+  String ensureCurrentGameId() {
+    final diff = currentDifficulty;
+    if (diff == null) {
+      final fallback =
+          DateTime.now().toUtc().microsecondsSinceEpoch.toString();
+      _currentGameId = fallback;
+      return fallback;
+    }
+    final existing = _currentGameId;
+    if (existing != null && existing.isNotEmpty) {
+      return existing;
+    }
+    final generated = _composeGameId(diff);
+    _currentGameId = generated;
+    scheduleSave();
+    return generated;
+  }
 
   bool get hasActiveGame => current != null;
 
@@ -1251,6 +1290,7 @@ class AppState extends ChangeNotifier {
       'sessionId': _sessionId,
       'history': _history.map((move) => move.toJson()).toList(),
       'dailyDate': _dailyChallengeDate?.toIso8601String(),
+      'gameId': _currentGameId,
     };
 
     await prefs.setString('currentGame', jsonEncode(data));

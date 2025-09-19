@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -31,7 +31,8 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
+class _GamePageState extends State<GamePage>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   final ValueNotifier<int> _elapsedVN = ValueNotifier<int>(0);
   Timer? _t;
   int _observedSession = -1;
@@ -40,6 +41,8 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   AppState? _appState;
   late final VoidCallback _appStateListener;
   bool _gameStateScheduled = false;
+  OverlayEntry? _scoreToastEntry;
+  AnimationController? _scoreToastController;
 
   @override
   void initState() {
@@ -131,6 +134,11 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       }
     }
 
+    _scoreToastController?.dispose();
+    _scoreToastEntry?.remove();
+    _scoreToastController = null;
+    _scoreToastEntry = null;
+
     _elapsedVN.dispose();
     super.dispose();
   }
@@ -218,6 +226,8 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       } catch (_) {
         championship = null;
       }
+      int awardedDelta = 0;
+      int? previousRank;
       if (championship != null) {
         try {
           final difficulty = app.currentDifficulty ?? app.featuredDifficulty;
@@ -226,16 +236,30 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
           final hintsUsed =
               (_kInitialHints - app.hintsLeft).clamp(0, _kInitialHints).toInt();
           final isDaily = app.activeDailyChallengeDate != null;
-          await championship.awardScoreForGame(
+          previousRank = championship.myRank;
+          final gameId = app.ensureCurrentGameId();
+          awardedDelta = await championship.awardScoreForGame(
             difficulty: difficulty,
             timeMs: ms,
             mistakes: mistakes,
             hints: hintsUsed,
+            gameId: gameId,
             isDailyChallenge: isDaily,
           );
         } catch (_) {}
         if (!mounted) {
           return;
+        }
+        if (awardedDelta > 0) {
+          final l10n = AppLocalizations.of(context)!;
+          _showScoreToast(l10n, awardedDelta);
+          if (previousRank != null) {
+            _maybeTriggerRankHaptic(
+              app,
+              previousRank,
+              championship.myRank,
+            );
+          }
         }
         try {
           championship.completeCurrentRound();
@@ -252,6 +276,110 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       }
     } else {
       _failureShown = false;
+    }
+  }
+
+  void _showScoreToast(AppLocalizations l10n, int delta) {
+    final overlay = Overlay.of(context);
+    if (overlay == null) {
+      return;
+    }
+
+    _scoreToastController?.dispose();
+    _scoreToastController = null;
+    _scoreToastEntry?.remove();
+    _scoreToastEntry = null;
+
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final animationDuration =
+        reduceMotion ? const Duration(milliseconds: 1) : const Duration(milliseconds: 240);
+
+    final controller = AnimationController(
+      duration: animationDuration,
+      reverseDuration: animationDuration,
+      vsync: this,
+    );
+
+    final Animation<double> opacityAnimation;
+    final Animation<Offset> slideAnimation;
+    if (reduceMotion) {
+      opacityAnimation = const AlwaysStoppedAnimation<double>(1.0);
+      slideAnimation = const AlwaysStoppedAnimation<Offset>(Offset.zero);
+    } else {
+      final curved = CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+      opacityAnimation = curved;
+      slideAnimation = Tween<Offset>(
+        begin: const Offset(0, -0.12),
+        end: Offset.zero,
+      ).animate(curved);
+    }
+
+    final entry = OverlayEntry(
+      builder: (context) {
+        final media = MediaQuery.of(context);
+        final text = '+$delta ${l10n.pointsShort}';
+        return Positioned(
+          top: media.padding.top + 16,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SlideTransition(
+                position: slideAnimation,
+                child: FadeTransition(
+                  opacity: opacityAnimation,
+                  child: _ScoreToastMessage(text: text),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(entry);
+    _scoreToastEntry = entry;
+    _scoreToastController = controller;
+    controller.forward();
+
+    Future.delayed(const Duration(milliseconds: 1200), () async {
+      if (!mounted || _scoreToastController != controller) {
+        return;
+      }
+      if (!reduceMotion) {
+        try {
+          await controller.reverse();
+        } catch (_) {
+          return;
+        }
+      }
+      if (_scoreToastController == controller) {
+        controller.dispose();
+        entry.remove();
+        _scoreToastController = null;
+        _scoreToastEntry = null;
+      }
+    });
+  }
+
+  void _maybeTriggerRankHaptic(AppState app, int oldRank, int newRank) {
+    if (!app.vibrationEnabled) {
+      return;
+    }
+    if (newRank >= oldRank) {
+      return;
+    }
+    const thresholds = [100, 50, 10];
+    for (final threshold in thresholds) {
+      if (oldRank > threshold && newRank <= threshold) {
+        HapticFeedback.lightImpact();
+        break;
+      }
     }
   }
 
@@ -717,6 +845,51 @@ class _StatusBar extends StatelessWidget {
           const SizedBox(width: 16),
           _HeartsIndicator(lives: lives),
         ],
+      ),
+    );
+  }
+}
+
+class _ScoreToastMessage extends StatelessWidget {
+  final String text;
+
+  const _ScoreToastMessage({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final background =
+        Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface);
+    return Material(
+      color: Colors.transparent,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withOpacity(0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Text(
+            text,
+            style: theme.textTheme.titleMedium?.copyWith(
+                  color: cs.primary,
+                  fontWeight: FontWeight.w700,
+                ) ??
+                TextStyle(
+                  color: cs.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+          ),
+        ),
       ),
     );
   }

@@ -28,6 +28,33 @@
     }
   },
   "meLabel": "Я",
+  "leaderboardRow": "Місце {rank}, {name}, {points} очок",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "Моє місце {rank}, {points} очок",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "оч.",
+  "championshipAutoScroll": "Автоскрол до мого місця",
   "play": "Грати",
   "battleTitle": "Битва",
   "battleWinRate": "Відсоток перемог {percent}%",

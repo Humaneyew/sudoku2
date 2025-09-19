@@ -28,6 +28,33 @@
     }
   },
   "meLabel": "Me",
+  "leaderboardRow": "Place {rank}, {name}, {points} points",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "My place {rank}, {points} points",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "pts",
+  "championshipAutoScroll": "Auto-scroll to my position",
   "play": "Play",
   "battleTitle": "Battle",
   "battleWinRate": "Win rate {percent}%",
