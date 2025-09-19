@@ -379,28 +379,24 @@ class _NumberPad extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          final double baseMinWidth = isTablet ? 56.0 : 48.0;
-          final double desiredWidth = isTablet ? 72.0 : 56.0;
           const double minGap = 2.0;
-          const double maxGap = 12.0;
+          const double maxGap = 4.0;
 
-          double gap = minGap;
-          double availableWidth = math.max(0.0, maxWidth - gap * 8);
-          double buttonWidth = availableWidth / 9;
+          double gap = maxGap;
+          double availableWidth = maxWidth - gap * 8;
 
-          if (buttonWidth >= desiredWidth) {
-            final double expandedGap =
-                ((maxWidth - desiredWidth * 9) / 8).clamp(minGap, maxGap).toDouble();
-            gap = expandedGap;
-            availableWidth = math.max(0.0, maxWidth - gap * 8);
-            buttonWidth = availableWidth / 9;
-          } else if (buttonWidth < baseMinWidth) {
-            final double tightenedGap =
-                ((maxWidth - baseMinWidth * 9) / 8).clamp(0.0, minGap).toDouble();
-            gap = math.max(0.0, tightenedGap);
-            availableWidth = math.max(0.0, maxWidth - gap * 8);
-            buttonWidth = availableWidth / 9;
+          if (availableWidth < 0) {
+            gap = minGap;
+            availableWidth = maxWidth - gap * 8;
+            if (availableWidth < 0) {
+              gap = 0.0;
+              availableWidth = maxWidth;
+            }
           }
+
+          availableWidth = math.max(0.0, availableWidth);
+          final double buttonWidth = availableWidth / 9;
+          final double baseMinWidth = isTablet ? 56.0 : 48.0;
 
           final double widthScale =
               (buttonWidth / baseMinWidth).clamp(0.9, isTablet ? 1.6 : 1.3).toDouble();
@@ -413,25 +409,26 @@ class _NumberPad extends StatelessWidget {
 
           final children = <Widget>[];
           for (var i = 0; i < 9; i++) {
-            children.add(SizedBox(
-              width: buttonWidth,
-              child: _DigitButton(
-                number: i + 1,
-                theme: theme,
-                colors: colors,
-                reduceMotion: reduceMotion,
-                buttonHeight: buttonHeight,
-                widthScale: widthScale,
-                labelSpacing: labelSpacing,
+            children.add(
+              Expanded(
+                child: _DigitButton(
+                  number: i + 1,
+                  theme: theme,
+                  colors: colors,
+                  reduceMotion: reduceMotion,
+                  buttonHeight: buttonHeight,
+                  widthScale: widthScale,
+                  labelSpacing: labelSpacing,
+                ),
               ),
-            ));
+            );
             if (i < 8) {
               children.add(SizedBox(width: gap));
             }
           }
 
           return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           );
         },
