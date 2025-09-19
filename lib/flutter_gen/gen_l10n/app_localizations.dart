@@ -62,6 +62,10 @@ abstract class AppLocalizations {
 
   String championshipScore(int score);
 
+  String toNextPlace(int points);
+
+  String get youAreTop;
+
   String get championshipRoundDescriptionPlaceholder;
 
   String get championshipRoundCompletedLabel;
@@ -77,6 +81,8 @@ abstract class AppLocalizations {
   String get pointsShort;
 
   String get championshipAutoScroll;
+
+  String get bestLabel;
 
   String get play;
 
@@ -200,6 +206,8 @@ abstract class AppLocalizations {
 
   String get miscSectionTitle;
 
+  String get championshipLocalSection;
+
   String get hideCompletedNumbersLabel;
 
   String get aboutApp;
@@ -221,6 +229,24 @@ abstract class AppLocalizations {
   String get languageChinese;
 
   String get languageHindi;
+
+  String get export;
+
+  String get import;
+
+  String get resetMyScore;
+
+  String get regenerateOpponents;
+
+  String get confirm;
+
+  String get cancel;
+
+  String get done;
+
+  String get failed;
+
+  String rankBadgeChasing(int current, int delta, int target);
 
   String get statsTitle;
 
@@ -359,6 +385,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "Bis zum nächsten Platz: ${points} Pkt";
+  }
+
+  @override
+  String get youAreTop => "Du bist Nr. 1";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "Spiele diese Runde, um deinen Meisterschaftslauf zu stärken.";
 
   @override
@@ -374,12 +408,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "Platz ${rank}, ${name}, ${points} Punkte";
+    return "Platz ${rank}. ${name}. ${points} Punkte";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "Mein Platz ${rank}, ${points} Punkte";
+    return "Mein Platz ${rank}. ${points} Punkte";
   }
 
   @override
@@ -387,6 +421,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "Automatisch zu meiner Position scrollen";
+
+  @override
+  String get bestLabel => "Bestleistung";
 
   @override
   String get play => "Spielen";
@@ -598,6 +635,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get miscSectionTitle => "Sonstiges";
 
   @override
+  String get championshipLocalSection => "Meisterschaft (lokal)";
+
+  @override
   String get hideCompletedNumbersLabel => "Verwendete Ziffern ausblenden";
 
   @override
@@ -631,6 +671,35 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "Exportieren";
+
+  @override
+  String get import => "Importieren";
+
+  @override
+  String get resetMyScore => "Meinen Punktestand zurücksetzen";
+
+  @override
+  String get regenerateOpponents => "Gegner neu erstellen";
+
+  @override
+  String get confirm => "Bestätigen";
+
+  @override
+  String get cancel => "Abbrechen";
+
+  @override
+  String get done => "Fertig";
+
+  @override
+  String get failed => "Fehlgeschlagen";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Rang #${current} • +${delta} bis #${target}";
+  }
 
   @override
   String get statsTitle => "Statistiken";
@@ -735,6 +804,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "Jusqu'à la prochaine place : ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "Vous êtes n°1";
+
+  @override
+  String toNextPlace(int points) {
+    return "To next place: ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "You are #1";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "Play this round to boost your championship run.";
 
   @override
@@ -750,12 +835,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "Place ${rank}, ${name}, ${points} points";
+    return "Place ${rank}. ${name}. ${points} points";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "My place ${rank}, ${points} points";
+    return "My place ${rank}. ${points} points";
   }
 
   @override
@@ -763,6 +848,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "Auto-scroll to my position";
+
+  @override
+  String get bestLabel => "Best";
 
   @override
   String get play => "Play";
@@ -974,6 +1062,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get miscSectionTitle => "Other";
 
   @override
+  String get championshipLocalSection => "Championship (local)";
+
+  @override
   String get hideCompletedNumbersLabel => "Hide completed digits";
 
   @override
@@ -1007,6 +1098,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "Export";
+
+  @override
+  String get import => "Import";
+
+  @override
+  String get resetMyScore => "Reset my score";
+
+  @override
+  String get regenerateOpponents => "Regenerate opponents";
+
+  @override
+  String get confirm => "Confirm";
+
+  @override
+  String get cancel => "Cancel";
+
+  @override
+  String get done => "Done";
+
+  @override
+  String get failed => "Failed";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Rank #${current} • +${delta} to #${target}";
+  }
 
   @override
   String get statsTitle => "Statistics";
@@ -1126,12 +1246,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "Position ${rank}, ${name}, ${points} points";
+    return "Place ${rank}. ${name}. ${points} points";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "Ma position ${rank}, ${points} points";
+    return "Ma place ${rank}. ${points} points";
   }
 
   @override
@@ -1139,6 +1259,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "Défilement auto vers ma position";
+
+  @override
+  String get bestLabel => "Meilleur";
 
   @override
   String get play => "Jouer";
@@ -1350,6 +1473,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get miscSectionTitle => "Autre";
 
   @override
+  String get championshipLocalSection => "Championnat (local)";
+
+  @override
   String get hideCompletedNumbersLabel => "Masquer les chiffres utilisés";
 
   @override
@@ -1383,6 +1509,35 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "Exporter";
+
+  @override
+  String get import => "Importer";
+
+  @override
+  String get resetMyScore => "Réinitialiser mon score";
+
+  @override
+  String get regenerateOpponents => "Régénérer les adversaires";
+
+  @override
+  String get confirm => "Confirmer";
+
+  @override
+  String get cancel => "Annuler";
+
+  @override
+  String get done => "Terminé";
+
+  @override
+  String get failed => "Échec";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Rang #${current} • +${delta} vers #${target}";
+  }
 
   @override
   String get statsTitle => "Statistiques";
@@ -1487,6 +1642,14 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "अगले स्थान तक: ${points} अंक";
+  }
+
+  @override
+  String get youAreTop => "आप नं. 1 हैं";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।";
 
   @override
@@ -1502,12 +1665,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "स्थान ${rank}, ${name}, ${points} अंक";
+    return "स्थान ${rank}. ${name}. ${points} अंक";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "मेरा स्थान ${rank}, ${points} अंक";
+    return "मेरा स्थान ${rank}. ${points} अंक";
   }
 
   @override
@@ -1515,6 +1678,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "मेरी स्थिति तक स्वतः स्क्रॉल करें";
+
+  @override
+  String get bestLabel => "श्रेष्ठ";
 
   @override
   String get play => "खेलें";
@@ -1726,6 +1892,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get miscSectionTitle => "अन्य";
 
   @override
+  String get championshipLocalSection => "चैम्पियनशिप (स्थानीय)";
+
+  @override
   String get hideCompletedNumbersLabel => "प्रयुक्त अंकों को छुपाएँ";
 
   @override
@@ -1759,6 +1928,35 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "निर्यात";
+
+  @override
+  String get import => "आयात";
+
+  @override
+  String get resetMyScore => "मेरा स्कोर रीसेट करें";
+
+  @override
+  String get regenerateOpponents => "प्रतिद्वंद्वी पुनः उत्पन्न करें";
+
+  @override
+  String get confirm => "पुष्टि करें";
+
+  @override
+  String get cancel => "रद्द करें";
+
+  @override
+  String get done => "पूर्ण";
+
+  @override
+  String get failed => "असफल";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "रैंक #${current} • +${delta} से #${target}";
+  }
 
   @override
   String get statsTitle => "आँकड़े";
@@ -1863,6 +2061,14 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "До следующего места: ${points} оч.";
+  }
+
+  @override
+  String get youAreTop => "Вы №1";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.";
 
   @override
@@ -1878,12 +2084,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "Место ${rank}, ${name}, ${points} очков";
+    return "Место ${rank}. ${name}. ${points} очков";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "Моё место ${rank}, ${points} очков";
+    return "Моё место ${rank}. ${points} очков";
   }
 
   @override
@@ -1891,6 +2097,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "Автопрокрутка к моему месту";
+
+  @override
+  String get bestLabel => "Лучший результат";
 
   @override
   String get play => "Играть";
@@ -2106,6 +2315,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get miscSectionTitle => "Другое";
 
   @override
+  String get championshipLocalSection => "Чемпионат (локально)";
+
+  @override
   String get hideCompletedNumbersLabel => "Убирать использованные цифры";
 
   @override
@@ -2139,6 +2351,35 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "Экспорт";
+
+  @override
+  String get import => "Импорт";
+
+  @override
+  String get resetMyScore => "Сбросить мой счёт";
+
+  @override
+  String get regenerateOpponents => "Перегенерировать соперников";
+
+  @override
+  String get confirm => "Подтвердить";
+
+  @override
+  String get cancel => "Отмена";
+
+  @override
+  String get done => "Готово";
+
+  @override
+  String get failed => "Ошибка";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Место #${current} • +${delta} до #${target}";
+  }
 
   @override
   String get statsTitle => "Статистика";
@@ -2243,6 +2484,14 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "До наступного місця: ${points} оч.";
+  }
+
+  @override
+  String get youAreTop => "Ви №1";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "Зіграйте в цьому раунді, щоб просунутися в чемпіонаті.";
 
   @override
@@ -2258,12 +2507,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "Місце ${rank}, ${name}, ${points} очок";
+    return "Місце ${rank}. ${name}. ${points} очок";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "Моє місце ${rank}, ${points} очок";
+    return "Моє місце ${rank}. ${points} очок";
   }
 
   @override
@@ -2271,6 +2520,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "Автоскрол до мого місця";
+
+  @override
+  String get bestLabel => "Найкращий результат";
 
   @override
   String get play => "Грати";
@@ -2486,6 +2738,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get miscSectionTitle => "Інше";
 
   @override
+  String get championshipLocalSection => "Чемпіонат (локально)";
+
+  @override
   String get hideCompletedNumbersLabel => "Прибирати використані цифри";
 
   @override
@@ -2519,6 +2774,35 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "Експорт";
+
+  @override
+  String get import => "Імпорт";
+
+  @override
+  String get resetMyScore => "Скинути мій рахунок";
+
+  @override
+  String get regenerateOpponents => "Перегенерувати суперників";
+
+  @override
+  String get confirm => "Підтвердити";
+
+  @override
+  String get cancel => "Скасувати";
+
+  @override
+  String get done => "Готово";
+
+  @override
+  String get failed => "Помилка";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Місце #${current} • +${delta} до #${target}";
+  }
 
   @override
   String get statsTitle => "Статистика";
@@ -2623,6 +2907,14 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String toNextPlace(int points) {
+    return "距下一名还差 ${points} 分";
+  }
+
+  @override
+  String get youAreTop => "您是第 1 名";
+
+  @override
   String get championshipRoundDescriptionPlaceholder => "进行这一轮，推动你的锦标赛征程。";
 
   @override
@@ -2638,12 +2930,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String leaderboardRow(int rank, String name, String points) {
-    return "第${rank}名，${name}，${points} 分";
+    return "第 ${rank} 名。${name}。${points} 分";
   }
 
   @override
   String yourPosition(int rank, String points) {
-    return "我的排名第${rank}名，${points} 分";
+    return "我的名次 ${rank}。${points} 分";
   }
 
   @override
@@ -2651,6 +2943,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get championshipAutoScroll => "自动滚动到我的位置";
+
+  @override
+  String get bestLabel => "最佳成绩";
 
   @override
   String get play => "游玩";
@@ -2860,6 +3155,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get miscSectionTitle => "其他";
 
   @override
+  String get championshipLocalSection => "锦标赛（本地）";
+
+  @override
   String get hideCompletedNumbersLabel => "隐藏已用数字";
 
   @override
@@ -2893,6 +3191,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get export => "导出";
+
+  @override
+  String get import => "导入";
+
+  @override
+  String get resetMyScore => "重置我的得分";
+
+  @override
+  String get regenerateOpponents => "重新生成对手";
+
+  @override
+  String get confirm => "确认";
+
+  @override
+  String get cancel => "取消";
+
+  @override
+  String get done => "完成";
+
+  @override
+  String get failed => "失败";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "第 ${current} 名 • 还差 ${delta} 分到第 ${target} 名";
+  }
 
   @override
   String get statsTitle => "统计";

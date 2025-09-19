@@ -17,6 +17,15 @@
       }
     }
   },
+  "toNextPlace": "To next place: {points} pts",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "You are #1",
   "championshipRoundDescriptionPlaceholder": "Play this round to boost your championship run.",
   "championshipRoundCompletedLabel": "Completed",
   "totalScore": "Total score: {score}",
@@ -28,7 +37,7 @@
     }
   },
   "meLabel": "Me",
-  "leaderboardRow": "Place {rank}, {name}, {points} points",
+  "leaderboardRow": "Place {rank}. {name}. {points} points",
   "@leaderboardRow": {
     "placeholders": {
       "rank": {
@@ -42,7 +51,7 @@
       }
     }
   },
-  "yourPosition": "My place {rank}, {points} points",
+  "yourPosition": "My place {rank}. {points} points",
   "@yourPosition": {
     "placeholders": {
       "rank": {
@@ -55,6 +64,7 @@
   },
   "pointsShort": "pts",
   "championshipAutoScroll": "Auto-scroll to my position",
+  "bestLabel": "Best",
   "play": "Play",
   "battleTitle": "Battle",
   "battleWinRate": "Win rate {percent}%",
@@ -168,6 +178,7 @@
   "vibrationLabel": "Vibration",
   "musicLabel": "Background music",
   "miscSectionTitle": "Other",
+  "championshipLocalSection": "Championship (local)",
   "hideCompletedNumbersLabel": "Hide completed digits",
   "aboutApp": "About",
   "versionLabel": "Version {version}",
@@ -186,6 +197,28 @@
   "languageFrench": "Français",
   "languageChinese": "中文",
   "languageHindi": "हिन्दी",
+  "export": "Export",
+  "import": "Import",
+  "resetMyScore": "Reset my score",
+  "regenerateOpponents": "Regenerate opponents",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "done": "Done",
+  "failed": "Failed",
+  "rankBadgeChasing": "Rank #{current} • +{delta} to #{target}",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "statsTitle": "Statistics",
   "statsGamesSection": "Games",
   "statsGamesStarted": "Games started",

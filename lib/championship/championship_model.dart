@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models.dart';
+import 'championship_backup.dart';
 
 enum ChampionshipRoundStatus { notStarted, inProgress, completed }
 
@@ -153,6 +154,20 @@ class ChampionshipState {
   }
 }
 
+class NextProgressSnapshot {
+  const NextProgressSnapshot({
+    required this.isTop,
+    required this.deltaToNext,
+    required this.progress,
+    required this.rank,
+  });
+
+  final bool isTop;
+  final int deltaToNext;
+  final double progress;
+  final int rank;
+}
+
 class ChampionshipModel extends ChangeNotifier {
   ChampionshipModel()
       : _state = ChampionshipState(
@@ -166,7 +181,10 @@ class ChampionshipModel extends ChangeNotifier {
   static const _opponentsKey = 'champ.perma.opponents.v1';
   static const _autoScrollKey = 'champ.settings.autoScroll.v1';
   static const _lastAwardedGameIdKey = 'champ.perma.lastAwardedGameId.v1';
+  static const _bestScoreKey = 'champ.perma.bestScore.v1';
+  static const _bestRankKey = 'champ.perma.bestRank.v1';
   static const int _opponentsCount = 100;
+  static const int _maxMyScore = 2000000000;
 
   static const Map<Difficulty, int> _baseScoreByDifficulty = {
     Difficulty.novice: 60,
@@ -187,8 +205,11 @@ class ChampionshipModel extends ChangeNotifier {
 
   ChampionshipState _state;
   int _myScore = 0;
+  int _bestScore = 0;
+  int _bestRank = 1;
   bool _autoScrollEnabled = true;
   String? _lastAwardedGameId;
+  int? _installSeed;
   Leaderboard _leaderboard = Leaderboard(
     opponents: const <Opponent>[],
     generatedAt: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
@@ -200,6 +221,10 @@ class ChampionshipModel extends ChangeNotifier {
       List<ChampionshipRound>.unmodifiable(_state.rounds);
 
   int get myScore => _myScore;
+
+  int get bestScore => _bestScore;
+
+  int get bestRank => _bestRank;
 
   Leaderboard get leaderboard => _leaderboard;
 
@@ -214,6 +239,51 @@ class ChampionshipModel extends ChangeNotifier {
     return index + 1;
   }
 
+  NextProgressSnapshot nextProgress() {
+    final opponents = _leaderboard.opponents;
+    final currentScore = _myScore;
+    final rank = myRank;
+    if (rank <= 1 || opponents.isEmpty) {
+      return const NextProgressSnapshot(
+        isTop: true,
+        deltaToNext: 0,
+        progress: 1.0,
+        rank: 1,
+      );
+    }
+
+    final insertionIndex = (rank - 1).clamp(0, opponents.length);
+    final targetIndex = (insertionIndex - 1).clamp(0, opponents.length - 1);
+    final target = opponents[targetIndex];
+    final targetScore = target.score;
+    final delta = math.max(targetScore - currentScore, 0);
+
+    int lowerScore;
+    if (targetIndex + 1 < opponents.length) {
+      lowerScore = opponents[targetIndex + 1].score;
+    } else {
+      lowerScore = currentScore;
+    }
+    var prevTargetFloor = (targetScore + lowerScore) / 2.0;
+    if (prevTargetFloor >= targetScore) {
+      prevTargetFloor = targetScore - 1;
+    }
+    final denominator = targetScore - prevTargetFloor;
+    double progress;
+    if (denominator <= 0) {
+      progress = currentScore >= targetScore ? 1.0 : 0.0;
+    } else {
+      progress = (currentScore - prevTargetFloor) / denominator;
+    }
+
+    return NextProgressSnapshot(
+      isTop: false,
+      deltaToNext: delta,
+      progress: progress.clamp(0.0, 1.0),
+      rank: rank,
+    );
+  }
+
   int _insertionIndex(List<Opponent> opponents, int score) {
     var low = 0;
     var high = opponents.length;
@@ -226,6 +296,16 @@ class ChampionshipModel extends ChangeNotifier {
       }
     }
     return low;
+  }
+
+  int _clampScore(int value) {
+    if (value < 0) {
+      return 0;
+    }
+    if (value > _maxMyScore) {
+      return _maxMyScore;
+    }
+    return value;
   }
 
   Future<void> loadFromPrefs() async {
@@ -252,7 +332,16 @@ class ChampionshipModel extends ChangeNotifier {
         unawaited(saveToPrefs());
       }
       notifyListeners();
-    } catch (_) {
+    } on FormatException catch (error) {
+      debugPrint('Failed to parse championship session: $error');
+      _state = ChampionshipState(
+        sessionId: _newSessionId(),
+        rounds: _createDefaultRounds(),
+      );
+      unawaited(saveToPrefs());
+      notifyListeners();
+    } catch (error) {
+      debugPrint('Unexpected error loading championship session: $error');
       _state = ChampionshipState(
         sessionId: _newSessionId(),
         rounds: _createDefaultRounds(),
@@ -264,20 +353,28 @@ class ChampionshipModel extends ChangeNotifier {
 
   Future<void> loadPermaLeaderboard() async {
     final prefs = await SharedPreferences.getInstance();
-    _myScore = prefs.getInt(_myScoreKey) ?? 0;
+    _myScore = _clampScore(prefs.getInt(_myScoreKey) ?? 0);
+    _bestScore = _clampScore(prefs.getInt(_bestScoreKey) ?? _myScore);
+    _bestRank = prefs.getInt(_bestRankKey) ?? 1;
     _autoScrollEnabled = prefs.getBool(_autoScrollKey) ?? true;
     _lastAwardedGameId = prefs.getString(_lastAwardedGameIdKey);
+    _installSeed = prefs.getInt(_installSeedKey);
 
     Leaderboard? board;
     final stored = prefs.getString(_opponentsKey);
     if (stored != null) {
       try {
         board = _decodeLeaderboard(stored);
-      } on FormatException {
+      } on FormatException catch (error) {
+        debugPrint('Failed to parse stored leaderboard: $error');
         _myScore = 0;
+        _bestScore = 0;
+        _bestRank = 1;
         await prefs.setInt(_myScoreKey, _myScore);
         await prefs.remove(_opponentsKey);
         await prefs.remove(_lastAwardedGameIdKey);
+        await prefs.remove(_bestScoreKey);
+        await prefs.remove(_bestRankKey);
         _lastAwardedGameId = null;
         board = null;
       }
@@ -285,15 +382,125 @@ class ChampionshipModel extends ChangeNotifier {
     board ??= await _generateLeaderboard(prefs);
 
     _leaderboard = board;
+    if (_bestRank <= 0) {
+      _bestRank = myRank;
+    }
+    if (_bestScore < _myScore) {
+      _bestScore = _myScore;
+    }
+    await prefs.setInt(_bestScoreKey, _bestScore);
+    await prefs.setInt(_bestRankKey, _bestRank);
     notifyListeners();
   }
 
   Future<void> saveMyScore({String? lastGameId}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_myScoreKey, _myScore);
+    await prefs.setInt(_bestScoreKey, _bestScore);
+    await prefs.setInt(_bestRankKey, _bestRank);
     if (lastGameId != null && lastGameId.isNotEmpty) {
       await prefs.setString(_lastAwardedGameIdKey, lastGameId);
     }
+  }
+
+  Future<void> resetMyScore() async {
+    if (_myScore == 0) {
+      return;
+    }
+    _myScore = 0;
+    notifyListeners();
+    await saveMyScore();
+  }
+
+  Future<void> regenerateOpponents() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seed = _generateRandomSeed();
+    _installSeed = seed;
+    await prefs.setInt(_installSeedKey, seed);
+    final board = await _generateLeaderboardWithSeed(seed, prefs);
+    _leaderboard = board;
+    notifyListeners();
+  }
+
+  ChampionshipBackupData createBackupData(DateTime exportedAt) {
+    final normalizedExportedAt = exportedAt.toUtc();
+    final opponents = List<Map<String, dynamic>>.unmodifiable(
+      _leaderboard.opponents.map((opponent) => opponent.toJson()),
+    );
+    final seed = _installSeed ?? 0;
+    final lastGameId =
+        _lastAwardedGameId != null && _lastAwardedGameId!.isNotEmpty
+            ? _lastAwardedGameId
+            : null;
+    return ChampionshipBackupData(
+      version: ChampionshipBackupData.currentVersion,
+      exportedAt: normalizedExportedAt,
+      myScore: _myScore,
+      bestRank: _bestRank,
+      bestScore: _bestScore,
+      installSeed: seed,
+      lastAwardedGameId: lastGameId,
+      autoScroll: _autoScrollEnabled,
+      opponents: opponents,
+    );
+  }
+
+  Future<void> restoreFromBackup(ChampionshipBackupData data) async {
+    if (data.version != ChampionshipBackupData.currentVersion) {
+      throw FormatException('Unsupported backup version: ${data.version}');
+    }
+    final prefs = await SharedPreferences.getInstance();
+    final parsedOpponents = <Opponent>[];
+    for (final opponent in data.opponents) {
+      parsedOpponents.add(Opponent.fromJson(opponent));
+    }
+    parsedOpponents.sort((a, b) => b.score.compareTo(a.score));
+
+    var newSeed = data.installSeed;
+    if (newSeed <= 0) {
+      newSeed = _generateRandomSeed();
+    }
+    _installSeed = newSeed;
+    await prefs.setInt(_installSeedKey, newSeed);
+
+    if (parsedOpponents.isEmpty) {
+      _leaderboard = await _generateLeaderboardWithSeed(newSeed, prefs);
+    } else {
+      _leaderboard = Leaderboard(
+        opponents: parsedOpponents,
+        generatedAt: data.exportedAt.toUtc(),
+      );
+      await prefs.setString(_opponentsKey, jsonEncode(_leaderboard.toJson()));
+    }
+
+    _myScore = _clampScore(data.myScore);
+    _bestScore = _clampScore(data.bestScore);
+    _bestRank = data.bestRank > 0 ? data.bestRank : 1;
+    _autoScrollEnabled = data.autoScroll;
+    final normalizedLastId =
+        data.lastAwardedGameId != null && data.lastAwardedGameId!.isNotEmpty
+            ? data.lastAwardedGameId
+            : null;
+    _lastAwardedGameId = normalizedLastId;
+
+    if (_bestScore < _myScore) {
+      _bestScore = _myScore;
+    }
+    if (_bestRank <= 0) {
+      _bestRank = myRank;
+    }
+
+    await prefs.setInt(_myScoreKey, _myScore);
+    await prefs.setInt(_bestScoreKey, _bestScore);
+    await prefs.setInt(_bestRankKey, _bestRank);
+    await prefs.setBool(_autoScrollKey, _autoScrollEnabled);
+    if (normalizedLastId != null) {
+      await prefs.setString(_lastAwardedGameIdKey, normalizedLastId);
+    } else {
+      await prefs.remove(_lastAwardedGameIdKey);
+    }
+
+    notifyListeners();
   }
 
   Future<int> awardScoreForGame({
@@ -308,7 +515,7 @@ class ChampionshipModel extends ChangeNotifier {
       return 0;
     }
     final base = _baseScoreByDifficulty[difficulty] ?? 60;
-    final normalizedTime = timeMs < 0 ? 0 : timeMs;
+    final normalizedTime = timeMs <= 0 ? 1 : timeMs;
     final normalizedMistakes = math.max(0, mistakes);
     final normalizedHints = math.max(0, hints);
     final timePenalty = (normalizedTime ~/ 30000) * 5;
@@ -326,11 +533,21 @@ class ChampionshipModel extends ChangeNotifier {
       delta = 800;
     }
 
-    _myScore += delta;
+    final previousScore = _myScore;
+    final tentativeScore = previousScore + delta;
+    _myScore = _clampScore(tentativeScore);
+    final appliedDelta = _myScore - previousScore;
     _lastAwardedGameId = gameId;
+    if (_myScore > _bestScore) {
+      _bestScore = _myScore;
+    }
+    final currentRank = myRank;
+    if (currentRank < _bestRank) {
+      _bestRank = currentRank;
+    }
     await saveMyScore(lastGameId: gameId);
     notifyListeners();
-    return delta;
+    return appliedDelta;
   }
 
   Future<void> setAutoScrollEnabled(bool value) async {
@@ -446,6 +663,14 @@ class ChampionshipModel extends ChangeNotifier {
 
   Future<Leaderboard> _generateLeaderboard(SharedPreferences prefs) async {
     final seed = await _ensureInstallSeed(prefs);
+    return _generateLeaderboardWithSeed(seed, prefs);
+  }
+
+  Future<Leaderboard> _generateLeaderboardWithSeed(
+    int seed,
+    SharedPreferences prefs,
+  ) async {
+    _installSeed = seed;
     final rng = math.Random(seed);
     final names = await _loadNames();
     final pool = names.isEmpty
@@ -488,12 +713,18 @@ class ChampionshipModel extends ChangeNotifier {
   Future<int> _ensureInstallSeed(SharedPreferences prefs) async {
     final stored = prefs.getInt(_installSeedKey);
     if (stored != null) {
+      _installSeed = stored;
       return stored;
     }
-    final random = math.Random();
-    final seed = (random.nextInt(1 << 16) << 16) | random.nextInt(1 << 16);
+    final seed = _generateRandomSeed();
+    _installSeed = seed;
     await prefs.setInt(_installSeedKey, seed);
     return seed;
+  }
+
+  int _generateRandomSeed() {
+    final random = math.Random();
+    return (random.nextInt(1 << 16) << 16) | random.nextInt(1 << 16);
   }
 
   Future<List<String>> _loadNames() async {

@@ -152,12 +152,116 @@ class _ChampionshipHeader extends StatelessWidget {
                       ),
                 ),
               ),
+              const SizedBox(height: 12),
+              const _NextPlaceIndicator(),
             ],
           ),
         );
       },
     );
   }
+}
+
+class _NextPlaceIndicator extends StatelessWidget {
+  const _NextPlaceIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: cs.onPrimary,
+          fontWeight: FontWeight.w600,
+        ) ??
+        TextStyle(
+          color: cs.onPrimary,
+          fontWeight: FontWeight.w600,
+        );
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final duration = reduceMotion ? Duration.zero : const Duration(milliseconds: 260);
+    final curve = reduceMotion ? Curves.linear : Curves.easeOutCubic;
+
+    return Selector<ChampionshipModel, _NextProgressVm>(
+      selector: (_, model) => _NextProgressVm.fromModel(model),
+      builder: (context, vm, _) {
+        final progressValue = vm.isTop ? 1.0 : vm.progress;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (vm.isTop)
+              Text(l10n.youAreTop, style: textStyle)
+            else
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: vm.delta.toDouble()),
+                duration: duration,
+                curve: curve,
+                builder: (context, value, child) {
+                  final displayed = value.round();
+                  return Text(l10n.toNextPlace(displayed), style: textStyle);
+                },
+              ),
+            const SizedBox(height: 6),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: progressValue),
+              duration: duration,
+              curve: curve,
+              builder: (context, value, child) {
+                final progress = reduceMotion ? progressValue : value.clamp(0.0, 1.0);
+                return ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 6,
+                    backgroundColor: cs.onPrimary.withOpacity(0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(cs.onPrimary),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _NextProgressVm {
+  const _NextProgressVm({
+    required this.isTop,
+    required this.delta,
+    required this.progressPermille,
+  });
+
+  final bool isTop;
+  final int delta;
+  final int progressPermille;
+
+  double get progress => progressPermille / 1000.0;
+
+  static _NextProgressVm fromModel(ChampionshipModel model) {
+    final snapshot = model.nextProgress();
+    final progressPermille = (snapshot.progress.clamp(0.0, 1.0) * 1000).round();
+    return _NextProgressVm(
+      isTop: snapshot.isTop,
+      delta: snapshot.deltaToNext,
+      progressPermille: snapshot.isTop ? 1000 : progressPermille,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is _NextProgressVm &&
+        other.isTop == isTop &&
+        other.delta == delta &&
+        other.progressPermille == progressPermille;
+  }
+
+  @override
+  int get hashCode => Object.hash(isTop, delta, progressPermille);
 }
 
 class _LeaderboardSection extends StatelessWidget {
@@ -227,10 +331,12 @@ class _LeaderboardListViewState extends State<_LeaderboardListView> {
   final ScrollController _controller = ScrollController();
   bool _highlightMe = false;
   Timer? _highlightTimer;
+  late NumberFormat _numberFormat;
 
   @override
   void initState() {
     super.initState();
+    _numberFormat = NumberFormat.decimalPattern(widget.localeName);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return;
@@ -244,6 +350,9 @@ class _LeaderboardListViewState extends State<_LeaderboardListView> {
   @override
   void didUpdateWidget(covariant _LeaderboardListView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.localeName != oldWidget.localeName) {
+      _numberFormat = NumberFormat.decimalPattern(widget.localeName);
+    }
     if (widget.myScore > oldWidget.myScore) {
       _triggerHighlight();
     }
@@ -324,21 +433,25 @@ class _LeaderboardListViewState extends State<_LeaderboardListView> {
     }
   }
 
+  String formatPoints(int value) => _numberFormat.format(value);
+
   @override
   Widget build(BuildContext context) {
     final opponents = widget.leaderboard.opponents;
     final total = opponents.length + 1;
     final insertionIndex = (widget.myRank.clamp(1, total)) - 1;
     final l10n = AppLocalizations.of(context)!;
-    final myScoreText =
-        _ScoreFormatter.format(widget.localeName, widget.myScore);
+    final myScoreText = formatPoints(widget.myScore);
 
-    return ListView.builder(
+    return CustomScrollView(
       controller: _controller,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemExtent: _rowExtent,
-      itemCount: total,
-      itemBuilder: (context, index) {
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          sliver: SliverFixedExtentList(
+            itemExtent: _rowExtent,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
         if (index == insertionIndex) {
           final semanticsLabel =
               l10n.yourPosition(index + 1, myScoreText);
@@ -356,8 +469,7 @@ class _LeaderboardListViewState extends State<_LeaderboardListView> {
 
         final opponentIndex = index > insertionIndex ? index - 1 : index;
         final opponent = opponents[opponentIndex];
-        final scoreText =
-            _ScoreFormatter.format(widget.localeName, opponent.score);
+        final scoreText = formatPoints(opponent.score);
         final semanticsLabel =
             l10n.leaderboardRow(index + 1, opponent.name, scoreText);
         return RepaintBoundary(
@@ -369,7 +481,12 @@ class _LeaderboardListViewState extends State<_LeaderboardListView> {
             semanticsLabel: semanticsLabel,
           ),
         );
-      },
+              },
+              childCount: total,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

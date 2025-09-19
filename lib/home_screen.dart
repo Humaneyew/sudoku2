@@ -8,6 +8,7 @@ import 'models.dart';
 import 'settings_page.dart';
 import 'stats_page.dart';
 import 'theme.dart';
+import 'championship/championship_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -133,7 +134,6 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           const SizedBox(height: 24),
           _ChallengeCarousel(
             battleWinRate: app.battleWinRate,
-            championshipScore: app.championshipScore,
             onOpenChallenge: widget.onOpenChallenge,
           ),
           const SizedBox(height: 32),
@@ -343,12 +343,10 @@ void _startDailyChallengeGame(BuildContext context, DateTime date) {
 
 class _ChallengeCarousel extends StatelessWidget {
   final int battleWinRate;
-  final int championshipScore;
   final VoidCallback onOpenChallenge;
 
   const _ChallengeCarousel({
     required this.battleWinRate,
-    required this.championshipScore,
     required this.onOpenChallenge,
   });
 
@@ -362,31 +360,50 @@ class _ChallengeCarousel extends StatelessWidget {
     final today = formatter.format(normalizedToday);
     final colors = theme.extension<SudokuColors>()!;
 
-    final cards = [
-      _ChallengeCardData(
-        title: l10n.navDaily,
-        subtitle: today,
-        buttonLabel: l10n.playAction,
-        gradient: colors.dailyChallengeGradient,
-        icon: Icons.emoji_events,
-        onPressed: onOpenChallenge,
+    final cards = <Widget>[
+      _ChallengeCard(
+        key: const ValueKey('challenge-card-daily'),
+        data: _ChallengeCardData(
+          title: l10n.navDaily,
+          subtitle: today,
+          buttonLabel: l10n.playAction,
+          gradient: colors.dailyChallengeGradient,
+          icon: Icons.emoji_events,
+          onPressed: onOpenChallenge,
+        ),
       ),
-      _ChallengeCardData(
-        title: l10n.championshipTitle,
-        subtitle: l10n.championshipScore(championshipScore),
-        buttonLabel: l10n.playAction,
-        gradient: colors.championshipChallengeGradient,
-        icon: Icons.workspace_premium_outlined,
-        onPressed: () => Navigator.pushNamed(context, '/championship'),
-        badge: '2G',
+      Selector<ChampionshipModel, _ChampionshipCardVm>(
+        selector: (_, model) => _ChampionshipCardVm.fromModel(model),
+        builder: (context, vm, _) {
+          final subtitle = l10n.championshipScore(vm.score);
+          final secondaryLine = vm.isTop
+              ? l10n.rankLabel(vm.rank)
+              : l10n.rankBadgeChasing(vm.rank, vm.deltaToNext, vm.rank - 1);
+          return _ChallengeCard(
+            key: const ValueKey('challenge-card-championship'),
+            data: _ChallengeCardData(
+              title: l10n.championshipTitle,
+              subtitle: subtitle,
+              secondaryLine: secondaryLine,
+              buttonLabel: l10n.playAction,
+              gradient: colors.championshipChallengeGradient,
+              icon: Icons.workspace_premium_outlined,
+              onPressed: () => Navigator.pushNamed(context, '/championship'),
+              badge: '2G',
+            ),
+          );
+        },
       ),
-      _ChallengeCardData(
-        title: l10n.battleTitle,
-        subtitle: l10n.battleWinRate(battleWinRate),
-        buttonLabel: l10n.startAction,
-        gradient: colors.battleChallengeGradient,
-        icon: Icons.sports_esports_outlined,
-        onPressed: () {},
+      _ChallengeCard(
+        key: const ValueKey('challenge-card-battle'),
+        data: _ChallengeCardData(
+          title: l10n.battleTitle,
+          subtitle: l10n.battleWinRate(battleWinRate),
+          buttonLabel: l10n.startAction,
+          gradient: colors.battleChallengeGradient,
+          icon: Icons.sports_esports_outlined,
+          onPressed: () {},
+        ),
       ),
     ];
 
@@ -419,7 +436,7 @@ class _ChallengeCarousel extends StatelessWidget {
           return SizedBox(
             key: ValueKey('challenge-card-$index'),
             width: cardWidth,
-            child: _ChallengeCard(data: cards[index]),
+            child: cards[index],
           );
         },
         separatorBuilder: (_, __) => const SizedBox(width: cardSpacing),
@@ -432,6 +449,7 @@ class _ChallengeCarousel extends StatelessWidget {
 class _ChallengeCardData {
   final String title;
   final String subtitle;
+  final String? secondaryLine;
   final String buttonLabel;
   final LinearGradient gradient;
   final IconData icon;
@@ -441,6 +459,7 @@ class _ChallengeCardData {
   const _ChallengeCardData({
     required this.title,
     required this.subtitle,
+    this.secondaryLine,
     required this.buttonLabel,
     required this.gradient,
     required this.icon,
@@ -529,6 +548,22 @@ class _ChallengeCard extends StatelessWidget {
             fontSize: 14,
           ),
         ),
+        if (data.secondaryLine != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            data.secondaryLine!,
+            style: theme.textTheme.bodySmall?.copyWith(
+                  color: onPrimary.withOpacity(0.85),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ) ??
+                TextStyle(
+                  color: onPrimary.withOpacity(0.85),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
         const SizedBox(height: 18),
         SizedBox(
           height: 40,
@@ -552,6 +587,45 @@ class _ChallengeCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ChampionshipCardVm {
+  const _ChampionshipCardVm({
+    required this.score,
+    required this.rank,
+    required this.deltaToNext,
+    required this.isTop,
+  });
+
+  final int score;
+  final int rank;
+  final int deltaToNext;
+  final bool isTop;
+
+  factory _ChampionshipCardVm.fromModel(ChampionshipModel model) {
+    final progress = model.nextProgress();
+    return _ChampionshipCardVm(
+      score: model.myScore,
+      rank: progress.rank,
+      deltaToNext: progress.deltaToNext,
+      isTop: progress.isTop,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is _ChampionshipCardVm &&
+        other.score == score &&
+        other.rank == rank &&
+        other.deltaToNext == deltaToNext &&
+        other.isTop == isTop;
+  }
+
+  @override
+  int get hashCode => Object.hash(score, rank, deltaToNext, isTop);
 }
 
 class _DailyChain extends StatelessWidget {

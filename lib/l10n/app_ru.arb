@@ -17,6 +17,15 @@
       }
     }
   },
+  "toNextPlace": "До следующего места: {points} оч.",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "Вы №1",
   "championshipRoundDescriptionPlaceholder": "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.",
   "championshipRoundCompletedLabel": "Завершено",
   "totalScore": "Общий счёт: {score}",
@@ -28,7 +37,7 @@
     }
   },
   "meLabel": "Я",
-  "leaderboardRow": "Место {rank}, {name}, {points} очков",
+  "leaderboardRow": "Место {rank}. {name}. {points} очков",
   "@leaderboardRow": {
     "placeholders": {
       "rank": {
@@ -42,7 +51,7 @@
       }
     }
   },
-  "yourPosition": "Моё место {rank}, {points} очков",
+  "yourPosition": "Моё место {rank}. {points} очков",
   "@yourPosition": {
     "placeholders": {
       "rank": {
@@ -55,6 +64,7 @@
   },
   "pointsShort": "очк.",
   "championshipAutoScroll": "Автопрокрутка к моему месту",
+  "bestLabel": "Лучший результат",
   "play": "Играть",
   "battleTitle": "Битва",
   "battleWinRate": "Процент побед {percent}%",
@@ -168,6 +178,7 @@
   "vibrationLabel": "Вибрация",
   "musicLabel": "Фоновая музыка",
   "miscSectionTitle": "Другое",
+  "championshipLocalSection": "Чемпионат (локально)",
   "hideCompletedNumbersLabel": "Убирать использованные цифры",
   "aboutApp": "О приложении",
   "versionLabel": "Версия {version}",
@@ -186,6 +197,28 @@
   "languageFrench": "Français",
   "languageChinese": "中文",
   "languageHindi": "हिन्दी",
+  "export": "Экспорт",
+  "import": "Импорт",
+  "resetMyScore": "Сбросить мой счёт",
+  "regenerateOpponents": "Перегенерировать соперников",
+  "confirm": "Подтвердить",
+  "cancel": "Отмена",
+  "done": "Готово",
+  "failed": "Ошибка",
+  "rankBadgeChasing": "Место #{current} • +{delta} до #{target}",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
   "statsTitle": "Статистика",
   "statsGamesSection": "Игры",
   "statsGamesStarted": "Начатые игры",
