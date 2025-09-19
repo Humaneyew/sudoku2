@@ -28,6 +28,33 @@
     }
   },
   "meLabel": "मैं",
+  "leaderboardRow": "स्थान {rank}, {name}, {points} अंक",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "मेरा स्थान {rank}, {points} अंक",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "अंक",
+  "championshipAutoScroll": "मेरी स्थिति तक स्वतः स्क्रॉल करें",
   "play": "खेलें",
   "battleTitle": "बैटल",
   "battleWinRate": "जीत दर {percent}%",

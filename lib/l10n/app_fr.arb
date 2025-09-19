@@ -28,6 +28,33 @@
     }
   },
   "meLabel": "Moi",
+  "leaderboardRow": "Position {rank}, {name}, {points} points",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "Ma position {rank}, {points} points",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "pts",
+  "championshipAutoScroll": "Défilement auto vers ma position",
   "play": "Jouer",
   "battleTitle": "Duel",
   "battleWinRate": "Taux de victoire {percent}%",

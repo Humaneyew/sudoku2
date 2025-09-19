@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'championship/championship_model.dart';
 import 'models.dart';
 import 'widgets/theme_menu.dart';
 
@@ -15,6 +16,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
+    final championship = context.watch<ChampionshipModel>();
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -71,6 +73,13 @@ class SettingsPage extends StatelessWidget {
             value: app.musicEnabled,
             onChanged: (v) => app.toggleMusic(v),
             secondary: const Icon(Icons.music_note),
+          ),
+          SwitchListTile(
+            key: const ValueKey('settings-champ-auto-scroll'),
+            title: Text(l10n.championshipAutoScroll),
+            value: championship.autoScrollEnabled,
+            onChanged: (v) => championship.setAutoScrollEnabled(v),
+            secondary: const Icon(Icons.my_location_alt),
           ),
           const Divider(height: 32),
 

@@ -28,6 +28,33 @@
     }
   },
   "meLabel": "我",
+  "leaderboardRow": "第{rank}名，{name}，{points} 分",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "我的排名第{rank}名，{points} 分",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "分",
+  "championshipAutoScroll": "自动滚动到我的位置",
   "play": "游玩",
   "battleTitle": "对战",
   "battleWinRate": "胜率 {percent}%",
