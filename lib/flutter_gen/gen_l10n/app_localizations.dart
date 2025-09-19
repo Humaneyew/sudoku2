@@ -64,6 +64,8 @@ abstract class AppLocalizations {
 
   String get championshipRoundDescriptionPlaceholder;
 
+  String get championshipRoundCompletedLabel;
+
   String get battleTitle;
 
   String battleWinRate(int percent);
@@ -344,6 +346,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get championshipRoundDescriptionPlaceholder => "Spiele diese Runde, um deinen Meisterschaftslauf zu stärken.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Abgeschlossen";
 
   @override
   String get battleTitle => "Duell";
@@ -692,6 +697,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get championshipRoundDescriptionPlaceholder => "Play this round to boost your championship run.";
 
   @override
+  String get championshipRoundCompletedLabel => "Completed";
+
+  @override
   String get battleTitle => "Battle";
 
   @override
@@ -1036,6 +1044,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get championshipRoundDescriptionPlaceholder => "Jouez cette manche pour booster votre parcours au championnat.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Terminé";
 
   @override
   String get battleTitle => "Duel";
@@ -1384,6 +1395,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get championshipRoundDescriptionPlaceholder => "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।";
 
   @override
+  String get championshipRoundCompletedLabel => "पूरा हुआ";
+
+  @override
   String get battleTitle => "बैटल";
 
   @override
@@ -1728,6 +1742,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get championshipRoundDescriptionPlaceholder => "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Завершено";
 
   @override
   String get battleTitle => "Битва";
@@ -2080,6 +2097,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get championshipRoundDescriptionPlaceholder => "Зіграйте в цьому раунді, щоб просунутися в чемпіонаті.";
 
   @override
+  String get championshipRoundCompletedLabel => "Завершено";
+
+  @override
   String get battleTitle => "Битва";
 
   @override
@@ -2428,6 +2448,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get championshipRoundDescriptionPlaceholder => "进行这一轮，推动你的锦标赛征程。";
+
+  @override
+  String get championshipRoundCompletedLabel => "已完成";
 
   @override
   String get battleTitle => "对战";

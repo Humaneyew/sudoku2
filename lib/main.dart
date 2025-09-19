@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'championship/championship_model.dart';
 import 'championship/championship_page.dart';
 import 'home_screen.dart';
 import 'models.dart';
@@ -25,6 +26,10 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appState),
+        ChangeNotifierProvider<ChampionshipModel>(
+          create: (_) => ChampionshipModel()..loadFromPrefs(),
+          lazy: false,
+        ),
         ChangeNotifierProvider(create: (_) => UndoAdController()),
       ],
       child: const SudokuApp(),

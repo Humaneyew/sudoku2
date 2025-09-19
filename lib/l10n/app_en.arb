@@ -18,6 +18,7 @@
     }
   },
   "championshipRoundDescriptionPlaceholder": "Play this round to boost your championship run.",
+  "championshipRoundCompletedLabel": "Completed",
   "battleTitle": "Battle",
   "battleWinRate": "Win rate {percent}%",
   "@battleWinRate": {

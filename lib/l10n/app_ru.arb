@@ -18,6 +18,7 @@
     }
   },
   "championshipRoundDescriptionPlaceholder": "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.",
+  "championshipRoundCompletedLabel": "Завершено",
   "battleTitle": "Битва",
   "battleWinRate": "Процент побед {percent}%",
   "@battleWinRate": {

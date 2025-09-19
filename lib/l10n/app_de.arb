@@ -18,6 +18,7 @@
     }
   },
   "championshipRoundDescriptionPlaceholder": "Spiele diese Runde, um deinen Meisterschaftslauf zu stärken.",
+  "championshipRoundCompletedLabel": "Abgeschlossen",
   "battleTitle": "Duell",
   "battleWinRate": "Siegquote {percent}%",
   "@battleWinRate": {
