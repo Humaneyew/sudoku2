@@ -613,92 +613,82 @@ class _ChampionshipCard extends StatelessWidget {
           ),
         ],
       ),
+      padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: onPrimary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        icon,
-                        color: gradient.colors.last,
-                        size: 22,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (badge != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: onPrimary.withOpacity(0.18),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(30)),
-                        ),
-                        child: Text(
-                          badge!,
-                          style: TextStyle(
-                            color: onPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                  ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: onPrimary,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  l10n.championshipTitle,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                        color: onPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
+                child: Icon(
+                  icon,
+                  color: gradient.colors.last,
+                  size: 22,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.championshipScore(score),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                        color: onPrimary.withOpacity(0.7),
-                        fontSize: 14,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            child: SizedBox(
-              height: 40,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: onPrimary,
-                  foregroundColor: gradient.colors.last,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
+              ),
+              const Spacer(),
+              if (badge != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: onPrimary.withOpacity(0.18),
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(30)),
+                  ),
+                  child: Text(
+                    badge!,
+                    style: TextStyle(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/championship');
-                },
-                child: Text(
-                  l10n.play,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            l10n.championshipTitle,
+            style: theme.textTheme.titleMedium?.copyWith(
+                  color: onPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                 ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.championshipScore(score),
+            style: theme.textTheme.bodySmall?.copyWith(
+                  color: onPrimary.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 40,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: onPrimary,
+                foregroundColor: gradient.colors.last,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18)),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, '/championship');
+              },
+              child: Text(
+                l10n.play,
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
