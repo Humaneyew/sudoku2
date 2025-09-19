@@ -62,7 +62,10 @@ class Board extends StatelessWidget {
                     ),
                     itemCount: 81,
                     itemBuilder: (context, index) {
-                      return _BoardCell(index: index);
+                      return _BoardCell(
+                        key: ValueKey('board-cell-$index'),
+                        index: index,
+                      );
                     },
                   ),
                 ),
@@ -188,8 +191,7 @@ Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
 class _BoardCell extends StatelessWidget {
   final int index;
 
-  const _BoardCell({required this.index})
-      : super(key: ValueKey('board-cell-$index'));
+  const _BoardCell({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
