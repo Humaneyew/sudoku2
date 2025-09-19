@@ -6,6 +6,10 @@ import '../models.dart';
 import '../theme.dart';
 import '../undo_ad_controller.dart';
 
+const BorderRadius _actionButtonRadius = BorderRadius.all(Radius.circular(20));
+const BorderRadius _numberButtonRadius = BorderRadius.all(Radius.circular(18));
+const BorderRadius _actionBadgeRadius = BorderRadius.all(Radius.circular(12));
+
 class ControlPanel extends StatelessWidget {
   const ControlPanel({super.key});
 
@@ -30,88 +34,117 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        Expanded(child: _UndoButton()),
+        SizedBox(width: 12),
+        Expanded(child: _EraseButton()),
+        SizedBox(width: 12),
+        Expanded(child: _NotesButton()),
+        SizedBox(width: 12),
+        Expanded(child: _HintButton()),
+      ],
+    );
+  }
+}
+
+class _UndoButton extends StatelessWidget {
+  const _UndoButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Consumer<UndoAdController>(
+      builder: (context, undoAds, _) {
+        final useUndoAd = undoAds.useAdFlow;
+        return Selector<AppState, bool>(
+          selector: (_, app) => app.canUndoMove,
+          builder: (context, canUndo, __) {
+            final undoEnabled =
+                canUndo && (!useUndoAd || undoAds.isAdAvailable);
+            return _ActionButton(
+              key: const ValueKey('action-undo'),
+              icon: Icons.undo_rounded,
+              label: l10n.undo,
+              onPressed: undoEnabled
+                  ? () async {
+                      final app = context.read<AppState>();
+                      if (useUndoAd) {
+                        final shown = await undoAds.showAd(context);
+                        if (!shown || !app.canUndoMove) {
+                          return;
+                        }
+                      }
+                      app.undoMove();
+                    }
+                  : null,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _EraseButton extends StatelessWidget {
+  const _EraseButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Selector<AppState, bool>(
+      selector: (_, app) => app.canErase,
+      builder: (context, canErase, __) => _ActionButton(
+        key: const ValueKey('action-erase'),
+        icon: Icons.backspace_outlined,
+        label: l10n.erase,
+        onPressed: canErase ? context.read<AppState>().eraseCell : null,
+      ),
+    );
+  }
+}
+
+class _NotesButton extends StatelessWidget {
+  const _NotesButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Selector<AppState, bool>(
+      selector: (_, app) => app.isNotesMode,
+      builder: (context, notesMode, __) => _ActionButton(
+        key: const ValueKey('action-notes'),
+        icon: Icons.edit_note,
+        label: l10n.notes,
+        onPressed: context.read<AppState>().toggleNotesMode,
+        active: notesMode,
+      ),
+    );
+  }
+}
+
+class _HintButton extends StatelessWidget {
+  const _HintButton();
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    final undoAds = context.watch<UndoAdController>();
-    final useUndoAd = undoAds.useAdFlow;
-
-    return Row(
-      children: [
-        Expanded(
-          child: Selector<AppState, bool>(
-            selector: (_, app) => app.canUndoMove,
-            builder: (context, canUndo, __) {
-              final undoEnabled =
-                  canUndo && (!useUndoAd || undoAds.isAdAvailable);
-              return _ActionButton(
-                key: const ValueKey('action-undo'),
-                icon: Icons.undo_rounded,
-                label: l10n.undo,
-                onPressed: undoEnabled
-                    ? () async {
-                        final app = context.read<AppState>();
-                        if (useUndoAd) {
-                          final shown = await undoAds.showAd(context);
-                          if (!shown) {
-                            return;
-                          }
-                          if (!app.canUndoMove) {
-                            return;
-                          }
-                        }
-                        app.undoMove();
-                      }
-                    : null,
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Selector<AppState, bool>(
-            selector: (_, app) => app.canErase,
-            builder: (context, canErase, __) => _ActionButton(
-              key: const ValueKey('action-erase'),
-              icon: Icons.backspace_outlined,
-              label: l10n.erase,
-              onPressed:
-                  canErase ? context.read<AppState>().eraseCell : null,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Selector<AppState, bool>(
-            selector: (_, app) => app.isNotesMode,
-            builder: (context, notesMode, __) => _ActionButton(
-              key: const ValueKey('action-notes'),
-              icon: Icons.edit_note,
-              label: l10n.notes,
-              onPressed: context.read<AppState>().toggleNotesMode,
-              active: notesMode,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Selector<AppState, int>(
-            selector: (_, app) => app.hintsLeft,
-            builder: (context, hintsLeft, __) {
-              final enabled = hintsLeft > 0;
-              return _ActionButton(
-                key: const ValueKey('action-hint'),
-                icon: Icons.lightbulb_outline,
-                label: l10n.hint,
-                onPressed:
-                    enabled ? context.read<AppState>().useHint : null,
-                badge: hintsLeft.toString(),
-                badgeColor: enabled ? cs.secondary : theme.disabledColor,
-              );
-            },
-          ),
-        ),
-      ],
+    return Selector<AppState, int>(
+      selector: (_, app) => app.hintsLeft,
+      builder: (context, hintsLeft, __) {
+        final enabled = hintsLeft > 0;
+        final badgeColor = enabled ? cs.secondary : theme.disabledColor;
+        return _ActionButton(
+          key: const ValueKey('action-hint'),
+          icon: Icons.lightbulb_outline,
+          label: l10n.hint,
+          onPressed: enabled ? context.read<AppState>().useHint : null,
+          badge: hintsLeft.toString(),
+          badgeColor: badgeColor,
+        );
+      },
     );
   }
 }
@@ -177,7 +210,7 @@ class _ActionButton extends StatelessWidget {
         curve: Curves.easeOut,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          borderRadius: _actionButtonRadius,
           border: Border.all(color: effectiveBorder),
           boxShadow: isActive
               ? [
@@ -192,7 +225,7 @@ class _ActionButton extends StatelessWidget {
         child: Material(
           type: MaterialType.transparency,
           child: InkWell(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            borderRadius: _actionButtonRadius,
             onTap: enabled ? onPressed : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -209,8 +242,7 @@ class _ActionButton extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: badgeBackground,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(12)),
+                          borderRadius: _actionBadgeRadius,
                         ),
                         child: Text(
                           badge!,
@@ -460,7 +492,7 @@ class _NumberButton extends StatelessWidget {
         duration: duration,
         opacity: enabled ? 1.0 : 0.0,
         child: InkWell(
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
+          borderRadius: _numberButtonRadius,
           onTapDown: enabled ? (_) => onHighlightStart() : null,
           onTapCancel: enabled ? onHighlightEnd : null,
           onTap: enabled
@@ -475,7 +507,7 @@ class _NumberButton extends StatelessWidget {
             height: 64,
             decoration: BoxDecoration(
               color: background,
-              borderRadius: const BorderRadius.all(Radius.circular(18)),
+              borderRadius: _numberButtonRadius,
               border: Border.all(color: borderColor),
               boxShadow: shadow,
             ),

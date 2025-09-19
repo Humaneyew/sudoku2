@@ -111,9 +111,6 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       _handleGameState(app);
     });
 
-    final difficulty =
-        (app.currentDifficulty ?? app.featuredStatsDifficulty).title(l10n);
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -138,11 +135,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: _StatusBar(
-                difficulty: difficulty,
-                stars: app.currentScore,
-                lives: app.livesLeft,
-              ),
+              child: const _StatusBarContainer(),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -400,9 +393,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
 
     if (result == true) {
       app.restoreOneLife();
-      setState(() {
-        _failureShown = false;
-      });
+      _failureShown = false;
     } else {
       app.registerFailure();
       app.abandonGame();
@@ -510,6 +501,68 @@ class _HeaderButton extends StatelessWidget {
   }
 }
 
+class _StatusBarContainer extends StatelessWidget {
+  const _StatusBarContainer();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Selector<AppState, _StatusBarData?>(
+      selector: (_, app) {
+        final current = app.current;
+        if (current == null) {
+          return null;
+        }
+        final difficulty =
+            app.currentDifficulty ?? app.featuredStatsDifficulty;
+        return _StatusBarData(
+          difficulty: difficulty,
+          stars: app.currentScore,
+          lives: app.livesLeft,
+        );
+      },
+      shouldRebuild: (previous, next) => previous != next,
+      builder: (context, data, _) {
+        if (data == null) {
+          return const SizedBox.shrink();
+        }
+        return _StatusBar(
+          difficulty: data.difficulty.title(l10n),
+          stars: data.stars,
+          lives: data.lives,
+        );
+      },
+    );
+  }
+}
+
+class _StatusBarData {
+  final Difficulty difficulty;
+  final int stars;
+  final int lives;
+
+  const _StatusBarData({
+    required this.difficulty,
+    required this.stars,
+    required this.lives,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is _StatusBarData &&
+            other.difficulty == difficulty &&
+            other.stars == stars &&
+            other.lives == lives;
+  }
+
+  @override
+  int get hashCode => Object.hash(difficulty, stars, lives);
+}
+
+const BorderRadius _statusBarRadius = BorderRadius.all(Radius.circular(28));
+const BorderRadius _statusBarBadgeRadius = BorderRadius.all(Radius.circular(18));
+
 class _StatusBar extends StatelessWidget {
   final String difficulty;
   final int stars;
@@ -531,12 +584,12 @@ class _StatusBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: _statusBarRadius,
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
             blurRadius: 20,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -558,7 +611,7 @@ class _StatusBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
               color: scheme.primary.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: _statusBarBadgeRadius,
             ),
             child: Row(
               children: [
