@@ -319,6 +319,21 @@ class _CircleButton extends StatelessWidget {
   }
 }
 
+void _startDailyChallengeGame(BuildContext context, DateTime date) {
+  final normalized = DateTime(date.year, date.month, date.day);
+  final now = DateTime.now();
+  final normalizedToday = DateTime(now.year, now.month, now.day);
+  if (normalized.isAfter(normalizedToday)) {
+    return;
+  }
+  final app = context.read<AppState>();
+  app.startDailyChallenge(normalized);
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const GamePage()),
+  );
+}
+
 class _ChallengeCarousel extends StatelessWidget {
   final int battleWinRate;
   final int championshipScore;
@@ -333,7 +348,9 @@ class _ChallengeCarousel extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final formatter = DateFormat('d MMMM', l10n.localeName);
-    final today = formatter.format(DateTime.now());
+    final now = DateTime.now();
+    final normalizedToday = DateTime(now.year, now.month, now.day);
+    final today = formatter.format(normalizedToday);
     final colors = theme.extension<SudokuColors>()!;
 
     final cards = [
@@ -343,7 +360,7 @@ class _ChallengeCarousel extends StatelessWidget {
         buttonLabel: l10n.playAction,
         gradient: colors.dailyChallengeGradient,
         icon: Icons.emoji_events,
-        onPressed: () {},
+        onPressed: () => _startDailyChallengeGame(context, normalizedToday),
       ),
       _ChallengeCardData(
         title: l10n.championshipTitle,
@@ -918,16 +935,8 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     });
   }
 
-  void _startDaily(AppState app, DateTime date) {
-    final normalized = DateTime(date.year, date.month, date.day);
-    if (normalized.isAfter(DateTime.now())) {
-      return;
-    }
-    app.startDailyChallenge(normalized);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const GamePage()),
-    );
+  void _startDaily(DateTime date) {
+    _startDailyChallengeGame(context, date);
   }
 
   @override
@@ -1181,7 +1190,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: canPlay && currentSelected != null
-                                  ? () => _startDaily(app, currentSelected)
+                                  ? () => _startDaily(currentSelected)
                                   : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: cs.primary,
