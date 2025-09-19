@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'championship/championship_model.dart';
 import 'models.dart';
 import 'settings_page.dart';
 import 'theme.dart';
@@ -211,6 +212,10 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       if (!_victoryShown) {
         _victoryShown = true;
         _showVictoryDialog(app);
+        try {
+          // після успішного завершення гри
+          context.read<ChampionshipModel?>()?.completeCurrentRound();
+        } catch (_) {}
       }
     } else if (app.isOutOfLives) {
       if (!_failureShown) {

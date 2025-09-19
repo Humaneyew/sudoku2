@@ -18,6 +18,7 @@
     }
   },
   "championshipRoundDescriptionPlaceholder": "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।",
+  "championshipRoundCompletedLabel": "पूरा हुआ",
   "battleTitle": "बैटल",
   "battleWinRate": "जीत दर {percent}%",
   "@battleWinRate": {
