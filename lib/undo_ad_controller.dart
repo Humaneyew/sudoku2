@@ -16,19 +16,32 @@ class UndoAdController extends ChangeNotifier {
   final Duration _adDuration;
   bool _adAvailable = true;
   bool _showingAd = false;
+  Future<bool>? _pendingAd;
 
   bool get useAdFlow => kReleaseMode && _integrationEnabled;
 
   bool get isAdAvailable => !useAdFlow ? true : _adAvailable && !_showingAd;
 
-  Future<bool> showAd(BuildContext context) async {
+  Future<bool> showAd(BuildContext context) {
     if (!useAdFlow) {
-      return true;
+      return Future.value(true);
+    }
+    if (_pendingAd != null) {
+      return _pendingAd!;
     }
     if (!isAdAvailable) {
-      return false;
+      return Future.value(false);
     }
 
+    final future = _performShowAd(context);
+    _pendingAd = future;
+    future.whenComplete(() {
+      _pendingAd = null;
+    });
+    return future;
+  }
+
+  Future<bool> _performShowAd(BuildContext context) async {
     _adAvailable = false;
     _showingAd = true;
     notifyListeners();
@@ -46,6 +59,13 @@ class UndoAdController extends ChangeNotifier {
         );
       },
     );
+
+    if (!context.mounted) {
+      _showingAd = false;
+      _adAvailable = true;
+      notifyListeners();
+      return false;
+    }
 
     _showingAd = false;
     _adAvailable = true;

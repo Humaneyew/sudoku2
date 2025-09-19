@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
+import 'stats_format.dart';
 
 const BorderRadius _statsSectionRadius = BorderRadius.all(Radius.circular(28));
 const BorderRadius _statIconRadius = BorderRadius.all(Radius.circular(16));
@@ -60,19 +60,11 @@ class _StatsTabState extends State<StatsTab>
     final averageTimeAccent = blend(cs.primary, cs.onSurface, 0.4);
     final currentStreakAccent = blend(cs.error, cs.secondary, 0.35);
     final l10n = AppLocalizations.of(context)!;
-    final numberFormatter = NumberFormat.decimalPattern(l10n.localeName);
     final stats = context.select<AppState, _DifficultyStatsView>((app) {
       final data = app.statsFor(_selected);
-      return _DifficultyStatsView.from(data);
+      final formatted = StatsFormatter.formatNumbers(data, l10n.localeName);
+      return _DifficultyStatsView.from(data, formatted);
     });
-    final gamesStartedText = _formatStatNumber(numberFormatter, stats.gamesStarted);
-    final gamesWonText = _formatStatNumber(numberFormatter, stats.gamesWon);
-    final flawlessWinsText =
-        _formatStatNumber(numberFormatter, stats.flawlessWins);
-    final currentStreakText =
-        _formatStatNumber(numberFormatter, stats.currentStreak);
-    final bestStreakText =
-        _formatStatNumber(numberFormatter, stats.bestStreak);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -98,13 +90,13 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.play_circle_outline,
                 color: primary,
                 label: l10n.statsGamesStarted,
-                value: gamesStartedText,
+                value: stats.gamesStartedText,
               ),
               _StatRowData(
                 icon: Icons.emoji_events_outlined,
                 color: winsAccent,
                 label: l10n.statsGamesWon,
-                value: gamesWonText,
+                value: stats.gamesWonText,
               ),
               _StatRowData(
                 icon: Icons.pie_chart_outline,
@@ -116,7 +108,7 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.shield_moon_outlined,
                 color: flawlessAccent,
                 label: l10n.statsFlawless,
-                value: flawlessWinsText,
+                value: stats.flawlessWinsText,
               ),
             ],
           ),
@@ -146,13 +138,13 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.bolt_outlined,
                 color: currentStreakAccent,
                 label: l10n.statsCurrentStreak,
-                value: currentStreakText,
+                value: stats.currentStreakText,
               ),
               _StatRowData(
                 icon: Icons.auto_graph_outlined,
                 color: winsAccent,
                 label: l10n.statsBestStreak,
-                value: bestStreakText,
+                value: stats.bestStreakText,
               ),
             ],
           ),
@@ -162,41 +154,40 @@ class _StatsTabState extends State<StatsTab>
   }
 }
 
-String _formatStatNumber(NumberFormat formatter, int value) {
-  return formatter.format(value);
-}
-
 class _DifficultyStatsView {
-  final int gamesStarted;
-  final int gamesWon;
-  final int flawlessWins;
+  final String gamesStartedText;
+  final String gamesWonText;
+  final String flawlessWinsText;
   final String winRateText;
   final String bestTimeText;
   final String averageTimeText;
-  final int currentStreak;
-  final int bestStreak;
+  final String currentStreakText;
+  final String bestStreakText;
 
   const _DifficultyStatsView({
-    required this.gamesStarted,
-    required this.gamesWon,
-    required this.flawlessWins,
+    required this.gamesStartedText,
+    required this.gamesWonText,
+    required this.flawlessWinsText,
     required this.winRateText,
     required this.bestTimeText,
     required this.averageTimeText,
-    required this.currentStreak,
-    required this.bestStreak,
+    required this.currentStreakText,
+    required this.bestStreakText,
   });
 
-  factory _DifficultyStatsView.from(DifficultyStats stats) {
+  factory _DifficultyStatsView.from(
+    DifficultyStats stats,
+    StatsFormatResult formatted,
+  ) {
     return _DifficultyStatsView(
-      gamesStarted: stats.gamesStarted,
-      gamesWon: stats.gamesWon,
-      flawlessWins: stats.flawlessWins,
+      gamesStartedText: formatted.gamesStarted,
+      gamesWonText: formatted.gamesWon,
+      flawlessWinsText: formatted.flawlessWins,
       winRateText: stats.winRateText,
       bestTimeText: stats.bestTimeText,
       averageTimeText: stats.averageTimeText,
-      currentStreak: stats.currentStreak,
-      bestStreak: stats.bestStreak,
+      currentStreakText: formatted.currentStreak,
+      bestStreakText: formatted.bestStreak,
     );
   }
 
@@ -204,26 +195,26 @@ class _DifficultyStatsView {
   bool operator ==(Object other) {
     return identical(this, other) ||
         other is _DifficultyStatsView &&
-            other.gamesStarted == gamesStarted &&
-            other.gamesWon == gamesWon &&
-            other.flawlessWins == flawlessWins &&
+            other.gamesStartedText == gamesStartedText &&
+            other.gamesWonText == gamesWonText &&
+            other.flawlessWinsText == flawlessWinsText &&
             other.winRateText == winRateText &&
             other.bestTimeText == bestTimeText &&
             other.averageTimeText == averageTimeText &&
-            other.currentStreak == currentStreak &&
-            other.bestStreak == bestStreak;
+            other.currentStreakText == currentStreakText &&
+            other.bestStreakText == bestStreakText;
   }
 
   @override
   int get hashCode => Object.hash(
-        gamesStarted,
-        gamesWon,
-        flawlessWins,
+        gamesStartedText,
+        gamesWonText,
+        flawlessWinsText,
         winRateText,
         bestTimeText,
         averageTimeText,
-        currentStreak,
-        bestStreak,
+        currentStreakText,
+        bestStreakText,
       );
 }
 
