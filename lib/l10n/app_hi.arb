@@ -67,10 +67,10 @@
   "bestLabel": "श्रेष्ठ",
   "play": "खेलें",
   "battleTitle": "बैटल",
-  "battleWinRate": "जीत दर {percent}%",
+  "battleWinRate": "जीतें {count}",
   "@battleWinRate": {
     "placeholders": {
-      "percent": {
+      "count": {
         "type": "int"
       }
     }

@@ -67,10 +67,10 @@
   "bestLabel": "Best",
   "play": "Play",
   "battleTitle": "Battle",
-  "battleWinRate": "Win rate {percent}%",
+  "battleWinRate": "Wins {count}",
   "@battleWinRate": {
     "placeholders": {
-      "percent": {
+      "count": {
         "type": "int"
       }
     }
