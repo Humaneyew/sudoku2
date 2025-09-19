@@ -375,22 +375,12 @@ class _ChallengeCarousel extends StatelessWidget {
       Selector<ChampionshipModel, _ChampionshipCardVm>(
         selector: (_, model) => _ChampionshipCardVm.fromModel(model),
         builder: (context, vm, _) {
-          final subtitle = l10n.championshipScore(vm.score);
-          final secondaryLine = vm.isTop
-              ? l10n.rankLabel(vm.rank)
-              : l10n.rankBadgeChasing(vm.rank, vm.deltaToNext, vm.rank - 1);
-          return _ChallengeCard(
+          return _ChampionshipCard(
             key: const ValueKey('challenge-card-championship'),
-            data: _ChallengeCardData(
-              title: l10n.championshipTitle,
-              subtitle: subtitle,
-              secondaryLine: secondaryLine,
-              buttonLabel: l10n.playAction,
-              gradient: colors.championshipChallengeGradient,
-              icon: Icons.workspace_premium_outlined,
-              onPressed: () => Navigator.pushNamed(context, '/championship'),
-              badge: '2G',
-            ),
+            score: vm.score,
+            gradient: colors.championshipChallengeGradient,
+            icon: Icons.workspace_premium_outlined,
+            badge: '2G',
           );
         },
       ),
@@ -532,57 +522,186 @@ class _ChallengeCard extends StatelessWidget {
             ],
           ),
           const Spacer(),
-        Text(
-          data.title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: onPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          data.subtitle,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: onPrimary.withOpacity(0.7),
-            fontSize: 14,
-          ),
-        ),
-        if (data.secondaryLine != null) ...[
-          const SizedBox(height: 2),
           Text(
-            data.secondaryLine!,
+            data.title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: onPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            data.subtitle,
             style: theme.textTheme.bodySmall?.copyWith(
-                  color: onPrimary.withOpacity(0.85),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ) ??
-                TextStyle(
-                  color: onPrimary.withOpacity(0.85),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+              color: onPrimary.withOpacity(0.7),
+              fontSize: 14,
+            ),
+          ),
+          if (data.secondaryLine != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              data.secondaryLine!,
+              style: theme.textTheme.bodySmall?.copyWith(
+                    color: onPrimary.withOpacity(0.85),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ) ??
+                  TextStyle(
+                    color: onPrimary.withOpacity(0.85),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 40,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: onPrimary,
+                foregroundColor: data.gradient.colors.last,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18)),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+              ),
+              onPressed: data.onPressed,
+              child: Text(
+                data.buttonLabel,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
           ),
         ],
-        const SizedBox(height: 18),
-        SizedBox(
-          height: 40,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: onPrimary,
-              foregroundColor: data.gradient.colors.last,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(18)),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-            ),
-            onPressed: data.onPressed,
-            child: Text(
-              data.buttonLabel,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+class _ChampionshipCard extends StatelessWidget {
+  const _ChampionshipCard({
+    Key? key,
+    required this.score,
+    required this.gradient,
+    required this.icon,
+    this.badge,
+  }) : super(key: key);
+
+  final int score;
+  final LinearGradient gradient;
+  final IconData icon;
+  final String? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final onPrimary = cs.onPrimary;
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(28)),
+        gradient: gradient,
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor,
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: onPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: gradient.colors.last,
+                        size: 22,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (badge != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: onPrimary.withOpacity(0.18),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30)),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: TextStyle(
+                            color: onPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  l10n.championshipTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.championshipScore(score),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                        color: onPrimary.withOpacity(0.7),
+                        fontSize: 14,
+                      ),
+                ),
+              ],
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: SizedBox(
+              height: 40,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: onPrimary,
+                  foregroundColor: gradient.colors.last,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/championship');
+                },
+                child: Text(
+                  l10n.play,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -592,23 +711,13 @@ class _ChallengeCard extends StatelessWidget {
 class _ChampionshipCardVm {
   const _ChampionshipCardVm({
     required this.score,
-    required this.rank,
-    required this.deltaToNext,
-    required this.isTop,
   });
 
   final int score;
-  final int rank;
-  final int deltaToNext;
-  final bool isTop;
 
   factory _ChampionshipCardVm.fromModel(ChampionshipModel model) {
-    final progress = model.nextProgress();
     return _ChampionshipCardVm(
       score: model.myScore,
-      rank: progress.rank,
-      deltaToNext: progress.deltaToNext,
-      isTop: progress.isTop,
     );
   }
 
@@ -617,15 +726,11 @@ class _ChampionshipCardVm {
     if (identical(this, other)) {
       return true;
     }
-    return other is _ChampionshipCardVm &&
-        other.score == score &&
-        other.rank == rank &&
-        other.deltaToNext == deltaToNext &&
-        other.isTop == isTop;
+    return other is _ChampionshipCardVm && other.score == score;
   }
 
   @override
-  int get hashCode => Object.hash(score, rank, deltaToNext, isTop);
+  int get hashCode => score.hashCode;
 }
 
 class _DailyChain extends StatelessWidget {
