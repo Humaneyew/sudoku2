@@ -389,7 +389,7 @@ class _ChallengeCarousel extends StatelessWidget {
         data: _ChallengeCardData(
           title: l10n.battleTitle,
           subtitle: l10n.battleWinRate(battleWinRate),
-          buttonLabel: l10n.startAction,
+          buttonLabel: l10n.playAction,
           gradient: colors.battleChallengeGradient,
           icon: Icons.sports_esports_outlined,
           onPressed: () {},
@@ -529,6 +529,8 @@ class _ChallengeCard extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
@@ -537,6 +539,8 @@ class _ChallengeCard extends StatelessWidget {
               color: onPrimary.withOpacity(0.7),
               fontSize: 14,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           if (data.secondaryLine != null) ...[
             const SizedBox(height: 2),
@@ -662,6 +666,8 @@ class _ChampionshipCard extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
@@ -670,6 +676,8 @@ class _ChampionshipCard extends StatelessWidget {
                   color: onPrimary.withOpacity(0.7),
                   fontSize: 14,
                 ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 18),
           SizedBox(

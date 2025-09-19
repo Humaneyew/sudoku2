@@ -88,7 +88,7 @@ abstract class AppLocalizations {
 
   String get battleTitle;
 
-  String battleWinRate(int percent);
+  String battleWinRate(int count);
 
   String get startAction;
 
@@ -432,8 +432,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get battleTitle => "Duell";
 
   @override
-  String battleWinRate(int percent) {
-    return "Siegquote ${percent}%";
+  String battleWinRate(int count) {
+    return "Siege ${count}";
   }
 
   @override
@@ -859,8 +859,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get battleTitle => "Battle";
 
   @override
-  String battleWinRate(int percent) {
-    return "Win rate ${percent}%";
+  String battleWinRate(int count) {
+    return "Wins ${count}";
   }
 
   @override
@@ -1270,8 +1270,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get battleTitle => "Duel";
 
   @override
-  String battleWinRate(int percent) {
-    return "Taux de victoire ${percent}%";
+  String battleWinRate(int count) {
+    return "Victoires ${count}";
   }
 
   @override
@@ -1689,8 +1689,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get battleTitle => "बैटल";
 
   @override
-  String battleWinRate(int percent) {
-    return "जीत दर ${percent}%";
+  String battleWinRate(int count) {
+    return "जीतें ${count}";
   }
 
   @override
@@ -2108,8 +2108,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get battleTitle => "Битва";
 
   @override
-  String battleWinRate(int percent) {
-    return "Процент побед ${percent}%";
+  String battleWinRate(int count) {
+    return "Побед ${count}";
   }
 
   @override
@@ -2531,8 +2531,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get battleTitle => "Битва";
 
   @override
-  String battleWinRate(int percent) {
-    return "Відсоток перемог ${percent}%";
+  String battleWinRate(int count) {
+    return "Перемог ${count}";
   }
 
   @override
@@ -2954,8 +2954,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get battleTitle => "对战";
 
   @override
-  String battleWinRate(int percent) {
-    return "胜率 ${percent}%";
+  String battleWinRate(int count) {
+    return "胜场 ${count}";
   }
 
   @override

@@ -67,10 +67,10 @@
   "bestLabel": "Bestleistung",
   "play": "Spielen",
   "battleTitle": "Duell",
-  "battleWinRate": "Siegquote {percent}%",
+  "battleWinRate": "Siege {count}",
   "@battleWinRate": {
     "placeholders": {
-      "percent": {
+      "count": {
         "type": "int"
       }
     }
