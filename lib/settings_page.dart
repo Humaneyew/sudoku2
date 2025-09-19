@@ -82,7 +82,7 @@ class SettingsPage extends StatelessWidget {
             title: Text(l10n.championshipAutoScroll),
             value: championship.autoScrollEnabled,
             onChanged: (v) => championship.setAutoScrollEnabled(v),
-            secondary: const Icon(Icons.my_location_alt),
+            secondary: const Icon(Icons.my_location),
           ),
           const Divider(height: 32),
 
