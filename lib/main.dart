@@ -27,7 +27,12 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider.value(value: appState),
         ChangeNotifierProvider<ChampionshipModel>(
-          create: (_) => ChampionshipModel()..loadFromPrefs(),
+          create: (_) {
+            final model = ChampionshipModel();
+            model.loadFromPrefs();
+            model.loadPermaLeaderboard();
+            return model;
+          },
           lazy: false,
         ),
         ChangeNotifierProvider(create: (_) => UndoAdController()),

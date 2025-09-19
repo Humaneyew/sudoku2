@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।",
   "championshipRoundCompletedLabel": "पूरा हुआ",
+  "totalScore": "कुल स्कोर: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "मैं",
+  "play": "खेलें",
   "battleTitle": "बैटल",
   "battleWinRate": "जीत दर {percent}%",
   "@battleWinRate": {

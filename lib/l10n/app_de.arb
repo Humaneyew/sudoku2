@@ -19,6 +19,16 @@
   },
   "championshipRoundDescriptionPlaceholder": "Spiele diese Runde, um deinen Meisterschaftslauf zu stärken.",
   "championshipRoundCompletedLabel": "Abgeschlossen",
+  "totalScore": "Gesamtpunktzahl: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "Ich",
+  "play": "Spielen",
   "battleTitle": "Duell",
   "battleWinRate": "Siegquote {percent}%",
   "@battleWinRate": {

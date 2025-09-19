@@ -66,6 +66,12 @@ abstract class AppLocalizations {
 
   String get championshipRoundCompletedLabel;
 
+  String totalScore(String score);
+
+  String get meLabel;
+
+  String get play;
+
   String get battleTitle;
 
   String battleWinRate(int percent);
@@ -349,6 +355,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get championshipRoundCompletedLabel => "Abgeschlossen";
+
+  @override
+  String totalScore(String score) {
+    return "Gesamtpunktzahl: ${score}";
+  }
+
+  @override
+  String get meLabel => "Ich";
+
+  @override
+  String get play => "Spielen";
 
   @override
   String get battleTitle => "Duell";
@@ -700,6 +717,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get championshipRoundCompletedLabel => "Completed";
 
   @override
+  String totalScore(String score) {
+    return "Total score: ${score}";
+  }
+
+  @override
+  String get meLabel => "Me";
+
+  @override
+  String get play => "Play";
+
+  @override
   String get battleTitle => "Battle";
 
   @override
@@ -1047,6 +1075,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get championshipRoundCompletedLabel => "Terminé";
+
+  @override
+  String totalScore(String score) {
+    return "Score total : ${score}";
+  }
+
+  @override
+  String get meLabel => "Moi";
+
+  @override
+  String get play => "Jouer";
 
   @override
   String get battleTitle => "Duel";
@@ -1398,6 +1437,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get championshipRoundCompletedLabel => "पूरा हुआ";
 
   @override
+  String totalScore(String score) {
+    return "कुल स्कोर: ${score}";
+  }
+
+  @override
+  String get meLabel => "मैं";
+
+  @override
+  String get play => "खेलें";
+
+  @override
   String get battleTitle => "बैटल";
 
   @override
@@ -1745,6 +1795,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get championshipRoundCompletedLabel => "Завершено";
+
+  @override
+  String totalScore(String score) {
+    return "Общий счёт: ${score}";
+  }
+
+  @override
+  String get meLabel => "Я";
+
+  @override
+  String get play => "Играть";
 
   @override
   String get battleTitle => "Битва";
@@ -2100,6 +2161,17 @@ class AppLocalizationsUk extends AppLocalizations {
   String get championshipRoundCompletedLabel => "Завершено";
 
   @override
+  String totalScore(String score) {
+    return "Загальний рахунок: ${score}";
+  }
+
+  @override
+  String get meLabel => "Я";
+
+  @override
+  String get play => "Грати";
+
+  @override
   String get battleTitle => "Битва";
 
   @override
@@ -2451,6 +2523,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get championshipRoundCompletedLabel => "已完成";
+
+  @override
+  String totalScore(String score) {
+    return "总得分：${score}";
+  }
+
+  @override
+  String get meLabel => "我";
+
+  @override
+  String get play => "游玩";
 
   @override
   String get battleTitle => "对战";

@@ -1,12 +1,50 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models.dart';
 
 enum ChampionshipRoundStatus { notStarted, inProgress, completed }
+
+class Opponent {
+  final String id;
+  final String name;
+  final int score;
+
+  const Opponent({required this.id, required this.name, required this.score});
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'score': score,
+      };
+
+  factory Opponent.fromJson(Map<String, dynamic> json) => Opponent(
+        id: json['id'] as String? ?? '',
+        name: json['name'] as String? ?? '',
+        score: (json['score'] as num?)?.toInt() ?? 0,
+      );
+}
+
+class Leaderboard {
+  final List<Opponent> opponents;
+  final DateTime generatedAt;
+
+  Leaderboard({
+    required List<Opponent> opponents,
+    required DateTime generatedAt,
+  })  : opponents = List<Opponent>.unmodifiable(opponents),
+        generatedAt = generatedAt.toUtc();
+
+  Map<String, dynamic> toJson() => {
+        'generatedAt': generatedAt.toIso8601String(),
+        'opponents': opponents.map((o) => o.toJson()).toList(),
+      };
+}
 
 class ChampionshipRound {
   final Difficulty difficulty;
@@ -123,13 +161,66 @@ class ChampionshipModel extends ChangeNotifier {
         );
 
   static const _prefsKey = 'championship.session.v1';
+  static const _myScoreKey = 'champ.perma.myScore.v1';
+  static const _installSeedKey = 'champ.perma.installSeed.v1';
+  static const _opponentsKey = 'champ.perma.opponents.v1';
+  static const int _opponentsCount = 100;
+
+  static const Map<Difficulty, int> _baseScoreByDifficulty = {
+    Difficulty.novice: 60,
+    Difficulty.medium: 140,
+    Difficulty.high: 260,
+    Difficulty.expert: 420,
+    Difficulty.master: 600,
+  };
+  static const List<String> _fallbackNames = [
+    'Alex',
+    'Sam',
+    'Lee',
+    'Max',
+    'Mia',
+    'Noah',
+  ];
+  static List<String>? _cachedNames;
 
   ChampionshipState _state;
+  int _myScore = 0;
+  Leaderboard _leaderboard = Leaderboard(
+    opponents: const <Opponent>[],
+    generatedAt: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+  );
 
   String get sessionId => _state.sessionId;
 
   List<ChampionshipRound> get rounds =>
       List<ChampionshipRound>.unmodifiable(_state.rounds);
+
+  int get myScore => _myScore;
+
+  Leaderboard get leaderboard => _leaderboard;
+
+  int get myRank {
+    final opponents = _leaderboard.opponents;
+    if (opponents.isEmpty) {
+      return 1;
+    }
+    final index = _insertionIndex(opponents, _myScore);
+    return index + 1;
+  }
+
+  int _insertionIndex(List<Opponent> opponents, int score) {
+    var low = 0;
+    var high = opponents.length;
+    while (low < high) {
+      final mid = low + ((high - low) >> 1);
+      if (score >= opponents[mid].score) {
+        high = mid;
+      } else {
+        low = mid + 1;
+      }
+    }
+    return low;
+  }
 
   Future<void> loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -163,6 +254,58 @@ class ChampionshipModel extends ChangeNotifier {
       unawaited(saveToPrefs());
       notifyListeners();
     }
+  }
+
+  Future<void> loadPermaLeaderboard() async {
+    final prefs = await SharedPreferences.getInstance();
+    _myScore = prefs.getInt(_myScoreKey) ?? 0;
+
+    Leaderboard? board;
+    final stored = prefs.getString(_opponentsKey);
+    if (stored != null) {
+      board = _decodeLeaderboard(stored);
+    }
+    board ??= await _generateLeaderboard(prefs);
+
+    _leaderboard = board;
+    notifyListeners();
+  }
+
+  Future<void> saveMyScore() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_myScoreKey, _myScore);
+  }
+
+  Future<int> awardScoreForGame({
+    required Difficulty difficulty,
+    required int timeMs,
+    required int mistakes,
+    required int hints,
+    bool isDailyChallenge = false,
+  }) async {
+    final base = _baseScoreByDifficulty[difficulty] ?? 60;
+    final normalizedTime = timeMs < 0 ? 0 : timeMs;
+    final normalizedMistakes = math.max(0, mistakes);
+    final normalizedHints = math.max(0, hints);
+    final timePenalty = (normalizedTime ~/ 30000) * 5;
+    final mistakesPenalty = normalizedMistakes * 20;
+    final hintsPenalty = normalizedHints * 30;
+    final flawlessBonus =
+        (normalizedMistakes == 0 && normalizedHints == 0) ? 50 : 0;
+    final dailyBonus = isDailyChallenge ? 30 : 0;
+
+    var delta =
+        base + flawlessBonus + dailyBonus - timePenalty - mistakesPenalty - hintsPenalty;
+    if (delta < 10) {
+      delta = 10;
+    } else if (delta > 800) {
+      delta = 800;
+    }
+
+    _myScore += delta;
+    await saveMyScore();
+    notifyListeners();
+    return delta;
   }
 
   Future<void> saveToPrefs() async {
@@ -220,6 +363,141 @@ class ChampionshipModel extends ChangeNotifier {
     }
     notifyListeners();
     unawaited(saveToPrefs());
+  }
+
+  Leaderboard? _decodeLeaderboard(String source) {
+    try {
+      final decoded = jsonDecode(source);
+      final map = decoded is Map<String, dynamic>
+          ? decoded
+          : decoded is Map
+              ? Map<String, dynamic>.from(decoded as Map)
+              : null;
+      if (map == null) {
+        return null;
+      }
+      final generatedAtString = map['generatedAt'] as String?;
+      final generatedAt = generatedAtString != null
+          ? DateTime.tryParse(generatedAtString)?.toUtc()
+          : null;
+      final opponentsValue = map['opponents'];
+      if (opponentsValue is! List) {
+        return null;
+      }
+      final opponents = <Opponent>[];
+      for (final entry in opponentsValue) {
+        if (entry is Map<String, dynamic>) {
+          opponents.add(Opponent.fromJson(entry));
+        } else if (entry is Map) {
+          opponents.add(
+            Opponent.fromJson(Map<String, dynamic>.from(entry as Map)),
+          );
+        }
+      }
+      if (opponents.isEmpty) {
+        return null;
+      }
+      opponents.sort((a, b) => b.score.compareTo(a.score));
+      return Leaderboard(
+        opponents: opponents,
+        generatedAt: generatedAt ?? DateTime.now().toUtc(),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<Leaderboard> _generateLeaderboard(SharedPreferences prefs) async {
+    final seed = await _ensureInstallSeed(prefs);
+    final rng = math.Random(seed);
+    final names = await _loadNames();
+    final pool = names.isEmpty
+        ? List<String>.from(_fallbackNames)
+        : List<String>.from(names);
+    if (pool.isEmpty) {
+      pool.addAll(_fallbackNames);
+    }
+    pool.shuffle(rng);
+
+    final usage = <String, int>{};
+    final generatedNames = <String>[];
+    for (var i = 0; i < _opponentsCount; i++) {
+      final base = pool[i % pool.length];
+      final count = (usage[base] ?? 0) + 1;
+      usage[base] = count;
+      generatedNames.add(count == 1 ? base : '$base #$count');
+    }
+
+    final scores = List<int>.generate(_opponentsCount, (_) => _generateScore(rng))
+      ..sort((a, b) => b.compareTo(a));
+
+    final opponents = <Opponent>[
+      for (var i = 0; i < _opponentsCount; i++)
+        Opponent(
+          id: 'o${i + 1}',
+          name: generatedNames[i],
+          score: scores[i],
+        ),
+    ];
+
+    final board = Leaderboard(
+      opponents: opponents,
+      generatedAt: DateTime.now().toUtc(),
+    );
+    await prefs.setString(_opponentsKey, jsonEncode(board.toJson()));
+    return board;
+  }
+
+  Future<int> _ensureInstallSeed(SharedPreferences prefs) async {
+    final stored = prefs.getInt(_installSeedKey);
+    if (stored != null) {
+      return stored;
+    }
+    final random = math.Random();
+    final seed = (random.nextInt(1 << 16) << 16) | random.nextInt(1 << 16);
+    await prefs.setInt(_installSeedKey, seed);
+    return seed;
+  }
+
+  Future<List<String>> _loadNames() async {
+    final cached = _cachedNames;
+    if (cached != null && cached.isNotEmpty) {
+      return List<String>.from(cached);
+    }
+    try {
+      final raw = await rootBundle.loadString('assets/data/names.json');
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        final result = <String>[];
+        for (final entry in decoded) {
+          if (entry is String) {
+            final trimmed = entry.trim();
+            if (trimmed.isNotEmpty) {
+              result.add(trimmed);
+            }
+          }
+        }
+        if (result.isNotEmpty) {
+          _cachedNames = List<String>.unmodifiable(result);
+          return List<String>.from(result);
+        }
+      }
+    } catch (_) {}
+    return List<String>.from(_fallbackNames);
+  }
+
+  int _generateScore(math.Random rng) {
+    const mean = 6000.0;
+    const stdDev = 1800.0;
+    var u1 = rng.nextDouble();
+    if (u1 <= 0) {
+      u1 = 1e-10;
+    }
+    final u2 = rng.nextDouble();
+    final gaussian = math.sqrt(-2.0 * math.log(u1)) * math.cos(2 * math.pi * u2);
+    final value = mean + stdDev * gaussian;
+    final clamped = value.clamp(1000.0, 15000.0);
+    return clamped.round();
   }
 }
 
