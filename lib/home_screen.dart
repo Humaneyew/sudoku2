@@ -369,7 +369,19 @@ class _ChallengeCarousel extends StatelessWidget {
     const cardSpacing = 16.0;
     const cardHeight = 196.0;
     final availableWidth = screenWidth - horizontalPadding * 2;
-    final cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
+
+    final showTwoCards = screenWidth < 600;
+    final double cardWidth;
+    if (showTwoCards) {
+      final widthForTwoCards = availableWidth - cardSpacing;
+      if (widthForTwoCards > 0) {
+        cardWidth = widthForTwoCards / 2;
+      } else {
+        cardWidth = availableWidth > 0 ? availableWidth : 0;
+      }
+    } else {
+      cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
+    }
 
     return SizedBox(
       height: cardHeight,
