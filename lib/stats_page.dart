@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
+
+const BorderRadius _statsSectionRadius = BorderRadius.all(Radius.circular(28));
+const BorderRadius _statIconRadius = BorderRadius.all(Radius.circular(16));
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -46,8 +50,6 @@ class _StatsTabState extends State<StatsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final app = context.watch<AppState>();
-    final stats = app.statsFor(_selected);
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final primary = cs.primary;
@@ -58,6 +60,19 @@ class _StatsTabState extends State<StatsTab>
     final averageTimeAccent = blend(cs.primary, cs.onSurface, 0.4);
     final currentStreakAccent = blend(cs.error, cs.secondary, 0.35);
     final l10n = AppLocalizations.of(context)!;
+    final numberFormatter = NumberFormat.decimalPattern(l10n.localeName);
+    final stats = context.select<AppState, _DifficultyStatsView>((app) {
+      final data = app.statsFor(_selected);
+      return _DifficultyStatsView.from(data);
+    });
+    final gamesStartedText = _formatStatNumber(numberFormatter, stats.gamesStarted);
+    final gamesWonText = _formatStatNumber(numberFormatter, stats.gamesWon);
+    final flawlessWinsText =
+        _formatStatNumber(numberFormatter, stats.flawlessWins);
+    final currentStreakText =
+        _formatStatNumber(numberFormatter, stats.currentStreak);
+    final bestStreakText =
+        _formatStatNumber(numberFormatter, stats.bestStreak);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -83,13 +98,13 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.play_circle_outline,
                 color: primary,
                 label: l10n.statsGamesStarted,
-                value: stats.gamesStarted.toString(),
+                value: gamesStartedText,
               ),
               _StatRowData(
                 icon: Icons.emoji_events_outlined,
                 color: winsAccent,
                 label: l10n.statsGamesWon,
-                value: stats.gamesWon.toString(),
+                value: gamesWonText,
               ),
               _StatRowData(
                 icon: Icons.pie_chart_outline,
@@ -101,7 +116,7 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.shield_moon_outlined,
                 color: flawlessAccent,
                 label: l10n.statsFlawless,
-                value: stats.flawlessWins.toString(),
+                value: flawlessWinsText,
               ),
             ],
           ),
@@ -131,13 +146,13 @@ class _StatsTabState extends State<StatsTab>
                 icon: Icons.bolt_outlined,
                 color: currentStreakAccent,
                 label: l10n.statsCurrentStreak,
-                value: stats.currentStreak.toString(),
+                value: currentStreakText,
               ),
               _StatRowData(
                 icon: Icons.auto_graph_outlined,
                 color: winsAccent,
                 label: l10n.statsBestStreak,
-                value: stats.bestStreak.toString(),
+                value: bestStreakText,
               ),
             ],
           ),
@@ -145,6 +160,71 @@ class _StatsTabState extends State<StatsTab>
       ),
     );
   }
+}
+
+String _formatStatNumber(NumberFormat formatter, int value) {
+  return formatter.format(value);
+}
+
+class _DifficultyStatsView {
+  final int gamesStarted;
+  final int gamesWon;
+  final int flawlessWins;
+  final String winRateText;
+  final String bestTimeText;
+  final String averageTimeText;
+  final int currentStreak;
+  final int bestStreak;
+
+  const _DifficultyStatsView({
+    required this.gamesStarted,
+    required this.gamesWon,
+    required this.flawlessWins,
+    required this.winRateText,
+    required this.bestTimeText,
+    required this.averageTimeText,
+    required this.currentStreak,
+    required this.bestStreak,
+  });
+
+  factory _DifficultyStatsView.from(DifficultyStats stats) {
+    return _DifficultyStatsView(
+      gamesStarted: stats.gamesStarted,
+      gamesWon: stats.gamesWon,
+      flawlessWins: stats.flawlessWins,
+      winRateText: stats.winRateText,
+      bestTimeText: stats.bestTimeText,
+      averageTimeText: stats.averageTimeText,
+      currentStreak: stats.currentStreak,
+      bestStreak: stats.bestStreak,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is _DifficultyStatsView &&
+            other.gamesStarted == gamesStarted &&
+            other.gamesWon == gamesWon &&
+            other.flawlessWins == flawlessWins &&
+            other.winRateText == winRateText &&
+            other.bestTimeText == bestTimeText &&
+            other.averageTimeText == averageTimeText &&
+            other.currentStreak == currentStreak &&
+            other.bestStreak == bestStreak;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        gamesStarted,
+        gamesWon,
+        flawlessWins,
+        winRateText,
+        bestTimeText,
+        averageTimeText,
+        currentStreak,
+        bestStreak,
+      );
 }
 
 class _DifficultySelector extends StatelessWidget {
@@ -206,7 +286,7 @@ class _StatsSection extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: const BorderRadius.all(Radius.circular(28)),
+        borderRadius: _statsSectionRadius,
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
@@ -226,20 +306,22 @@ class _StatsSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          for (var i = 0; i < rows.length; i++) ...[
-            _StatRow(
-              key: ValueKey('stats-row-${rows[i].label}'),
-              data: rows[i],
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) => _StatRow(
+              key: ValueKey('stats-row-${rows[index].label}'),
+              data: rows[index],
             ),
-            if (i != rows.length - 1)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Divider(
-                  height: 1,
-                  color: cs.outlineVariant,
-                ),
+            separatorBuilder: (context, _) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Divider(
+                height: 1,
+                color: cs.outlineVariant,
               ),
-          ],
+            ),
+            itemCount: rows.length,
+          ),
         ],
       ),
     );
@@ -276,7 +358,7 @@ class _StatRow extends StatelessWidget {
           height: 46,
           decoration: BoxDecoration(
             color: data.color.withOpacity(0.12),
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            borderRadius: _statIconRadius,
           ),
           child: Icon(data.icon, color: data.color),
         ),
