@@ -377,7 +377,7 @@ class _ChallengeCarousel extends StatelessWidget {
         buttonLabel: l10n.playAction,
         gradient: colors.championshipChallengeGradient,
         icon: Icons.workspace_premium_outlined,
-        onPressed: () {},
+        onPressed: () => Navigator.pushNamed(context, '/championship'),
         badge: '2G',
       ),
       _ChallengeCardData(

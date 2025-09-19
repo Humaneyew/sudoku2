@@ -62,6 +62,8 @@ abstract class AppLocalizations {
 
   String championshipScore(int score);
 
+  String get championshipRoundDescriptionPlaceholder;
+
   String get battleTitle;
 
   String battleWinRate(int percent);
@@ -339,6 +341,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String championshipScore(int score) {
     return "Punktestand ${score}";
   }
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Spiele diese Runde, um deinen Meisterschaftslauf zu stärken.";
 
   @override
   String get battleTitle => "Duell";
@@ -684,6 +689,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get championshipRoundDescriptionPlaceholder => "Play this round to boost your championship run.";
+
+  @override
   String get battleTitle => "Battle";
 
   @override
@@ -1025,6 +1033,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String championshipScore(int score) {
     return "Score ${score}";
   }
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Jouez cette manche pour booster votre parcours au championnat.";
 
   @override
   String get battleTitle => "Duel";
@@ -1370,6 +1381,9 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get championshipRoundDescriptionPlaceholder => "इस राउंड को खेलें और अपने चैम्पियनशिप सफर को आगे बढ़ाएँ।";
+
+  @override
   String get battleTitle => "बैटल";
 
   @override
@@ -1711,6 +1725,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String championshipScore(int score) {
     return "Счёт ${score}";
   }
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Сыграйте в этом раунде, чтобы продвинуться в чемпионате.";
 
   @override
   String get battleTitle => "Битва";
@@ -2060,6 +2077,9 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get championshipRoundDescriptionPlaceholder => "Зіграйте в цьому раунді, щоб просунутися в чемпіонаті.";
+
+  @override
   String get battleTitle => "Битва";
 
   @override
@@ -2405,6 +2425,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String championshipScore(int score) {
     return "得分 ${score}";
   }
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "进行这一轮，推动你的锦标赛征程。";
 
   @override
   String get battleTitle => "对战";

@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'championship/championship_page.dart';
 import 'home_screen.dart';
 import 'models.dart';
 import 'theme.dart';
@@ -61,6 +62,9 @@ class SudokuApp extends StatelessWidget {
           data: media.copyWith(textScaleFactor: app.fontScale),
           child: child ?? const SizedBox.shrink(),
         );
+      },
+      routes: {
+        '/championship': (context) => const ChampionshipPage(),
       },
       home: const HomeScreen(),
     );

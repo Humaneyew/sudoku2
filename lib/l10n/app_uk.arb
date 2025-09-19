@@ -17,6 +17,7 @@
       }
     }
   },
+  "championshipRoundDescriptionPlaceholder": "Зіграйте в цьому раунді, щоб просунутися в чемпіонаті.",
   "battleTitle": "Битва",
   "battleWinRate": "Відсоток перемог {percent}%",
   "@battleWinRate": {

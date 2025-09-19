@@ -17,6 +17,7 @@
       }
     }
   },
+  "championshipRoundDescriptionPlaceholder": "Jouez cette manche pour booster votre parcours au championnat.",
   "battleTitle": "Duel",
   "battleWinRate": "Taux de victoire {percent}%",
   "@battleWinRate": {
