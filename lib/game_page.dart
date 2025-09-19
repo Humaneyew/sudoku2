@@ -120,7 +120,11 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
           children: [
             _GameHeader(
               elapsed: _elapsedVN,
-              onBack: () => Navigator.pop(context),
+              onBack: () {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
               onRestart: () {
                 app.restartCurrentPuzzle();
                 app.current?.elapsedMs = 0;
@@ -245,8 +249,12 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                       Expanded(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            if (!context.mounted) {
+                              return;
+                            }
+                            final navigator = Navigator.of(context);
+                            navigator.pop();
+                            navigator.pop();
                           },
                           child: Text(l10n.backToHome),
                         ),
@@ -255,6 +263,9 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
+                            if (!context.mounted) {
+                              return;
+                            }
                             Navigator.pop(context);
                             final diff = app.currentDifficulty ??
                                 app.featuredStatsDifficulty;
@@ -355,7 +366,11 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context, true),
+                      onPressed: () {
+                        if (context.mounted) {
+                          Navigator.pop(context, true);
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.error,
                         foregroundColor: theme.colorScheme.onError,
@@ -368,7 +383,11 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.pop(context, false),
+                    onPressed: () {
+                      if (context.mounted) {
+                        Navigator.pop(context, false);
+                      }
+                    },
                     child: Text(l10n.cancelAction),
                   ),
                 ],
@@ -387,7 +406,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     } else {
       app.registerFailure();
       app.abandonGame();
-      if (mounted) {
+      if (context.mounted) {
         Navigator.pop(context);
       }
     }

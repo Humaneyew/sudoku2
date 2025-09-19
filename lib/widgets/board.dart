@@ -63,6 +63,7 @@ class Board extends StatelessWidget {
                           !given && value != 0 && !app.isMoveValid(index, value);
 
                       return _BoardCell(
+                        key: ValueKey('board-cell-$index'),
                         index: index,
                         value: value,
                         notes: notes,
@@ -95,6 +96,7 @@ class _BoardCell extends StatelessWidget {
   final VoidCallback onTap;
 
   const _BoardCell({
+    super.key,
     required this.index,
     required this.value,
     required this.notes,

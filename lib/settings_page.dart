@@ -26,6 +26,7 @@ class SettingsPage extends StatelessWidget {
         children: [
           _sectionTitle(l10n.themeSectionTitle),
           ListTile(
+            key: const ValueKey('settings-theme'),
             leading: const Icon(Icons.palette_outlined),
             title: Text(app.resolvedThemeName(l10n)),
             trailing: const Icon(Icons.chevron_right),
@@ -51,18 +52,21 @@ class SettingsPage extends StatelessWidget {
 
           _sectionTitle(l10n.audioSectionTitle),
           SwitchListTile(
+            key: const ValueKey('settings-sounds'),
             title: Text(l10n.soundsEffectsLabel),
             value: app.soundsEnabled,
             onChanged: (v) => app.toggleSounds(v),
             secondary: const Icon(Icons.volume_up),
           ),
           SwitchListTile(
+            key: const ValueKey('settings-vibration'),
             title: Text(l10n.vibrationLabel),
             value: app.vibrationEnabled,
             onChanged: (v) => app.toggleVibration(v),
             secondary: const Icon(Icons.vibration),
           ),
           SwitchListTile(
+            key: const ValueKey('settings-music'),
             title: Text(l10n.musicLabel),
             value: app.musicEnabled,
             onChanged: (v) => app.toggleMusic(v),
@@ -72,6 +76,7 @@ class SettingsPage extends StatelessWidget {
 
           _sectionTitle(l10n.miscSectionTitle),
           ListTile(
+            key: const ValueKey('settings-about'),
             leading: const Icon(Icons.info_outline),
             title: Text(l10n.aboutApp),
             subtitle: Text(l10n.versionLabel(_appVersion)),

@@ -167,6 +167,7 @@ class _DifficultySelector extends StatelessWidget {
       children: [
         for (final diff in Difficulty.values)
           ChoiceChip(
+            key: ValueKey('stats-diff-${diff.name}'),
             label: Text(diff.title(l10n)),
             selected: diff == selected,
             onSelected: (_) => onChanged(diff),
@@ -226,7 +227,10 @@ class _StatsSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           for (var i = 0; i < rows.length; i++) ...[
-            _StatRow(data: rows[i]),
+            _StatRow(
+              key: ValueKey('stats-row-${rows[i].label}'),
+              data: rows[i],
+            ),
             if (i != rows.length - 1)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -259,7 +263,7 @@ class _StatRowData {
 class _StatRow extends StatelessWidget {
   final _StatRowData data;
 
-  const _StatRow({required this.data});
+  const _StatRow({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
