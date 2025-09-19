@@ -50,6 +50,7 @@ class _ThemeDialog extends StatelessWidget {
                   children: [
                     for (final option in themeOptions)
                       _ThemeCircle(
+                        key: ValueKey('theme-${option.name}'),
                         option: option,
                         active: option == activeTheme,
                         onTap: () => app.setTheme(option),
@@ -111,6 +112,7 @@ class _ThemeCircle extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ThemeCircle({
+    super.key,
     required this.option,
     required this.active,
     required this.onTap,

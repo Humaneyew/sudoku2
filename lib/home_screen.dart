@@ -211,7 +211,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                       rankLabel: sheetL10n.rankLabel(stats.rank),
                       progress: stats.progressText,
                       isActive: diff == selected,
-                      onTap: () => Navigator.pop(context, diff),
+                      onTap: () {
+                        if (context.mounted) {
+                          Navigator.pop(context, diff);
+                        }
+                      },
                     ),
                   );
                 }),
@@ -375,6 +379,7 @@ class _ChallengeCarousel extends StatelessWidget {
         clipBehavior: Clip.none,
         itemBuilder: (context, index) {
           return SizedBox(
+            key: ValueKey('challenge-card-$index'),
             width: cardWidth,
             child: _ChallengeCard(data: cards[index]),
           );
@@ -468,8 +473,8 @@ class _ChallengeCard extends StatelessWidget {
                   ),
                 ),
             ],
-        ),
-        const Spacer(),
+          ),
+          const Spacer(),
         Text(
           data.title,
           style: theme.textTheme.titleMedium?.copyWith(
@@ -1107,6 +1112,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               final label =
                                   weekdayFormatter.format(DateTime(2020, 1, 6 + index));
                               return Expanded(
+                                key: ValueKey('weekday-$index'),
                                 child: Center(
                                   child: Text(
                                     label.toUpperCase(),
@@ -1144,6 +1150,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               return AspectRatio(
                                 aspectRatio: 1,
                                 child: _CalendarDayButton(
+                                  key: ValueKey('calendar-${date.toIso8601String()}'),
                                   date: date,
                                   selected: currentSelected != null &&
                                       DateUtils.isSameDay(currentSelected, date),
@@ -1210,6 +1217,7 @@ class _CalendarDayButton extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _CalendarDayButton({
+    super.key,
     required this.date,
     required this.selected,
     required this.today,

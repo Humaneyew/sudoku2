@@ -524,106 +524,110 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
   ),
 };
 
+final Map<SudokuTheme, ThemeData> _themeCache = {};
+
 ThemeData buildSudokuTheme(SudokuTheme theme) {
-  final config = _themeConfigs[theme]!;
-  final scheme = ColorScheme.fromSeed(
-    seedColor: config.primary,
-    brightness: config.brightness,
-  ).copyWith(
-    primary: config.primary,
-    onPrimary: config.onPrimary,
-    secondary: config.secondary,
-    onSecondary: config.onSecondary,
-    tertiary: config.primary,
-    onTertiary: config.onPrimary,
-    background: config.background,
-    onBackground: config.onSurface,
-    surface: config.surface,
-    onSurface: config.onSurface,
-    surfaceVariant: Color.alphaBlend(
-      config.onSurface.withOpacity(0.08),
-      config.surface,
-    ),
-    onSurfaceVariant: config.onSurface.withOpacity(0.72),
-    outline: config.outline,
-    outlineVariant: config.outlineVariant,
-    error: config.error,
-    onError: config.onError,
-    surfaceTint: Colors.transparent,
-  );
+  return _themeCache.putIfAbsent(theme, () {
+    final config = _themeConfigs[theme]!;
+    final scheme = ColorScheme.fromSeed(
+      seedColor: config.primary,
+      brightness: config.brightness,
+    ).copyWith(
+      primary: config.primary,
+      onPrimary: config.onPrimary,
+      secondary: config.secondary,
+      onSecondary: config.onSecondary,
+      tertiary: config.primary,
+      onTertiary: config.onPrimary,
+      background: config.background,
+      onBackground: config.onSurface,
+      surface: config.surface,
+      onSurface: config.onSurface,
+      surfaceVariant: Color.alphaBlend(
+        config.onSurface.withOpacity(0.08),
+        config.surface,
+      ),
+      onSurfaceVariant: config.onSurface.withOpacity(0.72),
+      outline: config.outline,
+      outlineVariant: config.outlineVariant,
+      error: config.error,
+      onError: config.onError,
+      surfaceTint: Colors.transparent,
+    );
 
-  final base = ThemeData(
-    useMaterial3: true,
-    colorScheme: scheme,
-    brightness: config.brightness,
-    scaffoldBackgroundColor: config.background,
-    shadowColor: config.colors.shadowColor,
-  );
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      brightness: config.brightness,
+      scaffoldBackgroundColor: config.background,
+      shadowColor: config.colors.shadowColor,
+    );
 
-  return base.copyWith(
-    textTheme: base.textTheme.apply(
-      fontFamily: 'SF Pro Display',
-      bodyColor: config.onSurface,
-      displayColor: config.onSurface,
-    ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: config.surface,
-      surfaceTintColor: Colors.transparent,
-      foregroundColor: config.onSurface,
-      elevation: 0,
-      titleTextStyle: base.textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        color: config.onSurface,
+    return base.copyWith(
+      textTheme: base.textTheme.apply(
+        fontFamily: 'SF Pro Display',
+        bodyColor: config.onSurface,
+        displayColor: config.onSurface,
       ),
-    ),
-    cardColor: config.surface,
-    cardTheme: CardThemeData(
-      color: config.surface,
-      elevation: 0,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+      appBarTheme: AppBarTheme(
+        backgroundColor: config.surface,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: config.onSurface,
+        elevation: 0,
+        titleTextStyle: base.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: config.onSurface,
+        ),
       ),
-    ),
-    dialogTheme: DialogThemeData(
-      backgroundColor: config.surface,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+      cardColor: config.surface,
+      cardTheme: CardThemeData(
+        color: config.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
       ),
-    ),
-    bottomNavigationBarTheme: base.bottomNavigationBarTheme.copyWith(
-      backgroundColor: config.surface,
-      selectedItemColor: config.primary,
-      unselectedItemColor:
-          config.onSurface.withOpacity(config.brightness == Brightness.dark
-              ? 0.5
-              : 0.6),
-      showUnselectedLabels: true,
-      type: BottomNavigationBarType.fixed,
-    ),
-    switchTheme: base.switchTheme.copyWith(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return config.primary;
-        }
-        return config.onSurface.withOpacity(0.4);
-      }),
-      trackColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
-          return config.primary.withOpacity(0.35);
-        }
-        return config.onSurface.withOpacity(0.15);
-      }),
-    ),
-    sliderTheme: base.sliderTheme.copyWith(
-      activeTrackColor: config.primary,
-      inactiveTrackColor: config.onSurface.withOpacity(0.2),
-      thumbColor: config.primary,
-      overlayColor: config.primary.withOpacity(0.12),
-    ),
-    extensions: [config.colors],
-  );
+      dialogTheme: DialogThemeData(
+        backgroundColor: config.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+      ),
+      bottomNavigationBarTheme: base.bottomNavigationBarTheme.copyWith(
+        backgroundColor: config.surface,
+        selectedItemColor: config.primary,
+        unselectedItemColor:
+            config.onSurface.withOpacity(config.brightness == Brightness.dark
+                ? 0.5
+                : 0.6),
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+      ),
+      switchTheme: base.switchTheme.copyWith(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return config.primary;
+          }
+          return config.onSurface.withOpacity(0.4);
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return config.primary.withOpacity(0.35);
+          }
+          return config.onSurface.withOpacity(0.15);
+        }),
+      ),
+      sliderTheme: base.sliderTheme.copyWith(
+        activeTrackColor: config.primary,
+        inactiveTrackColor: config.onSurface.withOpacity(0.2),
+        thumbColor: config.primary,
+        overlayColor: config.primary.withOpacity(0.12),
+      ),
+      extensions: [config.colors],
+    );
+  });
 }
 
 /// Цвет, который используется для предпросмотра темы в меню выбора.
