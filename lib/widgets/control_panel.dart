@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,7 +9,6 @@ import '../theme.dart';
 import '../undo_ad_controller.dart';
 
 const BorderRadius _actionButtonRadius = BorderRadius.all(Radius.circular(20));
-const BorderRadius _numberButtonRadius = BorderRadius.all(Radius.circular(18));
 const BorderRadius _actionBadgeRadius = BorderRadius.all(Radius.circular(12));
 
 class ControlPanel extends StatelessWidget {
@@ -348,7 +349,12 @@ class _NumberPad extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
-    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final media = MediaQuery.of(context);
+    final reduceMotion = media.disableAnimations;
+    final bool isTablet = media.size.shortestSide >= 600;
+
+    final horizontalPadding = isTablet ? 20.0 : 8.0;
+    final verticalPadding = isTablet ? 20.0 : 16.0;
 
     return Container(
       decoration: BoxDecoration(
@@ -362,19 +368,73 @@ class _NumberPad extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Row(
-        children: [
-          for (var i = 0; i < 9; i++)
-            Expanded(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxWidth = constraints.maxWidth;
+          if (maxWidth <= 0) {
+            return const SizedBox.shrink();
+          }
+
+          final double baseMinWidth = isTablet ? 56.0 : 48.0;
+          final double desiredWidth = isTablet ? 72.0 : 56.0;
+          const double minGap = 2.0;
+          const double maxGap = 12.0;
+
+          double gap = minGap;
+          double availableWidth = math.max(0.0, maxWidth - gap * 8);
+          double buttonWidth = availableWidth / 9;
+
+          if (buttonWidth >= desiredWidth) {
+            final double expandedGap =
+                ((maxWidth - desiredWidth * 9) / 8).clamp(minGap, maxGap).toDouble();
+            gap = expandedGap;
+            availableWidth = math.max(0.0, maxWidth - gap * 8);
+            buttonWidth = availableWidth / 9;
+          } else if (buttonWidth < baseMinWidth) {
+            final double tightenedGap =
+                ((maxWidth - baseMinWidth * 9) / 8).clamp(0.0, minGap).toDouble();
+            gap = math.max(0.0, tightenedGap);
+            availableWidth = math.max(0.0, maxWidth - gap * 8);
+            buttonWidth = availableWidth / 9;
+          }
+
+          final double widthScale =
+              (buttonWidth / baseMinWidth).clamp(0.9, isTablet ? 1.6 : 1.3).toDouble();
+          final double minHeight = isTablet ? 80.0 : 68.0;
+          final double heightMultiplier = isTablet ? 1.18 : 1.12;
+          final double buttonHeight =
+              math.max(minHeight, buttonWidth * heightMultiplier);
+          final double labelSpacing =
+              (buttonHeight * 0.1).clamp(4.0, 12.0).toDouble();
+
+          final children = <Widget>[];
+          for (var i = 0; i < 9; i++) {
+            children.add(SizedBox(
+              width: buttonWidth,
               child: _DigitButton(
                 number: i + 1,
                 theme: theme,
                 colors: colors,
                 reduceMotion: reduceMotion,
+                buttonHeight: buttonHeight,
+                widthScale: widthScale,
+                labelSpacing: labelSpacing,
               ),
-            ),
-        ],
+            ));
+            if (i < 8) {
+              children.add(SizedBox(width: gap));
+            }
+          }
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: children,
+          );
+        },
       ),
     );
   }
@@ -385,12 +445,18 @@ class _DigitButton extends StatelessWidget {
   final ThemeData theme;
   final SudokuColors colors;
   final bool reduceMotion;
+  final double buttonHeight;
+  final double widthScale;
+  final double labelSpacing;
 
   const _DigitButton({
     required this.number,
     required this.theme,
     required this.colors,
     required this.reduceMotion,
+    required this.buttonHeight,
+    required this.widthScale,
+    required this.labelSpacing,
   });
 
   @override
@@ -421,6 +487,9 @@ class _DigitButton extends StatelessWidget {
           notesMode: vm.notesMode,
           colors: colors,
           fontScale: vm.fontScale,
+          height: buttonHeight,
+          widthScale: widthScale,
+          labelSpacing: labelSpacing,
         );
       },
     );
@@ -441,6 +510,9 @@ class _NumberButton extends StatelessWidget {
   final bool notesMode;
   final SudokuColors colors;
   final double fontScale;
+  final double height;
+  final double widthScale;
+  final double labelSpacing;
 
   const _NumberButton({
     super.key,
@@ -457,6 +529,9 @@ class _NumberButton extends StatelessWidget {
     required this.notesMode,
     required this.colors,
     required this.fontScale,
+    required this.height,
+    required this.widthScale,
+    required this.labelSpacing,
   });
 
   @override
@@ -489,12 +564,17 @@ class _NumberButton extends StatelessWidget {
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
-    final numberFontSize = (notesMode ? 18.0 : 20.0) * fontScale;
+    final baseNumberSize = (notesMode ? 18.0 : 20.0) * fontScale;
+    final numberFontSize =
+        (baseNumberSize * widthScale).clamp(18.0, isSelected ? 34.0 : 32.0).toDouble();
     final remainingColor = !enabled
         ? colors.numberPadDisabledText
         : isHighlighted
             ? colors.numberPadRemainingHighlight
             : colors.numberPadRemaining;
+    final baseRemainingSize = 12.0 * fontScale;
+    final remainingFontSize =
+        (baseRemainingSize * math.max(1.0, widthScale * 0.9)).clamp(10.0, 18.0).toDouble();
     final shadow = isSelected
         ? [
             BoxShadow(
@@ -504,56 +584,57 @@ class _NumberButton extends StatelessWidget {
             ),
           ]
         : null;
+    final borderRadius = BorderRadius.circular(
+      math.max(18.0, math.min(24.0, height / 2.2)),
+    );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: AnimatedOpacity(
-        duration: duration,
-        opacity: enabled ? 1.0 : 0.0,
-        child: InkWell(
-          borderRadius: _numberButtonRadius,
-          onTapDown: enabled ? (_) => onHighlightStart() : null,
-          onTapCancel: enabled ? onHighlightEnd : null,
-          onTap: enabled
-              ? () {
-                  onHighlightEnd();
-                  onTap();
-                }
-              : null,
-          child: AnimatedContainer(
-            duration: duration,
-            curve: Curves.easeOut,
-            height: 64,
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: _numberButtonRadius,
-              border: Border.all(color: borderColor),
-              boxShadow: shadow,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedDefaultTextStyle(
-                  duration: duration,
-                  curve: Curves.easeOut,
-                  style: TextStyle(
-                    fontSize: numberFontSize,
-                    fontWeight: FontWeight.w700,
-                    color: textColor,
-                  ),
-                  child: Text(number.toString()),
+    return AnimatedOpacity(
+      duration: duration,
+      opacity: enabled ? 1.0 : 0.0,
+      child: InkWell(
+        borderRadius: borderRadius,
+        onTapDown: enabled ? (_) => onHighlightStart() : null,
+        onTapCancel: enabled ? onHighlightEnd : null,
+        onTap: enabled
+            ? () {
+                onHighlightEnd();
+                onTap();
+              }
+            : null,
+        child: AnimatedContainer(
+          duration: duration,
+          curve: Curves.easeOut,
+          height: height,
+          decoration: BoxDecoration(
+            color: background,
+            borderRadius: borderRadius,
+            border: Border.all(color: borderColor),
+            boxShadow: shadow,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedDefaultTextStyle(
+                duration: duration,
+                curve: Curves.easeOut,
+                style: TextStyle(
+                  fontSize: numberFontSize,
+                  fontWeight: FontWeight.w700,
+                  color: textColor,
                 ),
-                const SizedBox(height: 4),
-                AnimatedDefaultTextStyle(
-                  duration: duration,
-                  style: TextStyle(
-                    fontSize: 12 * fontScale,
-                    color: remainingColor,
-                  ),
-                  child: Text(remaining.toString()),
+                child: Text(number.toString()),
+              ),
+              SizedBox(height: labelSpacing),
+              AnimatedDefaultTextStyle(
+                duration: duration,
+                style: TextStyle(
+                  fontSize: remainingFontSize,
+                  color: remainingColor,
                 ),
-              ],
-            ),
+                child: Text(remaining.toString()),
+              ),
+            ],
           ),
         ),
       ),
