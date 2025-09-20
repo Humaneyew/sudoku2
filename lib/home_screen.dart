@@ -216,7 +216,8 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                       key: ValueKey(_difficultyKey(diff)),
                       title: diff.title(sheetL10n),
                       rankLabel: sheetL10n.rankLabel(stats.rank),
-                      progress: stats.progressText,
+                      progressCurrent: stats.progressCurrent,
+                      progressTarget: stats.progressTarget,
                       isActive: diff == selected,
                       onTap: () {
                         if (context.mounted) {
@@ -906,7 +907,8 @@ class _ProgressCard extends StatelessWidget {
 class _DifficultyTile extends StatelessWidget {
   final String title;
   final String rankLabel;
-  final String progress;
+  final int progressCurrent;
+  final int progressTarget;
   final bool isActive;
   final VoidCallback onTap;
 
@@ -914,7 +916,8 @@ class _DifficultyTile extends StatelessWidget {
     super.key,
     required this.title,
     required this.rankLabel,
-    required this.progress,
+    required this.progressCurrent,
+    required this.progressTarget,
     required this.isActive,
     required this.onTap,
   });
@@ -929,6 +932,17 @@ class _DifficultyTile extends StatelessWidget {
     final borderColor = isActive ? cs.primary : cs.outlineVariant;
     final titleColor = isActive ? cs.primary : cs.onSurface;
     final mutedColor = cs.onSurface.withOpacity(0.68);
+    final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
+    final safeCurrent = safeTarget == 0
+        ? 0
+        : progressCurrent < 0
+            ? 0
+            : (progressCurrent > safeTarget ? safeTarget : progressCurrent);
+    final progressValue = safeTarget == 0 ? 0.0 : safeCurrent / safeTarget;
+    final rankBackground = isActive
+        ? cs.primary
+        : Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface);
+    final rankTextColor = isActive ? cs.onPrimary : cs.primary;
 
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(22)),
@@ -941,6 +955,7 @@ class _DifficultyTile extends StatelessWidget {
           border: Border.all(color: borderColor),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
@@ -953,23 +968,49 @@ class _DifficultyTile extends StatelessWidget {
                       color: titleColor,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    rankLabel,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: mutedColor,
-                      fontSize: 12,
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(999)),
+                    child: LinearProgressIndicator(
+                      minHeight: 8,
+                      value: progressValue,
+                      backgroundColor: cs.primary.withOpacity(0.12),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        cs.primary,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Text(
-              progress,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: mutedColor,
-                fontWeight: FontWeight.w600,
-              ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: rankBackground,
+                    borderRadius: const BorderRadius.all(Radius.circular(999)),
+                  ),
+                  child: Text(
+                    rankLabel,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: rankTextColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '$safeCurrent / $safeTarget',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: mutedColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -996,13 +996,10 @@ class AppState extends ChangeNotifier {
         }
         stats.currentStreak++;
         stats.bestStreak = math.max(stats.bestStreak, stats.currentStreak);
-        stats.progressCurrent = math.min(
-          stats.progressTarget,
-          stats.progressCurrent + 1,
-        );
+        stats.progressCurrent += 1;
         if (stats.progressCurrent >= stats.progressTarget) {
           stats.level++;
-          stats.rank = math.max(1, stats.rank - 1);
+          stats.rank++;
           stats.progressCurrent = 0;
           stats.progressTarget += stats.level ~/ 2 + 5;
           heartBonus = 1;
