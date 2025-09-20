@@ -165,7 +165,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
-    final selectedDifficulty = await showModalBottomSheet<Difficulty>(
+    final result = await showModalBottomSheet<_DifficultySheetResult>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
@@ -192,7 +192,10 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               isActive: diff == selected,
               onTap: () {
                 if (context.mounted) {
-                  Navigator.pop(context, diff);
+                  Navigator.pop(
+                    context,
+                    _DifficultySheetResult.difficulty(diff),
+                  );
                 }
               },
             ),
@@ -226,6 +229,18 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
+                  _DailyChallengeTile(
+                    title: sheetL10n.selectDifficultyDailyChallenge,
+                    onTap: () {
+                      if (context.mounted) {
+                        Navigator.pop(
+                          context,
+                          const _DifficultySheetResult.dailyChallenge(),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
                   ...tiles,
                 ],
               ),
@@ -235,9 +250,23 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       },
     );
 
-    if (!context.mounted || selectedDifficulty == null) return;
+    if (!context.mounted || result == null) return;
 
-    app.startGame(selectedDifficulty);
+    if (result.isDailyChallenge) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      app.startDailyChallenge(today);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GamePage()),
+      );
+      return;
+    }
+
+    final difficulty = result.difficulty;
+    if (difficulty == null) return;
+
+    app.startGame(difficulty);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
@@ -905,11 +934,97 @@ class _ProgressCard extends StatelessWidget {
   }
 }
 
+class _DifficultySheetResult {
+  final Difficulty? difficulty;
+  final bool isDailyChallenge;
+
+  const _DifficultySheetResult._(this.difficulty, this.isDailyChallenge);
+
+  const _DifficultySheetResult.difficulty(Difficulty difficulty)
+      : this._(difficulty, false);
+
+  const _DifficultySheetResult.dailyChallenge() : this._(null, true);
+}
+
 const BorderRadius _difficultyTileRadius = BorderRadius.all(Radius.circular(20));
-const double _difficultyTileHeight = 46.0;
-const double _difficultyTileHorizontalPadding = 20.0;
-const double _difficultyTileProgressHeight = 4.0;
-const double _difficultyTileProgressSpacing = 8.0;
+const Color _lightDifficultyTileBackground = Color(0xFFF5F7FB);
+const Color _lightDifficultyTileActiveBackground = Color(0xFFFFE6E1);
+const Color _lightDifficultyBadgeBackground = Color(0xFFFFFFFF);
+const Color _lightDifficultyBadgeActiveBackground = Color(0xFF262D3D);
+const Color _lightDifficultyBadgeTextColor = Color(0xFF8E96AA);
+const Color _lightDifficultyBadgeActiveTextColor = Colors.white;
+const Color _lightDifficultyProgressTextColor = Color(0xFF8E96AA);
+const Color _lightDifficultyTitleColor = Color(0xFF141A2B);
+const Color _lightDifficultyCloseBackground = Color(0xFFF5F7FB);
+const Color _lightDifficultyCloseIcon = Color(0xFF8E96AA);
+const Color _lightDifficultyProgressTrackColor = Color(0xFFE5E8F4);
+const Color _lightDifficultyProgressTrackActiveColor = Color(0xFFFFD8D1);
+const Color _lightDifficultyProgressFillColor = Color(0xFFB7C0D8);
+const Color _lightDifficultyProgressFillActiveColor = Color(0xFFE35C67);
+const double _difficultyProgressHeight = 6.0;
+const Duration _difficultyProgressAnimationDuration =
+    Duration(milliseconds: 320);
+
+class _DailyChallengeTile extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const _DailyChallengeTile({required this.title, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final brightness = theme.brightness;
+    final background = brightness == Brightness.dark
+        ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.24), cs.surface)
+        : _lightDifficultyTileBackground;
+    final titleColor = brightness == Brightness.dark
+        ? cs.onSurface
+        : _lightDifficultyTitleColor;
+    final iconColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant
+        : _lightDifficultyProgressTextColor;
+
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        ) ??
+        TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        );
+
+    return InkWell(
+      borderRadius: _difficultyTileRadius,
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: _difficultyTileRadius,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: titleStyle,
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: iconColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _DifficultySheetCloseButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -923,8 +1038,10 @@ class _DifficultySheetCloseButton extends StatelessWidget {
     final brightness = theme.brightness;
     final background = brightness == Brightness.dark
         ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.3), cs.surface)
-        : cs.surfaceContainerHighest;
-    final iconColor = cs.onSurfaceVariant;
+        : _lightDifficultyCloseBackground;
+    final iconColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant
+        : _lightDifficultyCloseIcon;
 
     return InkWell(
       borderRadius: BorderRadius.circular(18),
@@ -970,6 +1087,7 @@ class _DifficultyTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final brightness = theme.brightness;
 
     final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
     final safeCurrent = safeTarget == 0
@@ -981,16 +1099,17 @@ class _DifficultyTile extends StatelessWidget {
     final progressValue =
         safeTarget == 0 ? 0.0 : safeCurrent / safeTarget;
 
-    final backgroundColor =
-        isActive ? cs.tertiaryContainer : cs.surfaceContainerLowest;
-    final titleColor = isActive ? cs.onTertiaryContainer : cs.onSurface;
-    final rankBackground =
-        isActive ? cs.onTertiaryContainer : cs.surfaceContainerHigh;
-    final rankTextColor =
-        isActive ? cs.tertiaryContainer : cs.onSurfaceVariant;
-    final progressTextColor =
-        isActive ? cs.onTertiaryContainer : cs.onSurfaceVariant;
-
+    final background = brightness == Brightness.dark
+        ? Color.alphaBlend(
+            (isActive ? cs.error : cs.surfaceVariant).withOpacity(0.28),
+            cs.surface,
+          )
+        : (isActive
+            ? _lightDifficultyTileActiveBackground
+            : _lightDifficultyTileBackground);
+    final titleColor = brightness == Brightness.dark
+        ? cs.onSurface
+        : _lightDifficultyTitleColor;
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: titleColor,
@@ -1001,6 +1120,18 @@ class _DifficultyTile extends StatelessWidget {
           color: titleColor,
         );
 
+    final rankBackground = brightness == Brightness.dark
+        ? (isActive
+            ? cs.primary
+            : Color.alphaBlend(cs.surfaceVariant.withOpacity(0.35), cs.surface))
+        : (isActive
+            ? _lightDifficultyBadgeActiveBackground
+            : _lightDifficultyBadgeBackground);
+    final rankTextColor = brightness == Brightness.dark
+        ? (isActive ? cs.onPrimary : cs.onSurfaceVariant)
+        : (isActive
+            ? _lightDifficultyBadgeActiveTextColor
+            : _lightDifficultyBadgeTextColor);
     final rankStyle = theme.textTheme.labelLarge?.copyWith(
           color: rankTextColor,
           fontWeight: FontWeight.w700,
@@ -1011,6 +1142,9 @@ class _DifficultyTile extends StatelessWidget {
           color: rankTextColor,
         );
 
+    final progressTextColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant
+        : _lightDifficultyProgressTextColor;
     final progressStyle = theme.textTheme.bodySmall?.copyWith(
           color: progressTextColor,
           fontWeight: FontWeight.w600,
@@ -1021,86 +1155,84 @@ class _DifficultyTile extends StatelessWidget {
           color: progressTextColor,
         );
 
+    final trackColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant.withOpacity(0.24)
+        : (isActive
+            ? _lightDifficultyProgressTrackActiveColor
+            : _lightDifficultyProgressTrackColor);
+    final fillColor = brightness == Brightness.dark
+        ? (isActive ? cs.primary : cs.onSurfaceVariant.withOpacity(0.5))
+        : (isActive
+            ? _lightDifficultyProgressFillActiveColor
+            : _lightDifficultyProgressFillColor);
+
     return InkWell(
       borderRadius: _difficultyTileRadius,
       onTap: onTap,
       child: Ink(
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: background,
           borderRadius: _difficultyTileRadius,
         ),
-        child: SizedBox(
-          height: _difficultyTileHeight,
-          child: Stack(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    _difficultyTileHorizontalPadding,
-                    0,
-                    _difficultyTileHorizontalPadding,
-                    isActive
-                        ? _difficultyTileProgressHeight +
-                            _difficultyTileProgressSpacing
-                        : 0,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: titleStyle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: rankBackground,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(999),
-                                ),
-                              ),
-                              child: Text(
-                                rankLabel,
-                                style: rankStyle,
-                              ),
-                            ),
-                            if (progressText != null) ...[
-                              const SizedBox(width: 12),
-                              Text(
-                                progressText,
-                                style: progressStyle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: false,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: titleStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 16),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: rankBackground,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(999),
+                          ),
+                        ),
+                        child: Text(
+                          rankLabel,
+                          style: rankStyle,
+                        ),
+                      ),
+                      if (progressText != null) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          progressText,
+                          style: progressStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
               ),
-              if (isActive)
-                Positioned(
-                  left: _difficultyTileHorizontalPadding,
-                  right: _difficultyTileHorizontalPadding,
-                  bottom: 0,
-                  child: _DifficultyProgressBar(progress: progressValue),
+              if (progressText != null) ...[
+                const SizedBox(height: 14),
+                _DifficultyProgressBar(
+                  progress: progressValue,
+                  trackColor: trackColor,
+                  fillColor: fillColor,
                 ),
+              ],
             ],
           ),
         ),
@@ -1111,21 +1243,24 @@ class _DifficultyTile extends StatelessWidget {
 
 class _DifficultyProgressBar extends StatelessWidget {
   final double progress;
+  final Color trackColor;
+  final Color fillColor;
 
-  const _DifficultyProgressBar({required this.progress});
+  const _DifficultyProgressBar({
+    required this.progress,
+    required this.trackColor,
+    required this.fillColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final backgroundColor = cs.onSurfaceVariant.withOpacity(0.15);
-    final effectiveFillColor = cs.error.alpha == 0 ? cs.primary : cs.error;
     final clampedProgress =
         progress.isNaN ? 0.0 : progress.clamp(0.0, 1.0).toDouble();
 
     return SizedBox(
-      height: _difficultyTileProgressHeight,
+      height: _difficultyProgressHeight,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(2),
+        borderRadius: BorderRadius.circular(_difficultyProgressHeight / 2),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final targetWidth = constraints.maxWidth * clampedProgress;
@@ -1133,20 +1268,17 @@ class _DifficultyProgressBar extends StatelessWidget {
               children: [
                 Positioned.fill(
                   child: DecoratedBox(
-                    decoration: BoxDecoration(color: backgroundColor),
+                    decoration: BoxDecoration(color: trackColor),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                    duration: _difficultyProgressAnimationDuration,
                     curve: Curves.easeInOut,
                     width: targetWidth,
-                    height: _difficultyTileProgressHeight,
-                    decoration: BoxDecoration(
-                      color: effectiveFillColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                    height: _difficultyProgressHeight,
+                    decoration: BoxDecoration(color: fillColor),
                   ),
                 ),
               ],
