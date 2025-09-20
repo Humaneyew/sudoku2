@@ -32,6 +32,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Судоку Майстер'), findsOneWidget);
-    expect(find.text('Щоденний виклик'), findsWidgets);
+    expect(find.text('Нова гра'), findsOneWidget);
   });
 }
