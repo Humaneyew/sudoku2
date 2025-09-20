@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'championship/championship_model.dart';
+import 'language_settings_page.dart';
 import 'models.dart';
 import 'widgets/theme_menu.dart';
 
@@ -37,18 +38,25 @@ class SettingsPage extends StatelessWidget {
           const Divider(height: 32),
 
           _sectionTitle(l10n.languageSectionTitle),
-          ...AppLanguage.values.map(
-                (lang) => RadioListTile<AppLanguage>(
-              key: ValueKey('lang-${lang.name}'),
-              title: Text(lang.displayName(l10n)),
-              value: lang,
-              groupValue: app.lang,
-              onChanged: (v) {
-                if (v != null) {
-                  unawaited(app.setLang(v));
-                }
-              },
+          ListTile(
+            key: const ValueKey('settings-language'),
+            leading: const Icon(Icons.language_outlined),
+            title: Text(l10n.languageSectionTitle),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(app.lang.displayName(l10n)),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right),
+              ],
             ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const LanguageSettingsPage(),
+                ),
+              );
+            },
           ),
           const Divider(height: 32),
 
