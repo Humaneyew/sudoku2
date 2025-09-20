@@ -1,0 +1,247 @@
+{
+  "@@locale": "ka",
+  "appTitle": "სუდოკუ ოსტატი",
+  "navHome": "მთავარი",
+  "navDaily": "გამოწვევა",
+  "navStats": "სტატისტიკა",
+  "dailyStreak": "დღიური სერია",
+  "selectDifficultyTitle": "აირჩიეთ სირთულე",
+  "selectDifficultyDailyChallenge": "გამოწვევა",
+  "playAction": "თამაში",
+  "championshipTitle": "ჩემპიონატი",
+  "championshipScore": "ქულები {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "toNextPlace": "შემდეგ ადგილზე გადასასვლელად: {points} ქულა",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "თქვენ ხართ #1",
+  "championshipRoundDescriptionPlaceholder": "ითამაშეთ ეს რაუნდი, რომ გააძლიეროთ თქვენი ჩემპიონატის სერია.",
+  "championshipRoundCompletedLabel": "დასრულებულია",
+  "totalScore": "საერთო ქულები: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "მე",
+  "leaderboardRow": "ადგილი {rank}. {name}. {points} ქულა",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "ჩემი ადგილი {rank}. {points} ქულა",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "ქულ.",
+  "championshipAutoScroll": "ავტომატურად გადახვევა ჩემს პოზიციაზე",
+  "bestLabel": "საუკეთესო",
+  "play": "თამაში",
+  "battleTitle": "ბრძოლა",
+  "battleWinRate": "მოგებები {count}",
+  "@battleWinRate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "დაწყება",
+  "levelHeading": "დონე {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "რეიტინგის პროგრესი",
+  "rankLabel": "რეიტინგი {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "ახალი თამაში",
+  "continueGame": "გაგრძელება",
+  "weeklyProgress": "კვირეული პროგრესი",
+  "rewardsTitle": "ჯილდოები",
+  "rewardNoMistakesTitle": "დაასრულეთ გამოწვევა შეცდომების გარეშე",
+  "rewardExtraHearts": "+{count, plural, one {# გული} other {# გული}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "დაასრულეთ სამი გამოწვევა ზედიზედ",
+  "rewardUniqueTrophy": "უნიკალური თასი",
+  "rewardSevenDayTitle": "შეინარჩუნეთ 7-დღიანი სერია",
+  "rewardStars": "+{count, plural, one {# ვარსკვლავი} other {# ვარსკვლავი}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "დღევანდელი თავსატეხი",
+  "todayPuzzleDescription": "დაასრულეთ სუდოკუ, რათა მიიღოთ დამატებითი ჯილდო და შეინარჩუნოთ სერია.",
+  "continueAction": "გაგრძელება",
+  "adMessage": "რეკლამა: იპოვეთ დამალული ობიექტები! ითამაშეთ ახლავე.",
+  "adPlay": "თამაში",
+  "undo": "გაუქმება",
+  "erase": "წაშლა",
+  "autoNotes": "ავტო შენიშვნები",
+  "statusOn": "ჩართული",
+  "statusOff": "გამორთული",
+  "notes": "შენიშვნები",
+  "hint": "მინიშნება",
+  "undoAdTitle": "უყურეთ რეკლამას გასაუქმებლად",
+  "undoAdDescription": "უყურეთ ამ მოკლე რეკლამას, რომ გააუქმოთ ბოლო სვლა.",
+  "undoAdCountdown": "რეკლამა დასრულდება {seconds} წმ-ში",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "gameScreenTitle": "სუდოკუ",
+  "noActiveGameMessage": "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.",
+  "victoryTitle": "გილოცავთ!",
+  "victoryMessage": "თავსატეხი ამოხსნილია {time}-ში.",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "მთავარი",
+  "playAnother": "კიდევ თამაში",
+  "outOfLivesTitle": "გულები აღარ დარჩა",
+  "outOfLivesDescription": "თამაშის გასაგრძელებლად აღადგინეთ ერთი წითელი გული.",
+  "restoreLifeAction": "1 წითელი გულის აღდგენა",
+  "cancelAction": "გაუქმება",
+  "settingsTitle": "პარამეტრები",
+  "themeSectionTitle": "თემა",
+  "themeWhite": "კლასიკური ღია",
+  "themeCream": "კრემისფერი",
+  "themeGreen": "მინტი",
+  "themeBlack": "მუქი",
+  "themePurple": "იისფერი მუქი",
+  "themeFontSize": "ფონტის ზომა",
+  "fontSizeExtraSmall": "ძალიან პატარა",
+  "fontSizeSmall": "პატარა",
+  "fontSizeMedium": "საშუალო",
+  "fontSizeLarge": "დიდი",
+  "fontSizeExtraLarge": "ძალიან დიდი",
+  "languageSectionTitle": "ენა",
+  "audioSectionTitle": "ხმა და მუსიკა",
+  "soundsEffectsLabel": "ხმის ეფექტები",
+  "vibrationLabel": "ვიბრაცია",
+  "musicLabel": "ფონური მუსიკა",
+  "miscSectionTitle": "სხვა",
+  "championshipLocalSection": "ჩემპიონატი (ლოკალური)",
+  "hideCompletedNumbersLabel": "დამალე დასრულებული ციფრები",
+  "aboutApp": "აპლიკაციის შესახებ",
+  "versionLabel": "ვერსია {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "languageGeorgian": "ქართული",
+  "export": "ექსპორტი",
+  "import": "იმპორტი",
+  "resetMyScore": "ჩემი ქულების განულება",
+  "resetMyScoreConfirmation": "დარწმუნებული ხართ, რომ გსურთ ქულების განულება? ეს ქმედება შეუქცევადია.",
+  "resetAction": "განულება",
+  "regenerateOpponents": "მოწინააღმდეგეების განახლება",
+  "confirm": "დადასტურება",
+  "cancel": "გაუქმება",
+  "done": "დასრულდა",
+  "failed": "ვერ შესრულდა",
+  "rankBadgeChasing": "რეიტინგი #{current} • +{delta} რათა მიაღწიოთ #{target}",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "statsTitle": "სტატისტიკა",
+  "statsGamesSection": "თამაშები",
+  "statsGamesStarted": "დაწყებული თამაშები",
+  "statsGamesWon": "მოგებული თამაშები",
+  "statsWinRate": "მოგების მაჩვენებელი",
+  "statsFlawless": "სრულყოფილი დასრულებები",
+  "statsTimeSection": "დრო",
+  "statsBestTime": "საუკეთესო დრო",
+  "statsAverageTime": "საშუალო დრო",
+  "statsStreakSection": "სერია",
+  "statsCurrentStreak": "მიმდინარე სერია",
+  "statsBestStreak": "საუკეთესო სერია",
+  "difficultyNovice": "დამწყები",
+  "difficultyNoviceShort": "დამ.",
+  "difficultyMedium": "საშუალო",
+  "difficultyMediumShort": "საშ.",
+  "difficultyHigh": "გამოცდილი",
+  "difficultyHighShort": "გამოც.",
+  "difficultyExpert": "ექსპერტი",
+  "difficultyExpertShort": "ექსპ.",
+  "difficultyMaster": "ოსტატი",
+  "difficultyMasterShort": "ოსტ."
+}
