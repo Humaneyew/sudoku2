@@ -165,7 +165,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
-    final difficulty = await showModalBottomSheet<Difficulty>(
+    final result = await showModalBottomSheet<_DifficultySheetResult>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
@@ -174,67 +174,97 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       builder: (context) {
         final theme = Theme.of(context);
-        final cs = theme.colorScheme;
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
+
+        final tiles = <Widget>[];
+        for (var index = 0; index < items.length; index++) {
+          final diff = items[index];
+          final stats = app.statsFor(diff);
+          tiles.add(
+            _DifficultyTile(
+              key: ValueKey(_difficultyKey(diff)),
+              title: diff.title(sheetL10n),
+              rankLabel: sheetL10n.rankLabel(stats.rank),
+              progressCurrent: stats.progressCurrent,
+              progressTarget: stats.progressTarget,
+              isActive: diff == selected,
+              onTap: () {
+                if (context.mounted) {
+                  Navigator.pop(
+                    context,
+                    _DifficultySheetResult.difficulty(diff),
+                  );
+                }
+              },
+            ),
+          );
+          if (index < items.length - 1) {
+            tiles.add(const SizedBox(height: 12));
+          }
+        }
 
         return SafeArea(
           top: false,
           bottom: true,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: cs.outlineVariant,
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  sheetL10n.selectDifficultyTitle,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                ...List.generate(items.length, (index) {
-                  final diff = items[index];
-                  final stats = app.statsFor(diff);
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index < items.length - 1 ? 12.0 : 0.0,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: _DifficultySheetCloseButton(
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    child: _DifficultyTile(
-                      key: ValueKey(_difficultyKey(diff)),
-                      title: diff.title(sheetL10n),
-                      rankLabel: sheetL10n.rankLabel(stats.rank),
-                      progressCurrent: stats.progressCurrent,
-                      progressTarget: stats.progressTarget,
-                      isActive: diff == selected,
-                      onTap: () {
-                        if (context.mounted) {
-                          Navigator.pop(context, diff);
-                        }
-                      },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    sheetL10n.selectDifficultyTitle,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                  );
-                }),
-              ],
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  _DailyChallengeTile(
+                    title: sheetL10n.selectDifficultyDailyChallenge,
+                    onTap: () {
+                      if (context.mounted) {
+                        Navigator.pop(
+                          context,
+                          const _DifficultySheetResult.dailyChallenge(),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  ...tiles,
+                ],
+              ),
             ),
           ),
         );
       },
     );
 
-    if (!context.mounted || difficulty == null) return;
+    if (!context.mounted || result == null) return;
+
+    if (result.isDailyChallenge) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      app.startDailyChallenge(today);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GamePage()),
+      );
+      return;
+    }
+
+    final difficulty = result.difficulty;
+    if (difficulty == null) return;
 
     app.startGame(difficulty);
     Navigator.push(
@@ -904,6 +934,130 @@ class _ProgressCard extends StatelessWidget {
   }
 }
 
+class _DifficultySheetResult {
+  final Difficulty? difficulty;
+  final bool isDailyChallenge;
+
+  const _DifficultySheetResult._(this.difficulty, this.isDailyChallenge);
+
+  const _DifficultySheetResult.difficulty(Difficulty difficulty)
+      : this._(difficulty, false);
+
+  const _DifficultySheetResult.dailyChallenge() : this._(null, true);
+}
+
+const BorderRadius _difficultyTileRadius = BorderRadius.all(Radius.circular(20));
+const Color _lightDifficultyTileBackground = Color(0xFFF5F7FB);
+const Color _lightDifficultyTileActiveBackground = Color(0xFFFFE6E1);
+const Color _lightDifficultyBadgeBackground = Color(0xFFFFFFFF);
+const Color _lightDifficultyBadgeActiveBackground = Color(0xFF262D3D);
+const Color _lightDifficultyBadgeTextColor = Color(0xFF8E96AA);
+const Color _lightDifficultyBadgeActiveTextColor = Colors.white;
+const Color _lightDifficultyProgressTextColor = Color(0xFF8E96AA);
+const Color _lightDifficultyTitleColor = Color(0xFF141A2B);
+const Color _lightDifficultyCloseBackground = Color(0xFFF5F7FB);
+const Color _lightDifficultyCloseIcon = Color(0xFF8E96AA);
+
+class _DailyChallengeTile extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const _DailyChallengeTile({required this.title, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final brightness = theme.brightness;
+    final background = brightness == Brightness.dark
+        ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.24), cs.surface)
+        : _lightDifficultyTileBackground;
+    final titleColor = brightness == Brightness.dark
+        ? cs.onSurface
+        : _lightDifficultyTitleColor;
+    final iconColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant
+        : _lightDifficultyProgressTextColor;
+
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        ) ??
+        TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        );
+
+    return InkWell(
+      borderRadius: _difficultyTileRadius,
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: _difficultyTileRadius,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: titleStyle,
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: iconColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DifficultySheetCloseButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _DifficultySheetCloseButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final brightness = theme.brightness;
+    final background = brightness == Brightness.dark
+        ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.3), cs.surface)
+        : _lightDifficultyCloseBackground;
+    final iconColor = brightness == Brightness.dark
+        ? cs.onSurfaceVariant
+        : _lightDifficultyCloseIcon;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onPressed,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: SizedBox(
+          width: 36,
+          height: 36,
+          child: Icon(
+            Icons.close_rounded,
+            size: 18,
+            color: iconColor,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _DifficultyTile extends StatelessWidget {
   final String title;
   final String rankLabel;
@@ -926,100 +1080,119 @@ class _DifficultyTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final background = isActive
-        ? Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface)
-        : cs.surface;
-    final borderColor = isActive ? cs.primary : cs.outlineVariant;
-    final titleColor = isActive ? cs.primary : cs.onSurface;
+    final brightness = theme.brightness;
     final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
     final safeCurrent = safeTarget == 0
         ? 0
         : progressCurrent < 0
             ? 0
             : (progressCurrent > safeTarget ? safeTarget : progressCurrent);
-    final progressValue = safeTarget == 0 ? 0.0 : safeCurrent / safeTarget;
-    final rankBackground = isActive
-        ? cs.primary
-        : Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface);
-    final rankTextColor = isActive ? cs.onPrimary : cs.primary;
-    final counterStyle =
-        theme.textTheme.labelSmall?.copyWith(
+    final progressText = safeTarget == 0 ? null : '$safeCurrent / $safeTarget';
+
+    final background = brightness == Brightness.dark
+        ? Color.alphaBlend(
+            (isActive ? cs.error : cs.surfaceVariant).withOpacity(0.28),
+            cs.surface,
+          )
+        : (isActive
+            ? _lightDifficultyTileActiveBackground
+            : _lightDifficultyTileBackground);
+    final titleColor = brightness == Brightness.dark
+        ? cs.onSurface
+        : _lightDifficultyTitleColor;
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        ) ??
+        TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        );
+
+    final rankBackground = brightness == Brightness.dark
+        ? (isActive
+            ? cs.primary
+            : Color.alphaBlend(cs.surfaceVariant.withOpacity(0.35), cs.surface))
+        : (isActive
+            ? _lightDifficultyBadgeActiveBackground
+            : _lightDifficultyBadgeBackground);
+    final rankTextColor = brightness == Brightness.dark
+        ? (isActive ? cs.onPrimary : cs.onSurfaceVariant)
+        : (isActive
+            ? _lightDifficultyBadgeActiveTextColor
+            : _lightDifficultyBadgeTextColor);
+    final rankStyle = theme.textTheme.labelLarge?.copyWith(
           color: rankTextColor,
+          fontWeight: FontWeight.w700,
+        ) ??
+        TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: rankTextColor,
+        );
+
+    final progressStyle = theme.textTheme.bodySmall?.copyWith(
+          color: brightness == Brightness.dark
+              ? cs.onSurfaceVariant
+              : _lightDifficultyProgressTextColor,
           fontWeight: FontWeight.w600,
         ) ??
-        theme.textTheme.bodySmall?.copyWith(
-          color: rankTextColor,
+        TextStyle(
+          fontSize: 12,
           fontWeight: FontWeight.w600,
+          color: brightness == Brightness.dark
+              ? cs.onSurfaceVariant
+              : _lightDifficultyProgressTextColor,
         );
 
     return InkWell(
-      borderRadius: const BorderRadius.all(Radius.circular(22)),
+      borderRadius: _difficultyTileRadius,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      child: Ink(
         decoration: BoxDecoration(
           color: background,
-          borderRadius: const BorderRadius.all(Radius.circular(22)),
-          border: Border.all(color: borderColor),
+          borderRadius: _difficultyTileRadius,
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: titleStyle,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: titleColor,
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: rankBackground,
+                      borderRadius: const BorderRadius.all(Radius.circular(999)),
+                    ),
+                    child: Text(
+                      rankLabel,
+                      style: rankStyle,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(999)),
-                    child: LinearProgressIndicator(
-                      minHeight: 10,
-                      value: progressValue,
-                      backgroundColor: cs.primary.withOpacity(0.12),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        cs.primary,
-                      ),
+                  if (progressText != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      progressText,
+                      style: progressStyle,
                     ),
-                  ),
+                  ],
                 ],
               ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: rankBackground,
-                    borderRadius: const BorderRadius.all(Radius.circular(999)),
-                  ),
-                  child: Text(
-                    rankLabel,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: rankTextColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '$safeCurrent / $safeTarget',
-                  style: counterStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

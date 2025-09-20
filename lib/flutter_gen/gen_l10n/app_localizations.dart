@@ -416,7 +416,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectDifficultyTitle => "Schwierigkeitsgrad wählen";
 
   @override
-  String get selectDifficultyDailyChallenge => "Herausforderung";
+  String get selectDifficultyDailyChallenge => "Tägliche Herausforderung";
 
   @override
   String get playAction => "Spielen";
@@ -857,7 +857,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectDifficultyTitle => "Choose difficulty";
 
   @override
-  String get selectDifficultyDailyChallenge => "Challenge";
+  String get selectDifficultyDailyChallenge => "Daily challenge";
 
   @override
   String get playAction => "Play";
@@ -1298,7 +1298,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectDifficultyTitle => "Elige la dificultad";
 
   @override
-  String get selectDifficultyDailyChallenge => "Desafío";
+  String get selectDifficultyDailyChallenge => "Desafío diario";
 
   @override
   String get playAction => "Jugar";
@@ -1739,7 +1739,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectDifficultyTitle => "Choisissez la difficulté";
 
   @override
-  String get selectDifficultyDailyChallenge => "Défi";
+  String get selectDifficultyDailyChallenge => "Défi quotidien";
 
   @override
   String get playAction => "Jouer";
@@ -2180,7 +2180,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get selectDifficultyTitle => "कठिनाई चुनें";
 
   @override
-  String get selectDifficultyDailyChallenge => "चुनौती";
+  String get selectDifficultyDailyChallenge => "दैनिक चुनौती";
 
   @override
   String get playAction => "खेलें";
@@ -2621,7 +2621,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get selectDifficultyTitle => "Scegli la difficoltà";
 
   @override
-  String get selectDifficultyDailyChallenge => "Sfida";
+  String get selectDifficultyDailyChallenge => "Sfida quotidiana";
 
   @override
   String get playAction => "Gioca";
@@ -3062,7 +3062,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get selectDifficultyTitle => "難易度を選択";
 
   @override
-  String get selectDifficultyDailyChallenge => "チャレンジ";
+  String get selectDifficultyDailyChallenge => "デイリーチャレンジ";
 
   @override
   String get playAction => "プレイ";
@@ -3503,7 +3503,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get selectDifficultyTitle => "აირჩიეთ სირთულე";
 
   @override
-  String get selectDifficultyDailyChallenge => "გამოწვევა";
+  String get selectDifficultyDailyChallenge => "ყოველდღიური გამოწვევა";
 
   @override
   String get playAction => "თამაში";
@@ -3944,7 +3944,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get selectDifficultyTitle => "난이도 선택";
 
   @override
-  String get selectDifficultyDailyChallenge => "도전";
+  String get selectDifficultyDailyChallenge => "일일 도전";
 
   @override
   String get playAction => "플레이";
@@ -4385,7 +4385,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get selectDifficultyTitle => "Выберите сложность";
 
   @override
-  String get selectDifficultyDailyChallenge => "Испытание";
+  String get selectDifficultyDailyChallenge => "Ежедневное испытание";
 
   @override
   String get playAction => "Играть";
@@ -4830,7 +4830,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get selectDifficultyTitle => "Виберіть складність";
 
   @override
-  String get selectDifficultyDailyChallenge => "Виклик";
+  String get selectDifficultyDailyChallenge => "Щоденний виклик";
 
   @override
   String get playAction => "Грати";
@@ -5275,7 +5275,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectDifficultyTitle => "选择难度";
 
   @override
-  String get selectDifficultyDailyChallenge => "挑战";
+  String get selectDifficultyDailyChallenge => "每日挑战";
 
   @override
   String get playAction => "游玩";
