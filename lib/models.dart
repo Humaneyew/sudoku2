@@ -202,6 +202,7 @@ class DifficultyStats {
 class AppState extends ChangeNotifier {
   static const int _maxHints = 3;
   static const int _maxLives = 3;
+  static const int _novicePuzzleLimit = 50;
   static final Set<String> _initedDateLocales = <String>{};
 
   SudokuTheme theme = SudokuTheme.white;
@@ -661,8 +662,9 @@ class AppState extends ChangeNotifier {
 
   /// Запуск новой игры выбранного уровня сложности.
   void startGame(Difficulty diff) {
-    final available = puzzles[diff] ?? puzzles[Difficulty.novice];
-    if (available == null || available.isEmpty) {
+    final resolvedList =
+        (puzzles[diff] ?? puzzles[Difficulty.novice]) ?? <Puzzle>[];
+    if (resolvedList.isEmpty) {
       current = null;
       selectedCell = null;
       notesMode = false;
@@ -676,6 +678,14 @@ class AppState extends ChangeNotifier {
     }
 
     _dailyChallengeDate = null;
+
+    final List<Puzzle> available;
+    if (diff == Difficulty.novice &&
+        resolvedList.length > _novicePuzzleLimit) {
+      available = resolvedList.sublist(0, _novicePuzzleLimit);
+    } else {
+      available = resolvedList;
+    }
 
     final index = _nextPuzzleIndex(diff, available.length);
     final puzzle = available[index];
