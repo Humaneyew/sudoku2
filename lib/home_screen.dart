@@ -931,7 +931,6 @@ class _DifficultyTile extends StatelessWidget {
         : cs.surface;
     final borderColor = isActive ? cs.primary : cs.outlineVariant;
     final titleColor = isActive ? cs.primary : cs.onSurface;
-    final mutedColor = cs.onSurface.withOpacity(0.68);
     final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
     final safeCurrent = safeTarget == 0
         ? 0
@@ -943,6 +942,15 @@ class _DifficultyTile extends StatelessWidget {
         ? cs.primary
         : Color.alphaBlend(cs.primary.withOpacity(0.12), cs.surface);
     final rankTextColor = isActive ? cs.onPrimary : cs.primary;
+    final counterStyle =
+        theme.textTheme.labelSmall?.copyWith(
+          color: rankTextColor,
+          fontWeight: FontWeight.w600,
+        ) ??
+        theme.textTheme.bodySmall?.copyWith(
+          color: rankTextColor,
+          fontWeight: FontWeight.w600,
+        );
 
     return InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(22)),
@@ -972,7 +980,7 @@ class _DifficultyTile extends StatelessWidget {
                   ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(999)),
                     child: LinearProgressIndicator(
-                      minHeight: 8,
+                      minHeight: 10,
                       value: progressValue,
                       backgroundColor: cs.primary.withOpacity(0.12),
                       valueColor: AlwaysStoppedAnimation<Color>(
@@ -985,7 +993,8 @@ class _DifficultyTile extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding:
@@ -1005,10 +1014,8 @@ class _DifficultyTile extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   '$safeCurrent / $safeTarget',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: mutedColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: counterStyle,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
