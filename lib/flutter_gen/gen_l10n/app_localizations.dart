@@ -22,6 +22,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('fr'),
     Locale('hi'),
+    Locale('ka'),
     Locale('ru'),
     Locale('uk'),
     Locale('zh'),
@@ -32,6 +33,7 @@ abstract class AppLocalizations {
     "en",
     "fr",
     "hi",
+    "ka",
     "ru",
     "uk",
     "zh",
@@ -230,6 +232,8 @@ abstract class AppLocalizations {
 
   String get languageHindi;
 
+  String get languageGeorgian;
+
   String get export;
 
   String get import;
@@ -326,6 +330,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "ka":
+      return AppLocalizationsKa();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -342,6 +348,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "ka":
+      return AppLocalizationsKa();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -675,6 +683,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
 
   @override
   String get export => "Exportieren";
@@ -1111,6 +1122,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული";
+
+  @override
   String get export => "Export";
 
   @override
@@ -1527,6 +1541,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
 
   @override
   String get export => "Exporter";
@@ -1955,6 +1972,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული";
+
+  @override
   String get export => "निर्यात";
 
   @override
@@ -2055,6 +2075,439 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get difficultyMasterShort => "मास्.";
+}
+
+class AppLocalizationsKa extends AppLocalizations {
+  AppLocalizationsKa() : super("ka");
+
+  @override
+  String get appTitle => "სუდოკუ ოსტატი";
+
+  @override
+  String get navHome => "მთავარი";
+
+  @override
+  String get navDaily => "გამოწვევა";
+
+  @override
+  String get navStats => "სტატისტიკა";
+
+  @override
+  String get dailyStreak => "დღიური სერია";
+
+  @override
+  String get selectDifficultyTitle => "აირჩიეთ სირთულე";
+
+  @override
+  String get selectDifficultyDailyChallenge => "გამოწვევა";
+
+  @override
+  String get playAction => "თამაში";
+
+  @override
+  String get championshipTitle => "ჩემპიონატი";
+
+  @override
+  String championshipScore(int score) {
+    return "ქულები ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "შემდეგ ადგილზე გადასასვლელად: ${points} ქულა";
+  }
+
+  @override
+  String get youAreTop => "თქვენ ხართ #1";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder =>
+      "ითამაშეთ ეს რაუნდი, რომ გააძლიეროთ თქვენი ჩემპიონატის სერია.";
+
+  @override
+  String get championshipRoundCompletedLabel => "დასრულებულია";
+
+  @override
+  String totalScore(String score) {
+    return "საერთო ქულები: ${score}";
+  }
+
+  @override
+  String get meLabel => "მე";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "ადგილი ${rank}. ${name}. ${points} ქულა";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "ჩემი ადგილი ${rank}. ${points} ქულა";
+  }
+
+  @override
+  String get pointsShort => "ქულ.";
+
+  @override
+  String get championshipAutoScroll => "ავტომატურად გადახვევა ჩემს პოზიციაზე";
+
+  @override
+  String get bestLabel => "საუკეთესო";
+
+  @override
+  String get play => "თამაში";
+
+  @override
+  String get battleTitle => "ბრძოლა";
+
+  @override
+  String battleWinRate(int count) {
+    return "მოგებები ${count}";
+  }
+
+  @override
+  String get startAction => "დაწყება";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "დონე ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "რეიტინგის პროგრესი";
+
+  @override
+  String rankLabel(int rank) {
+    return "რეიტინგი ${rank}";
+  }
+
+  @override
+  String get newGame => "ახალი თამაში";
+
+  @override
+  String get continueGame => "გაგრძელება";
+
+  @override
+  String get weeklyProgress => "კვირეული პროგრესი";
+
+  @override
+  String get rewardsTitle => "ჯილდოები";
+
+  @override
+  String get rewardNoMistakesTitle => "დაასრულეთ გამოწვევა შეცდომების გარეშე";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} გული",
+      other: "${count} გული",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "დაასრულეთ სამი გამოწვევა ზედიზედ";
+
+  @override
+  String get rewardUniqueTrophy => "უნიკალური თასი";
+
+  @override
+  String get rewardSevenDayTitle => "შეინარჩუნეთ 7-დღიანი სერია";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} ვარსკვლავი",
+      other: "${count} ვარსკვლავი",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "დღევანდელი თავსატეხი";
+
+  @override
+  String get todayPuzzleDescription =>
+      "დაასრულეთ სუდოკუ, რათა მიიღოთ დამატებითი ჯილდო და შეინარჩუნოთ სერია.";
+
+  @override
+  String get continueAction => "გაგრძელება";
+
+  @override
+  String get adMessage => "რეკლამა: იპოვეთ დამალული ობიექტები! ითამაშეთ ახლავე.";
+
+  @override
+  String get adPlay => "თამაში";
+
+  @override
+  String get undo => "გაუქმება";
+
+  @override
+  String get erase => "წაშლა";
+
+  @override
+  String get autoNotes => "ავტო შენიშვნები";
+
+  @override
+  String get statusOn => "ჩართული";
+
+  @override
+  String get statusOff => "გამორთული";
+
+  @override
+  String get notes => "შენიშვნები";
+
+  @override
+  String get hint => "მინიშნება";
+
+  @override
+  String get undoAdTitle => "უყურეთ რეკლამას გასაუქმებლად";
+
+  @override
+  String get undoAdDescription =>
+      "უყურეთ ამ მოკლე რეკლამას, რომ გააუქმოთ ბოლო სვლა.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "რეკლამა დასრულდება ${seconds} წმ-ში";
+  }
+
+  @override
+  String get gameScreenTitle => "სუდოკუ";
+
+  @override
+  String get noActiveGameMessage => "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.";
+
+  @override
+  String get victoryTitle => "გილოცავთ!";
+
+  @override
+  String victoryMessage(String time) {
+    return "თავსატეხი ამოხსნილია ${time}-ში.";
+  }
+
+  @override
+  String get backToHome => "მთავარი";
+
+  @override
+  String get playAnother => "კიდევ თამაში";
+
+  @override
+  String get outOfLivesTitle => "გულები აღარ დარჩა";
+
+  @override
+  String get outOfLivesDescription =>
+      "თამაშის გასაგრძელებლად აღადგინეთ ერთი წითელი გული.";
+
+  @override
+  String get restoreLifeAction => "1 წითელი გულის აღდგენა";
+
+  @override
+  String get cancelAction => "გაუქმება";
+
+  @override
+  String get settingsTitle => "პარამეტრები";
+
+  @override
+  String get themeSectionTitle => "თემა";
+
+  @override
+  String get themeWhite => "კლასიკური ღია";
+
+  @override
+  String get themeCream => "კრემისფერი";
+
+  @override
+  String get themeGreen => "მინტი";
+
+  @override
+  String get themeBlack => "მუქი";
+
+  @override
+  String get themePurple => "იისფერი მუქი";
+
+  @override
+  String get themeFontSize => "ფონტის ზომა";
+
+  @override
+  String get fontSizeExtraSmall => "ძალიან პატარა";
+
+  @override
+  String get fontSizeSmall => "პატარა";
+
+  @override
+  String get fontSizeMedium => "საშუალო";
+
+  @override
+  String get fontSizeLarge => "დიდი";
+
+  @override
+  String get fontSizeExtraLarge => "ძალიან დიდი";
+
+  @override
+  String get languageSectionTitle => "ენა";
+
+  @override
+  String get audioSectionTitle => "ხმა და მუსიკა";
+
+  @override
+  String get soundsEffectsLabel => "ხმის ეფექტები";
+
+  @override
+  String get vibrationLabel => "ვიბრაცია";
+
+  @override
+  String get musicLabel => "ფონური მუსიკა";
+
+  @override
+  String get miscSectionTitle => "სხვა";
+
+  @override
+  String get championshipLocalSection => "ჩემპიონატი (ლოკალური)";
+
+  @override
+  String get hideCompletedNumbersLabel => "დამალე დასრულებული ციფრები";
+
+  @override
+  String get aboutApp => "აპლიკაციის შესახებ";
+
+  @override
+  String versionLabel(String version) {
+    return "ვერსია ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "© 2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get export => "ექსპორტი";
+
+  @override
+  String get import => "იმპორტი";
+
+  @override
+  String get resetMyScore => "ჩემი ქულების განულება";
+
+  @override
+  String get resetMyScoreConfirmation =>
+      "დარწმუნებული ხართ, რომ გსურთ ქულების განულება? ეს ქმედება შეუქცევადია.";
+
+  @override
+  String get resetAction => "განულება";
+
+  @override
+  String get regenerateOpponents => "მოწინააღმდეგეების განახლება";
+
+  @override
+  String get confirm => "დადასტურება";
+
+  @override
+  String get cancel => "გაუქმება";
+
+  @override
+  String get done => "დასრულდა";
+
+  @override
+  String get failed => "ვერ შესრულდა";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "რეიტინგი #${current} • +${delta} რათა მიაღწიოთ #${target}";
+  }
+
+  @override
+  String get statsTitle => "სტატისტიკა";
+
+  @override
+  String get statsGamesSection => "თამაშები";
+
+  @override
+  String get statsGamesStarted => "დაწყებული თამაშები";
+
+  @override
+  String get statsGamesWon => "მოგებული თამაშები";
+
+  @override
+  String get statsWinRate => "მოგების მაჩვენებელი";
+
+  @override
+  String get statsFlawless => "სრულყოფილი დასრულებები";
+
+  @override
+  String get statsTimeSection => "დრო";
+
+  @override
+  String get statsBestTime => "საუკეთესო დრო";
+
+  @override
+  String get statsAverageTime => "საშუალო დრო";
+
+  @override
+  String get statsStreakSection => "სერია";
+
+  @override
+  String get statsCurrentStreak => "მიმდინარე სერია";
+
+  @override
+  String get statsBestStreak => "საუკეთესო სერია";
+
+  @override
+  String get difficultyNovice => "დამწყები";
+
+  @override
+  String get difficultyNoviceShort => "დამ.";
+
+  @override
+  String get difficultyMedium => "საშუალო";
+
+  @override
+  String get difficultyMediumShort => "საშ.";
+
+  @override
+  String get difficultyHigh => "გამოცდილი";
+
+  @override
+  String get difficultyHighShort => "გამოც.";
+
+  @override
+  String get difficultyExpert => "ექსპერტი";
+
+  @override
+  String get difficultyExpertShort => "ექსპ.";
+
+  @override
+  String get difficultyMaster => "ოსტატი";
+
+  @override
+  String get difficultyMasterShort => "ოსტ.";
 }
 
 class AppLocalizationsRu extends AppLocalizations {
@@ -2383,6 +2836,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
 
   @override
   String get export => "Экспорт";
@@ -2815,6 +3271,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get languageHindi => "हिन्दी";
 
   @override
+  String get languageGeorgian => "ქართული";
+
+  @override
   String get export => "Експорт";
 
   @override
@@ -3237,6 +3696,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
 
   @override
   String get export => "导出";
