@@ -1198,6 +1198,16 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     const challengeGoal = 30;
     final headerProgress = progress.clamp(0, challengeGoal);
 
+    final textScaleFactor = MediaQuery.textScaleFactorOf(context);
+    final extraTextScale =
+        (textScaleFactor - 1.0).clamp(0.0, 2.0).toDouble();
+    final calendarHorizontalPadding =
+        (16 - 3 * extraTextScale).clamp(10.0, 16.0).toDouble();
+    final calendarCrossSpacing =
+        (10 - 2.5 * extraTextScale).clamp(6.0, 10.0).toDouble();
+    final calendarMainSpacing =
+        (12 - 2.5 * extraTextScale).clamp(8.0, 12.0).toDouble();
+
     final monthFormatter = DateFormat.MMMM(l10n.localeName);
     final rawMonthLabel = monthFormatter.format(_visibleMonth);
     final monthLabel = toBeginningOfSentenceCase(
@@ -1322,7 +1332,12 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                   child: FadeTransition(
                     opacity: _calendarOpacity,
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
+                      padding: EdgeInsets.fromLTRB(
+                        calendarHorizontalPadding,
+                        28,
+                        calendarHorizontalPadding,
+                        28,
+                      ),
                       decoration: BoxDecoration(
                         color: surfaceColor,
                         borderRadius: const BorderRadius.all(Radius.circular(28)),
@@ -1386,10 +1401,10 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: totalCells,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 7,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
+                              mainAxisSpacing: calendarMainSpacing,
+                              crossAxisSpacing: calendarCrossSpacing,
                             ),
                             itemBuilder: (context, index) {
                               final day = index - leadingEmpty + 1;
@@ -1532,7 +1547,7 @@ class _CalendarDayButton extends StatelessWidget {
           color: selected ? cs.primary : Colors.transparent,
           border: border,
         ),
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(3),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -1544,6 +1559,8 @@ class _CalendarDayButton extends StatelessWidget {
                 Text(
                   '${date.day}',
                   style: textStyle,
+                  textAlign: TextAlign.center,
+                  softWrap: false,
                 ),
                 if (completed)
                   Padding(
