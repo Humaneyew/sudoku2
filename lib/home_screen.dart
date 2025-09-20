@@ -1116,7 +1116,10 @@ class _DifficultyTile extends StatelessWidget {
           borderRadius: _difficultyTileRadius,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 15),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 17,
+            vertical: 12.75,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1135,7 +1138,7 @@ class _DifficultyTile extends StatelessWidget {
                   const SizedBox(width: 14),
                   Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -1154,10 +1157,11 @@ class _DifficultyTile extends StatelessWidget {
                         ),
                       ),
                       if (progressText != null) ...[
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 4),
                         Text(
                           progressText,
                           style: progressStyle,
+                          textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1167,7 +1171,7 @@ class _DifficultyTile extends StatelessWidget {
                 ],
               ),
               if (progressText != null) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 _DifficultyProgressBar(
                   progress: progressValue,
                   trackColor: trackColor,
