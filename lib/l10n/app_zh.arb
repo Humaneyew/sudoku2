@@ -200,6 +200,8 @@
   "export": "导出",
   "import": "导入",
   "resetMyScore": "重置我的得分",
+  "resetMyScoreConfirmation": "确定要重置得分吗？此操作无法撤销。",
+  "resetAction": "重置",
   "regenerateOpponents": "重新生成对手",
   "confirm": "确认",
   "cancel": "取消",

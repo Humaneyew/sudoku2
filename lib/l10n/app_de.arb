@@ -200,6 +200,8 @@
   "export": "Exportieren",
   "import": "Importieren",
   "resetMyScore": "Meinen Punktestand zurücksetzen",
+  "resetMyScoreConfirmation": "Sind Sie sicher, dass Sie den Punktestand zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "resetAction": "Zurücksetzen",
   "regenerateOpponents": "Gegner neu erstellen",
   "confirm": "Bestätigen",
   "cancel": "Abbrechen",

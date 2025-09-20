@@ -236,6 +236,10 @@ abstract class AppLocalizations {
 
   String get resetMyScore;
 
+  String get resetMyScoreConfirmation;
+
+  String get resetAction;
+
   String get regenerateOpponents;
 
   String get confirm;
@@ -682,6 +686,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get resetMyScore => "Meinen Punktestand zurücksetzen";
 
   @override
+  String get resetMyScoreConfirmation =>
+      "Sind Sie sicher, dass Sie den Punktestand zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
+
+  @override
+  String get resetAction => "Zurücksetzen";
+
+  @override
   String get regenerateOpponents => "Gegner neu erstellen";
 
   @override
@@ -1109,6 +1120,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetMyScore => "Reset my score";
 
   @override
+  String get resetMyScoreConfirmation =>
+      "Are you sure you want to reset the score? This action cannot be undone.";
+
+  @override
+  String get resetAction => "Reset";
+
+  @override
   String get regenerateOpponents => "Regenerate opponents";
 
   @override
@@ -1518,6 +1536,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get resetMyScore => "Réinitialiser mon score";
+
+  @override
+  String get resetMyScoreConfirmation =>
+      "Voulez-vous vraiment réinitialiser le score ? Cette action est irréversible.";
+
+  @override
+  String get resetAction => "Réinitialiser";
 
   @override
   String get regenerateOpponents => "Régénérer les adversaires";
@@ -1937,6 +1962,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get resetMyScore => "मेरा स्कोर रीसेट करें";
+
+  @override
+  String get resetMyScoreConfirmation =>
+      "क्या आप वाकई स्कोर रीसेट करना चाहते हैं? यह कार्रवाई अपरिवर्तनीय है।";
+
+  @override
+  String get resetAction => "रीसेट करें";
 
   @override
   String get regenerateOpponents => "प्रतिद्वंद्वी पुनः उत्पन्न करें";
@@ -2362,6 +2394,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resetMyScore => "Сбросить мой счёт";
 
   @override
+  String get resetMyScoreConfirmation =>
+      "Вы уверены, что хотите сбросить счёт? Это действие необратимо.";
+
+  @override
+  String get resetAction => "Сбросить";
+
+  @override
   String get regenerateOpponents => "Перегенерировать соперников";
 
   @override
@@ -2785,6 +2824,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get resetMyScore => "Скинути мій рахунок";
 
   @override
+  String get resetMyScoreConfirmation =>
+      "Ви впевнені, що хочете скинути рахунок? Цю дію неможливо скасувати.";
+
+  @override
+  String get resetAction => "Скинути";
+
+  @override
   String get regenerateOpponents => "Перегенерувати суперників";
 
   @override
@@ -3200,6 +3246,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get resetMyScore => "重置我的得分";
+
+  @override
+  String get resetMyScoreConfirmation => "确定要重置得分吗？此操作无法撤销。";
+
+  @override
+  String get resetAction => "重置";
 
   @override
   String get regenerateOpponents => "重新生成对手";

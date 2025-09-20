@@ -200,6 +200,8 @@
   "export": "Экспорт",
   "import": "Импорт",
   "resetMyScore": "Сбросить мой счёт",
+  "resetMyScoreConfirmation": "Вы уверены, что хотите сбросить счёт? Это действие необратимо.",
+  "resetAction": "Сбросить",
   "regenerateOpponents": "Перегенерировать соперников",
   "confirm": "Подтвердить",
   "cancel": "Отмена",

@@ -200,6 +200,8 @@
   "export": "Експорт",
   "import": "Імпорт",
   "resetMyScore": "Скинути мій рахунок",
+  "resetMyScoreConfirmation": "Ви впевнені, що хочете скинути рахунок? Цю дію неможливо скасувати.",
+  "resetAction": "Скинути",
   "regenerateOpponents": "Перегенерувати суперників",
   "confirm": "Підтвердити",
   "cancel": "Скасувати",
