@@ -174,6 +174,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       ),
       builder: (context) {
         final theme = Theme.of(context);
+        final palette = _DifficultySheetPalette.fromTheme(theme);
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
@@ -190,6 +191,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               progressCurrent: stats.progressCurrent,
               progressTarget: stats.progressTarget,
               isActive: diff == selected,
+              palette: palette,
               onTap: () {
                 if (context.mounted) {
                   Navigator.pop(
@@ -217,6 +219,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   Align(
                     alignment: Alignment.centerRight,
                     child: _DifficultySheetCloseButton(
+                      palette: palette,
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -225,6 +228,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                     sheetL10n.selectDifficultyTitle,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
+                      color: palette.titleColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -909,47 +913,106 @@ class _ProgressCard extends StatelessWidget {
 }
 
 const BorderRadius _difficultyTileRadius = BorderRadius.all(Radius.circular(20));
-const Color _lightDifficultyTileBackground = Color(0xFFF5F7FB);
-const Color _lightDifficultyTileActiveBackground = Color(0xFFFFE6E1);
-const Color _lightDifficultyBadgeBackground = Color(0xFFFFFFFF);
-const Color _lightDifficultyBadgeActiveBackground = Color(0xFF262D3D);
-const Color _lightDifficultyBadgeTextColor = Color(0xFF8E96AA);
-const Color _lightDifficultyBadgeActiveTextColor = Colors.white;
-const Color _lightDifficultyProgressTextColor = Color(0xFF8E96AA);
-const Color _lightDifficultyTitleColor = Color(0xFF141A2B);
-const Color _lightDifficultyCloseBackground = Color(0xFFF5F7FB);
-const Color _lightDifficultyCloseIcon = Color(0xFF8E96AA);
-const Color _lightDifficultyProgressTrackColor = Color(0xFFE5E8F4);
-const Color _lightDifficultyProgressTrackActiveColor = Color(0xFFFFD8D1);
-const Color _lightDifficultyProgressFillColor = Color(0xFFB7C0D8);
-const Color _lightDifficultyProgressFillActiveColor = Color(0xFFE35C67);
 const double _difficultyProgressHeight = 6.0;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
 
+class _DifficultySheetPalette {
+  final Color tileBackground;
+  final Color tileActiveBackground;
+  final Color badgeBackground;
+  final Color badgeActiveBackground;
+  final Color badgeTextColor;
+  final Color badgeActiveTextColor;
+  final Color progressTextColor;
+  final Color titleColor;
+  final Color closeBackground;
+  final Color closeIconColor;
+  final Color progressTrackColor;
+  final Color progressTrackActiveColor;
+  final Color progressFillColor;
+  final Color progressFillActiveColor;
+
+  const _DifficultySheetPalette({
+    required this.tileBackground,
+    required this.tileActiveBackground,
+    required this.badgeBackground,
+    required this.badgeActiveBackground,
+    required this.badgeTextColor,
+    required this.badgeActiveTextColor,
+    required this.progressTextColor,
+    required this.titleColor,
+    required this.closeBackground,
+    required this.closeIconColor,
+    required this.progressTrackColor,
+    required this.progressTrackActiveColor,
+    required this.progressFillColor,
+    required this.progressFillActiveColor,
+  });
+
+  factory _DifficultySheetPalette.fromTheme(ThemeData theme) {
+    final cs = theme.colorScheme;
+    final brightness = theme.brightness;
+
+    Color overlay(Color color, double opacity) {
+      return Color.alphaBlend(color.withOpacity(opacity), cs.surface);
+    }
+
+    if (brightness == Brightness.dark) {
+      return _DifficultySheetPalette(
+        tileBackground: overlay(cs.onSurface, 0.12),
+        tileActiveBackground: overlay(cs.primary, 0.32),
+        badgeBackground: overlay(cs.onSurface, 0.18),
+        badgeActiveBackground: cs.primary,
+        badgeTextColor: cs.onSurface.withOpacity(0.75),
+        badgeActiveTextColor: cs.onPrimary,
+        progressTextColor: cs.onSurfaceVariant,
+        titleColor: cs.onSurface,
+        closeBackground: overlay(cs.onSurface, 0.16),
+        closeIconColor: cs.onSurfaceVariant,
+        progressTrackColor: overlay(cs.onSurfaceVariant, 0.26),
+        progressTrackActiveColor: overlay(cs.primary, 0.34),
+        progressFillColor: cs.onSurface.withOpacity(0.55),
+        progressFillActiveColor: cs.primary,
+      );
+    }
+
+    return _DifficultySheetPalette(
+      tileBackground: overlay(cs.onSurface, 0.04),
+      tileActiveBackground: overlay(cs.primary, 0.18),
+      badgeBackground: overlay(cs.onSurface, 0.06),
+      badgeActiveBackground: cs.primary,
+      badgeTextColor: cs.onSurface.withOpacity(0.65),
+      badgeActiveTextColor: cs.onPrimary,
+      progressTextColor: cs.onSurface.withOpacity(0.6),
+      titleColor: cs.onSurface,
+      closeBackground: overlay(cs.onSurface, 0.05),
+      closeIconColor: cs.onSurfaceVariant,
+      progressTrackColor: overlay(cs.onSurfaceVariant, 0.12),
+      progressTrackActiveColor: overlay(cs.primary, 0.24),
+      progressFillColor: overlay(cs.onSurface, 0.14),
+      progressFillActiveColor: cs.primary,
+    );
+  }
+}
+
 class _DifficultySheetCloseButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final _DifficultySheetPalette palette;
 
-  const _DifficultySheetCloseButton({required this.onPressed});
+  const _DifficultySheetCloseButton({
+    required this.onPressed,
+    required this.palette,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final brightness = theme.brightness;
-    final background = brightness == Brightness.dark
-        ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.3), cs.surface)
-        : _lightDifficultyCloseBackground;
-    final iconColor = brightness == Brightness.dark
-        ? cs.onSurfaceVariant
-        : _lightDifficultyCloseIcon;
-
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: onPressed,
       child: Ink(
         decoration: BoxDecoration(
-          color: background,
+          color: palette.closeBackground,
           borderRadius: BorderRadius.circular(18),
         ),
         child: SizedBox(
@@ -958,7 +1021,7 @@ class _DifficultySheetCloseButton extends StatelessWidget {
           child: Icon(
             Icons.close_rounded,
             size: 18,
-            color: iconColor,
+            color: palette.closeIconColor,
           ),
         ),
       ),
@@ -972,6 +1035,7 @@ class _DifficultyTile extends StatelessWidget {
   final int progressCurrent;
   final int progressTarget;
   final bool isActive;
+  final _DifficultySheetPalette palette;
   final VoidCallback onTap;
 
   const _DifficultyTile({
@@ -981,14 +1045,13 @@ class _DifficultyTile extends StatelessWidget {
     required this.progressCurrent,
     required this.progressTarget,
     required this.isActive,
+    required this.palette,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final brightness = theme.brightness;
 
     final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
     final safeCurrent = safeTarget == 0
@@ -1000,17 +1063,9 @@ class _DifficultyTile extends StatelessWidget {
     final progressValue =
         safeTarget == 0 ? 0.0 : safeCurrent / safeTarget;
 
-    final background = brightness == Brightness.dark
-        ? Color.alphaBlend(
-            (isActive ? cs.error : cs.surfaceVariant).withOpacity(0.28),
-            cs.surface,
-          )
-        : (isActive
-            ? _lightDifficultyTileActiveBackground
-            : _lightDifficultyTileBackground);
-    final titleColor = brightness == Brightness.dark
-        ? cs.onSurface
-        : _lightDifficultyTitleColor;
+    final background =
+        isActive ? palette.tileActiveBackground : palette.tileBackground;
+    final titleColor = palette.titleColor;
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: titleColor,
@@ -1021,51 +1076,36 @@ class _DifficultyTile extends StatelessWidget {
           color: titleColor,
         );
 
-    final rankBackground = brightness == Brightness.dark
-        ? (isActive
-            ? cs.primary
-            : Color.alphaBlend(cs.surfaceVariant.withOpacity(0.35), cs.surface))
-        : (isActive
-            ? _lightDifficultyBadgeActiveBackground
-            : _lightDifficultyBadgeBackground);
-    final rankTextColor = brightness == Brightness.dark
-        ? (isActive ? cs.onPrimary : cs.onSurfaceVariant)
-        : (isActive
-            ? _lightDifficultyBadgeActiveTextColor
-            : _lightDifficultyBadgeTextColor);
+    final rankBackground =
+        isActive ? palette.badgeActiveBackground : palette.badgeBackground;
+    final rankColor =
+        isActive ? palette.badgeActiveTextColor : palette.badgeTextColor;
     final rankStyle = theme.textTheme.labelLarge?.copyWith(
-          color: rankTextColor,
+          color: rankColor,
           fontWeight: FontWeight.w700,
         ) ??
         TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: rankTextColor,
+          color: rankColor,
         );
 
-    final progressTextColor = brightness == Brightness.dark
-        ? cs.onSurfaceVariant
-        : _lightDifficultyProgressTextColor;
+    final progressColor = palette.progressTextColor;
     final progressStyle = theme.textTheme.bodySmall?.copyWith(
-          color: progressTextColor,
+          color: progressColor,
           fontWeight: FontWeight.w600,
         ) ??
         TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: progressTextColor,
+          color: progressColor,
         );
 
-    final trackColor = brightness == Brightness.dark
-        ? cs.onSurfaceVariant.withOpacity(0.24)
-        : (isActive
-            ? _lightDifficultyProgressTrackActiveColor
-            : _lightDifficultyProgressTrackColor);
-    final fillColor = brightness == Brightness.dark
-        ? (isActive ? cs.primary : cs.onSurfaceVariant.withOpacity(0.5))
-        : (isActive
-            ? _lightDifficultyProgressFillActiveColor
-            : _lightDifficultyProgressFillColor);
+    final trackColor = isActive
+        ? palette.progressTrackActiveColor
+        : palette.progressTrackColor;
+    final fillColor =
+        isActive ? palette.progressFillActiveColor : palette.progressFillColor;
 
     return InkWell(
       borderRadius: _difficultyTileRadius,
