@@ -165,7 +165,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
-    final result = await showModalBottomSheet<_DifficultySheetResult>(
+    final result = await showModalBottomSheet<Difficulty>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
@@ -194,7 +194,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                 if (context.mounted) {
                   Navigator.pop(
                     context,
-                    _DifficultySheetResult.difficulty(diff),
+                    diff,
                   );
                 }
               },
@@ -229,18 +229,6 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  _DailyChallengeTile(
-                    title: sheetL10n.selectDifficultyDailyChallenge,
-                    onTap: () {
-                      if (context.mounted) {
-                        Navigator.pop(
-                          context,
-                          const _DifficultySheetResult.dailyChallenge(),
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12),
                   ...tiles,
                 ],
               ),
@@ -252,21 +240,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
     if (!context.mounted || result == null) return;
 
-    if (result.isDailyChallenge) {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      app.startDailyChallenge(today);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const GamePage()),
-      );
-      return;
-    }
-
-    final difficulty = result.difficulty;
-    if (difficulty == null) return;
-
-    app.startGame(difficulty);
+    app.startGame(result);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
@@ -934,18 +908,6 @@ class _ProgressCard extends StatelessWidget {
   }
 }
 
-class _DifficultySheetResult {
-  final Difficulty? difficulty;
-  final bool isDailyChallenge;
-
-  const _DifficultySheetResult._(this.difficulty, this.isDailyChallenge);
-
-  const _DifficultySheetResult.difficulty(Difficulty difficulty)
-      : this._(difficulty, false);
-
-  const _DifficultySheetResult.dailyChallenge() : this._(null, true);
-}
-
 const BorderRadius _difficultyTileRadius = BorderRadius.all(Radius.circular(20));
 const Color _lightDifficultyTileBackground = Color(0xFFF5F7FB);
 const Color _lightDifficultyTileActiveBackground = Color(0xFFFFE6E1);
@@ -964,67 +926,6 @@ const Color _lightDifficultyProgressFillActiveColor = Color(0xFFE35C67);
 const double _difficultyProgressHeight = 6.0;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
-
-class _DailyChallengeTile extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const _DailyChallengeTile({required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final brightness = theme.brightness;
-    final background = brightness == Brightness.dark
-        ? Color.alphaBlend(cs.surfaceVariant.withOpacity(0.24), cs.surface)
-        : _lightDifficultyTileBackground;
-    final titleColor = brightness == Brightness.dark
-        ? cs.onSurface
-        : _lightDifficultyTitleColor;
-    final iconColor = brightness == Brightness.dark
-        ? cs.onSurfaceVariant
-        : _lightDifficultyProgressTextColor;
-
-    final titleStyle = theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: titleColor,
-        ) ??
-        TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: titleColor,
-        );
-
-    return InkWell(
-      borderRadius: _difficultyTileRadius,
-      onTap: onTap,
-      child: Ink(
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: _difficultyTileRadius,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: titleStyle,
-                ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: iconColor,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _DifficultySheetCloseButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -1175,7 +1076,7 @@ class _DifficultyTile extends StatelessWidget {
           borderRadius: _difficultyTileRadius,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 15),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1191,15 +1092,15 @@ class _DifficultyTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 6,
+                          horizontal: 12,
+                          vertical: 5,
                         ),
                         decoration: BoxDecoration(
                           color: rankBackground,
@@ -1213,7 +1114,7 @@ class _DifficultyTile extends StatelessWidget {
                         ),
                       ),
                       if (progressText != null) ...[
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 5),
                         Text(
                           progressText,
                           style: progressStyle,
@@ -1226,7 +1127,7 @@ class _DifficultyTile extends StatelessWidget {
                 ],
               ),
               if (progressText != null) ...[
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 _DifficultyProgressBar(
                   progress: progressValue,
                   trackColor: trackColor,
