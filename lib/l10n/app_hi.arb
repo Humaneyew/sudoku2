@@ -200,6 +200,8 @@
   "export": "निर्यात",
   "import": "आयात",
   "resetMyScore": "मेरा स्कोर रीसेट करें",
+  "resetMyScoreConfirmation": "क्या आप वाकई स्कोर रीसेट करना चाहते हैं? यह कार्रवाई अपरिवर्तनीय है।",
+  "resetAction": "रीसेट करें",
   "regenerateOpponents": "प्रतिद्वंद्वी पुनः उत्पन्न करें",
   "confirm": "पुष्टि करें",
   "cancel": "रद्द करें",

@@ -200,6 +200,8 @@
   "export": "Export",
   "import": "Import",
   "resetMyScore": "Reset my score",
+  "resetMyScoreConfirmation": "Are you sure you want to reset the score? This action cannot be undone.",
+  "resetAction": "Reset",
   "regenerateOpponents": "Regenerate opponents",
   "confirm": "Confirm",
   "cancel": "Cancel",

@@ -200,6 +200,8 @@
   "export": "Exporter",
   "import": "Importer",
   "resetMyScore": "Réinitialiser mon score",
+  "resetMyScoreConfirmation": "Voulez-vous vraiment réinitialiser le score ? Cette action est irréversible.",
+  "resetAction": "Réinitialiser",
   "regenerateOpponents": "Régénérer les adversaires",
   "confirm": "Confirmer",
   "cancel": "Annuler",
