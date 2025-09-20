@@ -27,7 +27,6 @@ abstract class AppLocalizations {
     Locale('ja'),
     Locale('ka'),
     Locale('ko'),
-    Locale('pt', 'BR'),
     Locale('ru'),
     Locale('uk'),
     Locale('zh'),
@@ -43,7 +42,6 @@ abstract class AppLocalizations {
     "ja",
     "ka",
     "ko",
-    "pt_BR",
     "ru",
     "uk",
     "zh",
@@ -246,7 +244,6 @@ abstract class AppLocalizations {
 
   String get languageSpanish;
 
-  String get languagePortuguese;
 
   String get languageItalian;
 
@@ -360,8 +357,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsKa();
     case "ko":
       return AppLocalizationsKo();
-    case "pt_BR":
-      return AppLocalizationsPtBr();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -388,8 +383,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsKa();
     case "ko":
       return AppLocalizationsKo();
-    case "pt":
-      return AppLocalizationsPtBr();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -730,8 +723,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -1173,8 +1164,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -1616,8 +1605,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -2059,8 +2046,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -2502,8 +2487,6 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -2945,8 +2928,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -3388,8 +3369,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -3831,8 +3810,6 @@ class AppLocalizationsKa extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -4274,8 +4251,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -4386,449 +4361,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get difficultyMasterShort => "MST.";
-}
-
-class AppLocalizationsPtBr extends AppLocalizations {
-  AppLocalizationsPtBr() : super("pt_BR");
-
-  @override
-  String get appTitle => "Mestre do Sudoku";
-
-  @override
-  String get navHome => "Início";
-
-  @override
-  String get navDaily => "Desafio";
-
-  @override
-  String get navStats => "Estatísticas";
-
-  @override
-  String get dailyStreak => "Sequência diária";
-
-  @override
-  String get selectDifficultyTitle => "Escolha a dificuldade";
-
-  @override
-  String get selectDifficultyDailyChallenge => "Desafio";
-
-  @override
-  String get playAction => "Jogar";
-
-  @override
-  String get championshipTitle => "Campeonato";
-
-  @override
-  String championshipScore(int score) {
-    return "Pontuação ${score}";
-  }
-
-  @override
-  String toNextPlace(int points) {
-    return "Até a próxima posição: ${points} pts";
-  }
-
-  @override
-  String get youAreTop => "Você é o número 1";
-
-  @override
-  String get championshipRoundDescriptionPlaceholder => "Jogue nesta rodada para aumentar sua corrida no campeonato.";
-
-  @override
-  String get championshipRoundCompletedLabel => "Concluído";
-
-  @override
-  String totalScore(String score) {
-    return "Pontuação total: ${score}";
-  }
-
-  @override
-  String get meLabel => "Meu";
-
-  @override
-  String leaderboardRow(int rank, String name, String points) {
-    return "Posição ${rank}. ${name}. ${points} pontos";
-  }
-
-  @override
-  String yourPosition(int rank, String points) {
-    return "Minha posição ${rank}. ${points} pontos";
-  }
-
-  @override
-  String get pointsShort => "PTS";
-
-  @override
-  String get championshipAutoScroll => "Rolagem automática para minha posição";
-
-  @override
-  String get bestLabel => "Melhor";
-
-  @override
-  String get play => "Jogar";
-
-  @override
-  String get battleTitle => "Batalha";
-
-  @override
-  String battleWinRate(int count) {
-    return "Vitórias ${count}";
-  }
-
-  @override
-  String get startAction => "Começar";
-
-  @override
-  String levelHeading(int level, String difficulty) {
-    return "Nível ${level} — ${difficulty}";
-  }
-
-  @override
-  String get rankProgress => "Classificar o progresso";
-
-  @override
-  String rankLabel(int rank) {
-    return "Classificação ${rank}";
-  }
-
-  @override
-  String get newGame => "Novo jogo";
-
-  @override
-  String get continueGame => "Continue o jogo";
-
-  @override
-  String get weeklyProgress => "Progresso semanal";
-
-  @override
-  String get rewardsTitle => "Recompensas";
-
-  @override
-  String get rewardNoMistakesTitle => "Termine o desafio sem erros";
-
-  @override
-  String rewardExtraHearts(num count) {
-    final value = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      one: "${count} coração",
-      other: "${count} corações",
-    );
-    return "+" + value;
-  }
-
-  @override
-  String get rewardThreeInRowTitle => "Complete três desafios consecutivos";
-
-  @override
-  String get rewardUniqueTrophy => "Troféu único";
-
-  @override
-  String get rewardSevenDayTitle => "Mantenha uma sequência de 7 dias";
-
-  @override
-  String rewardStars(num count) {
-    final value = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      one: "${count} estrela",
-      other: "${count} estrelas",
-    );
-    return "+" + value;
-  }
-
-  @override
-  String get todayPuzzle => "Quebra -cabeça de hoje";
-
-  @override
-  String get todayPuzzleDescription => "Termine o Sudoku para ganhar uma recompensa extra e manter sua sequência viva.";
-
-  @override
-  String get continueAction => "Continuar";
-
-  @override
-  String get adMessage => "AD: Encontre objetos ocultos! Jogue agora.";
-
-  @override
-  String get adPlay => "Jogar";
-
-  @override
-  String get undo => "Desfazer";
-
-  @override
-  String get erase => "Apagar";
-
-  @override
-  String get autoNotes => "Notas automáticas";
-
-  @override
-  String get statusOn => "SOBRE";
-
-  @override
-  String get statusOff => "DESLIGADO";
-
-  @override
-  String get notes => "Notas";
-
-  @override
-  String get hint => "Dica";
-
-  @override
-  String get undoAdTitle => "Assista a anúncio para desfazer";
-
-  @override
-  String get undoAdDescription => "Assista a este curto anúncio para desfazer seu último passo.";
-
-  @override
-  String undoAdCountdown(int seconds) {
-    return "O anúncio termina em ${seconds} s";
-  }
-
-  @override
-  String get gameScreenTitle => "Sudoku";
-
-  @override
-  String get noActiveGameMessage => "Nenhum jogo ativo. Volte para a tela inicial.";
-
-  @override
-  String get victoryTitle => "Parabéns!";
-
-  @override
-  String victoryMessage(String time) {
-    return "Quebra-cabeça resolvido em ${time}.";
-  }
-
-  @override
-  String get backToHome => "Lar";
-
-  @override
-  String get playAnother => "Jogue novamente";
-
-  @override
-  String get outOfLivesTitle => "Você está fora do coração";
-
-  @override
-  String get outOfLivesDescription => "Restaure um coração vermelho para continuar brincando.";
-
-  @override
-  String get restoreLifeAction => "Restaurar 1 coração vermelho";
-
-  @override
-  String get cancelAction => "Cancelar";
-
-  @override
-  String get settingsTitle => "Configurações";
-
-  @override
-  String get themeSectionTitle => "Tema";
-
-  @override
-  String get themeWhite => "Luz clássica";
-
-  @override
-  String get themeCream => "Creme";
-
-  @override
-  String get themeGreen => "Hortelã";
-
-  @override
-  String get themeBlack => "Escuro";
-
-  @override
-  String get themePurple => "Púrpura escura";
-
-  @override
-  String get themeFontSize => "Tamanho da fonte";
-
-  @override
-  String get fontSizeExtraSmall => "Extra pequeno";
-
-  @override
-  String get fontSizeSmall => "Pequeno";
-
-  @override
-  String get fontSizeMedium => "Médio";
-
-  @override
-  String get fontSizeLarge => "Grande";
-
-  @override
-  String get fontSizeExtraLarge => "Extra grande";
-
-  @override
-  String get languageSectionTitle => "Linguagem";
-
-  @override
-  String get audioSectionTitle => "Som e música";
-
-  @override
-  String get soundsEffectsLabel => "Efeitos sonoros";
-
-  @override
-  String get vibrationLabel => "Vibração";
-
-  @override
-  String get musicLabel => "Música de fundo";
-
-  @override
-  String get miscSectionTitle => "Outro";
-
-  @override
-  String get championshipLocalSection => "Campeonato (local)";
-
-  @override
-  String get hideCompletedNumbersLabel => "Ocultar dígitos completos";
-
-  @override
-  String get aboutApp => "Sobre";
-
-  @override
-  String versionLabel(String version) {
-    return "Versão ${version}";
-  }
-
-  @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
-
-  @override
-  String get languageEnglish => "English";
-
-  @override
-  String get languageRussian => "Русский";
-
-  @override
-  String get languageUkrainian => "Українська";
-
-  @override
-  String get languageGerman => "Deutsch";
-
-  @override
-  String get languageFrench => "Français";
-
-  @override
-  String get languageChinese => "中文";
-
-  @override
-  String get languageHindi => "हिन्दी";
-
-  @override
-  String get languageGeorgian => "ქართული";
-
-  @override
-  String get languageSpanish => "Español";
-
-  @override
-  String get languagePortuguese => "Português";
-
-  @override
-  String get languageItalian => "Italiano";
-
-  @override
-  String get languageJapanese => "日本語";
-
-  @override
-  String get languageKorean => "한국어";
-
-  @override
-  String get export => "Exportar";
-
-  @override
-  String get import => "Importar";
-
-  @override
-  String get resetMyScore => "Redefinir minha pontuação";
-
-  @override
-  String get resetMyScoreConfirmation => "Tem certeza de que deseja redefinir a pontuação? Esta ação não pode ser desfeita.";
-
-  @override
-  String get resetAction => "Reiniciar";
-
-  @override
-  String get regenerateOpponents => "Regenerar oponentes";
-
-  @override
-  String get confirm => "Confirmar";
-
-  @override
-  String get cancel => "Cancelar";
-
-  @override
-  String get done => "Feito";
-
-  @override
-  String get failed => "Fracassado";
-
-  @override
-  String rankBadgeChasing(int current, int delta, int target) {
-    return "Classificação #${current} • +${delta} até #${target}";
-  }
-
-  @override
-  String get statsTitle => "Estatística";
-
-  @override
-  String get statsGamesSection => "Jogos";
-
-  @override
-  String get statsGamesStarted => "Os jogos começaram";
-
-  @override
-  String get statsGamesWon => "Os jogos venceram";
-
-  @override
-  String get statsWinRate => "Taxa de vitória";
-
-  @override
-  String get statsFlawless => "Acabamentos impecáveis";
-
-  @override
-  String get statsTimeSection => "Tempo";
-
-  @override
-  String get statsBestTime => "Melhor hora";
-
-  @override
-  String get statsAverageTime => "Tempo médio";
-
-  @override
-  String get statsStreakSection => "Onda";
-
-  @override
-  String get statsCurrentStreak => "Correia atual";
-
-  @override
-  String get statsBestStreak => "Melhor faixa";
-
-  @override
-  String get difficultyNovice => "Novato";
-
-  @override
-  String get difficultyNoviceShort => "Novembro";
-
-  @override
-  String get difficultyMedium => "Intermediário";
-
-  @override
-  String get difficultyMediumShort => "Int.";
-
-  @override
-  String get difficultyHigh => "Avançado";
-
-  @override
-  String get difficultyHighShort => "Adv.";
-
-  @override
-  String get difficultyExpert => "Especialista";
-
-  @override
-  String get difficultyExpertShort => "Exp.";
-
-  @override
-  String get difficultyMaster => "Mestre";
-
-  @override
-  String get difficultyMasterShort => "Mst.";
 }
 
 class AppLocalizationsRu extends AppLocalizations {
@@ -5164,8 +4696,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -5611,8 +5141,6 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";
@@ -6052,8 +5580,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-  @override
-  String get languagePortuguese => "Português";
 
   @override
   String get languageItalian => "Italiano";

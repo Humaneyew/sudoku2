@@ -35,7 +35,7 @@ extension DifficultyX on Difficulty {
 }
 
 /// Поддерживаемые языки интерфейса.
-enum AppLanguage { en, ru, uk, de, fr, es, pt, it, zh, hi, ja, ko, ka }
+enum AppLanguage { en, ru, uk, de, fr, es, it, zh, hi, ja, ko, ka }
 
 /// Доступные варианты размера шрифта для интерфейса игры.
 enum FontSizeOption { extraSmall, small, medium, large, extraLarge }
@@ -49,7 +49,6 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.de => const Locale('de'),
         AppLanguage.fr => const Locale('fr'),
         AppLanguage.es => const Locale('es'),
-        AppLanguage.pt => const Locale('pt', 'BR'),
         AppLanguage.it => const Locale('it'),
         AppLanguage.zh => const Locale('zh'),
         AppLanguage.hi => const Locale('hi'),
@@ -66,7 +65,6 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.de => 'de-DE',
         AppLanguage.fr => 'fr-FR',
         AppLanguage.es => 'es-ES',
-        AppLanguage.pt => 'pt-BR',
         AppLanguage.it => 'it-IT',
         AppLanguage.zh => 'zh-CN',
         AppLanguage.hi => 'hi-IN',
@@ -86,7 +84,6 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.de => l10n.languageGerman,
         AppLanguage.fr => l10n.languageFrench,
         AppLanguage.es => l10n.languageSpanish,
-        AppLanguage.pt => l10n.languagePortuguese,
         AppLanguage.it => l10n.languageItalian,
         AppLanguage.zh => l10n.languageChinese,
         AppLanguage.hi => l10n.languageHindi,
