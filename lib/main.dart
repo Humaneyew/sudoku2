@@ -10,6 +10,7 @@ import 'championship/championship_model.dart';
 import 'championship/championship_page.dart';
 import 'home_screen.dart';
 import 'models.dart';
+import 'screens/intro_screen.dart';
 import 'theme.dart';
 import 'undo_ad_controller.dart';
 
@@ -73,10 +74,12 @@ class SudokuApp extends StatelessWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
+      initialRoute: '/intro',
       routes: {
+        '/intro': (context) => const IntroScreen(),
+        '/home': (context) => const HomeScreen(),
         '/championship': (context) => const ChampionshipPage(),
       },
-      home: const HomeScreen(),
     );
   }
 }
