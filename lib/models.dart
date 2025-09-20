@@ -35,7 +35,7 @@ extension DifficultyX on Difficulty {
 }
 
 /// Поддерживаемые языки интерфейса.
-enum AppLanguage { en, ru, uk, de, fr, zh, hi, ka }
+enum AppLanguage { en, ru, uk, de, fr, es, pt, it, zh, hi, ja, ko, ka }
 
 /// Доступные варианты размера шрифта для интерфейса игры.
 enum FontSizeOption { extraSmall, small, medium, large, extraLarge }
@@ -48,8 +48,13 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.uk => const Locale('uk'),
         AppLanguage.de => const Locale('de'),
         AppLanguage.fr => const Locale('fr'),
+        AppLanguage.es => const Locale('es'),
+        AppLanguage.pt => const Locale('pt', 'BR'),
+        AppLanguage.it => const Locale('it'),
         AppLanguage.zh => const Locale('zh'),
         AppLanguage.hi => const Locale('hi'),
+        AppLanguage.ja => const Locale('ja'),
+        AppLanguage.ko => const Locale('ko'),
         AppLanguage.ka => const Locale('ka'),
       };
 
@@ -60,8 +65,13 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.uk => 'uk-UA',
         AppLanguage.de => 'de-DE',
         AppLanguage.fr => 'fr-FR',
+        AppLanguage.es => 'es-ES',
+        AppLanguage.pt => 'pt-BR',
+        AppLanguage.it => 'it-IT',
         AppLanguage.zh => 'zh-CN',
         AppLanguage.hi => 'hi-IN',
+        AppLanguage.ja => 'ja-JP',
+        AppLanguage.ko => 'ko-KR',
         AppLanguage.ka => 'ka-GE',
       };
 
@@ -75,8 +85,13 @@ extension AppLanguageX on AppLanguage {
         AppLanguage.uk => l10n.languageUkrainian,
         AppLanguage.de => l10n.languageGerman,
         AppLanguage.fr => l10n.languageFrench,
+        AppLanguage.es => l10n.languageSpanish,
+        AppLanguage.pt => l10n.languagePortuguese,
+        AppLanguage.it => l10n.languageItalian,
         AppLanguage.zh => l10n.languageChinese,
         AppLanguage.hi => l10n.languageHindi,
+        AppLanguage.ja => l10n.languageJapanese,
+        AppLanguage.ko => l10n.languageKorean,
         AppLanguage.ka => l10n.languageGeorgian,
       };
 }

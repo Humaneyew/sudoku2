@@ -1,0 +1,252 @@
+{
+  "@@locale": "ja",
+  "appTitle": "数独マスター",
+  "navHome": "ホーム",
+  "navDaily": "チャレンジ",
+  "navStats": "統計",
+  "dailyStreak": "連続日数",
+  "selectDifficultyTitle": "難易度を選択",
+  "selectDifficultyDailyChallenge": "チャレンジ",
+  "playAction": "プレイ",
+  "championshipTitle": "チャンピオンシップ",
+  "championshipScore": "スコア {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "toNextPlace": "次の順位まで: {points} pts",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "あなたは第1位です",
+  "championshipRoundDescriptionPlaceholder": "このラウンドをプレイしてチャンピオンシップの戦いを加速させましょう。",
+  "championshipRoundCompletedLabel": "完了しました",
+  "totalScore": "合計スコア: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "自分",
+  "leaderboardRow": "順位 {rank}。{name}。{points} ポイント",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "自分の順位 {rank}。{points} ポイント",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "PTS",
+  "championshipAutoScroll": "私の立場に自動スクロールします",
+  "bestLabel": "最高",
+  "play": "遊ぶ",
+  "battleTitle": "戦い",
+  "battleWinRate": "勝利 {count}",
+  "@battleWinRate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "始める",
+  "levelHeading": "レベル {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "ランクの進捗",
+  "rankLabel": "ランク {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "新しいゲーム",
+  "continueGame": "ゲームを続けます",
+  "weeklyProgress": "毎週の進歩",
+  "rewardsTitle": "報酬",
+  "rewardNoMistakesTitle": "間違いなくチャレンジを終了します",
+  "rewardExtraHearts": "+{count, plural, one {# ハート} other {# ハート}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "連続して3つの課題を完了します",
+  "rewardUniqueTrophy": "ユニークなトロフィー",
+  "rewardSevenDayTitle": "7日間の連勝を維持します",
+  "rewardStars": "+{count, plural, one {# スター} other {# スター}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "今日のパズル",
+  "todayPuzzleDescription": "数独を終えて、余分な報酬を獲得し、連勝を生かし続けます。",
+  "continueAction": "続く",
+  "adMessage": "AD：隠されたオブジェクトを見つけてください！今すぐ遊んでください。",
+  "adPlay": "遊ぶ",
+  "undo": "元に戻します",
+  "erase": "消去します",
+  "autoNotes": "オートノート",
+  "statusOn": "の上",
+  "statusOff": "オフ",
+  "notes": "メモ",
+  "hint": "ヒント",
+  "undoAdTitle": "元に戻すために広告を見てください",
+  "undoAdDescription": "この短い広告を見て、最後の動きを元に戻してください。",
+  "undoAdCountdown": "広告は {seconds} 秒後に終了",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "gameScreenTitle": "数独",
+  "noActiveGameMessage": "アクティブなゲームはありません。ホーム画面に戻ります。",
+  "victoryTitle": "おめでとう！",
+  "victoryMessage": "パズルを {time} で解きました。",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "家",
+  "playAnother": "もう一度遊ぶ",
+  "outOfLivesTitle": "あなたは心がありません",
+  "outOfLivesDescription": "1つの赤い心を回復してプレイし続けます。",
+  "restoreLifeAction": "1つの赤いハートを復元します",
+  "cancelAction": "キャンセル",
+  "settingsTitle": "設定",
+  "themeSectionTitle": "テーマ",
+  "themeWhite": "古典的な光",
+  "themeCream": "クリーム",
+  "themeGreen": "ミント",
+  "themeBlack": "暗い",
+  "themePurple": "紫色の暗い",
+  "themeFontSize": "フォントサイズ",
+  "fontSizeExtraSmall": "余分な小",
+  "fontSizeSmall": "小さい",
+  "fontSizeMedium": "中くらい",
+  "fontSizeLarge": "大きい",
+  "fontSizeExtraLarge": "特大",
+  "languageSectionTitle": "言語",
+  "audioSectionTitle": "サウンドと音楽",
+  "soundsEffectsLabel": "効果音",
+  "vibrationLabel": "振動",
+  "musicLabel": "バックグラウンドミュージック",
+  "miscSectionTitle": "他の",
+  "championshipLocalSection": "チャンピオンシップ（ローカル）",
+  "hideCompletedNumbersLabel": "完成した数字を非表示にします",
+  "aboutApp": "について",
+  "versionLabel": "バージョン {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "©2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "languageGeorgian": "ქართული",
+  "languageSpanish": "Español",
+  "languagePortuguese": "Português",
+  "languageItalian": "Italiano",
+  "languageJapanese": "日本語",
+  "languageKorean": "한국어",
+  "export": "輸出",
+  "import": "輸入",
+  "resetMyScore": "スコアをリセットします",
+  "resetMyScoreConfirmation": "スコアをリセットしたいですか？このアクションを元に戻すことはできません。",
+  "resetAction": "リセット",
+  "regenerateOpponents": "敵を再生します",
+  "confirm": "確認する",
+  "cancel": "キャンセル",
+  "done": "終わり",
+  "failed": "失敗した",
+  "rankBadgeChasing": "ランク #{current} • +{delta} で #{target}へ",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "statsTitle": "統計",
+  "statsGamesSection": "ゲーム",
+  "statsGamesStarted": "ゲームが始まりました",
+  "statsGamesWon": "ゲームが勝った",
+  "statsWinRate": "勝利率",
+  "statsFlawless": "完璧な仕上げ",
+  "statsTimeSection": "時間",
+  "statsBestTime": "最高の時間",
+  "statsAverageTime": "平均時間",
+  "statsStreakSection": "ストリーク",
+  "statsCurrentStreak": "現在のストリーク",
+  "statsBestStreak": "ベストストリーク",
+  "difficultyNovice": "初心者",
+  "difficultyNoviceShort": "11月",
+  "difficultyMedium": "中級",
+  "difficultyMediumShort": "int。",
+  "difficultyHigh": "高度な",
+  "difficultyHighShort": "Adv。",
+  "difficultyExpert": "専門家",
+  "difficultyExpertShort": "exp。",
+  "difficultyMaster": "マスター",
+  "difficultyMasterShort": "MST。"
+}

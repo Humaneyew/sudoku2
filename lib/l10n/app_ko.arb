@@ -1,0 +1,252 @@
+{
+  "@@locale": "ko",
+  "appTitle": "스도쿠 마스터",
+  "navHome": "홈",
+  "navDaily": "도전",
+  "navStats": "통계",
+  "dailyStreak": "일일 연속",
+  "selectDifficultyTitle": "난이도 선택",
+  "selectDifficultyDailyChallenge": "도전",
+  "playAction": "플레이",
+  "championshipTitle": "챔피언십",
+  "championshipScore": "점수 {score}",
+  "@championshipScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "toNextPlace": "다음 순위까지: {points} pts",
+  "@toNextPlace": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "youAreTop": "당신은 1위입니다",
+  "championshipRoundDescriptionPlaceholder": "이 라운드를 플레이해 챔피언십 순위를 끌어올리세요.",
+  "championshipRoundCompletedLabel": "완료",
+  "totalScore": "총 점수: {score}",
+  "@totalScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "meLabel": "나",
+  "leaderboardRow": "순위 {rank}. {name}. {points} 포인트",
+  "@leaderboardRow": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "yourPosition": "내 순위 {rank}. {points} 포인트",
+  "@yourPosition": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "points": {
+        "type": "String"
+      }
+    }
+  },
+  "pointsShort": "pts",
+  "championshipAutoScroll": "내 위치에 자동 스크롤",
+  "bestLabel": "최상의",
+  "play": "놀다",
+  "battleTitle": "전투",
+  "battleWinRate": "승리 {count}",
+  "@battleWinRate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startAction": "시작",
+  "levelHeading": "레벨 {level} — {difficulty}",
+  "@levelHeading": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  },
+  "rankProgress": "순위 진행",
+  "rankLabel": "랭크 {rank}",
+  "@rankLabel": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "newGame": "새로운 게임",
+  "continueGame": "계속 게임",
+  "weeklyProgress": "주간 진행",
+  "rewardsTitle": "보상",
+  "rewardNoMistakesTitle": "실수없이 도전을 끝내십시오",
+  "rewardExtraHearts": "+{count, plural, one {# 하트} other {# 하트}}",
+  "@rewardExtraHearts": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rewardThreeInRowTitle": "연속으로 세 가지 도전을 완료하십시오",
+  "rewardUniqueTrophy": "독특한 트로피",
+  "rewardSevenDayTitle": "7 일 행진을 유지하십시오",
+  "rewardStars": "+{count, plural, one {# 별} other {# 별}}",
+  "@rewardStars": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "todayPuzzle": "오늘의 퍼즐",
+  "todayPuzzleDescription": "스도쿠를 마치고 추가 보상을 받고 줄무늬를 유지하십시오.",
+  "continueAction": "계속하다",
+  "adMessage": "AD : 숨겨진 물건을 찾으십시오! 지금 플레이하십시오.",
+  "adPlay": "놀다",
+  "undo": "끄르다",
+  "erase": "지우다",
+  "autoNotes": "자동 노트",
+  "statusOn": "에",
+  "statusOff": "끄다",
+  "notes": "메모",
+  "hint": "힌트",
+  "undoAdTitle": "취소 할 광고를 시청하십시오",
+  "undoAdDescription": "이 짧은 광고를보고 마지막 이동을 취소하십시오.",
+  "undoAdCountdown": "광고가 {seconds}초 후 종료",
+  "@undoAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "gameScreenTitle": "스도쿠",
+  "noActiveGameMessage": "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.",
+  "victoryTitle": "축하해요!",
+  "victoryMessage": "퍼즐을 {time}에 해결했습니다.",
+  "@victoryMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "backToHome": "집",
+  "playAnother": "다시 플레이하십시오",
+  "outOfLivesTitle": "당신은 마음이 없습니다",
+  "outOfLivesDescription": "붉은 심장 하나를 회복하여 계속 연주하십시오.",
+  "restoreLifeAction": "1 개의 붉은 심장을 복원하십시오",
+  "cancelAction": "취소",
+  "settingsTitle": "설정",
+  "themeSectionTitle": "주제",
+  "themeWhite": "클래식 라이트",
+  "themeCream": "크림",
+  "themeGreen": "박하",
+  "themeBlack": "어두운",
+  "themePurple": "보라색 어두운",
+  "themeFontSize": "글꼴 크기",
+  "fontSizeExtraSmall": "더 작습니다",
+  "fontSizeSmall": "작은",
+  "fontSizeMedium": "중간",
+  "fontSizeLarge": "크기가 큰",
+  "fontSizeExtraLarge": "특대",
+  "languageSectionTitle": "언어",
+  "audioSectionTitle": "소리와 음악",
+  "soundsEffectsLabel": "음향 효과",
+  "vibrationLabel": "진동",
+  "musicLabel": "배경 음악",
+  "miscSectionTitle": "다른",
+  "championshipLocalSection": "챔피언십 (지역)",
+  "hideCompletedNumbersLabel": "완성 된 숫자를 숨기십시오",
+  "aboutApp": "에 대한",
+  "versionLabel": "버전 {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "© 2025 Sudoku Inc.",
+  "languageEnglish": "English",
+  "languageRussian": "Русский",
+  "languageUkrainian": "Українська",
+  "languageGerman": "Deutsch",
+  "languageFrench": "Français",
+  "languageChinese": "中文",
+  "languageHindi": "हिन्दी",
+  "languageGeorgian": "ქართული",
+  "languageSpanish": "Español",
+  "languagePortuguese": "Português",
+  "languageItalian": "Italiano",
+  "languageJapanese": "日本語",
+  "languageKorean": "한국어",
+  "export": "내보내다",
+  "import": "수입",
+  "resetMyScore": "내 점수를 재설정하십시오",
+  "resetMyScoreConfirmation": "점수를 재설정 하시겠습니까? 이 조치는 취소 할 수 없습니다.",
+  "resetAction": "다시 놓기",
+  "regenerateOpponents": "상대방을 재생합니다",
+  "confirm": "확인하다",
+  "cancel": "취소",
+  "done": "완료",
+  "failed": "실패한",
+  "rankBadgeChasing": "랭크 #{current} • +{delta} #{target}까지",
+  "@rankBadgeChasing": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "delta": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "statsTitle": "통계",
+  "statsGamesSection": "계략",
+  "statsGamesStarted": "게임이 시작되었습니다",
+  "statsGamesWon": "게임 우승",
+  "statsWinRate": "승리",
+  "statsFlawless": "완벽한 마무리",
+  "statsTimeSection": "시간",
+  "statsBestTime": "최고의 시간",
+  "statsAverageTime": "평균 시간",
+  "statsStreakSection": "줄",
+  "statsCurrentStreak": "현재 행진",
+  "statsBestStreak": "최고의 행진",
+  "difficultyNovice": "초심자",
+  "difficultyNoviceShort": "11 월",
+  "difficultyMedium": "중간",
+  "difficultyMediumShort": "int.",
+  "difficultyHigh": "고급의",
+  "difficultyHighShort": "adv.",
+  "difficultyExpert": "전문가",
+  "difficultyExpertShort": "Exp.",
+  "difficultyMaster": "주인",
+  "difficultyMasterShort": "MST."
+}

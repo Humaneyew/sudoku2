@@ -20,9 +20,14 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
+    Locale('es'),
     Locale('fr'),
     Locale('hi'),
+    Locale('it'),
+    Locale('ja'),
     Locale('ka'),
+    Locale('ko'),
+    Locale('pt', 'BR'),
     Locale('ru'),
     Locale('uk'),
     Locale('zh'),
@@ -31,9 +36,14 @@ abstract class AppLocalizations {
   static const List<String> _supportedLocaleNames = <String>[
     "de",
     "en",
+    "es",
     "fr",
     "hi",
+    "it",
+    "ja",
     "ka",
+    "ko",
+    "pt_BR",
     "ru",
     "uk",
     "zh",
@@ -234,6 +244,16 @@ abstract class AppLocalizations {
 
   String get languageGeorgian;
 
+  String get languageSpanish;
+
+  String get languagePortuguese;
+
+  String get languageItalian;
+
+  String get languageJapanese;
+
+  String get languageKorean;
+
   String get export;
 
   String get import;
@@ -326,12 +346,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case "en":
       return AppLocalizationsEn();
+    case "es":
+      return AppLocalizationsEs();
     case "fr":
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "it":
+      return AppLocalizationsIt();
+    case "ja":
+      return AppLocalizationsJa();
     case "ka":
       return AppLocalizationsKa();
+    case "ko":
+      return AppLocalizationsKo();
+    case "pt_BR":
+      return AppLocalizationsPtBr();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -344,12 +374,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case "en":
       return AppLocalizationsEn();
+    case "es":
+      return AppLocalizationsEs();
     case "fr":
       return AppLocalizationsFr();
     case "hi":
       return AppLocalizationsHi();
+    case "it":
+      return AppLocalizationsIt();
+    case "ja":
+      return AppLocalizationsJa();
     case "ka":
       return AppLocalizationsKa();
+    case "ko":
+      return AppLocalizationsKo();
+    case "pt":
+      return AppLocalizationsPtBr();
     case "ru":
       return AppLocalizationsRu();
     case "uk":
@@ -688,6 +728,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "Exportieren";
 
   @override
@@ -697,8 +752,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get resetMyScore => "Meinen Punktestand zurücksetzen";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "Sind Sie sicher, dass Sie den Punktestand zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
+  String get resetMyScoreConfirmation => "Sind Sie sicher, dass Sie den Punktestand zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
 
   @override
   String get resetAction => "Zurücksetzen";
@@ -824,14 +878,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String championshipScore(int score) {
     return "Score ${score}";
   }
-
-  @override
-  String toNextPlace(int points) {
-    return "Jusqu'à la prochaine place : ${points} pts";
-  }
-
-  @override
-  String get youAreTop => "Vous êtes n°1";
 
   @override
   String toNextPlace(int points) {
@@ -1125,6 +1171,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "Export";
 
   @override
@@ -1134,8 +1195,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetMyScore => "Reset my score";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "Are you sure you want to reset the score? This action cannot be undone.";
+  String get resetMyScoreConfirmation => "Are you sure you want to reset the score? This action cannot be undone.";
 
   @override
   String get resetAction => "Reset";
@@ -1227,6 +1287,449 @@ class AppLocalizationsEn extends AppLocalizations {
   String get difficultyMasterShort => "Mst.";
 }
 
+class AppLocalizationsEs extends AppLocalizations {
+  AppLocalizationsEs() : super("es");
+
+  @override
+  String get appTitle => "Sudoku Maestro";
+
+  @override
+  String get navHome => "Inicio";
+
+  @override
+  String get navDaily => "Desafío";
+
+  @override
+  String get navStats => "Estadísticas";
+
+  @override
+  String get dailyStreak => "Racha diaria";
+
+  @override
+  String get selectDifficultyTitle => "Elige la dificultad";
+
+  @override
+  String get selectDifficultyDailyChallenge => "Desafío";
+
+  @override
+  String get playAction => "Jugar";
+
+  @override
+  String get championshipTitle => "Campeonato";
+
+  @override
+  String championshipScore(int score) {
+    return "Puntuación ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "Hasta el siguiente puesto: ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "Eres #1";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Juega esta ronda para impulsar su carrera de campeonato.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Terminado";
+
+  @override
+  String totalScore(String score) {
+    return "Puntuación total: ${score}";
+  }
+
+  @override
+  String get meLabel => "A mí";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Puesto ${rank}. ${name}. ${points} puntos";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Mi puesto ${rank}. ${points} puntos";
+  }
+
+  @override
+  String get pointsShort => "pts";
+
+  @override
+  String get championshipAutoScroll => "Desplazamiento automático a mi posición";
+
+  @override
+  String get bestLabel => "Mejor";
+
+  @override
+  String get play => "Jugar";
+
+  @override
+  String get battleTitle => "Batalla";
+
+  @override
+  String battleWinRate(int count) {
+    return "Victorias ${count}";
+  }
+
+  @override
+  String get startAction => "Comenzar";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "Nivel ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "Rango de progreso";
+
+  @override
+  String rankLabel(int rank) {
+    return "Rango ${rank}";
+  }
+
+  @override
+  String get newGame => "Nuevo juego";
+
+  @override
+  String get continueGame => "Continuar el juego";
+
+  @override
+  String get weeklyProgress => "Progreso semanal";
+
+  @override
+  String get rewardsTitle => "Recompensas";
+
+  @override
+  String get rewardNoMistakesTitle => "Termina el desafío sin errores";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} corazón",
+      other: "${count} corazones",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "Completar tres desafíos seguidos";
+
+  @override
+  String get rewardUniqueTrophy => "Trofeo único";
+
+  @override
+  String get rewardSevenDayTitle => "Mantener una racha de 7 días";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} estrella",
+      other: "${count} estrellas",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "Rompecabezas de hoy";
+
+  @override
+  String get todayPuzzleDescription => "Termine el sudoku para ganar una recompensa adicional y mantener su racha viva.";
+
+  @override
+  String get continueAction => "Continuar";
+
+  @override
+  String get adMessage => "AD: ¡Encuentra objetos ocultos! Juega ahora.";
+
+  @override
+  String get adPlay => "Jugar";
+
+  @override
+  String get undo => "Deshacer";
+
+  @override
+  String get erase => "Borrar";
+
+  @override
+  String get autoNotes => "Notas automáticas";
+
+  @override
+  String get statusOn => "EN";
+
+  @override
+  String get statusOff => "APAGADO";
+
+  @override
+  String get notes => "Notas";
+
+  @override
+  String get hint => "Pista";
+
+  @override
+  String get undoAdTitle => "Mira el anuncio para deshacer";
+
+  @override
+  String get undoAdDescription => "Mire este breve anuncio para deshacer su último movimiento.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "El anuncio termina en ${seconds} s";
+  }
+
+  @override
+  String get gameScreenTitle => "Sudoku";
+
+  @override
+  String get noActiveGameMessage => "No hay juego activo. Regrese a la pantalla de inicio.";
+
+  @override
+  String get victoryTitle => "¡Felicidades!";
+
+  @override
+  String victoryMessage(String time) {
+    return "Rompecabezas resuelto en ${time}.";
+  }
+
+  @override
+  String get backToHome => "Hogar";
+
+  @override
+  String get playAnother => "Volver a jugar";
+
+  @override
+  String get outOfLivesTitle => "Estás fuera de corazón";
+
+  @override
+  String get outOfLivesDescription => "Restaurar un corazón rojo para seguir jugando.";
+
+  @override
+  String get restoreLifeAction => "Restaurar 1 corazón rojo";
+
+  @override
+  String get cancelAction => "Cancelar";
+
+  @override
+  String get settingsTitle => "Ajustes";
+
+  @override
+  String get themeSectionTitle => "Tema";
+
+  @override
+  String get themeWhite => "Luz clásica";
+
+  @override
+  String get themeCream => "Crema";
+
+  @override
+  String get themeGreen => "Menta";
+
+  @override
+  String get themeBlack => "Oscuro";
+
+  @override
+  String get themePurple => "Morado oscuro";
+
+  @override
+  String get themeFontSize => "Tamaño de fuente";
+
+  @override
+  String get fontSizeExtraSmall => "Extra pequeño";
+
+  @override
+  String get fontSizeSmall => "Pequeño";
+
+  @override
+  String get fontSizeMedium => "Medio";
+
+  @override
+  String get fontSizeLarge => "Grande";
+
+  @override
+  String get fontSizeExtraLarge => "Extra grande";
+
+  @override
+  String get languageSectionTitle => "Idioma";
+
+  @override
+  String get audioSectionTitle => "Sonido y música";
+
+  @override
+  String get soundsEffectsLabel => "Efectos sonoros";
+
+  @override
+  String get vibrationLabel => "Vibración";
+
+  @override
+  String get musicLabel => "Música de fondo";
+
+  @override
+  String get miscSectionTitle => "Otro";
+
+  @override
+  String get championshipLocalSection => "Campeonato (local)";
+
+  @override
+  String get hideCompletedNumbersLabel => "Ocultar dígitos completos";
+
+  @override
+  String get aboutApp => "Acerca de";
+
+  @override
+  String versionLabel(String version) {
+    return "Versión ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "© 2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
+  String get export => "Exportar";
+
+  @override
+  String get import => "Importar";
+
+  @override
+  String get resetMyScore => "Restablecer mi puntaje";
+
+  @override
+  String get resetMyScoreConfirmation => "¿Estás seguro de que quieres restablecer el puntaje? Esta acción no se puede deshacer.";
+
+  @override
+  String get resetAction => "Reiniciar";
+
+  @override
+  String get regenerateOpponents => "Regenerar oponentes";
+
+  @override
+  String get confirm => "Confirmar";
+
+  @override
+  String get cancel => "Cancelar";
+
+  @override
+  String get done => "Hecho";
+
+  @override
+  String get failed => "Fallido";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Rango #${current} • +${delta} hacia #${target}";
+  }
+
+  @override
+  String get statsTitle => "Estadística";
+
+  @override
+  String get statsGamesSection => "Juegos";
+
+  @override
+  String get statsGamesStarted => "Comenzaron los juegos";
+
+  @override
+  String get statsGamesWon => "Juegos ganados";
+
+  @override
+  String get statsWinRate => "Tasa de ganancia";
+
+  @override
+  String get statsFlawless => "Acabados impecables";
+
+  @override
+  String get statsTimeSection => "Tiempo";
+
+  @override
+  String get statsBestTime => "Mejor tiempo";
+
+  @override
+  String get statsAverageTime => "Tiempo promedio";
+
+  @override
+  String get statsStreakSection => "Racha";
+
+  @override
+  String get statsCurrentStreak => "Racha actual";
+
+  @override
+  String get statsBestStreak => "Mejor racha";
+
+  @override
+  String get difficultyNovice => "Principiante";
+
+  @override
+  String get difficultyNoviceShort => "Nov.";
+
+  @override
+  String get difficultyMedium => "Intermedio";
+
+  @override
+  String get difficultyMediumShort => "Int.";
+
+  @override
+  String get difficultyHigh => "Avanzado";
+
+  @override
+  String get difficultyHighShort => "Adv.";
+
+  @override
+  String get difficultyExpert => "Experto";
+
+  @override
+  String get difficultyExpertShort => "Exp.";
+
+  @override
+  String get difficultyMaster => "Maestro";
+
+  @override
+  String get difficultyMasterShort => "MST.";
+}
+
 class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr() : super("fr");
 
@@ -1261,6 +1764,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String championshipScore(int score) {
     return "Score ${score}";
   }
+
+  @override
+  String toNextPlace(int points) {
+    return "Jusqu'à la prochaine place : ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "Vous êtes n°1";
 
   @override
   String get championshipRoundDescriptionPlaceholder => "Jouez cette manche pour booster votre parcours au championnat.";
@@ -1546,6 +2057,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "Exporter";
 
   @override
@@ -1555,8 +2081,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get resetMyScore => "Réinitialiser mon score";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "Voulez-vous vraiment réinitialiser le score ? Cette action est irréversible.";
+  String get resetMyScoreConfirmation => "Voulez-vous vraiment réinitialiser le score ? Cette action est irréversible.";
 
   @override
   String get resetAction => "Réinitialiser";
@@ -1975,6 +2500,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "निर्यात";
 
   @override
@@ -1984,8 +2524,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get resetMyScore => "मेरा स्कोर रीसेट करें";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "क्या आप वाकई स्कोर रीसेट करना चाहते हैं? यह कार्रवाई अपरिवर्तनीय है।";
+  String get resetMyScoreConfirmation => "क्या आप वाकई स्कोर रीसेट करना चाहते हैं? यह कार्रवाई अपरिवर्तनीय है।";
 
   @override
   String get resetAction => "रीसेट करें";
@@ -2077,6 +2616,892 @@ class AppLocalizationsHi extends AppLocalizations {
   String get difficultyMasterShort => "मास्.";
 }
 
+class AppLocalizationsIt extends AppLocalizations {
+  AppLocalizationsIt() : super("it");
+
+  @override
+  String get appTitle => "Maestro di Sudoku";
+
+  @override
+  String get navHome => "Home";
+
+  @override
+  String get navDaily => "Sfida";
+
+  @override
+  String get navStats => "Statistiche";
+
+  @override
+  String get dailyStreak => "Serie giornaliera";
+
+  @override
+  String get selectDifficultyTitle => "Scegli la difficoltà";
+
+  @override
+  String get selectDifficultyDailyChallenge => "Sfida";
+
+  @override
+  String get playAction => "Gioca";
+
+  @override
+  String get championshipTitle => "Campionato";
+
+  @override
+  String championshipScore(int score) {
+    return "Punteggio ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "Fino al prossimo posto: ${points} punti";
+  }
+
+  @override
+  String get youAreTop => "Sei #1";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Gioca questo round per aumentare la tua corsa in campionato.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Completato";
+
+  @override
+  String totalScore(String score) {
+    return "Punteggio totale: ${score}";
+  }
+
+  @override
+  String get meLabel => "Me";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Posizione ${rank}. ${name}. ${points} punti";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "La mia posizione ${rank}. ${points} punti";
+  }
+
+  @override
+  String get pointsShort => "PT";
+
+  @override
+  String get championshipAutoScroll => "Scrollare automatico alla mia posizione";
+
+  @override
+  String get bestLabel => "Migliore";
+
+  @override
+  String get play => "Giocare";
+
+  @override
+  String get battleTitle => "Battaglia";
+
+  @override
+  String battleWinRate(int count) {
+    return "Vittorie ${count}";
+  }
+
+  @override
+  String get startAction => "Inizio";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "Livello ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "Progresso di rango";
+
+  @override
+  String rankLabel(int rank) {
+    return "Classifica ${rank}";
+  }
+
+  @override
+  String get newGame => "Nuovo gioco";
+
+  @override
+  String get continueGame => "Continua il gioco";
+
+  @override
+  String get weeklyProgress => "Progressi settimanali";
+
+  @override
+  String get rewardsTitle => "Premi";
+
+  @override
+  String get rewardNoMistakesTitle => "Finire la sfida senza errori";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} cuore",
+      other: "${count} cuori",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "Completa tre sfide di seguito";
+
+  @override
+  String get rewardUniqueTrophy => "Trofeo unico";
+
+  @override
+  String get rewardSevenDayTitle => "Mantenere una serie di 7 giorni";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} stella",
+      other: "${count} stelle",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "Il puzzle di oggi";
+
+  @override
+  String get todayPuzzleDescription => "Termina il Sudoku per guadagnare una ricompensa extra e mantenere viva la tua serie.";
+
+  @override
+  String get continueAction => "Continuare";
+
+  @override
+  String get adMessage => "AD: Trova oggetti nascosti! Gioca adesso.";
+
+  @override
+  String get adPlay => "Giocare";
+
+  @override
+  String get undo => "Disfare";
+
+  @override
+  String get erase => "Cancellare";
+
+  @override
+  String get autoNotes => "Note automatiche";
+
+  @override
+  String get statusOn => "SU";
+
+  @override
+  String get statusOff => "SPENTO";
+
+  @override
+  String get notes => "Note";
+
+  @override
+  String get hint => "Suggerimento";
+
+  @override
+  String get undoAdTitle => "Guarda l'annuncio per annullare";
+
+  @override
+  String get undoAdDescription => "Guarda questo breve annuncio per annullare la tua ultima mossa.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "L'annuncio termina tra ${seconds} s";
+  }
+
+  @override
+  String get gameScreenTitle => "Sudoku";
+
+  @override
+  String get noActiveGameMessage => "Nessun gioco attivo. Torna alla schermata principale.";
+
+  @override
+  String get victoryTitle => "Congratulazioni!";
+
+  @override
+  String victoryMessage(String time) {
+    return "Schema risolto in ${time}.";
+  }
+
+  @override
+  String get backToHome => "Casa";
+
+  @override
+  String get playAnother => "Gioca di nuovo";
+
+  @override
+  String get outOfLivesTitle => "Sei fuori dal cuore";
+
+  @override
+  String get outOfLivesDescription => "Ripristina un cuore rosso per continuare a giocare.";
+
+  @override
+  String get restoreLifeAction => "Ripristina 1 cuore rosso";
+
+  @override
+  String get cancelAction => "Cancellare";
+
+  @override
+  String get settingsTitle => "Impostazioni";
+
+  @override
+  String get themeSectionTitle => "Tema";
+
+  @override
+  String get themeWhite => "Luce classica";
+
+  @override
+  String get themeCream => "Crema";
+
+  @override
+  String get themeGreen => "Menta";
+
+  @override
+  String get themeBlack => "Buio";
+
+  @override
+  String get themePurple => "Viola scuro";
+
+  @override
+  String get themeFontSize => "Dimensione del carattere";
+
+  @override
+  String get fontSizeExtraSmall => "Extra piccolo";
+
+  @override
+  String get fontSizeSmall => "Piccolo";
+
+  @override
+  String get fontSizeMedium => "Medio";
+
+  @override
+  String get fontSizeLarge => "Grande";
+
+  @override
+  String get fontSizeExtraLarge => "Extra grande";
+
+  @override
+  String get languageSectionTitle => "Lingua";
+
+  @override
+  String get audioSectionTitle => "Suono e musica";
+
+  @override
+  String get soundsEffectsLabel => "Effetti sonori";
+
+  @override
+  String get vibrationLabel => "Vibrazione";
+
+  @override
+  String get musicLabel => "Musica di sottofondo";
+
+  @override
+  String get miscSectionTitle => "Altro";
+
+  @override
+  String get championshipLocalSection => "Campionato (locale)";
+
+  @override
+  String get hideCompletedNumbersLabel => "Nascondere le cifre completate";
+
+  @override
+  String get aboutApp => "Di";
+
+  @override
+  String versionLabel(String version) {
+    return "Versione ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "© 2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
+  String get export => "Esportare";
+
+  @override
+  String get import => "Importare";
+
+  @override
+  String get resetMyScore => "Ripristina il mio punteggio";
+
+  @override
+  String get resetMyScoreConfirmation => "Sei sicuro di voler ripristinare il punteggio? Questa azione non può essere annullata.";
+
+  @override
+  String get resetAction => "Reset";
+
+  @override
+  String get regenerateOpponents => "Rigenerare gli avversari";
+
+  @override
+  String get confirm => "Confermare";
+
+  @override
+  String get cancel => "Cancellare";
+
+  @override
+  String get done => "Fatto";
+
+  @override
+  String get failed => "Fallito";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Classifica #${current} • +${delta} fino a #${target}";
+  }
+
+  @override
+  String get statsTitle => "Statistiche";
+
+  @override
+  String get statsGamesSection => "Giochi";
+
+  @override
+  String get statsGamesStarted => "I giochi sono iniziati";
+
+  @override
+  String get statsGamesWon => "Giochi vinti";
+
+  @override
+  String get statsWinRate => "Tasso di vittoria";
+
+  @override
+  String get statsFlawless => "Finiture impeccabili";
+
+  @override
+  String get statsTimeSection => "Tempo";
+
+  @override
+  String get statsBestTime => "MIGLIORE MIGLIORE";
+
+  @override
+  String get statsAverageTime => "Tempo medio";
+
+  @override
+  String get statsStreakSection => "Strisciante";
+
+  @override
+  String get statsCurrentStreak => "Striscia attuale";
+
+  @override
+  String get statsBestStreak => "Migliore striscia";
+
+  @override
+  String get difficultyNovice => "Novizio";
+
+  @override
+  String get difficultyNoviceShort => "Novembre";
+
+  @override
+  String get difficultyMedium => "Intermedio";
+
+  @override
+  String get difficultyMediumShort => "Int.";
+
+  @override
+  String get difficultyHigh => "Avanzato";
+
+  @override
+  String get difficultyHighShort => "Adv.";
+
+  @override
+  String get difficultyExpert => "Esperto";
+
+  @override
+  String get difficultyExpertShort => "Exp.";
+
+  @override
+  String get difficultyMaster => "Maestro";
+
+  @override
+  String get difficultyMasterShort => "MST.";
+}
+
+class AppLocalizationsJa extends AppLocalizations {
+  AppLocalizationsJa() : super("ja");
+
+  @override
+  String get appTitle => "数独マスター";
+
+  @override
+  String get navHome => "ホーム";
+
+  @override
+  String get navDaily => "チャレンジ";
+
+  @override
+  String get navStats => "統計";
+
+  @override
+  String get dailyStreak => "連続日数";
+
+  @override
+  String get selectDifficultyTitle => "難易度を選択";
+
+  @override
+  String get selectDifficultyDailyChallenge => "チャレンジ";
+
+  @override
+  String get playAction => "プレイ";
+
+  @override
+  String get championshipTitle => "チャンピオンシップ";
+
+  @override
+  String championshipScore(int score) {
+    return "スコア ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "次の順位まで: ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "あなたは＃1です";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "このラウンドをプレイして、チャンピオンシップランを後押しします。";
+
+  @override
+  String get championshipRoundCompletedLabel => "完了しました";
+
+  @override
+  String totalScore(String score) {
+    return "合計スコア: ${score}";
+  }
+
+  @override
+  String get meLabel => "自分";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "順位 ${rank}。${name}。${points} ポイント";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "自分の順位 ${rank}。${points} ポイント";
+  }
+
+  @override
+  String get pointsShort => "PTS";
+
+  @override
+  String get championshipAutoScroll => "私の立場に自動スクロールします";
+
+  @override
+  String get bestLabel => "最高";
+
+  @override
+  String get play => "遊ぶ";
+
+  @override
+  String get battleTitle => "戦い";
+
+  @override
+  String battleWinRate(int count) {
+    return "勝利 ${count}";
+  }
+
+  @override
+  String get startAction => "始める";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "レベル ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "ランクの進捗";
+
+  @override
+  String rankLabel(int rank) {
+    return "ランク ${rank}";
+  }
+
+  @override
+  String get newGame => "新しいゲーム";
+
+  @override
+  String get continueGame => "ゲームを続けます";
+
+  @override
+  String get weeklyProgress => "毎週の進歩";
+
+  @override
+  String get rewardsTitle => "報酬";
+
+  @override
+  String get rewardNoMistakesTitle => "間違いなくチャレンジを終了します";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} ハート",
+      other: "${count} ハート",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "連続して3つの課題を完了します";
+
+  @override
+  String get rewardUniqueTrophy => "ユニークなトロフィー";
+
+  @override
+  String get rewardSevenDayTitle => "7日間の連勝を維持します";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} スター",
+      other: "${count} スター",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "今日のパズル";
+
+  @override
+  String get todayPuzzleDescription => "数独を終えて、余分な報酬を獲得し、連勝を生かし続けます。";
+
+  @override
+  String get continueAction => "続く";
+
+  @override
+  String get adMessage => "AD：隠されたオブジェクトを見つけてください！今すぐ遊んでください。";
+
+  @override
+  String get adPlay => "遊ぶ";
+
+  @override
+  String get undo => "元に戻します";
+
+  @override
+  String get erase => "消去します";
+
+  @override
+  String get autoNotes => "オートノート";
+
+  @override
+  String get statusOn => "の上";
+
+  @override
+  String get statusOff => "オフ";
+
+  @override
+  String get notes => "メモ";
+
+  @override
+  String get hint => "ヒント";
+
+  @override
+  String get undoAdTitle => "元に戻すために広告を見てください";
+
+  @override
+  String get undoAdDescription => "この短い広告を見て、最後の動きを元に戻してください。";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "広告は ${seconds} 秒後に終了";
+  }
+
+  @override
+  String get gameScreenTitle => "数独";
+
+  @override
+  String get noActiveGameMessage => "アクティブなゲームはありません。ホーム画面に戻ります。";
+
+  @override
+  String get victoryTitle => "おめでとう！";
+
+  @override
+  String victoryMessage(String time) {
+    return "パズルを ${time} で解きました。";
+  }
+
+  @override
+  String get backToHome => "家";
+
+  @override
+  String get playAnother => "もう一度遊ぶ";
+
+  @override
+  String get outOfLivesTitle => "あなたは心がありません";
+
+  @override
+  String get outOfLivesDescription => "1つの赤い心を回復してプレイし続けます。";
+
+  @override
+  String get restoreLifeAction => "1つの赤いハートを復元します";
+
+  @override
+  String get cancelAction => "キャンセル";
+
+  @override
+  String get settingsTitle => "設定";
+
+  @override
+  String get themeSectionTitle => "テーマ";
+
+  @override
+  String get themeWhite => "古典的な光";
+
+  @override
+  String get themeCream => "クリーム";
+
+  @override
+  String get themeGreen => "ミント";
+
+  @override
+  String get themeBlack => "暗い";
+
+  @override
+  String get themePurple => "紫色の暗い";
+
+  @override
+  String get themeFontSize => "フォントサイズ";
+
+  @override
+  String get fontSizeExtraSmall => "余分な小";
+
+  @override
+  String get fontSizeSmall => "小さい";
+
+  @override
+  String get fontSizeMedium => "中くらい";
+
+  @override
+  String get fontSizeLarge => "大きい";
+
+  @override
+  String get fontSizeExtraLarge => "特大";
+
+  @override
+  String get languageSectionTitle => "言語";
+
+  @override
+  String get audioSectionTitle => "サウンドと音楽";
+
+  @override
+  String get soundsEffectsLabel => "効果音";
+
+  @override
+  String get vibrationLabel => "振動";
+
+  @override
+  String get musicLabel => "バックグラウンドミュージック";
+
+  @override
+  String get miscSectionTitle => "他の";
+
+  @override
+  String get championshipLocalSection => "チャンピオンシップ（ローカル）";
+
+  @override
+  String get hideCompletedNumbersLabel => "完成した数字を非表示にします";
+
+  @override
+  String get aboutApp => "について";
+
+  @override
+  String versionLabel(String version) {
+    return "バージョン ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "©2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
+  String get export => "輸出";
+
+  @override
+  String get import => "輸入";
+
+  @override
+  String get resetMyScore => "スコアをリセットします";
+
+  @override
+  String get resetMyScoreConfirmation => "スコアをリセットしたいですか？このアクションを元に戻すことはできません。";
+
+  @override
+  String get resetAction => "リセット";
+
+  @override
+  String get regenerateOpponents => "敵を再生します";
+
+  @override
+  String get confirm => "確認する";
+
+  @override
+  String get cancel => "キャンセル";
+
+  @override
+  String get done => "終わり";
+
+  @override
+  String get failed => "失敗した";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "ランク #${current} • +${delta} で #${target}へ";
+  }
+
+  @override
+  String get statsTitle => "統計";
+
+  @override
+  String get statsGamesSection => "ゲーム";
+
+  @override
+  String get statsGamesStarted => "ゲームが始まりました";
+
+  @override
+  String get statsGamesWon => "ゲームが勝った";
+
+  @override
+  String get statsWinRate => "勝利率";
+
+  @override
+  String get statsFlawless => "完璧な仕上げ";
+
+  @override
+  String get statsTimeSection => "時間";
+
+  @override
+  String get statsBestTime => "最高の時間";
+
+  @override
+  String get statsAverageTime => "平均時間";
+
+  @override
+  String get statsStreakSection => "ストリーク";
+
+  @override
+  String get statsCurrentStreak => "現在のストリーク";
+
+  @override
+  String get statsBestStreak => "ベストストリーク";
+
+  @override
+  String get difficultyNovice => "初心者";
+
+  @override
+  String get difficultyNoviceShort => "11月";
+
+  @override
+  String get difficultyMedium => "中級";
+
+  @override
+  String get difficultyMediumShort => "int。";
+
+  @override
+  String get difficultyHigh => "高度な";
+
+  @override
+  String get difficultyHighShort => "Adv。";
+
+  @override
+  String get difficultyExpert => "専門家";
+
+  @override
+  String get difficultyExpertShort => "exp。";
+
+  @override
+  String get difficultyMaster => "マスター";
+
+  @override
+  String get difficultyMasterShort => "MST。";
+}
+
 class AppLocalizationsKa extends AppLocalizations {
   AppLocalizationsKa() : super("ka");
 
@@ -2121,8 +3546,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get youAreTop => "თქვენ ხართ #1";
 
   @override
-  String get championshipRoundDescriptionPlaceholder =>
-      "ითამაშეთ ეს რაუნდი, რომ გააძლიეროთ თქვენი ჩემპიონატის სერია.";
+  String get championshipRoundDescriptionPlaceholder => "ითამაშეთ ეს რაუნდი, რომ გააძლიეროთ თქვენი ჩემპიონატის სერია.";
 
   @override
   String get championshipRoundCompletedLabel => "დასრულებულია";
@@ -2231,8 +3655,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get todayPuzzle => "დღევანდელი თავსატეხი";
 
   @override
-  String get todayPuzzleDescription =>
-      "დაასრულეთ სუდოკუ, რათა მიიღოთ დამატებითი ჯილდო და შეინარჩუნოთ სერია.";
+  String get todayPuzzleDescription => "დაასრულეთ სუდოკუ, რათა მიიღოთ დამატებითი ჯილდო და შეინარჩუნოთ სერია.";
 
   @override
   String get continueAction => "გაგრძელება";
@@ -2268,8 +3691,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get undoAdTitle => "უყურეთ რეკლამას გასაუქმებლად";
 
   @override
-  String get undoAdDescription =>
-      "უყურეთ ამ მოკლე რეკლამას, რომ გააუქმოთ ბოლო სვლა.";
+  String get undoAdDescription => "უყურეთ ამ მოკლე რეკლამას, რომ გააუქმოთ ბოლო სვლა.";
 
   @override
   String undoAdCountdown(int seconds) {
@@ -2300,8 +3722,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get outOfLivesTitle => "გულები აღარ დარჩა";
 
   @override
-  String get outOfLivesDescription =>
-      "თამაშის გასაგრძელებლად აღადგინეთ ერთი წითელი გული.";
+  String get outOfLivesDescription => "თამაშის გასაგრძელებლად აღადგინეთ ერთი წითელი გული.";
 
   @override
   String get restoreLifeAction => "1 წითელი გულის აღდგენა";
@@ -2408,6 +3829,21 @@ class AppLocalizationsKa extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "ექსპორტი";
 
   @override
@@ -2417,8 +3853,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get resetMyScore => "ჩემი ქულების განულება";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "დარწმუნებული ხართ, რომ გსურთ ქულების განულება? ეს ქმედება შეუქცევადია.";
+  String get resetMyScoreConfirmation => "დარწმუნებული ხართ, რომ გსურთ ქულების განულება? ეს ქმედება შეუქცევადია.";
 
   @override
   String get resetAction => "განულება";
@@ -2508,6 +3943,892 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String get difficultyMasterShort => "ოსტ.";
+}
+
+class AppLocalizationsKo extends AppLocalizations {
+  AppLocalizationsKo() : super("ko");
+
+  @override
+  String get appTitle => "스도쿠 마스터";
+
+  @override
+  String get navHome => "홈";
+
+  @override
+  String get navDaily => "도전";
+
+  @override
+  String get navStats => "통계";
+
+  @override
+  String get dailyStreak => "일일 연속";
+
+  @override
+  String get selectDifficultyTitle => "난이도 선택";
+
+  @override
+  String get selectDifficultyDailyChallenge => "도전";
+
+  @override
+  String get playAction => "플레이";
+
+  @override
+  String get championshipTitle => "챔피언십";
+
+  @override
+  String championshipScore(int score) {
+    return "점수 ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "다음 순위까지: ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "당신은 #1입니다";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "이 라운드를 플레이하여 챔피언십 경기를 촉진하십시오.";
+
+  @override
+  String get championshipRoundCompletedLabel => "완전한";
+
+  @override
+  String totalScore(String score) {
+    return "총 점수: ${score}";
+  }
+
+  @override
+  String get meLabel => "나";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "순위 ${rank}. ${name}. ${points} 포인트";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "내 순위 ${rank}. ${points} 포인트";
+  }
+
+  @override
+  String get pointsShort => "pts";
+
+  @override
+  String get championshipAutoScroll => "내 위치에 자동 스크롤";
+
+  @override
+  String get bestLabel => "최상의";
+
+  @override
+  String get play => "놀다";
+
+  @override
+  String get battleTitle => "전투";
+
+  @override
+  String battleWinRate(int count) {
+    return "승리 ${count}";
+  }
+
+  @override
+  String get startAction => "시작";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "레벨 ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "순위 진행";
+
+  @override
+  String rankLabel(int rank) {
+    return "랭크 ${rank}";
+  }
+
+  @override
+  String get newGame => "새로운 게임";
+
+  @override
+  String get continueGame => "계속 게임";
+
+  @override
+  String get weeklyProgress => "주간 진행";
+
+  @override
+  String get rewardsTitle => "보상";
+
+  @override
+  String get rewardNoMistakesTitle => "실수없이 도전을 끝내십시오";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} 하트",
+      other: "${count} 하트",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "연속으로 세 가지 도전을 완료하십시오";
+
+  @override
+  String get rewardUniqueTrophy => "독특한 트로피";
+
+  @override
+  String get rewardSevenDayTitle => "7 일 행진을 유지하십시오";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} 별",
+      other: "${count} 별",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "오늘의 퍼즐";
+
+  @override
+  String get todayPuzzleDescription => "스도쿠를 마치고 추가 보상을 받고 줄무늬를 유지하십시오.";
+
+  @override
+  String get continueAction => "계속하다";
+
+  @override
+  String get adMessage => "AD : 숨겨진 물건을 찾으십시오! 지금 플레이하십시오.";
+
+  @override
+  String get adPlay => "놀다";
+
+  @override
+  String get undo => "끄르다";
+
+  @override
+  String get erase => "지우다";
+
+  @override
+  String get autoNotes => "자동 노트";
+
+  @override
+  String get statusOn => "에";
+
+  @override
+  String get statusOff => "끄다";
+
+  @override
+  String get notes => "메모";
+
+  @override
+  String get hint => "힌트";
+
+  @override
+  String get undoAdTitle => "취소 할 광고를 시청하십시오";
+
+  @override
+  String get undoAdDescription => "이 짧은 광고를보고 마지막 이동을 취소하십시오.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "광고가 ${seconds}초 후 종료";
+  }
+
+  @override
+  String get gameScreenTitle => "스도쿠";
+
+  @override
+  String get noActiveGameMessage => "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.";
+
+  @override
+  String get victoryTitle => "축하해요!";
+
+  @override
+  String victoryMessage(String time) {
+    return "퍼즐을 ${time}에 해결했습니다.";
+  }
+
+  @override
+  String get backToHome => "집";
+
+  @override
+  String get playAnother => "다시 플레이하십시오";
+
+  @override
+  String get outOfLivesTitle => "당신은 마음이 없습니다";
+
+  @override
+  String get outOfLivesDescription => "붉은 심장 하나를 회복하여 계속 연주하십시오.";
+
+  @override
+  String get restoreLifeAction => "1 개의 붉은 심장을 복원하십시오";
+
+  @override
+  String get cancelAction => "취소";
+
+  @override
+  String get settingsTitle => "설정";
+
+  @override
+  String get themeSectionTitle => "주제";
+
+  @override
+  String get themeWhite => "클래식 라이트";
+
+  @override
+  String get themeCream => "크림";
+
+  @override
+  String get themeGreen => "박하";
+
+  @override
+  String get themeBlack => "어두운";
+
+  @override
+  String get themePurple => "보라색 어두운";
+
+  @override
+  String get themeFontSize => "글꼴 크기";
+
+  @override
+  String get fontSizeExtraSmall => "더 작습니다";
+
+  @override
+  String get fontSizeSmall => "작은";
+
+  @override
+  String get fontSizeMedium => "중간";
+
+  @override
+  String get fontSizeLarge => "크기가 큰";
+
+  @override
+  String get fontSizeExtraLarge => "특대";
+
+  @override
+  String get languageSectionTitle => "언어";
+
+  @override
+  String get audioSectionTitle => "소리와 음악";
+
+  @override
+  String get soundsEffectsLabel => "음향 효과";
+
+  @override
+  String get vibrationLabel => "진동";
+
+  @override
+  String get musicLabel => "배경 음악";
+
+  @override
+  String get miscSectionTitle => "다른";
+
+  @override
+  String get championshipLocalSection => "챔피언십 (지역)";
+
+  @override
+  String get hideCompletedNumbersLabel => "완성 된 숫자를 숨기십시오";
+
+  @override
+  String get aboutApp => "에 대한";
+
+  @override
+  String versionLabel(String version) {
+    return "버전 ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "© 2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
+  String get export => "내보내다";
+
+  @override
+  String get import => "수입";
+
+  @override
+  String get resetMyScore => "내 점수를 재설정하십시오";
+
+  @override
+  String get resetMyScoreConfirmation => "점수를 재설정 하시겠습니까? 이 조치는 취소 할 수 없습니다.";
+
+  @override
+  String get resetAction => "다시 놓기";
+
+  @override
+  String get regenerateOpponents => "상대방을 재생합니다";
+
+  @override
+  String get confirm => "확인하다";
+
+  @override
+  String get cancel => "취소";
+
+  @override
+  String get done => "완료";
+
+  @override
+  String get failed => "실패한";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "랭크 #${current} • +${delta} #${target}까지";
+  }
+
+  @override
+  String get statsTitle => "통계";
+
+  @override
+  String get statsGamesSection => "계략";
+
+  @override
+  String get statsGamesStarted => "게임이 시작되었습니다";
+
+  @override
+  String get statsGamesWon => "게임 우승";
+
+  @override
+  String get statsWinRate => "승리";
+
+  @override
+  String get statsFlawless => "완벽한 마무리";
+
+  @override
+  String get statsTimeSection => "시간";
+
+  @override
+  String get statsBestTime => "최고의 시간";
+
+  @override
+  String get statsAverageTime => "평균 시간";
+
+  @override
+  String get statsStreakSection => "줄";
+
+  @override
+  String get statsCurrentStreak => "현재 행진";
+
+  @override
+  String get statsBestStreak => "최고의 행진";
+
+  @override
+  String get difficultyNovice => "초심자";
+
+  @override
+  String get difficultyNoviceShort => "11 월";
+
+  @override
+  String get difficultyMedium => "중간";
+
+  @override
+  String get difficultyMediumShort => "int.";
+
+  @override
+  String get difficultyHigh => "고급의";
+
+  @override
+  String get difficultyHighShort => "adv.";
+
+  @override
+  String get difficultyExpert => "전문가";
+
+  @override
+  String get difficultyExpertShort => "Exp.";
+
+  @override
+  String get difficultyMaster => "주인";
+
+  @override
+  String get difficultyMasterShort => "MST.";
+}
+
+class AppLocalizationsPtBr extends AppLocalizations {
+  AppLocalizationsPtBr() : super("pt_BR");
+
+  @override
+  String get appTitle => "Mestre do Sudoku";
+
+  @override
+  String get navHome => "Início";
+
+  @override
+  String get navDaily => "Desafio";
+
+  @override
+  String get navStats => "Estatísticas";
+
+  @override
+  String get dailyStreak => "Sequência diária";
+
+  @override
+  String get selectDifficultyTitle => "Escolha a dificuldade";
+
+  @override
+  String get selectDifficultyDailyChallenge => "Desafio";
+
+  @override
+  String get playAction => "Jogar";
+
+  @override
+  String get championshipTitle => "Campeonato";
+
+  @override
+  String championshipScore(int score) {
+    return "Pontuação ${score}";
+  }
+
+  @override
+  String toNextPlace(int points) {
+    return "Até a próxima posição: ${points} pts";
+  }
+
+  @override
+  String get youAreTop => "Você é o número 1";
+
+  @override
+  String get championshipRoundDescriptionPlaceholder => "Jogue nesta rodada para aumentar sua corrida no campeonato.";
+
+  @override
+  String get championshipRoundCompletedLabel => "Concluído";
+
+  @override
+  String totalScore(String score) {
+    return "Pontuação total: ${score}";
+  }
+
+  @override
+  String get meLabel => "Meu";
+
+  @override
+  String leaderboardRow(int rank, String name, String points) {
+    return "Posição ${rank}. ${name}. ${points} pontos";
+  }
+
+  @override
+  String yourPosition(int rank, String points) {
+    return "Minha posição ${rank}. ${points} pontos";
+  }
+
+  @override
+  String get pointsShort => "PTS";
+
+  @override
+  String get championshipAutoScroll => "Rolagem automática para minha posição";
+
+  @override
+  String get bestLabel => "Melhor";
+
+  @override
+  String get play => "Jogar";
+
+  @override
+  String get battleTitle => "Batalha";
+
+  @override
+  String battleWinRate(int count) {
+    return "Vitórias ${count}";
+  }
+
+  @override
+  String get startAction => "Começar";
+
+  @override
+  String levelHeading(int level, String difficulty) {
+    return "Nível ${level} — ${difficulty}";
+  }
+
+  @override
+  String get rankProgress => "Classificar o progresso";
+
+  @override
+  String rankLabel(int rank) {
+    return "Classificação ${rank}";
+  }
+
+  @override
+  String get newGame => "Novo jogo";
+
+  @override
+  String get continueGame => "Continue o jogo";
+
+  @override
+  String get weeklyProgress => "Progresso semanal";
+
+  @override
+  String get rewardsTitle => "Recompensas";
+
+  @override
+  String get rewardNoMistakesTitle => "Termine o desafio sem erros";
+
+  @override
+  String rewardExtraHearts(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} coração",
+      other: "${count} corações",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get rewardThreeInRowTitle => "Complete três desafios consecutivos";
+
+  @override
+  String get rewardUniqueTrophy => "Troféu único";
+
+  @override
+  String get rewardSevenDayTitle => "Mantenha uma sequência de 7 dias";
+
+  @override
+  String rewardStars(num count) {
+    final value = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      one: "${count} estrela",
+      other: "${count} estrelas",
+    );
+    return "+" + value;
+  }
+
+  @override
+  String get todayPuzzle => "Quebra -cabeça de hoje";
+
+  @override
+  String get todayPuzzleDescription => "Termine o Sudoku para ganhar uma recompensa extra e manter sua sequência viva.";
+
+  @override
+  String get continueAction => "Continuar";
+
+  @override
+  String get adMessage => "AD: Encontre objetos ocultos! Jogue agora.";
+
+  @override
+  String get adPlay => "Jogar";
+
+  @override
+  String get undo => "Desfazer";
+
+  @override
+  String get erase => "Apagar";
+
+  @override
+  String get autoNotes => "Notas automáticas";
+
+  @override
+  String get statusOn => "SOBRE";
+
+  @override
+  String get statusOff => "DESLIGADO";
+
+  @override
+  String get notes => "Notas";
+
+  @override
+  String get hint => "Dica";
+
+  @override
+  String get undoAdTitle => "Assista a anúncio para desfazer";
+
+  @override
+  String get undoAdDescription => "Assista a este curto anúncio para desfazer seu último passo.";
+
+  @override
+  String undoAdCountdown(int seconds) {
+    return "O anúncio termina em ${seconds} s";
+  }
+
+  @override
+  String get gameScreenTitle => "Sudoku";
+
+  @override
+  String get noActiveGameMessage => "Nenhum jogo ativo. Volte para a tela inicial.";
+
+  @override
+  String get victoryTitle => "Parabéns!";
+
+  @override
+  String victoryMessage(String time) {
+    return "Quebra-cabeça resolvido em ${time}.";
+  }
+
+  @override
+  String get backToHome => "Lar";
+
+  @override
+  String get playAnother => "Jogue novamente";
+
+  @override
+  String get outOfLivesTitle => "Você está fora do coração";
+
+  @override
+  String get outOfLivesDescription => "Restaure um coração vermelho para continuar brincando.";
+
+  @override
+  String get restoreLifeAction => "Restaurar 1 coração vermelho";
+
+  @override
+  String get cancelAction => "Cancelar";
+
+  @override
+  String get settingsTitle => "Configurações";
+
+  @override
+  String get themeSectionTitle => "Tema";
+
+  @override
+  String get themeWhite => "Luz clássica";
+
+  @override
+  String get themeCream => "Creme";
+
+  @override
+  String get themeGreen => "Hortelã";
+
+  @override
+  String get themeBlack => "Escuro";
+
+  @override
+  String get themePurple => "Púrpura escura";
+
+  @override
+  String get themeFontSize => "Tamanho da fonte";
+
+  @override
+  String get fontSizeExtraSmall => "Extra pequeno";
+
+  @override
+  String get fontSizeSmall => "Pequeno";
+
+  @override
+  String get fontSizeMedium => "Médio";
+
+  @override
+  String get fontSizeLarge => "Grande";
+
+  @override
+  String get fontSizeExtraLarge => "Extra grande";
+
+  @override
+  String get languageSectionTitle => "Linguagem";
+
+  @override
+  String get audioSectionTitle => "Som e música";
+
+  @override
+  String get soundsEffectsLabel => "Efeitos sonoros";
+
+  @override
+  String get vibrationLabel => "Vibração";
+
+  @override
+  String get musicLabel => "Música de fundo";
+
+  @override
+  String get miscSectionTitle => "Outro";
+
+  @override
+  String get championshipLocalSection => "Campeonato (local)";
+
+  @override
+  String get hideCompletedNumbersLabel => "Ocultar dígitos completos";
+
+  @override
+  String get aboutApp => "Sobre";
+
+  @override
+  String versionLabel(String version) {
+    return "Versão ${version}";
+  }
+
+  @override
+  String get aboutLegalese => "© 2025 Sudoku Inc.";
+
+  @override
+  String get languageEnglish => "English";
+
+  @override
+  String get languageRussian => "Русский";
+
+  @override
+  String get languageUkrainian => "Українська";
+
+  @override
+  String get languageGerman => "Deutsch";
+
+  @override
+  String get languageFrench => "Français";
+
+  @override
+  String get languageChinese => "中文";
+
+  @override
+  String get languageHindi => "हिन्दी";
+
+  @override
+  String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
+  String get export => "Exportar";
+
+  @override
+  String get import => "Importar";
+
+  @override
+  String get resetMyScore => "Redefinir minha pontuação";
+
+  @override
+  String get resetMyScoreConfirmation => "Tem certeza de que deseja redefinir a pontuação? Esta ação não pode ser desfeita.";
+
+  @override
+  String get resetAction => "Reiniciar";
+
+  @override
+  String get regenerateOpponents => "Regenerar oponentes";
+
+  @override
+  String get confirm => "Confirmar";
+
+  @override
+  String get cancel => "Cancelar";
+
+  @override
+  String get done => "Feito";
+
+  @override
+  String get failed => "Fracassado";
+
+  @override
+  String rankBadgeChasing(int current, int delta, int target) {
+    return "Classificação #${current} • +${delta} até #${target}";
+  }
+
+  @override
+  String get statsTitle => "Estatística";
+
+  @override
+  String get statsGamesSection => "Jogos";
+
+  @override
+  String get statsGamesStarted => "Os jogos começaram";
+
+  @override
+  String get statsGamesWon => "Os jogos venceram";
+
+  @override
+  String get statsWinRate => "Taxa de vitória";
+
+  @override
+  String get statsFlawless => "Acabamentos impecáveis";
+
+  @override
+  String get statsTimeSection => "Tempo";
+
+  @override
+  String get statsBestTime => "Melhor hora";
+
+  @override
+  String get statsAverageTime => "Tempo médio";
+
+  @override
+  String get statsStreakSection => "Onda";
+
+  @override
+  String get statsCurrentStreak => "Correia atual";
+
+  @override
+  String get statsBestStreak => "Melhor faixa";
+
+  @override
+  String get difficultyNovice => "Novato";
+
+  @override
+  String get difficultyNoviceShort => "Novembro";
+
+  @override
+  String get difficultyMedium => "Intermediário";
+
+  @override
+  String get difficultyMediumShort => "Int.";
+
+  @override
+  String get difficultyHigh => "Avançado";
+
+  @override
+  String get difficultyHighShort => "Adv.";
+
+  @override
+  String get difficultyExpert => "Especialista";
+
+  @override
+  String get difficultyExpertShort => "Exp.";
+
+  @override
+  String get difficultyMaster => "Mestre";
+
+  @override
+  String get difficultyMasterShort => "Mst.";
 }
 
 class AppLocalizationsRu extends AppLocalizations {
@@ -2841,6 +5162,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "Экспорт";
 
   @override
@@ -2850,8 +5186,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resetMyScore => "Сбросить мой счёт";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "Вы уверены, что хотите сбросить счёт? Это действие необратимо.";
+  String get resetMyScoreConfirmation => "Вы уверены, что хотите сбросить счёт? Это действие необратимо.";
 
   @override
   String get resetAction => "Сбросить";
@@ -3274,6 +5609,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get languageGeorgian => "ქართული";
 
   @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
+
+  @override
   String get export => "Експорт";
 
   @override
@@ -3283,8 +5633,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get resetMyScore => "Скинути мій рахунок";
 
   @override
-  String get resetMyScoreConfirmation =>
-      "Ви впевнені, що хочете скинути рахунок? Цю дію неможливо скасувати.";
+  String get resetMyScoreConfirmation => "Ви впевнені, що хочете скинути рахунок? Цю дію неможливо скасувати.";
 
   @override
   String get resetAction => "Скинути";
@@ -3699,6 +6048,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageGeorgian => "ქართული";
+
+  @override
+  String get languageSpanish => "Español";
+
+  @override
+  String get languagePortuguese => "Português";
+
+  @override
+  String get languageItalian => "Italiano";
+
+  @override
+  String get languageJapanese => "日本語";
+
+  @override
+  String get languageKorean => "한국어";
 
   @override
   String get export => "导出";
