@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -26,14 +25,11 @@ class BattlePage extends StatefulWidget {
   State<BattlePage> createState() => _BattlePageState();
 }
 
-enum _OpponentPhase { normal, pause, burst }
-
 class _BattlePageState extends State<BattlePage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   final ValueNotifier<int> _elapsedVN = ValueNotifier<int>(0);
   Timer? _timer;
   Ticker? _opponentTicker;
-  AnimationController? _pulseController;
 
   AppState? _appState;
   late final VoidCallback _appStateListener;
@@ -46,15 +42,17 @@ class _BattlePageState extends State<BattlePage>
   final math.Random _random = math.Random();
 
   String _opponentName = '';
-  String _opponentFlag = '🏳️';
-
   double _opponentProgress = 0;
-  double _initialProgress = 0;
-  double _baseSpeed = 0.02; // progress per second
-  double _currentSpeedMultiplier = 1.0;
-  Duration _phaseEnd = Duration.zero;
+  int _opponentSolvedCells = 0;
+  int _opponentTargetSolvedCells = 0;
+  int _burstStartSolvedCells = 0;
+  int _currentBurstCells = 0;
+  bool _opponentInBurst = false;
+  Duration _nextOpponentAction = Duration.zero;
+  Duration _burstStartTime = Duration.zero;
+  double _burstDurationSeconds = 0.5;
+  double _baseOpponentTempo = 0.05; // cells per second
   Duration _lastTick = Duration.zero;
-  _OpponentPhase _phase = _OpponentPhase.normal;
 
   @override
   void initState() {
@@ -149,32 +147,33 @@ class _BattlePageState extends State<BattlePage>
 
     if (resetProfile || _opponentName.isEmpty) {
       _opponentName = _generateOpponentName();
-      _opponentFlag = randomFlag(random: _random, exclude: app.playerFlag);
     }
 
-    final initialProgress = _calculateProgress(game);
+    final initialSolved = _countSolvedCells(game);
+    final totalCells = game.board.length;
+    final initialProgress =
+        totalCells == 0 ? 0.0 : initialSolved / totalCells.toDouble();
     setState(() {
-      _initialProgress = initialProgress;
       _opponentProgress = initialProgress;
-      _opponentFinished = false;
+      _opponentSolvedCells = initialSolved;
+      _opponentTargetSolvedCells = initialSolved;
+      _opponentFinished =
+          totalCells > 0 && initialSolved >= totalCells;
       _defeatShown = false;
     });
 
-    final durationSeconds = _estimateOpponentDurationSeconds(app);
-    final remaining = (1.0 - _initialProgress).clamp(0.05, 1.0);
-    _baseSpeed = durationSeconds <= 0 ? remaining / 300 : remaining / durationSeconds;
-    _currentSpeedMultiplier = 1.0;
-    _phaseEnd = Duration.zero;
+    _baseOpponentTempo = _estimateOpponentTempo(app, totalCells);
+    _opponentInBurst = false;
+    _currentBurstCells = 0;
+    _burstStartSolvedCells = initialSolved;
+    _burstDurationSeconds = 0.5;
+    _nextOpponentAction =
+        Duration(milliseconds: 400 + _random.nextInt(600));
+    _burstStartTime = Duration.zero;
     _lastTick = Duration.zero;
 
     _opponentTicker?.dispose();
     _opponentTicker = createTicker(_handleOpponentTick)..start();
-
-    _pulseController?.dispose();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    )..repeat(reverse: true);
   }
 
   void _handleOpponentTick(Duration elapsed) {
@@ -183,53 +182,115 @@ class _BattlePageState extends State<BattlePage>
     if (dt <= 0 || _opponentFinished) {
       return;
     }
-
-    if (elapsed >= _phaseEnd) {
-      _startNextPhase(elapsed);
+    final game = _appState?.current;
+    if (game == null) {
+      return;
+    }
+    final totalCells = game.board.length;
+    if (totalCells <= 0) {
+      return;
     }
 
-    final progressDelta = _baseSpeed * _currentSpeedMultiplier * dt;
-    if (progressDelta > 0) {
+    if (_opponentInBurst) {
+      final elapsedInBurst =
+          (elapsed - _burstStartTime).inMilliseconds / 1000.0;
+      final burstProgress =
+          (elapsedInBurst / _burstDurationSeconds).clamp(0.0, 1.0);
+      final double solvedDouble =
+          _burstStartSolvedCells + _currentBurstCells * burstProgress;
+      final double clampedSolved =
+          solvedDouble.clamp(0.0, totalCells.toDouble());
+      final double progressValue =
+          totalCells == 0 ? 0.0 : (clampedSolved / totalCells).clamp(0.0, 1.0);
+      final int animatedSolved = clampedSolved.floor();
+      final bool burstCompleted = burstProgress >= 1.0;
+
+      if (!mounted) {
+        _opponentTicker?.stop();
+        return;
+      }
+
+      setState(() {
+        if (burstCompleted) {
+          final solved = math.min(_opponentTargetSolvedCells, totalCells);
+          _opponentSolvedCells = solved;
+          _opponentProgress = totalCells == 0
+              ? 0.0
+              : solved / totalCells;
+          if (solved >= totalCells) {
+            _opponentFinished = true;
+            _opponentProgress = 1.0;
+            _opponentSolvedCells = totalCells;
+          }
+        } else {
+          _opponentProgress = progressValue;
+          _opponentSolvedCells = math.min(animatedSolved, totalCells);
+        }
+      });
+
+      if (burstCompleted) {
+        _opponentInBurst = false;
+        if (_opponentFinished) {
+          _opponentTicker?.stop();
+          _scheduleHandleGameState();
+          return;
+        }
+        final expectedSeconds = _currentBurstCells /
+            math.max(_baseOpponentTempo, 0.001);
+        final baselinePause =
+            math.max(0.2, expectedSeconds - _burstDurationSeconds);
+        final jitter = 0.7 + _random.nextDouble() * 0.6;
+        final pauseSeconds =
+            (baselinePause * jitter).clamp(0.3, 3.5);
+        _nextOpponentAction = elapsed +
+            Duration(milliseconds: (pauseSeconds * 1000).round());
+      }
+      return;
+    }
+
+    if (elapsed >= _nextOpponentAction) {
+      _startOpponentBurst(elapsed, totalCells);
+    }
+  }
+
+  void _startOpponentBurst(Duration elapsed, int totalCells) {
+    if (_opponentFinished) {
+      return;
+    }
+
+    final remaining = totalCells - _opponentSolvedCells;
+    if (remaining <= 0) {
       if (!mounted) {
         _opponentTicker?.stop();
         return;
       }
       setState(() {
-        _opponentProgress = (_opponentProgress + progressDelta).clamp(0.0, 1.0);
+        _opponentFinished = true;
+        _opponentProgress = 1.0;
+        _opponentSolvedCells = totalCells;
       });
-    }
-
-    if (_opponentProgress >= 0.999 && !_opponentFinished) {
-      _opponentFinished = true;
-      _opponentProgress = 1.0;
       _opponentTicker?.stop();
       _scheduleHandleGameState();
+      return;
     }
-  }
 
-  void _startNextPhase(Duration elapsed) {
-    final roll = _random.nextDouble();
-    if (roll < 0.15) {
-      _phase = _OpponentPhase.pause;
-      _currentSpeedMultiplier = 0.0;
-      final pauseMs = 600 + _random.nextInt(1400);
-      _phaseEnd = elapsed + Duration(milliseconds: pauseMs);
-    } else if (roll < 0.28) {
-      _phase = _OpponentPhase.burst;
-      _currentSpeedMultiplier = 1.8 + _random.nextDouble() * 1.4;
-      final burstMs = 800 + _random.nextInt(1400);
-      _phaseEnd = elapsed + Duration(milliseconds: burstMs);
-    } else {
-      _phase = _OpponentPhase.normal;
-      _currentSpeedMultiplier = 0.85 + _random.nextDouble() * 0.5;
-      final spanMs = 1500 + _random.nextInt(2500);
-      _phaseEnd = elapsed + Duration(milliseconds: spanMs);
+    final maxJump = math.min(3, remaining);
+    final jump = 1 + _random.nextInt(maxJump);
+    final targetSolved = math.min(totalCells, _opponentSolvedCells + jump);
+    _currentBurstCells = targetSolved - _opponentSolvedCells;
+    if (_currentBurstCells <= 0) {
+      _nextOpponentAction =
+          elapsed + Duration(milliseconds: 400 + _random.nextInt(600));
+      return;
     }
-  }
 
-  double _calculateProgress(GameState game) {
-    final solved = _countSolvedCells(game);
-    return solved / game.board.length;
+    _opponentTargetSolvedCells = targetSolved;
+    _burstStartSolvedCells = _opponentSolvedCells;
+    _burstDurationSeconds = 0.35 + _random.nextDouble() * 0.45;
+    _burstStartTime = elapsed;
+    _opponentInBurst = true;
+    _nextOpponentAction =
+        elapsed + Duration(milliseconds: (_burstDurationSeconds * 1000).round());
   }
 
   int _countSolvedCells(GameState game) {
@@ -242,7 +303,7 @@ class _BattlePageState extends State<BattlePage>
     return solved;
   }
 
-  int _estimateOpponentDurationSeconds(AppState app) {
+  double _estimateOpponentTempo(AppState app, int totalCells) {
     final diff = app.currentDifficulty ?? app.featuredStatsDifficulty;
     final stats = app.statsFor(diff);
     int averageMs;
@@ -252,8 +313,16 @@ class _BattlePageState extends State<BattlePage>
       averageMs = 8 * 60 * 1000;
     }
     averageMs = averageMs.clamp(4 * 60 * 1000, 18 * 60 * 1000);
-    final factor = 0.7 + _random.nextDouble() * 0.6;
-    return (averageMs * factor / 1000).round();
+    final averageSeconds = averageMs / 1000.0;
+    double baseTempo;
+    if (averageSeconds <= 0 || totalCells <= 0) {
+      baseTempo = 0.15;
+    } else {
+      baseTempo = totalCells / averageSeconds;
+    }
+    final factor = 0.8 + _random.nextDouble() * 0.4;
+    final tempo = baseTempo * factor;
+    return tempo <= 0 ? 0.12 : tempo;
   }
 
   String _generateOpponentName() {
@@ -320,7 +389,6 @@ class _BattlePageState extends State<BattlePage>
       game.elapsedMs = ms;
       app.completeBattle(ms);
       _opponentTicker?.stop();
-      _pulseController?.stop();
       if (!_victoryShown) {
         _victoryShown = true;
         _showVictoryDialog(app);
@@ -331,7 +399,6 @@ class _BattlePageState extends State<BattlePage>
     if (_opponentFinished && !app.isSolved && !_defeatShown) {
       _defeatShown = true;
       _opponentTicker?.stop();
-      _pulseController?.stop();
       _showDefeatDialog(app);
     }
   }
@@ -341,7 +408,6 @@ class _BattlePageState extends State<BattlePage>
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _opponentTicker?.dispose();
-    _pulseController?.dispose();
 
     final app = _appState;
     if (app != null) {
@@ -441,15 +507,12 @@ class _BattlePageState extends State<BattlePage>
                   children: [
                     _BattleHeader(
                       elapsed: _elapsedVN,
-                      playerFlag: app.playerFlag ?? '🏳️',
-                      opponentFlag: _opponentFlag,
                       playerName: l10n.battleYouLabel,
                       opponentName: _opponentName,
                       playerProgress: playerProgress,
                       opponentProgress: _opponentProgress,
-                      pulseController: _pulseController,
-                      solvedCells: solvedCells,
-                      totalCells: game.board.length,
+                      playerScore: solvedCells,
+                      opponentScore: _opponentSolvedCells,
                     ),
                     SizedBox(height: _kStatusBarOuterPadding * scale),
                     Expanded(
@@ -690,34 +753,28 @@ class _BattlePageState extends State<BattlePage>
 
 class _BattleHeader extends StatelessWidget {
   final ValueListenable<int> elapsed;
-  final String playerFlag;
-  final String opponentFlag;
   final String playerName;
   final String opponentName;
   final double playerProgress;
   final double opponentProgress;
-  final AnimationController? pulseController;
-  final int solvedCells;
-  final int totalCells;
+  final int playerScore;
+  final int opponentScore;
 
   const _BattleHeader({
     required this.elapsed,
-    required this.playerFlag,
-    required this.opponentFlag,
     required this.playerName,
     required this.opponentName,
     required this.playerProgress,
     required this.opponentProgress,
-    required this.pulseController,
-    required this.solvedCells,
-    required this.totalCells,
+    required this.playerScore,
+    required this.opponentScore,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
+    final cs = theme.colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -734,160 +791,102 @@ class _BattleHeader extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        _ProgressBar(
-          label: playerName,
-          flag: playerFlag,
-          value: playerProgress,
-          color: cs.primary,
-          background: cs.primary.withOpacity(0.12),
-          valueText: '$solvedCells / $totalCells',
-          pulse: null,
-        ),
-        const SizedBox(height: 12),
-        AnimatedBuilder(
-          animation: pulseController ?? const AlwaysStoppedAnimation(0.0),
-          builder: (context, child) {
-            final t = pulseController?.value ?? 0.0;
-            final pulseColor = Color.lerp(
-              colors.battleChallengeGradient.colors.first,
-              colors.battleChallengeGradient.colors.last,
-              0.5 + (math.sin(t * math.pi) * 0.5),
-            );
-            return _ProgressBar(
-              label: opponentName,
-              flag: opponentFlag,
-              value: opponentProgress,
-              color: pulseColor ?? cs.secondary,
-              background: (pulseColor ?? cs.secondary).withOpacity(0.16),
-              valueText: '${(opponentProgress * 100).clamp(0, 100).round()}%',
-              pulse: true,
-            );
-          },
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            _FlagAvatar(flag: playerFlag, label: playerName),
-            const Spacer(),
-            _FlagAvatar(flag: opponentFlag, label: opponentName),
-          ],
+        _BattleProgressTrack(
+          playerName: playerName,
+          opponentName: opponentName,
+          playerScore: playerScore,
+          opponentScore: opponentScore,
+          playerProgress: playerProgress,
+          opponentProgress: opponentProgress,
+          lineColor: colors.battleChallengeGradient.colors.last,
+          trackColor: cs.onSurface.withOpacity(0.08),
         ),
       ],
     );
   }
 }
 
-class _ProgressBar extends StatelessWidget {
-  final String label;
-  final String flag;
-  final double value;
-  final Color color;
-  final Color background;
-  final String valueText;
-  final bool? pulse;
+class _BattleProgressTrack extends StatelessWidget {
+  final String playerName;
+  final String opponentName;
+  final int playerScore;
+  final int opponentScore;
+  final double playerProgress;
+  final double opponentProgress;
+  final Color lineColor;
+  final Color trackColor;
 
-  const _ProgressBar({
-    required this.label,
-    required this.flag,
-    required this.value,
-    required this.color,
-    required this.background,
-    required this.valueText,
-    this.pulse,
+  const _BattleProgressTrack({
+    required this.playerName,
+    required this.opponentName,
+    required this.playerScore,
+    required this.opponentScore,
+    required this.playerProgress,
+    required this.opponentProgress,
+    required this.lineColor,
+    required this.trackColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final opponentLineColor = lineColor.withOpacity(0.7);
+    const double lineThickness = 8;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              '$flag $label',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+            Expanded(
+              child: Text(
+                '$playerName ($playerScore)',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Spacer(),
-            Text(
-              valueText,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: cs.onSurface.withOpacity(0.6),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                '($opponentScore) $opponentName',
+                textAlign: TextAlign.right,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Stack(
-            children: [
-              Container(
-                height: 16,
-                decoration: BoxDecoration(
-                  color: background,
-                ),
-              ),
-              FractionallySizedBox(
-                widthFactor: value.clamp(0.0, 1.0),
-                child: Container(
-                  height: 16,
-                  decoration: BoxDecoration(
-                    gradient: pulse == true
-                        ? LinearGradient(
-                            colors: [
-                              color.withOpacity(0.8),
-                              color,
-                            ],
-                          )
-                        : null,
-                    color: pulse == true ? null : color,
+          borderRadius: BorderRadius.circular(lineThickness / 2),
+          child: SizedBox(
+            height: lineThickness,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(color: trackColor),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    widthFactor: playerProgress.clamp(0.0, 1.0),
+                    alignment: Alignment.centerLeft,
+                    child: Container(color: lineColor),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FlagAvatar extends StatelessWidget {
-  final String flag;
-  final String label;
-
-  const _FlagAvatar({required this.flag, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: cs.surfaceVariant.withOpacity(0.4),
-            shape: BoxShape.circle,
-            border: Border.all(color: cs.primary.withOpacity(0.2)),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            flag,
-            style: const TextStyle(fontSize: 28),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FractionallySizedBox(
+                    widthFactor: opponentProgress.clamp(0.0, 1.0),
+                    alignment: Alignment.centerRight,
+                    child: Container(color: opponentLineColor),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
