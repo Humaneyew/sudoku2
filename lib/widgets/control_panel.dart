@@ -8,26 +8,10 @@ import '../models.dart';
 import '../theme.dart';
 import '../undo_ad_controller.dart';
 
-const double _actionButtonRadiusValue = 16;
+const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
-const double kControlPanelVerticalSpacing = 12.0;
+const double kControlPanelVerticalSpacing = 8.0;
 const double _kCompactHeightBreakpoint = 720.0;
-const double _kActionButtonPreferredHeight = 44.0;
-const double _kActionButtonMinHeight = 42.0;
-const double _kActionButtonMaxHeight = 46.0;
-const double _kActionButtonIconSize = 20.0;
-const double _kActionButtonTextSize = 12.0;
-const double _kActionButtonBadgeTextSize = 10.0;
-const double _kNumberButtonMinHeight = 44.0;
-const double _kNumberButtonMaxHeight = 50.0;
-const double _kNumberButtonTextSize = 15.0;
-const double _kNumberButtonSelectedTextSize = 16.0;
-const double _kNumberButtonRemainingTextSize = 12.0;
-const double _kNumberPadHorizontalPadding = 12.0;
-const double _kNumberPadVerticalPadding = 12.0;
-const double _kNumberPadCornerRadius = 24.0;
-const double _kNumberPadShadowBlur = 18.0;
-const double _kNumberPadShadowOffsetY = 10.0;
 
 class ControlPanel extends StatelessWidget {
   final double scale;
@@ -72,11 +56,11 @@ class _ActionRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(child: _UndoButton(scale: scale, heightFactor: heightFactor)),
-        SizedBox(width: 8 * scale),
+        SizedBox(width: 10 * scale * heightFactor),
         Expanded(child: _EraseButton(scale: scale, heightFactor: heightFactor)),
-        SizedBox(width: 8 * scale),
+        SizedBox(width: 10 * scale * heightFactor),
         Expanded(child: _NotesButton(scale: scale, heightFactor: heightFactor)),
-        SizedBox(width: 8 * scale),
+        SizedBox(width: 10 * scale * heightFactor),
         Expanded(child: _HintButton(scale: scale, heightFactor: heightFactor)),
       ],
     );
@@ -266,42 +250,36 @@ class _ActionButton extends StatelessWidget {
     final showBadge = badge != null && badge!.isNotEmpty;
 
     final mediaQuery = MediaQuery.of(context);
-    final clampedTextScale = mediaQuery.textScaleFactor.clamp(0.0, 1.1);
-    final double resolvedHeight =
-        (_kActionButtonPreferredHeight * scale * heightFactor)
-            .clamp(_kActionButtonMinHeight, _kActionButtonMaxHeight);
-    final double radiusValue = math.max(
-      12.0,
-      _actionButtonRadiusValue * math.max(1.0, scale * 0.9),
-    );
-    final double badgeRadiusValue = math.max(
-      8.0,
-      _actionBadgeRadiusValue * math.max(1.0, scale * 0.8),
-    );
+    final clampedTextScale = mediaQuery.textScaleFactor.clamp(0.0, 1.2);
+    final bool narrowWidth = mediaQuery.size.width < 360;
+    final double widthFactor = narrowWidth ? 0.94 : 1.0;
+    final double baseFactor = math.min(widthFactor, heightFactor);
+    final double sizeFactor = baseFactor.clamp(0.85, 1.0).toDouble();
+    final double minHeight = 56.0 * scale;
+    final double height = math.max(minHeight, 72 * scale * sizeFactor);
+    final double radiusValue =
+        math.max(12.0, _actionButtonRadiusValue * scale * sizeFactor);
+    final double badgeRadiusValue =
+        math.max(8.0, _actionBadgeRadiusValue * scale * sizeFactor);
     final borderRadius = BorderRadius.circular(radiusValue);
     final badgeRadius = BorderRadius.circular(badgeRadiusValue);
-    final double iconSize = math.min(
-      resolvedHeight - 12.0,
-      _kActionButtonIconSize * math.max(1.0, scale),
-    );
-    final double spacing = math.max(3.0, resolvedHeight * 0.12);
-    final double availableForPadding =
-        resolvedHeight - iconSize - spacing - _kActionButtonTextSize;
+    final double blurRadius = 10 * scale * sizeFactor;
+    final double offsetY = 5 * scale * sizeFactor;
     final double verticalPadding =
-        (availableForPadding / 2).clamp(2.0, resolvedHeight * 0.25);
+        math.max(6.0, 10 * scale * sizeFactor);
     final double horizontalPadding =
-        math.max(8.0, resolvedHeight * 0.25);
+        math.max(6.0, 8 * scale * sizeFactor);
     final double badgeHorizontalPadding =
-        math.max(3.0, resolvedHeight * 0.09);
+        math.max(3.0, 6 * scale * sizeFactor);
     final double badgeVerticalPadding =
-        math.max(1.0, resolvedHeight * 0.06);
-    final double blurRadius = 8 * math.max(1.0, scale * 0.9);
-    final double offsetY = 4 * math.max(1.0, scale * 0.9);
+        math.max(1.0, 2 * scale * sizeFactor);
+    final double iconSize = 24 * scale;
+    final double spacing = math.max(4.0, 6 * scale * sizeFactor);
 
     return MediaQuery(
       data: mediaQuery.copyWith(textScaleFactor: clampedTextScale),
       child: SizedBox(
-        height: resolvedHeight,
+        height: height,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
           curve: Curves.easeOut,
@@ -347,7 +325,7 @@ class _ActionButton extends StatelessWidget {
                           child: Text(
                             badge!,
                             style: TextStyle(
-                              fontSize: _kActionButtonBadgeTextSize,
+                              fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: badgeForeground,
                             ),
@@ -369,7 +347,7 @@ class _ActionButton extends StatelessWidget {
                                 maxLines: 1,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: _kActionButtonTextSize,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: textColor,
                                 ),
@@ -450,19 +428,14 @@ class _NumberPad extends StatelessWidget {
             ? 0.9
             : 1.0);
 
-    final double baseHorizontalPadding =
-        isTablet ? 16.0 : _kNumberPadHorizontalPadding;
-    final double baseVerticalPadding =
-        isTablet ? 14.0 : _kNumberPadVerticalPadding;
-    final double radiusValue = math.max(
-      18.0,
-      _kNumberPadCornerRadius * math.max(1.0, scale * 0.9),
-    );
+    final baseHorizontalPadding = isTablet ? 20.0 : 8.0;
+    final horizontalPadding = baseHorizontalPadding / scale;
+    final verticalPadding = (isTablet ? 20.0 : 16.0) * scale * effectiveHeightFactor;
+    final double radiusValue =
+        math.max(18.0, 28 * scale * effectiveHeightFactor);
     final borderRadius = BorderRadius.circular(radiusValue);
-    final double blurRadius =
-        _kNumberPadShadowBlur * math.max(1.0, scale * 0.9) * effectiveHeightFactor;
-    final double offsetY =
-        _kNumberPadShadowOffsetY * math.max(1.0, scale * 0.9) * effectiveHeightFactor;
+    final double blurRadius = 20 * scale * effectiveHeightFactor;
+    final double offsetY = 12 * scale * effectiveHeightFactor;
 
     return Container(
       decoration: BoxDecoration(
@@ -477,8 +450,8 @@ class _NumberPad extends StatelessWidget {
         ],
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: baseHorizontalPadding,
-        vertical: baseVerticalPadding * effectiveHeightFactor,
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -504,13 +477,19 @@ class _NumberPad extends StatelessWidget {
 
           availableWidth = math.max(0.0, availableWidth);
           final double buttonWidth = availableWidth / 9;
-          final double rawHeight = buttonWidth * 1.05;
-          final double baseButtonHeight = rawHeight.clamp(
-            _kNumberButtonMinHeight,
-            _kNumberButtonMaxHeight,
-          );
-          final double scaledButtonHeight = (baseButtonHeight * effectiveHeightFactor)
-              .clamp(_kNumberButtonMinHeight, _kNumberButtonMaxHeight);
+          final double baseMinWidth = isTablet ? 56.0 : 48.0;
+
+          final double widthScale =
+              (buttonWidth / baseMinWidth).clamp(0.95, isTablet ? 1.6 : 1.35).toDouble();
+          final double minHeight = isTablet ? 80.0 : 68.0;
+          final double heightMultiplier = isTablet ? 1.18 : 1.12;
+          final double buttonHeight =
+              math.max(minHeight, buttonWidth * heightMultiplier);
+          final double scaledButtonHeight =
+              buttonHeight * scale * effectiveHeightFactor;
+          final double labelSpacing = (scaledButtonHeight * 0.09)
+              .clamp(3.5 * scale, 10.0 * scale)
+              .toDouble();
 
           final children = <Widget>[];
           for (var i = 0; i < 9; i++) {
@@ -522,7 +501,8 @@ class _NumberPad extends StatelessWidget {
                   colors: colors,
                   reduceMotion: reduceMotion,
                   buttonHeight: scaledButtonHeight,
-                  buttonWidth: buttonWidth,
+                  widthScale: widthScale,
+                  labelSpacing: labelSpacing,
                   scale: scale,
                 ),
               ),
@@ -548,7 +528,8 @@ class _DigitButton extends StatelessWidget {
   final SudokuColors colors;
   final bool reduceMotion;
   final double buttonHeight;
-  final double buttonWidth;
+  final double widthScale;
+  final double labelSpacing;
   final double scale;
 
   const _DigitButton({
@@ -557,7 +538,8 @@ class _DigitButton extends StatelessWidget {
     required this.colors,
     required this.reduceMotion,
     required this.buttonHeight,
-    required this.buttonWidth,
+    required this.widthScale,
+    required this.labelSpacing,
     required this.scale,
   });
 
@@ -590,7 +572,8 @@ class _DigitButton extends StatelessWidget {
           colors: colors,
           fontScale: vm.fontScale,
           height: buttonHeight,
-          buttonWidth: buttonWidth,
+          widthScale: widthScale,
+          labelSpacing: labelSpacing,
           scale: scale,
         );
       },
@@ -613,7 +596,8 @@ class _NumberButton extends StatelessWidget {
   final SudokuColors colors;
   final double fontScale;
   final double height;
-  final double buttonWidth;
+  final double widthScale;
+  final double labelSpacing;
   final double scale;
 
   const _NumberButton({
@@ -632,7 +616,8 @@ class _NumberButton extends StatelessWidget {
     required this.colors,
     required this.fontScale,
     required this.height,
-    required this.buttonWidth,
+    required this.widthScale,
+    required this.labelSpacing,
     required this.scale,
   });
 
@@ -666,44 +651,30 @@ class _NumberButton extends StatelessWidget {
     final duration = reduceMotion
         ? Duration.zero
         : const Duration(milliseconds: 160);
-    final double baseNumberSize =
-        (_kNumberButtonTextSize * (notesMode ? 0.95 : 1.0)) * fontScale;
-    final double selectedNumberSize =
-        (_kNumberButtonSelectedTextSize * (notesMode ? 0.95 : 1.0)) * fontScale;
-    final double targetNumberSize =
-        isSelected ? selectedNumberSize : baseNumberSize;
-    final double numberFontSize = targetNumberSize
-        .clamp(_kNumberButtonTextSize, _kNumberButtonSelectedTextSize + 1.0)
+    final baseNumberSize = (notesMode ? 18.0 : 20.0) * fontScale;
+    final numberFontSize = (baseNumberSize * widthScale * 1.05)
+        .clamp(18.0, isSelected ? 36.0 : 34.0)
         .toDouble();
     final remainingColor = !enabled
         ? colors.numberPadDisabledText
         : isHighlighted
             ? colors.numberPadRemainingHighlight
             : colors.numberPadRemaining;
-    final double baseRemainingSize =
-        _kNumberButtonRemainingTextSize * fontScale;
-    final double remainingFontSize = baseRemainingSize
-        .clamp(10.0, _kNumberButtonRemainingTextSize + 1.0)
+    final baseRemainingSize = 12.0 * fontScale;
+    final remainingFontSize = (baseRemainingSize * math.max(1.0, widthScale * 0.92) * 1.02)
+        .clamp(10.0, 18.0)
         .toDouble();
-    final double spacing = (height * 0.12).clamp(3.0, 6.0).toDouble();
-    final selectionScale = math.max(1.0, scale * 0.9);
     final shadow = isSelected
         ? [
             BoxShadow(
               color: colors.shadowColor,
-              blurRadius: 10 * selectionScale,
-              offset: Offset(0, 5 * selectionScale),
+              blurRadius: 12 * scale,
+              offset: Offset(0, 6 * scale),
             ),
           ]
         : null;
-    final double radiusValue = math.min(
-      height / 2,
-      math.max(12.0, height * 0.45),
-    );
-    final borderRadius = BorderRadius.circular(radiusValue);
-    final double horizontalInset = math.max(
-      3.0,
-      math.min(6.0, buttonWidth * 0.12),
+    final borderRadius = BorderRadius.circular(
+      math.max(18.0 * scale, math.min(24.0 * scale, height / 2.2)),
     );
 
     return AnimatedOpacity(
@@ -729,7 +700,7 @@ class _NumberButton extends StatelessWidget {
             border: Border.all(color: borderColor),
             boxShadow: shadow,
           ),
-          padding: EdgeInsets.symmetric(horizontal: horizontalInset),
+          padding: EdgeInsets.symmetric(horizontal: 4 * scale),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -743,7 +714,7 @@ class _NumberButton extends StatelessWidget {
                 ),
                 child: Text(number.toString()),
               ),
-              SizedBox(height: spacing),
+              SizedBox(height: labelSpacing),
               AnimatedDefaultTextStyle(
                 duration: duration,
                 style: TextStyle(
@@ -774,15 +745,11 @@ double estimateControlPanelHeight({
   const double maxGap = 4.0;
   final double heightFactor = isCompact ? 0.9 : 1.0;
   final double actionRowHeight =
-      (_kActionButtonPreferredHeight * scale * heightFactor)
-          .clamp(_kActionButtonMinHeight, _kActionButtonMaxHeight)
-          .toDouble();
-  final double spacing =
-      (kControlPanelVerticalSpacing * scale).clamp(10.0, 14.0).toDouble();
-  final double horizontalPadding =
-      isTablet ? 16.0 : _kNumberPadHorizontalPadding;
+      math.max(56.0 * scale, 72 * scale * heightFactor);
+  final double spacing = kControlPanelVerticalSpacing * scale * heightFactor;
+  final double horizontalPadding = (isTablet ? 20.0 : 8.0) / scale;
   final double verticalPadding =
-      (isTablet ? 14.0 : _kNumberPadVerticalPadding) * heightFactor;
+      (isTablet ? 20.0 : 16.0) * scale * heightFactor;
 
   final double innerWidth = math.max(0.0, maxWidth - horizontalPadding * 2);
 
@@ -799,15 +766,10 @@ double estimateControlPanelHeight({
 
   availableWidth = math.max(0.0, availableWidth);
   final double buttonWidth = availableWidth / 9;
-  final double rawHeight = buttonWidth * 1.05;
-  final double baseButtonHeight = rawHeight.clamp(
-    _kNumberButtonMinHeight,
-    _kNumberButtonMaxHeight,
-  );
-  final double scaledButtonHeight =
-      (baseButtonHeight * heightFactor)
-          .clamp(_kNumberButtonMinHeight, _kNumberButtonMaxHeight)
-          .toDouble();
+  final double minHeight = isTablet ? 80.0 : 68.0;
+  final double heightMultiplier = isTablet ? 1.18 : 1.12;
+  final double buttonHeight = math.max(minHeight, buttonWidth * heightMultiplier);
+  final double scaledButtonHeight = buttonHeight * scale * heightFactor;
   final double numberPadHeight = verticalPadding * 2 + scaledButtonHeight;
 
   return actionRowHeight + spacing + numberPadHeight;

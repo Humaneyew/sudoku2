@@ -22,21 +22,12 @@ const int _kInitialLives = 3;
 const double _kGameplayUiScale = 1.1;
 const double _kGameplayMinUiScale = 0.7;
 const double _kGameplayHorizontalPaddingFactor = 0.025;
-const double _kStatusBarOuterPadding = 8.0;
-const double _kGameContentTopPadding = 10.0;
-const double _kGameContentBottomPadding = 14.0;
-const double _kBoardToControlsSpacing = 14.0;
+const double _kStatusBarOuterPadding = 10.0;
+const double _kGameContentTopPadding = 16.0;
+const double _kGameContentBottomPadding = 40.0;
+const double _kBoardToControlsSpacing = 8.0;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
-const double _kTopSpacingMin = 8.0;
-const double _kTopSpacingMax = 12.0;
-const double _kBottomSpacingMin = 12.0;
-const double _kBottomSpacingMax = 16.0;
-const double _kBoardBaseExtent = 320.0;
-const double _kBoardMinExtent = 300.0;
-const double _kBoardMaxExtent = 336.0;
-const double _kControlPanelMinExtent = 300.0;
-const double _kControlPanelMaxExtent = 360.0;
 
 extension _GameStateElapsedMs on GameState {
   int get elapsedMs => _elapsedMsExpando[this] ?? 0;
@@ -861,57 +852,43 @@ double _estimateStatusBarHeight({
 }
 
 double _calculateBoardExtent(double width, double scale) {
-  if (width <= 0 || scale <= 0) {
-    return 0;
-  }
-  final scaledExtent = _kBoardBaseExtent * scale;
-  final constrainedExtent = math.min(
-    _kBoardMaxExtent,
-    math.max(_kBoardMinExtent, scaledExtent),
-  );
-  return math.min(width, constrainedExtent);
+  final baseWidth = math.max(0.0, width - 40);
+  return math.min(width, baseWidth * scale);
 }
 
 double _calculateControlPanelWidth(double width, double scale) {
-  if (width <= 0 || scale <= 0) {
-    return 0;
-  }
-  final scaledExtent = _kBoardBaseExtent * scale;
-  final constrainedExtent = math.min(
-    _kControlPanelMaxExtent,
-    math.max(_kControlPanelMinExtent, scaledExtent),
-  );
-  return math.min(width, constrainedExtent);
+  final baseWidth = math.max(0.0, width - 24);
+  return math.min(width, baseWidth * scale);
 }
 
 double _calculateGameContentTopPadding({
   required double availableHeight,
   required double scale,
 }) {
-  final double minSpacing = _kTopSpacingMin * scale;
-  final double maxSpacing = _kTopSpacingMax * scale;
   if (!availableHeight.isFinite || availableHeight <= 0) {
-    final double fallback = _kGameContentTopPadding * scale;
-    return fallback.clamp(minSpacing, maxSpacing);
+    return _kGameContentTopPadding * scale;
   }
-  final double preferredSpacing =
-      (availableHeight * 0.012).clamp(minSpacing, maxSpacing).toDouble();
-  return preferredSpacing;
+  final double basePadding = _kGameContentTopPadding * scale;
+  final double extraPadding =
+      (availableHeight * 0.02).clamp(6.0, 24.0).toDouble();
+  return basePadding + extraPadding;
 }
 
 double _calculateGameContentBottomPadding({
   required double availableHeight,
   required double scale,
 }) {
-  final double minSpacing = _kBottomSpacingMin * scale;
-  final double maxSpacing = _kBottomSpacingMax * scale;
   if (!availableHeight.isFinite || availableHeight <= 0) {
-    final double fallback = _kGameContentBottomPadding * scale;
-    return fallback.clamp(minSpacing, maxSpacing);
+    return _kGameContentBottomPadding * scale;
   }
-  final double preferredSpacing =
-      (availableHeight * 0.015).clamp(minSpacing, maxSpacing).toDouble();
-  return preferredSpacing;
+  final double basePadding = _kGameContentBottomPadding * scale;
+  final double lowerBound = availableHeight * 0.08;
+  final double upperBound = availableHeight * 0.15;
+  final double targetFraction =
+      availableHeight * (availableHeight >= 900 ? 0.12 : 0.10);
+  final double fractionalPadding =
+      targetFraction.clamp(lowerBound, upperBound).toDouble();
+  return math.max(basePadding, fractionalPadding);
 }
 
 class _GameHeader extends StatelessWidget {
