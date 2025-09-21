@@ -209,10 +209,23 @@ class _GamePageState extends State<GamePage>
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 24 / scale,
                         vertical: 12 * scale,
                       ),
-                      child: const _StatusBarContainer(scale: scale),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.maxWidth;
+                          final baseWidth = math.max(0.0, width - 40);
+                          final targetWidth = math.min(width, baseWidth * scale);
+                          final horizontalPadding =
+                              math.max(0.0, (width - targetWidth) / 2);
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                            ),
+                            child: const _StatusBarContainer(scale: scale),
+                          );
+                        },
+                      ),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -891,7 +904,29 @@ class _StatusBar extends StatelessWidget {
     final borderRadius = BorderRadius.circular(_statusBarRadiusValue * scale);
     final badgeRadius = BorderRadius.circular(_statusBarBadgeRadiusValue * scale);
 
+    final baseDifficultySize =
+        theme.textTheme.titleMedium?.fontSize ?? 16.0;
+    final difficultyStyle = (theme.textTheme.titleMedium ??
+            const TextStyle(fontSize: 16))
+        .copyWith(
+      fontWeight: FontWeight.w700,
+      color: scheme.onSurface,
+      fontSize: baseDifficultySize,
+    );
+    final baseBadgeSize = math.max(
+      theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
+      _statusBarBadgeTextSize,
+    );
+    final badgeTextStyle = (theme.textTheme.titleMedium ??
+            const TextStyle(fontSize: _statusBarBadgeTextSize))
+        .copyWith(
+      fontWeight: FontWeight.w700,
+      color: scheme.primary,
+      fontSize: baseBadgeSize,
+    );
+
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: _statusBarHorizontalPadding * scale,
         vertical: _statusBarVerticalPadding * scale,
@@ -908,53 +943,87 @@ class _StatusBar extends StatelessWidget {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            difficulty,
-            style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                ) ??
-                const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-          ),
-          const Spacer(),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: _statusBarBadgeHorizontalPadding * scale,
-              vertical: _statusBarBadgeVerticalPadding * scale,
-            ),
-            decoration: BoxDecoration(
-              color: scheme.primary.withOpacity(0.15),
-              borderRadius: badgeRadius,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.star_rounded,
-                  color: scheme.secondary,
-                  size: _statusBarBadgeIconSize * scale,
-                ),
-                SizedBox(width: _statusBarBadgeSpacing * scale),
-                Text(
-                  stars.toString(),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: scheme.primary,
-                      ) ??
-                      TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: scheme.primary,
-                        fontSize: _statusBarBadgeTextSize * scale,
-                      ),
-                ),
-              ],
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                difficulty,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: difficultyStyle,
+              ),
             ),
           ),
           SizedBox(width: _statusBarItemsSpacing * scale),
-          _HeartsIndicator(lives: lives, scale: scale),
+          _ScoreBadge(
+            badgeRadius: badgeRadius,
+            scale: scale,
+            scheme: scheme,
+            stars: stars,
+            textStyle: badgeTextStyle,
+          ),
+          SizedBox(width: _statusBarItemsSpacing * scale),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _HeartsIndicator(lives: lives, scale: scale),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoreBadge extends StatelessWidget {
+  final BorderRadius badgeRadius;
+  final double scale;
+  final ColorScheme scheme;
+  final int stars;
+  final TextStyle textStyle;
+
+  const _ScoreBadge({
+    required this.badgeRadius,
+    required this.scale,
+    required this.scheme,
+    required this.stars,
+    required this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baseTextStyle = textStyle.copyWith(
+      fontSize: textStyle.fontSize ?? _statusBarBadgeTextSize,
+    );
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: _statusBarBadgeHorizontalPadding * scale,
+        vertical: _statusBarBadgeVerticalPadding * scale,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.primary.withOpacity(0.15),
+        borderRadius: badgeRadius,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.star_rounded,
+            color: scheme.secondary,
+            size: _statusBarBadgeIconSize * scale,
+          ),
+          SizedBox(width: _statusBarBadgeSpacing * scale),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              stars.toString(),
+              style: baseTextStyle,
+            ),
+          ),
         ],
       ),
     );
@@ -1021,20 +1090,25 @@ class _HeartsIndicator extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final inactive = scheme.outlineVariant;
-    return Row(
-      children: List.generate(3, (index) {
-        final active = index < lives;
-        return Padding(
-          padding: EdgeInsets.only(
-            left: index == 0 ? 0 : _statusBarHeartSpacing * scale,
-          ),
-          child: Icon(
-            Icons.favorite,
-            size: _statusBarHeartIconSize * scale,
-            color: active ? scheme.error : inactive,
-          ),
-        );
-      }),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(3, (index) {
+          final active = index < lives;
+          return Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : _statusBarHeartSpacing * scale,
+            ),
+            child: Icon(
+              Icons.favorite,
+              size: _statusBarHeartIconSize * scale,
+              color: active ? scheme.error : inactive,
+            ),
+          );
+        }),
+      ),
     );
   }
 }
