@@ -859,6 +859,16 @@ class _StatusBarData {
 
 const double _statusBarRadiusValue = 28;
 const double _statusBarBadgeRadiusValue = 18;
+const double _statusBarHorizontalPadding = 24;
+const double _statusBarVerticalPadding = 18;
+const double _statusBarBadgeHorizontalPadding = 18;
+const double _statusBarBadgeVerticalPadding = 8;
+const double _statusBarBadgeIconSize = 24;
+const double _statusBarBadgeSpacing = 8;
+const double _statusBarBadgeTextSize = 18;
+const double _statusBarItemsSpacing = 20;
+const double _statusBarHeartSpacing = 8;
+const double _statusBarHeartIconSize = 28;
 
 class _StatusBar extends StatelessWidget {
   final String difficulty;
@@ -883,8 +893,8 @@ class _StatusBar extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 20 / scale,
-        vertical: 16 * scale,
+        horizontal: _statusBarHorizontalPadding * scale,
+        vertical: _statusBarVerticalPadding * scale,
       ),
       decoration: BoxDecoration(
         color: scheme.surface,
@@ -913,8 +923,8 @@ class _StatusBar extends StatelessWidget {
           const Spacer(),
           Container(
             padding: EdgeInsets.symmetric(
-              horizontal: 14 * scale,
-              vertical: 6 * scale,
+              horizontal: _statusBarBadgeHorizontalPadding * scale,
+              vertical: _statusBarBadgeVerticalPadding * scale,
             ),
             decoration: BoxDecoration(
               color: scheme.primary.withOpacity(0.15),
@@ -925,20 +935,25 @@ class _StatusBar extends StatelessWidget {
                 Icon(
                   Icons.star_rounded,
                   color: scheme.secondary,
-                  size: 20 * scale,
+                  size: _statusBarBadgeIconSize * scale,
                 ),
-                SizedBox(width: 6 * scale),
+                SizedBox(width: _statusBarBadgeSpacing * scale),
                 Text(
                   stars.toString(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: scheme.primary,
-                  ),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: scheme.primary,
+                      ) ??
+                      TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: scheme.primary,
+                        fontSize: _statusBarBadgeTextSize * scale,
+                      ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 16 * scale),
+          SizedBox(width: _statusBarItemsSpacing * scale),
           _HeartsIndicator(lives: lives, scale: scale),
         ],
       ),
@@ -1010,10 +1025,12 @@ class _HeartsIndicator extends StatelessWidget {
       children: List.generate(3, (index) {
         final active = index < lives;
         return Padding(
-          padding: EdgeInsets.only(left: 4 * scale),
+          padding: EdgeInsets.only(
+            left: index == 0 ? 0 : _statusBarHeartSpacing * scale,
+          ),
           child: Icon(
             Icons.favorite,
-            size: 24 * scale,
+            size: _statusBarHeartIconSize * scale,
             color: active ? scheme.error : inactive,
           ),
         );
