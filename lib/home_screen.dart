@@ -1515,7 +1515,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
-                                Icons.monetization_on_rounded,
+                                Icons.star_rounded,
                                 color: Color(0xFFFFD54F),
                                 size: 24,
                               ),
@@ -1574,26 +1574,9 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               ),
                               Expanded(
                                 child: Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        monthLabel,
-                                        style: monthHeaderStyle,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Icon(
-                                        Icons.monetization_on_rounded,
-                                        color: Color(0xFFFFD54F),
-                                        size: 24,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        '$progress/$monthDays',
-                                        style: monthHeaderStyle,
-                                      ),
-                                    ],
+                                  child: Text(
+                                    monthLabel,
+                                    style: monthHeaderStyle,
                                   ),
                                 ),
                               ),
