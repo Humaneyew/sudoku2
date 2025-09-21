@@ -1636,7 +1636,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
         final horizontalPadding = lerpWidth(13.0, 28.0);
         final headerTopPadding = media.padding.top + lerpHeight(6.0, 36.0);
         final headerBottomPadding = lerpHeight(24.0, 132.0);
-        final headerOverlap = lerpHeight(56.0, 88.0);
+        final headerOverlap = lerpHeight(44.0, 76.0);
         final trophyDiameter = lerpHeight(54.0, 116.0);
         final trophyIconSize = lerpHeight(32.0, 64.0);
         final headerTrophySpacing = lerpHeight(4.0, 22.0);
