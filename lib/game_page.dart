@@ -852,7 +852,7 @@ double _estimateStatusBarHeight({
 }
 
 double _calculateBoardExtent(double width, double scale) {
-  final baseWidth = math.max(0.0, width - 40);
+  final baseWidth = math.max(0.0, width - 24);
   return math.min(width, baseWidth * scale);
 }
 
