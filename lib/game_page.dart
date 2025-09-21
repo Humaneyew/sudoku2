@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ final _elapsedMsExpando = Expando<int>('elapsedMs');
 
 const int _kInitialHints = 3;
 const int _kInitialLives = 3;
+const double _kGameplayUiScale = 1.1;
 
 extension _GameStateElapsedMs on GameState {
   int get elapsedMs => _elapsedMsExpando[this] ?? 0;
@@ -170,52 +172,86 @@ class _GamePageState extends State<GamePage>
       );
     }
 
+    final media = MediaQuery.of(context);
+    const scale = _kGameplayUiScale;
+
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            _GameHeader(
-              elapsed: _elapsedVN,
-              onBack: () {
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
-              onRestart: () {
-                app.restartCurrentPuzzle();
-                app.current?.elapsedMs = 0;
-                _startTimer(app, 0);
-              },
-              onOpenTheme: () => showThemeMenu(context),
-              onSettings: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SettingsPage()),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: const _StatusBarContainer(),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(0, 12, 0, 32),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Board(),
-                    ),
-                    SizedBox(height: 20),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: ControlPanel(),
-                    ),
-                  ],
+      body: MediaQuery(
+        data: media.copyWith(
+          textScaleFactor: media.textScaleFactor * scale,
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _GameHeader(
+                scale: scale,
+                elapsed: _elapsedVN,
+                onBack: () {
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                onRestart: () {
+                  app.restartCurrentPuzzle();
+                  app.current?.elapsedMs = 0;
+                  _startTimer(app, 0);
+                },
+                onOpenTheme: () => showThemeMenu(context),
+                onSettings: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsPage()),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 24 / scale,
+                  vertical: 12 * scale,
+                ),
+                child: const _StatusBarContainer(scale: scale),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(0, 12 * scale, 0, 32 * scale),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.maxWidth;
+                          final baseWidth = math.max(0.0, width - 40);
+                          final targetWidth = math.min(width, baseWidth * scale);
+                          final horizontalPadding =
+                              math.max(0.0, (width - targetWidth) / 2);
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                            ),
+                            child: const Board(scale: scale),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20 * scale),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final width = constraints.maxWidth;
+                          final baseWidth = math.max(0.0, width - 24);
+                          final targetWidth = math.min(width, baseWidth * scale);
+                          final horizontalPadding =
+                              math.max(0.0, (width - targetWidth) / 2);
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: horizontalPadding,
+                            ),
+                            child: const ControlPanel(scale: scale),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -341,7 +377,10 @@ class _GamePageState extends State<GamePage>
                 position: slideAnimation,
                 child: FadeTransition(
                   opacity: opacityAnimation,
-                  child: _ScoreToastMessage(text: text),
+                  child: _ScoreToastMessage(
+                    text: text,
+                    scale: _kGameplayUiScale,
+                  ),
                 ),
               ),
             ),
@@ -631,6 +670,7 @@ String formatDuration(int ms) {
 }
 
 class _GameHeader extends StatelessWidget {
+  final double scale;
   final ValueListenable<int> elapsed;
   final VoidCallback onBack;
   final VoidCallback onRestart;
@@ -638,6 +678,7 @@ class _GameHeader extends StatelessWidget {
   final VoidCallback onSettings;
 
   const _GameHeader({
+    required this.scale,
     required this.elapsed,
     required this.onBack,
     required this.onRestart,
@@ -659,10 +700,14 @@ class _GameHeader extends StatelessWidget {
         );
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: EdgeInsets.fromLTRB(16 / scale, 8 * scale, 16 / scale, 0),
       child: Row(
         children: [
-          _HeaderButton(icon: Icons.arrow_back_ios_new_rounded, onTap: onBack),
+          _HeaderButton(
+            scale: scale,
+            icon: Icons.arrow_back_ios_new_rounded,
+            onTap: onBack,
+          ),
           Expanded(
             child: Column(
               children: [
@@ -676,11 +721,23 @@ class _GameHeader extends StatelessWidget {
               ],
             ),
           ),
-          _HeaderButton(icon: Icons.palette_outlined, onTap: onOpenTheme),
-          const SizedBox(width: 12),
-          _HeaderButton(icon: Icons.refresh_rounded, onTap: onRestart),
-          const SizedBox(width: 12),
-          _HeaderButton(icon: Icons.settings_outlined, onTap: onSettings),
+          _HeaderButton(
+            scale: scale,
+            icon: Icons.palette_outlined,
+            onTap: onOpenTheme,
+          ),
+          SizedBox(width: 12 * scale),
+          _HeaderButton(
+            scale: scale,
+            icon: Icons.refresh_rounded,
+            onTap: onRestart,
+          ),
+          SizedBox(width: 12 * scale),
+          _HeaderButton(
+            scale: scale,
+            icon: Icons.settings_outlined,
+            onTap: onSettings,
+          ),
         ],
       ),
     );
@@ -690,38 +747,49 @@ class _GameHeader extends StatelessWidget {
 class _HeaderButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final double scale;
 
-  const _HeaderButton({required this.icon, required this.onTap});
+  const _HeaderButton({required this.icon, required this.onTap, required this.scale});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
+    final radiusValue = 24 * scale;
+    final borderRadius = BorderRadius.circular(radiusValue);
+    final blurRadius = 12 * scale;
+    final offsetY = 6 * scale;
     return InkResponse(
-      radius: 28,
+      radius: 28 * scale,
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 48 * scale,
+        height: 48 * scale,
         decoration: BoxDecoration(
           color: colors.headerButtonBackground,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: borderRadius,
           boxShadow: [
             BoxShadow(
               color: colors.shadowColor,
-              blurRadius: 12,
-              offset: Offset(0, 6),
+              blurRadius: blurRadius,
+              offset: Offset(0, offsetY),
             ),
           ],
         ),
-        child: Icon(icon, color: colors.headerButtonIcon),
+        child: Icon(
+          icon,
+          color: colors.headerButtonIcon,
+          size: 24 * scale,
+        ),
       ),
     );
   }
 }
 
 class _StatusBarContainer extends StatelessWidget {
-  const _StatusBarContainer();
+  final double scale;
+
+  const _StatusBarContainer({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -746,6 +814,7 @@ class _StatusBarContainer extends StatelessWidget {
           return const SizedBox.shrink();
         }
         return _StatusBar(
+          scale: scale,
           difficulty: data.difficulty.title(l10n),
           stars: data.stars,
           lives: data.lives,
@@ -779,18 +848,20 @@ class _StatusBarData {
   int get hashCode => Object.hash(difficulty, stars, lives);
 }
 
-const BorderRadius _statusBarRadius = BorderRadius.all(Radius.circular(28));
-const BorderRadius _statusBarBadgeRadius = BorderRadius.all(Radius.circular(18));
+const double _statusBarRadiusValue = 28;
+const double _statusBarBadgeRadiusValue = 18;
 
 class _StatusBar extends StatelessWidget {
   final String difficulty;
   final int stars;
   final int lives;
+  final double scale;
 
   const _StatusBar({
     required this.difficulty,
     required this.stars,
     required this.lives,
+    required this.scale,
   });
 
   @override
@@ -798,17 +869,22 @@ class _StatusBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
     final scheme = theme.colorScheme;
+    final borderRadius = BorderRadius.circular(_statusBarRadiusValue * scale);
+    final badgeRadius = BorderRadius.circular(_statusBarBadgeRadiusValue * scale);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: 20 / scale,
+        vertical: 16 * scale,
+      ),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: _statusBarRadius,
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            blurRadius: 20 * scale,
+            offset: Offset(0, 10 * scale),
           ),
         ],
       ),
@@ -827,19 +903,22 @@ class _StatusBar extends StatelessWidget {
           ),
           const Spacer(),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: 14 * scale,
+              vertical: 6 * scale,
+            ),
             decoration: BoxDecoration(
               color: scheme.primary.withOpacity(0.15),
-              borderRadius: _statusBarBadgeRadius,
+              borderRadius: badgeRadius,
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.star_rounded,
                   color: scheme.secondary,
-                  size: 20,
+                  size: 20 * scale,
                 ),
-                const SizedBox(width: 6),
+                SizedBox(width: 6 * scale),
                 Text(
                   stars.toString(),
                   style: TextStyle(
@@ -850,8 +929,8 @@ class _StatusBar extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 16),
-          _HeartsIndicator(lives: lives),
+          SizedBox(width: 16 * scale),
+          _HeartsIndicator(lives: lives, scale: scale),
         ],
       ),
     );
@@ -860,8 +939,9 @@ class _StatusBar extends StatelessWidget {
 
 class _ScoreToastMessage extends StatelessWidget {
   final String text;
+  final double scale;
 
-  const _ScoreToastMessage({required this.text});
+  const _ScoreToastMessage({required this.text, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -874,17 +954,20 @@ class _ScoreToastMessage extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24 * scale),
           boxShadow: [
             BoxShadow(
               color: theme.shadowColor.withOpacity(0.18),
-              blurRadius: 18,
-              offset: const Offset(0, 12),
+              blurRadius: 18 * scale,
+              offset: Offset(0, 12 * scale),
             ),
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: 20 * scale,
+            vertical: 12 * scale,
+          ),
           child: Text(
             text,
             style: theme.textTheme.titleMedium?.copyWith(
@@ -905,8 +988,9 @@ class _ScoreToastMessage extends StatelessWidget {
 
 class _HeartsIndicator extends StatelessWidget {
   final int lives;
+  final double scale;
 
-  const _HeartsIndicator({required this.lives});
+  const _HeartsIndicator({required this.lives, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -917,10 +1001,10 @@ class _HeartsIndicator extends StatelessWidget {
       children: List.generate(3, (index) {
         final active = index < lives;
         return Padding(
-          padding: const EdgeInsets.only(left: 4),
+          padding: EdgeInsets.only(left: 4 * scale),
           child: Icon(
             Icons.favorite,
-            size: 24,
+            size: 24 * scale,
             color: active ? scheme.error : inactive,
           ),
         );
