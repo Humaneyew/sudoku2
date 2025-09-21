@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -122,6 +123,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       titlePlaceholderHeight += textPainter.height;
     }
 
+    final dailyContentTopSpacing = math.max(
+      8.0,
+      titlePlaceholderHeight - (isCompactHeight ? 12.0 : 16.0),
+    );
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Column(
@@ -154,7 +160,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: titlePlaceholderHeight),
+                SizedBox(height: dailyContentTopSpacing),
                 _DailyChain(streak: app.dailyStreak),
                 SizedBox(height: bodySpacing),
                 _ProgressCard(
