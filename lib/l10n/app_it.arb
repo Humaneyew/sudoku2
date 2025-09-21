@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "Tu",
+  "battleVictoryTitle": "Hai vinto!",
+  "battleDefeatTitle": "L'avversario ha vinto",
+  "battleDefeatMessage": "{name} ha risolto il sudoku prima di te.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "Bandiera del giocatore",
+  "selectPlayerFlag": "Scegli la tua bandiera",
   "startAction": "Inizio",
   "levelHeading": "Livello {level} — {difficulty}",
   "@levelHeading": {

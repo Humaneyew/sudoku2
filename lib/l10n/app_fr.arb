@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "Toi",
+  "battleVictoryTitle": "Tu as gagné !",
+  "battleDefeatTitle": "L'adversaire a gagné",
+  "battleDefeatMessage": "{name} a résolu la grille avant toi.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "Drapeau du joueur",
+  "selectPlayerFlag": "Choisis ton drapeau",
   "startAction": "Commencer",
   "levelHeading": "Niveau {level} — {difficulty}",
   "@levelHeading": {

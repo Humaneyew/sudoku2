@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "आप",
+  "battleVictoryTitle": "आप जीत गए!",
+  "battleDefeatTitle": "प्रतिद्वंदी जीत गया",
+  "battleDefeatMessage": "{name} ने आपसे पहले पहेली हल कर ली।",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "खिलाड़ी का झंडा",
+  "selectPlayerFlag": "अपना झंडा चुनें",
   "startAction": "शुरू करें",
   "levelHeading": "स्तर {level} — {difficulty}",
   "@levelHeading": {

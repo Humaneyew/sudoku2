@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "You",
+  "battleVictoryTitle": "You won!",
+  "battleDefeatTitle": "Opponent finished first",
+  "battleDefeatMessage": "{name} solved the puzzle before you.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "Player flag",
+  "selectPlayerFlag": "Choose your flag",
   "startAction": "Start",
   "levelHeading": "Level {level} — {difficulty}",
   "@levelHeading": {

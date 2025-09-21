@@ -100,6 +100,18 @@ abstract class AppLocalizations {
 
   String battleWinRate(int count);
 
+  String get battleYouLabel;
+
+  String get battleVictoryTitle;
+
+  String get battleDefeatTitle;
+
+  String battleDefeatMessage(String name);
+
+  String get playerFlagSettingTitle;
+
+  String get selectPlayerFlag;
+
   String get startAction;
 
   String levelHeading(int level, String difficulty);
@@ -241,7 +253,6 @@ abstract class AppLocalizations {
   String get languageGeorgian;
 
   String get languageSpanish;
-
 
   String get languageItalian;
 
@@ -478,6 +489,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String battleWinRate(int count) {
     return "Siege ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Du";
+
+  @override
+  String get battleVictoryTitle => "Du hast gewonnen!";
+
+  @override
+  String get battleDefeatTitle => "Der Gegner hat gewonnen";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} hat das Rätsel vor dir gelöst.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Spielerflagge";
+
+  @override
+  String get selectPlayerFlag => "Wähle deine Flagge";
 
   @override
   String get startAction => "Starten";
@@ -718,7 +749,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -916,6 +946,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String battleWinRate(int count) {
     return "Wins ${count}";
   }
+
+  @override
+  String get battleYouLabel => "You";
+
+  @override
+  String get battleVictoryTitle => "You won!";
+
+  @override
+  String get battleDefeatTitle => "Opponent finished first";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} solved the puzzle before you.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Player flag";
+
+  @override
+  String get selectPlayerFlag => "Choose your flag";
 
   @override
   String get startAction => "Start";
@@ -1156,7 +1206,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -1309,10 +1358,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get youAreTop => "Eres #1";
+  String get youAreTop => "Eres el nº 1";
 
   @override
-  String get championshipRoundDescriptionPlaceholder => "Juega esta ronda para impulsar su carrera de campeonato.";
+  String get championshipRoundDescriptionPlaceholder => "Juega esta ronda para impulsar tu carrera en el campeonato.";
 
   @override
   String get championshipRoundCompletedLabel => "Terminado";
@@ -1323,7 +1372,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get meLabel => "A mí";
+  String get meLabel => "Yo";
 
   @override
   String leaderboardRow(int rank, String name, String points) {
@@ -1354,6 +1403,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String battleWinRate(int count) {
     return "Victorias ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Tú";
+
+  @override
+  String get battleVictoryTitle => "¡Ganaste!";
+
+  @override
+  String get battleDefeatTitle => "El oponente ganó";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} completó el sudoku antes que tú.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Bandera del jugador";
+
+  @override
+  String get selectPlayerFlag => "Elige tu bandera";
 
   @override
   String get startAction => "Comenzar";
@@ -1594,7 +1663,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -1792,6 +1860,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String battleWinRate(int count) {
     return "Victoires ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Toi";
+
+  @override
+  String get battleVictoryTitle => "Tu as gagné !";
+
+  @override
+  String get battleDefeatTitle => "L'adversaire a gagné";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} a résolu la grille avant toi.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Drapeau du joueur";
+
+  @override
+  String get selectPlayerFlag => "Choisis ton drapeau";
 
   @override
   String get startAction => "Commencer";
@@ -2032,7 +2120,6 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -2230,6 +2317,26 @@ class AppLocalizationsHi extends AppLocalizations {
   String battleWinRate(int count) {
     return "जीतें ${count}";
   }
+
+  @override
+  String get battleYouLabel => "आप";
+
+  @override
+  String get battleVictoryTitle => "आप जीत गए!";
+
+  @override
+  String get battleDefeatTitle => "प्रतिद्वंदी जीत गया";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} ने आपसे पहले पहेली हल कर ली।";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "खिलाड़ी का झंडा";
+
+  @override
+  String get selectPlayerFlag => "अपना झंडा चुनें";
 
   @override
   String get startAction => "शुरू करें";
@@ -2470,7 +2577,6 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -2623,10 +2729,10 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get youAreTop => "Sei #1";
+  String get youAreTop => "Sei il nº 1";
 
   @override
-  String get championshipRoundDescriptionPlaceholder => "Gioca questo round per aumentare la tua corsa in campionato.";
+  String get championshipRoundDescriptionPlaceholder => "Gioca questo round per dare slancio alla tua corsa nel campionato.";
 
   @override
   String get championshipRoundCompletedLabel => "Completato";
@@ -2637,7 +2743,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get meLabel => "Me";
+  String get meLabel => "Io";
 
   @override
   String leaderboardRow(int rank, String name, String points) {
@@ -2668,6 +2774,26 @@ class AppLocalizationsIt extends AppLocalizations {
   String battleWinRate(int count) {
     return "Vittorie ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Tu";
+
+  @override
+  String get battleVictoryTitle => "Hai vinto!";
+
+  @override
+  String get battleDefeatTitle => "L'avversario ha vinto";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} ha risolto il sudoku prima di te.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Bandiera del giocatore";
+
+  @override
+  String get selectPlayerFlag => "Scegli la tua bandiera";
 
   @override
   String get startAction => "Inizio";
@@ -2908,7 +3034,6 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -3061,10 +3186,10 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get youAreTop => "あなたは＃1です";
+  String get youAreTop => "あなたは第1位です";
 
   @override
-  String get championshipRoundDescriptionPlaceholder => "このラウンドをプレイして、チャンピオンシップランを後押しします。";
+  String get championshipRoundDescriptionPlaceholder => "このラウンドをプレイしてチャンピオンシップの戦いを加速させましょう。";
 
   @override
   String get championshipRoundCompletedLabel => "完了しました";
@@ -3106,6 +3231,26 @@ class AppLocalizationsJa extends AppLocalizations {
   String battleWinRate(int count) {
     return "勝利 ${count}";
   }
+
+  @override
+  String get battleYouLabel => "あなた";
+
+  @override
+  String get battleVictoryTitle => "あなたの勝ち！";
+
+  @override
+  String get battleDefeatTitle => "相手が先にクリア";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} があなたより先に数独を解きました。";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "プレイヤーの旗";
+
+  @override
+  String get selectPlayerFlag => "自分の旗を選択";
 
   @override
   String get startAction => "始める";
@@ -3346,7 +3491,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -3544,6 +3688,26 @@ class AppLocalizationsKa extends AppLocalizations {
   String battleWinRate(int count) {
     return "მოგებები ${count}";
   }
+
+  @override
+  String get battleYouLabel => "შენ";
+
+  @override
+  String get battleVictoryTitle => "შენ გაიმარჯვე!";
+
+  @override
+  String get battleDefeatTitle => "მეტოქემ გაიმარჯვა";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name}-მა შენზე ადრე ამოხსნა თავსატეხი.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "მოთამაშის დროშა";
+
+  @override
+  String get selectPlayerFlag => "აირჩიე შენი დროშა";
 
   @override
   String get startAction => "დაწყება";
@@ -3784,7 +3948,6 @@ class AppLocalizationsKa extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -3937,13 +4100,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get youAreTop => "당신은 #1입니다";
+  String get youAreTop => "당신은 1위입니다";
 
   @override
-  String get championshipRoundDescriptionPlaceholder => "이 라운드를 플레이하여 챔피언십 경기를 촉진하십시오.";
+  String get championshipRoundDescriptionPlaceholder => "이 라운드를 플레이해 챔피언십 순위를 끌어올리세요.";
 
   @override
-  String get championshipRoundCompletedLabel => "완전한";
+  String get championshipRoundCompletedLabel => "완료";
 
   @override
   String totalScore(String score) {
@@ -3982,6 +4145,26 @@ class AppLocalizationsKo extends AppLocalizations {
   String battleWinRate(int count) {
     return "승리 ${count}";
   }
+
+  @override
+  String get battleYouLabel => "당신";
+
+  @override
+  String get battleVictoryTitle => "당신의 승리!";
+
+  @override
+  String get battleDefeatTitle => "상대가 승리했어요";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name}가 당신보다 먼저 스도쿠를 풀었습니다.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "플레이어 깃발";
+
+  @override
+  String get selectPlayerFlag => "깃발을 선택하세요";
 
   @override
   String get startAction => "시작";
@@ -4222,7 +4405,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -4420,6 +4602,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String battleWinRate(int count) {
     return "Побед ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Ты";
+
+  @override
+  String get battleVictoryTitle => "Ты выиграл!";
+
+  @override
+  String get battleDefeatTitle => "Соперник победил";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} решил головоломку раньше тебя.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Флаг игрока";
+
+  @override
+  String get selectPlayerFlag => "Выбери свой флаг";
 
   @override
   String get startAction => "Начать";
@@ -4664,7 +4866,6 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -4862,6 +5063,26 @@ class AppLocalizationsUk extends AppLocalizations {
   String battleWinRate(int count) {
     return "Перемог ${count}";
   }
+
+  @override
+  String get battleYouLabel => "Ти";
+
+  @override
+  String get battleVictoryTitle => "Ти переміг!";
+
+  @override
+  String get battleDefeatTitle => "Суперник переміг";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} розв'язав головоломку раніше за тебе.";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "Прапор гравця";
+
+  @override
+  String get selectPlayerFlag => "Обери свій прапор";
 
   @override
   String get startAction => "Почати";
@@ -5106,7 +5327,6 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get languageSpanish => "Español";
 
-
   @override
   String get languageItalian => "Italiano";
 
@@ -5304,6 +5524,26 @@ class AppLocalizationsZh extends AppLocalizations {
   String battleWinRate(int count) {
     return "胜场 ${count}";
   }
+
+  @override
+  String get battleYouLabel => "你";
+
+  @override
+  String get battleVictoryTitle => "你赢了！";
+
+  @override
+  String get battleDefeatTitle => "对手获胜";
+
+  @override
+  String battleDefeatMessage(String name) {
+    return "${name} 比你更快完成了数独。";
+  }
+
+  @override
+  String get playerFlagSettingTitle => "玩家旗帜";
+
+  @override
+  String get selectPlayerFlag => "选择你的旗帜";
 
   @override
   String get startAction => "开始";
@@ -5541,7 +5781,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageSpanish => "Español";
-
 
   @override
   String get languageItalian => "Italiano";
