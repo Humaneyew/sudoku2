@@ -1424,6 +1424,10 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
           l10n.localeName,
         ) ??
         rawMonthLabel;
+    final monthHeaderStyle = theme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: cs.onSurface,
+    );
 
     final weekdayFormatter = DateFormat.E(l10n.localeName);
     final currentSelected = _selectedDate;
@@ -1569,12 +1573,27 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                 onPressed: () => _changeMonth(-1),
                               ),
                               Expanded(
-                                child: Text(
-                                  '$monthLabel $progress/$monthDays',
-                                  textAlign: TextAlign.center,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: cs.onSurface,
+                                child: Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        monthLabel,
+                                        style: monthHeaderStyle,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(
+                                        Icons.monetization_on_rounded,
+                                        color: Color(0xFFFFD54F),
+                                        size: 24,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '$progress/$monthDays',
+                                        style: monthHeaderStyle,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -1748,7 +1767,7 @@ class _CalendarDayButton extends StatelessWidget {
       dayContent = const Icon(
         Icons.star_rounded,
         color: Color(0xFFFFD700),
-        size: 26,
+        size: 30,
       );
     } else {
       dayContent = Text(
