@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "你",
+  "battleVictoryTitle": "你赢了！",
+  "battleDefeatTitle": "对手获胜",
+  "battleDefeatMessage": "{name} 比你更快完成了数独。",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "玩家旗帜",
+  "selectPlayerFlag": "选择你的旗帜",
   "startAction": "开始",
   "levelHeading": "等级 {level} — {difficulty}",
   "@levelHeading": {

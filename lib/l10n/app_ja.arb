@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "あなた",
+  "battleVictoryTitle": "あなたの勝ち！",
+  "battleDefeatTitle": "相手が先にクリア",
+  "battleDefeatMessage": "{name} があなたより先に数独を解きました。",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "プレイヤーの旗",
+  "selectPlayerFlag": "自分の旗を選択",
   "startAction": "始める",
   "levelHeading": "レベル {level} — {difficulty}",
   "@levelHeading": {

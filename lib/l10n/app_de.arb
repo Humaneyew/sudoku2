@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "Du",
+  "battleVictoryTitle": "Du hast gewonnen!",
+  "battleDefeatTitle": "Der Gegner hat gewonnen",
+  "battleDefeatMessage": "{name} hat das Rätsel vor dir gelöst.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "Spielerflagge",
+  "selectPlayerFlag": "Wähle deine Flagge",
   "startAction": "Starten",
   "levelHeading": "Level {level} — {difficulty}",
   "@levelHeading": {

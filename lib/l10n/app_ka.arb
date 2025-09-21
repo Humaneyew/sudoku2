@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "შენ",
+  "battleVictoryTitle": "შენ გაიმარჯვე!",
+  "battleDefeatTitle": "მეტოქემ გაიმარჯვა",
+  "battleDefeatMessage": "{name}-მა შენზე ადრე ამოხსნა თავსატეხი.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "მოთამაშის დროშა",
+  "selectPlayerFlag": "აირჩიე შენი დროშა",
   "startAction": "დაწყება",
   "levelHeading": "დონე {level} — {difficulty}",
   "@levelHeading": {

@@ -75,6 +75,19 @@
       }
     }
   },
+  "battleYouLabel": "Ти",
+  "battleVictoryTitle": "Ти переміг!",
+  "battleDefeatTitle": "Суперник переміг",
+  "battleDefeatMessage": "{name} розв'язав головоломку раніше за тебе.",
+  "@battleDefeatMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "playerFlagSettingTitle": "Прапор гравця",
+  "selectPlayerFlag": "Обери свій прапор",
   "startAction": "Почати",
   "levelHeading": "Рівень {level} — {difficulty}",
   "@levelHeading": {

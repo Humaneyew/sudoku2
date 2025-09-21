@@ -113,6 +113,9 @@ extension FontSizeOptionX on FontSizeOption {
       };
 }
 
+/// Режим активной игры.
+enum GameMode { classic, daily, battle }
+
 /// Состояние активной игры.
 class GameState {
   final List<int> board;
@@ -237,7 +240,10 @@ class AppState extends ChangeNotifier {
 
   GameState? current;
   Difficulty? currentDifficulty;
+  GameMode? currentMode;
   Difficulty featuredDifficulty = Difficulty.novice;
+
+  String? playerFlag;
 
   int totalStars = 0;
   int battleWinRate = 87;
@@ -289,6 +295,7 @@ class AppState extends ChangeNotifier {
           championshipScore = map['championshipScore'] ?? championshipScore;
           battleWinRate = map['battleWinRate'] ?? battleWinRate;
           heartBonus = map['heartBonus'] ?? heartBonus;
+          playerFlag = (map['playerFlag'] as String?) ?? playerFlag;
 
           final statsMap = map['stats'] as Map<String, dynamic>?;
           if (statsMap != null) {
@@ -407,6 +414,13 @@ class AppState extends ChangeNotifier {
                   (d) => d.name == diffName,
                   orElse: () => Difficulty.novice,
                 );
+          final modeName = map['mode'] as String?;
+          GameMode? mode;
+          if (modeName != null) {
+            try {
+              mode = GameMode.values.byName(modeName);
+            } catch (_) {}
+          }
           final board = (map['board'] as List?)?.map((e) => e as int).toList();
           final solution =
               (map['solution'] as List?)?.map((e) => e as int).toList();
@@ -442,6 +456,7 @@ class AppState extends ChangeNotifier {
 
             currentDifficulty = diff;
             featuredDifficulty = diff;
+            currentMode = mode ?? GameMode.classic;
             _sessionId = (map['sessionId'] as num?)?.toInt() ?? _sessionId;
             currentScore = (map['currentScore'] as num?)?.toInt() ?? currentScore;
             selectedCell = (map['selectedCell'] as num?)?.toInt();
@@ -502,6 +517,7 @@ class AppState extends ChangeNotifier {
       'championshipScore': championshipScore,
       'battleWinRate': battleWinRate,
       'heartBonus': heartBonus,
+      'playerFlag': playerFlag,
       'stats': statsJson,
     });
     await prefs.setString('profile', profile);
@@ -519,6 +535,15 @@ class AppState extends ChangeNotifier {
     _dailyChallengeDate = null;
     _saveDailyProgress();
     saveProfile();
+    notifyListeners();
+  }
+
+  void setPlayerFlag(String value) {
+    if (playerFlag == value) {
+      return;
+    }
+    playerFlag = value;
+    unawaited(saveProfile());
     notifyListeners();
   }
 
@@ -644,6 +669,7 @@ class AppState extends ChangeNotifier {
 
     currentDifficulty = Difficulty.medium;
     featuredDifficulty = Difficulty.medium;
+    currentMode = GameMode.daily;
     _dailyChallengeDate = normalized;
     _sessionId++;
     currentScore = 0;
@@ -666,6 +692,65 @@ class AppState extends ChangeNotifier {
 
   /// Запуск новой игры выбранного уровня сложности.
   void startGame(Difficulty diff) {
+    final resolvedList =
+        (puzzles[diff] ?? puzzles[Difficulty.novice]) ?? <Puzzle>[];
+    if (resolvedList.isEmpty) {
+      current = null;
+      selectedCell = null;
+      notesMode = false;
+      hintsLeft = _maxHints;
+      livesLeft = _maxLives;
+      _history.clear();
+      _clearSavedGame();
+      _currentGameId = null;
+      currentMode = null;
+      notifyListeners();
+      return;
+    }
+
+    _dailyChallengeDate = null;
+
+    final List<Puzzle> available;
+    if (diff == Difficulty.novice &&
+        resolvedList.length > _novicePuzzleLimit) {
+      available = resolvedList.sublist(0, _novicePuzzleLimit);
+    } else {
+      available = resolvedList;
+    }
+
+    final index = _nextPuzzleIndex(diff, available.length);
+    final puzzle = available[index];
+
+    current = GameState(
+      board: List.of(puzzle.board),
+      solution: List.of(puzzle.solution),
+      given: puzzle.board.map((v) => v != 0).toList(),
+      notes: List.generate(81, (_) => <int>{}),
+    );
+
+    currentDifficulty = diff;
+    featuredDifficulty = diff;
+    currentMode = GameMode.classic;
+    _sessionId++;
+    currentScore = 0;
+    selectedCell = null;
+    notesMode = false;
+    hintsLeft = _maxHints;
+    livesLeft = _maxLives;
+    highlightedNumber = null;
+    _madeMistake = false;
+    _gameCompleted = false;
+    _history.clear();
+    _startedAt = DateTime.now();
+    _currentGameId = _composeGameId(diff);
+
+    statsByDifficulty[diff]?.gamesStarted++;
+    scheduleSave();
+    saveProfile();
+    notifyListeners();
+  }
+
+  void startBattleGame(Difficulty diff) {
     final resolvedList =
         (puzzles[diff] ?? puzzles[Difficulty.novice]) ?? <Puzzle>[];
     if (resolvedList.isEmpty) {
@@ -703,6 +788,7 @@ class AppState extends ChangeNotifier {
 
     currentDifficulty = diff;
     featuredDifficulty = diff;
+    currentMode = GameMode.battle;
     _sessionId++;
     currentScore = 0;
     selectedCell = null;
@@ -716,9 +802,7 @@ class AppState extends ChangeNotifier {
     _startedAt = DateTime.now();
     _currentGameId = _composeGameId(diff);
 
-    statsByDifficulty[diff]?.gamesStarted++;
     scheduleSave();
-    saveProfile();
     notifyListeners();
   }
 
@@ -1033,6 +1117,21 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void completeBattle(int elapsedMs) {
+    final game = current;
+    if (game == null) return;
+    if (_gameCompleted) return;
+    if (!isSolved) return;
+
+    _gameCompleted = true;
+    _handleVictoryFeedback();
+    battleWinRate++;
+    game.elapsedMs = elapsedMs;
+    _clearSavedGame();
+    saveProfile();
+    notifyListeners();
+  }
+
   void registerFailure() {
     _handleDefeatFeedback();
     final diff = currentDifficulty;
@@ -1048,9 +1147,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void loseBattle() {
+    _handleDefeatFeedback();
+    abandonGame();
+    saveProfile();
+  }
+
   void abandonGame() {
     current = null;
     currentDifficulty = null;
+    currentMode = null;
     currentScore = 0;
     selectedCell = null;
     notesMode = false;
@@ -1285,6 +1391,11 @@ class AppState extends ChangeNotifier {
   Future<void> _saveCurrentGame(SharedPreferences prefs) async {
     final game = current;
     final diff = currentDifficulty;
+    final mode = currentMode;
+    if (mode == GameMode.battle) {
+      await prefs.remove('currentGame');
+      return;
+    }
     if (game == null || diff == null || _gameCompleted) {
       await prefs.remove('currentGame');
       return;
@@ -1307,6 +1418,7 @@ class AppState extends ChangeNotifier {
       'history': _history.map((move) => move.toJson()).toList(),
       'dailyDate': _dailyChallengeDate?.toIso8601String(),
       'gameId': _currentGameId,
+      'mode': mode?.name,
     };
 
     await prefs.setString('currentGame', jsonEncode(data));

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'battle/battle_page.dart';
 import 'game_page.dart';
 import 'models.dart';
 import 'settings_page.dart';
@@ -152,6 +153,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           _ChallengeCarousel(
             battleWinRate: app.battleWinRate,
             onOpenChallenge: widget.onOpenChallenge,
+            onOpenBattle: () => _startBattle(context),
             horizontalPadding: horizontalPadding,
           ),
           SizedBox(height: carouselSpacing),
@@ -167,10 +169,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   stats: stats,
                   onNewGame: () => _openDifficultySheet(context),
                   onContinue: app.hasUnfinishedGame
-                      ? () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const GamePage()),
-                        )
+                      ? () => _openCurrentGame(context)
                       : null,
                 ),
               ],
@@ -266,6 +265,33 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
+    );
+  }
+
+  void _openCurrentGame(BuildContext context) {
+    final app = context.read<AppState>();
+    final mode = app.currentMode;
+    if (mode == GameMode.battle) {
+      final diff = app.currentDifficulty ?? app.featuredStatsDifficulty;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => BattlePage(difficulty: diff)),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const GamePage()),
+      );
+    }
+  }
+
+  void _startBattle(BuildContext context) {
+    final app = context.read<AppState>();
+    final diff = app.currentDifficulty ?? app.featuredStatsDifficulty;
+    app.startBattleGame(diff);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => BattlePage(difficulty: diff)),
     );
   }
 }
@@ -371,11 +397,13 @@ void _startDailyChallengeGame(BuildContext context, DateTime date) {
 class _ChallengeCarousel extends StatelessWidget {
   final int battleWinRate;
   final VoidCallback onOpenChallenge;
+  final VoidCallback onOpenBattle;
   final double horizontalPadding;
 
   const _ChallengeCarousel({
     required this.battleWinRate,
     required this.onOpenChallenge,
+    required this.onOpenBattle,
     required this.horizontalPadding,
   });
 
@@ -422,7 +450,7 @@ class _ChallengeCarousel extends StatelessWidget {
           buttonLabel: l10n.playAction,
           gradient: colors.battleChallengeGradient,
           icon: Icons.sports_esports_outlined,
-          onPressed: () {},
+          onPressed: onOpenBattle,
         ),
       ),
     ];

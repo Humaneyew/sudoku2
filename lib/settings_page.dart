@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'battle/flag_picker.dart';
 import 'championship/championship_model.dart';
 import 'language_settings_page.dart';
 import 'models.dart';
@@ -34,6 +35,25 @@ class SettingsPage extends StatelessWidget {
             title: Text(app.resolvedThemeName(l10n)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => showThemeMenu(context),
+          ),
+          ListTile(
+            key: const ValueKey('settings-player-flag'),
+            leading: const Icon(Icons.flag_outlined),
+            title: Text(l10n.playerFlagSettingTitle),
+            trailing: Text(
+              app.playerFlag ?? '🏳️',
+              style: const TextStyle(fontSize: 24),
+            ),
+            onTap: () async {
+              final selected = await showFlagPicker(
+                context,
+                selectedFlag: app.playerFlag,
+              );
+              if (!context.mounted || selected == null || selected.isEmpty) {
+                return;
+              }
+              app.setPlayerFlag(selected);
+            },
           ),
           const Divider(height: 32),
 
