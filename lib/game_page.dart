@@ -20,6 +20,13 @@ final _elapsedMsExpando = Expando<int>('elapsedMs');
 const int _kInitialHints = 3;
 const int _kInitialLives = 3;
 const double _kGameplayUiScale = 1.1;
+const double _kGameplayMinUiScale = 0.7;
+const double _kGameplayHorizontalPaddingFactor = 0.025;
+const double _kStatusBarOuterPadding = 10.0;
+const double _kGameContentTopPadding = 10.0;
+const double _kGameContentBottomPadding = 28.0;
+const double _kBoardToControlsSpacing = 16.0;
+const double _kTextHeightMultiplier = 1.1;
 
 extension _GameStateElapsedMs on GameState {
   int get elapsedMs => _elapsedMsExpando[this] ?? 0;
@@ -173,18 +180,33 @@ class _GamePageState extends State<GamePage>
     }
 
     final media = MediaQuery.of(context);
-    const scale = _kGameplayUiScale;
 
     return Scaffold(
-      body: MediaQuery(
-        data: media.copyWith(
-          textScaleFactor: media.textScaleFactor * scale,
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final horizontalPadding = constraints.maxWidth * 0.025;
-              return Padding(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final horizontalPadding =
+                constraints.maxWidth * _kGameplayHorizontalPaddingFactor;
+            final contentWidth =
+                math.max(0.0, constraints.maxWidth - horizontalPadding * 2);
+            final theme = Theme.of(context);
+            final isTablet = media.size.shortestSide >= 600;
+            final scale = _resolveGameplayScale(
+              baseScale: _kGameplayUiScale,
+              minScale: _kGameplayMinUiScale,
+              contentWidth: contentWidth,
+              availableHeight: constraints.maxHeight,
+              baseTextScaleFactor: media.textScaleFactor,
+              theme: theme,
+              isTablet: isTablet,
+            );
+            final scaledMedia = media.copyWith(
+              textScaleFactor: media.textScaleFactor * scale,
+            );
+
+            return MediaQuery(
+              data: scaledMedia,
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Column(
                   children: [
@@ -209,59 +231,62 @@ class _GamePageState extends State<GamePage>
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: 12 * scale,
+                        vertical: _kStatusBarOuterPadding * scale,
                       ),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           final width = constraints.maxWidth;
-                          final baseWidth = math.max(0.0, width - 40);
-                          final targetWidth = math.min(width, baseWidth * scale);
-                          final horizontalPadding =
+                          final targetWidth = _calculateBoardExtent(width, scale);
+                          final innerPadding =
                               math.max(0.0, (width - targetWidth) / 2);
                           return Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,
+                              horizontal: innerPadding,
                             ),
-                            child: const _StatusBarContainer(scale: scale),
+                            child: _StatusBarContainer(scale: scale),
                           );
                         },
                       ),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding:
-                            const EdgeInsets.fromLTRB(0, 12 * scale, 0, 32 * scale),
+                        padding: EdgeInsets.fromLTRB(
+                          0,
+                          _kGameContentTopPadding * scale,
+                          0,
+                          _kGameContentBottomPadding * scale,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
-                                final baseWidth = math.max(0.0, width - 40);
-                                final targetWidth = math.min(width, baseWidth * scale);
-                                final horizontalPadding =
+                                final targetWidth =
+                                    _calculateBoardExtent(width, scale);
+                                final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPadding,
+                                    horizontal: innerPadding,
                                   ),
-                                  child: const Board(scale: scale),
+                                  child: Board(scale: scale),
                                 );
                               },
                             ),
-                            const SizedBox(height: 20 * scale),
+                            SizedBox(height: _kBoardToControlsSpacing * scale),
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
-                                final baseWidth = math.max(0.0, width - 24);
-                                final targetWidth = math.min(width, baseWidth * scale);
-                                final horizontalPadding =
+                                final targetWidth =
+                                    _calculateControlPanelWidth(width, scale);
+                                final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPadding,
+                                    horizontal: innerPadding,
                                   ),
-                                  child: const ControlPanel(scale: scale),
+                                  child: ControlPanel(scale: scale),
                                 );
                               },
                             ),
@@ -271,9 +296,9 @@ class _GamePageState extends State<GamePage>
                     ),
                   ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -689,6 +714,124 @@ String formatDuration(int ms) {
   final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
   final secs = (seconds % 60).toString().padLeft(2, '0');
   return '$minutes:$secs';
+}
+
+double _resolveGameplayScale({
+  required double baseScale,
+  required double minScale,
+  required double contentWidth,
+  required double availableHeight,
+  required double baseTextScaleFactor,
+  required ThemeData theme,
+  required bool isTablet,
+}) {
+  if (contentWidth <= 0 || availableHeight <= 0) {
+    return minScale.clamp(0.0, baseScale);
+  }
+
+  double estimate(double scale) => _estimateGameplayHeight(
+        scale: scale,
+        contentWidth: contentWidth,
+        baseTextScaleFactor: baseTextScaleFactor,
+        theme: theme,
+        isTablet: isTablet,
+      );
+
+  final maxScaleHeight = estimate(baseScale);
+  if (maxScaleHeight <= availableHeight) {
+    return baseScale;
+  }
+
+  final minScaleHeight = estimate(minScale);
+  if (minScaleHeight > availableHeight) {
+    return minScale;
+  }
+
+  double low = minScale;
+  double high = baseScale;
+  double best = minScale;
+  for (var i = 0; i < 18; i++) {
+    final mid = (low + high) / 2;
+    final height = estimate(mid);
+    if (height <= availableHeight) {
+      best = mid;
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  return best.clamp(minScale, baseScale);
+}
+
+double _estimateGameplayHeight({
+  required double scale,
+  required double contentWidth,
+  required double baseTextScaleFactor,
+  required ThemeData theme,
+  required bool isTablet,
+}) {
+  final textScale = baseTextScaleFactor * scale;
+  final headerHeight = (8.0 + 48.0) * scale;
+  final statusHeight = _estimateStatusBarHeight(
+    scale: scale,
+    textScaleFactor: textScale,
+    theme: theme,
+  );
+  final boardSize = _calculateBoardExtent(contentWidth, scale);
+  final controlPanelWidth = _calculateControlPanelWidth(contentWidth, scale);
+  final controlPanelHeight = estimateControlPanelHeight(
+    maxWidth: controlPanelWidth,
+    scale: scale,
+    isTablet: isTablet,
+  );
+  final statusPadding = _kStatusBarOuterPadding * 2 * scale;
+  final contentPadding =
+      (_kGameContentTopPadding + _kGameContentBottomPadding) * scale;
+
+  return headerHeight +
+      statusPadding +
+      statusHeight +
+      contentPadding +
+      boardSize +
+      _kBoardToControlsSpacing * scale +
+      controlPanelHeight;
+}
+
+double _estimateStatusBarHeight({
+  required double scale,
+  required double textScaleFactor,
+  required ThemeData theme,
+}) {
+  final difficultyFont = theme.textTheme.titleMedium?.fontSize ?? 16.0;
+  final difficultyHeight =
+      difficultyFont * textScaleFactor * _kTextHeightMultiplier;
+
+  final baseBadgeFont = math.max(
+    theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
+    _statusBarBadgeTextSize,
+  );
+  final badgeTextHeight =
+      baseBadgeFont * textScaleFactor * _kTextHeightMultiplier;
+  final badgeHeight = (_statusBarBadgeVerticalPadding * 2 * scale) +
+      math.max(_statusBarBadgeIconSize * scale, badgeTextHeight);
+
+  final heartsHeight = _statusBarHeartIconSize * scale;
+  final contentHeight = math.max(
+    difficultyHeight,
+    math.max(badgeHeight, heartsHeight),
+  );
+
+  return (_statusBarVerticalPadding * 2 * scale) + contentHeight;
+}
+
+double _calculateBoardExtent(double width, double scale) {
+  final baseWidth = math.max(0.0, width - 40);
+  return math.min(width, baseWidth * scale);
+}
+
+double _calculateControlPanelWidth(double width, double scale) {
+  final baseWidth = math.max(0.0, width - 24);
+  return math.min(width, baseWidth * scale);
 }
 
 class _GameHeader extends StatelessWidget {
