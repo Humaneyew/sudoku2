@@ -495,17 +495,17 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       numberPadRemainingHighlight: Color(0xFF3D82FF),
       shadowColor: Color(0x66000000),
       dailyChallengeGradient: const LinearGradient(
-        colors: [Color(0xFFFFF0B3), Color(0xFFFFC26F)],
+        colors: [Color(0xFF2A2514), Color(0xFF8C7536)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       championshipChallengeGradient: const LinearGradient(
-        colors: [Color(0xFFFFB2D0), Color(0xFFE55D87)],
+        colors: [Color(0xFF2B1322), Color(0xFF8A3159)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       battleChallengeGradient: const LinearGradient(
-        colors: [Color(0xFFCDE7FF), Color(0xFF3B82F6)],
+        colors: [Color(0xFF0D1F28), Color(0xFF2C6477)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
