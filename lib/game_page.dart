@@ -23,9 +23,10 @@ const double _kGameplayUiScale = 1.1;
 const double _kGameplayMinUiScale = 0.7;
 const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
-const double _kGameContentTopPadding = 10.0;
-const double _kGameContentBottomPadding = 28.0;
-const double _kBoardToControlsSpacing = 14.0;
+const double _kGameContentTopPadding = 16.0;
+const double _kGameContentBottomPadding = 40.0;
+const double _kBoardToControlsSpacing = 8.0;
+const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
 
 extension _GameStateElapsedMs on GameState {
@@ -203,6 +204,17 @@ class _GamePageState extends State<GamePage>
             final scaledMedia = media.copyWith(
               textScaleFactor: media.textScaleFactor * scale,
             );
+            final availableHeight = constraints.maxHeight;
+            final topContentPadding = _calculateGameContentTopPadding(
+              availableHeight: availableHeight,
+              scale: scale,
+            );
+            final bottomContentPadding = _calculateGameContentBottomPadding(
+              availableHeight: availableHeight,
+              scale: scale,
+            );
+            final bool isCompactHeight =
+                !isTablet && availableHeight < _kCompactHeightBreakpoint;
 
             return MediaQuery(
               data: scaledMedia,
@@ -252,9 +264,9 @@ class _GamePageState extends State<GamePage>
                       child: SingleChildScrollView(
                         padding: EdgeInsets.fromLTRB(
                           0,
-                          _kGameContentTopPadding * scale,
+                          topContentPadding,
                           0,
-                          _kGameContentBottomPadding * scale,
+                          bottomContentPadding,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -286,7 +298,10 @@ class _GamePageState extends State<GamePage>
                                   padding: EdgeInsets.symmetric(
                                     horizontal: innerPadding,
                                   ),
-                                  child: ControlPanel(scale: scale),
+                                  child: ControlPanel(
+                                    scale: scale,
+                                    compactLayout: isCompactHeight,
+                                  ),
                                 );
                               },
                             ),
@@ -735,6 +750,7 @@ double _resolveGameplayScale({
         baseTextScaleFactor: baseTextScaleFactor,
         theme: theme,
         isTablet: isTablet,
+        availableHeight: availableHeight,
       );
 
   final maxScaleHeight = estimate(baseScale);
@@ -769,6 +785,7 @@ double _estimateGameplayHeight({
   required double baseTextScaleFactor,
   required ThemeData theme,
   required bool isTablet,
+  required double availableHeight,
 }) {
   final textScale = baseTextScaleFactor * scale;
   final headerHeight = (8.0 + 48.0) * scale;
@@ -779,14 +796,24 @@ double _estimateGameplayHeight({
   );
   final boardSize = _calculateBoardExtent(contentWidth, scale);
   final controlPanelWidth = _calculateControlPanelWidth(contentWidth, scale);
+  final bool isCompactHeight =
+      !isTablet && availableHeight < _kCompactHeightBreakpoint;
   final controlPanelHeight = estimateControlPanelHeight(
     maxWidth: controlPanelWidth,
     scale: scale,
     isTablet: isTablet,
+    isCompact: isCompactHeight,
   );
   final statusPadding = _kStatusBarOuterPadding * 2 * scale;
-  final contentPadding =
-      (_kGameContentTopPadding + _kGameContentBottomPadding) * scale;
+  final topPadding = _calculateGameContentTopPadding(
+    availableHeight: availableHeight,
+    scale: scale,
+  );
+  final bottomPadding = _calculateGameContentBottomPadding(
+    availableHeight: availableHeight,
+    scale: scale,
+  );
+  final contentPadding = topPadding + bottomPadding;
 
   return headerHeight +
       statusPadding +
@@ -832,6 +859,36 @@ double _calculateBoardExtent(double width, double scale) {
 double _calculateControlPanelWidth(double width, double scale) {
   final baseWidth = math.max(0.0, width - 24);
   return math.min(width, baseWidth * scale);
+}
+
+double _calculateGameContentTopPadding({
+  required double availableHeight,
+  required double scale,
+}) {
+  if (!availableHeight.isFinite || availableHeight <= 0) {
+    return _kGameContentTopPadding * scale;
+  }
+  final double basePadding = _kGameContentTopPadding * scale;
+  final double extraPadding =
+      (availableHeight * 0.02).clamp(6.0, 24.0).toDouble();
+  return basePadding + extraPadding;
+}
+
+double _calculateGameContentBottomPadding({
+  required double availableHeight,
+  required double scale,
+}) {
+  if (!availableHeight.isFinite || availableHeight <= 0) {
+    return _kGameContentBottomPadding * scale;
+  }
+  final double basePadding = _kGameContentBottomPadding * scale;
+  final double lowerBound = availableHeight * 0.08;
+  final double upperBound = availableHeight * 0.15;
+  final double targetFraction =
+      availableHeight * (availableHeight >= 900 ? 0.12 : 0.10);
+  final double fractionalPadding =
+      targetFraction.clamp(lowerBound, upperBound).toDouble();
+  return math.max(basePadding, fractionalPadding);
 }
 
 class _GameHeader extends StatelessWidget {
