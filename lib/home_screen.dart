@@ -1737,13 +1737,27 @@ class _CalendarDayButton extends StatelessWidget {
       fontWeight: FontWeight.w700,
       color: textColor,
     );
-    final indicatorColor = selected ? cs.onPrimary : cs.secondary;
     final border = today
         ? Border.all(
             color: selected ? cs.onPrimary : cs.primary,
             width: 3,
           )
         : null;
+    final Widget dayContent;
+    if (completed) {
+      dayContent = const Icon(
+        Icons.star_rounded,
+        color: Color(0xFFFFD700),
+        size: 26,
+      );
+    } else {
+      dayContent = Text(
+        '${date.day}',
+        style: textStyle,
+        textAlign: TextAlign.center,
+        softWrap: false,
+      );
+    }
 
     return AnimatedScale(
       duration: const Duration(milliseconds: 200),
@@ -1762,29 +1776,7 @@ class _CalendarDayButton extends StatelessWidget {
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: locked ? null : onTap,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${date.day}',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                  softWrap: false,
-                ),
-                if (completed)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: indicatorColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            child: Center(child: dayContent),
           ),
         ),
       ),
