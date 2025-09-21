@@ -26,6 +26,8 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
   final Color boardBorder;
   final Color selectedCell;
   final Color sameNumberCell;
+  final Color blockHighlight;
+  final Color crosshairHighlight;
   final Color noteColor;
   final Color headerButtonBackground;
   final Color headerButtonIcon;
@@ -55,6 +57,8 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     required this.boardBorder,
     required this.selectedCell,
     required this.sameNumberCell,
+    required this.blockHighlight,
+    required this.crosshairHighlight,
     required this.noteColor,
     required this.headerButtonBackground,
     required this.headerButtonIcon,
@@ -86,6 +90,8 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     Color? boardBorder,
     Color? selectedCell,
     Color? sameNumberCell,
+    Color? blockHighlight,
+    Color? crosshairHighlight,
     Color? noteColor,
     Color? headerButtonBackground,
     Color? headerButtonIcon,
@@ -115,6 +121,8 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
       boardBorder: boardBorder ?? this.boardBorder,
       selectedCell: selectedCell ?? this.selectedCell,
       sameNumberCell: sameNumberCell ?? this.sameNumberCell,
+      blockHighlight: blockHighlight ?? this.blockHighlight,
+      crosshairHighlight: crosshairHighlight ?? this.crosshairHighlight,
       noteColor: noteColor ?? this.noteColor,
       headerButtonBackground:
           headerButtonBackground ?? this.headerButtonBackground,
@@ -180,6 +188,8 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
       boardBorder: _lerp(boardBorder, other.boardBorder),
       selectedCell: _lerp(selectedCell, other.selectedCell),
       sameNumberCell: _lerp(sameNumberCell, other.sameNumberCell),
+      blockHighlight: _lerp(blockHighlight, other.blockHighlight),
+      crosshairHighlight: _lerp(crosshairHighlight, other.crosshairHighlight),
       noteColor: _lerp(noteColor, other.noteColor),
       headerButtonBackground:
           _lerp(headerButtonBackground, other.headerButtonBackground),
@@ -286,8 +296,10 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     colors: const SudokuColors(
       boardInner: Color(0xFFFFFFFF),
       boardBorder: Color(0xFFC7D3F4),
-      selectedCell: Color(0xFFD9E7FF),
-      sameNumberCell: Color(0xFFF1F5FF),
+      selectedCell: Color(0xFF4A90E2),
+      sameNumberCell: Color(0x59A9CCE3),
+      blockHighlight: Color(0x3DEAF2F8),
+      crosshairHighlight: Color(0x2ED6EAF8),
       noteColor: Color(0xFF7C8CB2),
       headerButtonBackground: Color(0xFFFFFFFF),
       headerButtonIcon: Color(0xFF2563EB),
@@ -350,7 +362,9 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       boardInner: Color(0xFFFFFBF2),
       boardBorder: Color(0xFFE0D2B5),
       selectedCell: Color(0xFFF2E3BF),
-      sameNumberCell: Color(0xFFF9EED6),
+      sameNumberCell: Color(0x59F2E3BF),
+      blockHighlight: Color(0x3DF8EBD6),
+      crosshairHighlight: Color(0x2EFDF5E6),
       noteColor: Color(0xFFB08F5A),
       headerButtonBackground: Color(0xFFFFFBF2),
       headerButtonIcon: Color(0xFF2F7457),
@@ -413,7 +427,9 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       boardInner: Color(0xFFFBFFFD),
       boardBorder: Color(0xFFC5DED2),
       selectedCell: Color(0xFFCFEFE0),
-      sameNumberCell: Color(0xFFE5F7EC),
+      sameNumberCell: Color(0x59E5F7EC),
+      blockHighlight: Color(0x3DECF7F0),
+      crosshairHighlight: Color(0x2EEFF9F3),
       noteColor: Color(0xFF6F8F7F),
       headerButtonBackground: Color(0xFFFBFFFD),
       headerButtonIcon: Color(0xFF2F8D6A),
@@ -476,7 +492,9 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       boardInner: Color(0xFF1A1A1A),
       boardBorder: Color(0xFF2C2C2C),
       selectedCell: Color(0xFF2C3E5F),
-      sameNumberCell: Color(0xFF202B3D),
+      sameNumberCell: Color(0x59202B3D),
+      blockHighlight: Color(0x3D2B374C),
+      crosshairHighlight: Color(0x2E252F41),
       noteColor: Color(0xFFB3B9C6),
       headerButtonBackground: Color(0xFF1F2634),
       headerButtonIcon: Color(0xFF8EB6FF),

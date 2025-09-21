@@ -7,12 +7,6 @@ import '../theme.dart';
 
 const double _boardOuterRadiusValue = 28;
 const double _boardInnerRadiusValue = 12;
-// Percentage (in decimal form) used to increase the opacity/intensity of
-// the selected cell highlight relative to the board background.
-const double _selectedCellOpacityBoost = 0.35;
-// Percentage used to increase the opacity for the cells containing the same
-// number as the selected one.
-const double _sameNumberOpacityBoost = 0.15;
 
 class Board extends StatelessWidget {
   final double scale;
@@ -202,26 +196,6 @@ Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
   );
 }
 
-/// Returns a new [Color] that is visually further away from [base] by the
-/// provided [increase] ratio, effectively reducing the transparency of
-/// [highlight] when drawn on top of [base].
-Color _emphasizeHighlight(Color base, Color highlight, double increase) {
-  if (increase <= 0 || highlight == base) return highlight;
-
-  int adjustChannel(int baseChannel, int highlightChannel) {
-    final diff = highlightChannel - baseChannel;
-    final value = baseChannel + diff * (1 + increase);
-    return value.clamp(0, 255).round();
-  }
-
-  return Color.fromARGB(
-    highlight.alpha,
-    adjustChannel(base.red, highlight.red),
-    adjustChannel(base.green, highlight.green),
-    adjustChannel(base.blue, highlight.blue),
-  );
-}
-
 class _BoardCell extends StatelessWidget {
   final int index;
 
@@ -243,10 +217,17 @@ class _BoardCell extends StatelessWidget {
         final given = game.given[index];
         final selected = app.selectedCell;
         final isSelected = selected == index;
-        final sameRow =
-            selected != null && (selected ~/ 9) == (index ~/ 9);
+        final row = index ~/ 9;
+        final column = index % 9;
+        final selectedRow = selected != null ? selected ~/ 9 : null;
+        final selectedColumn = selected != null ? selected % 9 : null;
+        final sameRow = selectedRow != null && selectedRow == row;
         final sameColumn =
-            selected != null && (selected % 9) == (index % 9);
+            selectedColumn != null && selectedColumn == column;
+        final sameBlock = selectedRow != null &&
+            selectedColumn != null &&
+            (selectedRow ~/ 3) == (row ~/ 3) &&
+            (selectedColumn ~/ 3) == (column ~/ 3);
         final sameValue = app.isSameAsSelectedValue(index);
         final incorrect =
             !given && value != 0 && !app.isMoveValid(index, value);
@@ -256,6 +237,7 @@ class _BoardCell extends StatelessWidget {
           isSelected: isSelected,
           sameRow: sameRow,
           sameColumn: sameColumn,
+          sameBlock: sameBlock,
           sameValue: sameValue,
           incorrect: incorrect,
           fontScale: app.fontScale,
@@ -282,27 +264,25 @@ class _BoardCell extends StatelessWidget {
         final border = _cellBorder(index, thinColor, boldColor);
         final highlightSameValue =
             cell.value != 0 && cell.sameValue && !cell.isSelected;
+        final highlightBlock = cell.sameBlock && !cell.isSelected;
         final highlightCrosshair =
             (cell.sameRow || cell.sameColumn) && !cell.isSelected;
-        final selectedBackground = _emphasizeHighlight(
-          baseInner,
-          colors.selectedCell,
-          _selectedCellOpacityBoost,
-        );
-        final sameNumberBackground = _emphasizeHighlight(
-          baseInner,
-          colors.sameNumberCell,
-          _sameNumberOpacityBoost,
-        );
-        final crosshairColor =
-            Color.lerp(baseInner, selectedBackground, 0.45) ?? selectedBackground;
+        final selectedBackground = colors.selectedCell;
+        final sameNumberBackground =
+            Color.alphaBlend(colors.sameNumberCell, baseInner);
+        final blockBackground =
+            Color.alphaBlend(colors.blockHighlight, baseInner);
+        final crosshairBackground =
+            Color.alphaBlend(colors.crosshairHighlight, baseInner);
         final backgroundColor = cell.isSelected
             ? selectedBackground
             : highlightSameValue
                 ? sameNumberBackground
-                : highlightCrosshair
-                    ? crosshairColor
-                    : baseInner;
+                : highlightBlock
+                    ? blockBackground
+                    : highlightCrosshair
+                        ? crosshairBackground
+                        : baseInner;
 
         return GestureDetector(
           onTap: () => context.read<AppState>().selectCell(index),
@@ -330,6 +310,7 @@ class _CellState {
   final bool isSelected;
   final bool sameRow;
   final bool sameColumn;
+  final bool sameBlock;
   final bool sameValue;
   final bool incorrect;
   final double fontScale;
@@ -340,6 +321,7 @@ class _CellState {
     required this.isSelected,
     required this.sameRow,
     required this.sameColumn,
+    required this.sameBlock,
     required this.sameValue,
     required this.incorrect,
     required this.fontScale,
@@ -354,6 +336,7 @@ class _CellState {
             other.isSelected == isSelected &&
             other.sameRow == sameRow &&
             other.sameColumn == sameColumn &&
+            other.sameBlock == sameBlock &&
             other.sameValue == sameValue &&
             other.incorrect == incorrect &&
             other.fontScale == fontScale;
@@ -366,6 +349,7 @@ class _CellState {
         isSelected,
         sameRow,
         sameColumn,
+        sameBlock,
         sameValue,
         incorrect,
         fontScale,
