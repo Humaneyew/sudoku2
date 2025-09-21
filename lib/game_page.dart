@@ -181,76 +181,85 @@ class _GamePageState extends State<GamePage>
           textScaleFactor: media.textScaleFactor * scale,
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              _GameHeader(
-                scale: scale,
-                elapsed: _elapsedVN,
-                onBack: () {
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
-                },
-                onRestart: () {
-                  app.restartCurrentPuzzle();
-                  app.current?.elapsedMs = 0;
-                  _startTimer(app, 0);
-                },
-                onOpenTheme: () => showThemeMenu(context),
-                onSettings: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SettingsPage()),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24 / scale,
-                  vertical: 12 * scale,
-                ),
-                child: const _StatusBarContainer(scale: scale),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(0, 12 * scale, 0, 32 * scale),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final width = constraints.maxWidth;
-                          final baseWidth = math.max(0.0, width - 40);
-                          final targetWidth = math.min(width, baseWidth * scale);
-                          final horizontalPadding =
-                              math.max(0.0, (width - targetWidth) / 2);
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,
-                            ),
-                            child: const Board(scale: scale),
-                          );
-                        },
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final horizontalPadding = constraints.maxWidth * 0.025;
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: Column(
+                  children: [
+                    _GameHeader(
+                      scale: scale,
+                      elapsed: _elapsedVN,
+                      onBack: () {
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      onRestart: () {
+                        app.restartCurrentPuzzle();
+                        app.current?.elapsedMs = 0;
+                        _startTimer(app, 0);
+                      },
+                      onOpenTheme: () => showThemeMenu(context),
+                      onSettings: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SettingsPage()),
                       ),
-                      const SizedBox(height: 20 * scale),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final width = constraints.maxWidth;
-                          final baseWidth = math.max(0.0, width - 24);
-                          final targetWidth = math.min(width, baseWidth * scale);
-                          final horizontalPadding =
-                              math.max(0.0, (width - targetWidth) / 2);
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,
-                            ),
-                            child: const ControlPanel(scale: scale),
-                          );
-                        },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24 / scale,
+                        vertical: 12 * scale,
                       ),
-                    ],
-                  ),
+                      child: const _StatusBarContainer(scale: scale),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding:
+                            const EdgeInsets.fromLTRB(0, 12 * scale, 0, 32 * scale),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final width = constraints.maxWidth;
+                                final baseWidth = math.max(0.0, width - 40);
+                                final targetWidth = math.min(width, baseWidth * scale);
+                                final horizontalPadding =
+                                    math.max(0.0, (width - targetWidth) / 2);
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPadding,
+                                  ),
+                                  child: const Board(scale: scale),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 20 * scale),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final width = constraints.maxWidth;
+                                final baseWidth = math.max(0.0, width - 24);
+                                final targetWidth = math.min(width, baseWidth * scale);
+                                final horizontalPadding =
+                                    math.max(0.0, (width - targetWidth) / 2);
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: horizontalPadding,
+                                  ),
+                                  child: const ControlPanel(scale: scale),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
