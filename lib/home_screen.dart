@@ -1603,350 +1603,369 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final l10n = AppLocalizations.of(context)!;
     final media = MediaQuery.of(context);
     final size = media.size;
-    const minHeight = 620.0;
-    const maxHeight = 880.0;
-    final heightFactor = ((size.height.clamp(minHeight, maxHeight) - minHeight) /
-            (maxHeight - minHeight))
-        .toDouble();
-    const minWidth = 320.0;
-    const maxWidth = 430.0;
-    final widthFactor = ((size.width.clamp(minWidth, maxWidth) - minWidth) /
-            (maxWidth - minWidth))
-        .toDouble();
-    double lerpHeight(double small, double large) =>
-        lerpDouble(small, large, heightFactor)!;
-    double lerpWidth(double small, double large) =>
-        lerpDouble(small, large, widthFactor)!;
 
-    final horizontalPadding = lerpWidth(18.0, 28.0);
-    final headerTopPadding = media.padding.top + lerpHeight(20.0, 36.0);
-    final headerBottomPadding = lerpHeight(72.0, 132.0);
-    final headerOverlap = lerpHeight(52.0, 88.0);
-    final trophyDiameter = lerpHeight(84.0, 116.0);
-    final trophyIconSize = lerpHeight(48.0, 64.0);
-    final headerTrophySpacing = lerpHeight(12.0, 22.0);
-    final headerTitleSpacing = lerpHeight(8.0, 14.0);
-    final headerStatIconSize = lerpHeight(20.0, 26.0);
-    final headerStatSpacing = lerpHeight(4.0, 10.0);
-    final calendarVerticalPadding = lerpHeight(20.0, 32.0);
-    final calendarHeaderSpacing = lerpHeight(12.0, 22.0);
-    final calendarWeekdaySpacing = lerpHeight(10.0, 18.0);
-    final calendarBottomSpacing = lerpHeight(16.0, 30.0);
-    final playButtonPaddingV = lerpHeight(14.0, 20.0);
-    final bottomSpacing = lerpHeight(12.0, 26.0);
-
-    final today = DateTime.now();
-    final normalizedToday = DateTime(today.year, today.month, today.day);
-    final monthDays = DateUtils.getDaysInMonth(_visibleMonth.year, _visibleMonth.month);
-    final progress = app.completedDailyCount(_visibleMonth);
-    const challengeGoal = 30;
-    final headerProgress = progress.clamp(0, challengeGoal);
-
-    final textScaleFactor = media.textScaleFactor;
-    final extraTextScale =
-        (textScaleFactor - 1.0).clamp(0.0, 2.0).toDouble();
-    final baseCalendarHorizontal = lerpWidth(12.0, 18.0);
-    final calendarHorizontalPadding =
-        (baseCalendarHorizontal - 3 * extraTextScale)
-            .clamp(8.0, baseCalendarHorizontal)
-            .toDouble();
-    final baseCalendarCrossSpacing = lerpWidth(6.0, 10.0);
-    final calendarCrossSpacing =
-        (baseCalendarCrossSpacing - 2.5 * extraTextScale)
-            .clamp(4.0, baseCalendarCrossSpacing)
-            .toDouble();
-    final baseCalendarMainSpacing = lerpHeight(8.0, 12.0);
-    final calendarMainSpacing =
-        (baseCalendarMainSpacing - 2.0 * extraTextScale)
-            .clamp(6.0, baseCalendarMainSpacing)
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final heightForSizing =
+            constraints.maxHeight.isFinite && constraints.maxHeight > 0
+                ? constraints.maxHeight
+                : size.height;
+        const minHeight = 560.0;
+        const maxHeight = 880.0;
+        final heightFactor = ((heightForSizing - minHeight) /
+                (maxHeight - minHeight))
+            .clamp(0.0, 1.0)
             .toDouble();
 
-    final monthFormatter = DateFormat.MMMM(l10n.localeName);
-    final rawMonthLabel = monthFormatter.format(_visibleMonth);
-    final monthLabel = toBeginningOfSentenceCase(
-          rawMonthLabel,
-          l10n.localeName,
-        ) ??
-        rawMonthLabel;
-    final monthHeaderFontFactor = lerpHeight(0.92, 1.0);
-    final monthHeaderStyle = theme.textTheme.titleMedium
-        ?.copyWith(
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        )
-        ?.apply(fontSizeFactor: monthHeaderFontFactor);
+        final widthForSizing =
+            constraints.maxWidth.isFinite && constraints.maxWidth > 0
+                ? constraints.maxWidth
+                : size.width;
+        const minWidth = 320.0;
+        const maxWidth = 430.0;
+        final widthFactor = ((widthForSizing - minWidth) /
+                (maxWidth - minWidth))
+            .clamp(0.0, 1.0)
+            .toDouble();
 
-    final headerTitleFontFactor = lerpHeight(0.9, 1.0);
-    final headerTitleStyle = theme.textTheme.headlineMedium
-        ?.copyWith(
-          color: cs.onPrimary,
-          fontWeight: FontWeight.w800,
-          letterSpacing: -0.4,
-        )
-        ?.apply(fontSizeFactor: headerTitleFontFactor);
+        double lerpHeight(double small, double large) =>
+            lerpDouble(small, large, heightFactor)!;
+        double lerpWidth(double small, double large) =>
+            lerpDouble(small, large, widthFactor)!;
 
-    final headerScoreFontFactor = lerpHeight(0.92, 1.0);
-    final headerScoreStyle = theme.textTheme.titleMedium
-        ?.copyWith(
-          color: cs.onPrimary,
-          fontWeight: FontWeight.w700,
-        )
-        ?.apply(fontSizeFactor: headerScoreFontFactor);
+        final horizontalPadding = lerpWidth(13.0, 28.0);
+        final headerTopPadding = media.padding.top + lerpHeight(6.0, 36.0);
+        final headerBottomPadding = lerpHeight(24.0, 132.0);
+        final headerOverlap = lerpHeight(56.0, 88.0);
+        final trophyDiameter = lerpHeight(54.0, 116.0);
+        final trophyIconSize = lerpHeight(32.0, 64.0);
+        final headerTrophySpacing = lerpHeight(4.0, 22.0);
+        final headerTitleSpacing = lerpHeight(3.0, 14.0);
+        final headerStatIconSize = lerpHeight(15.0, 26.0);
+        final headerStatSpacing = lerpHeight(3.0, 10.0);
+        final calendarVerticalPadding = lerpHeight(3.0, 32.0);
+        final calendarHeaderSpacing = lerpHeight(4.0, 22.0);
+        final calendarWeekdaySpacing = lerpHeight(3.0, 18.0);
+        final calendarBottomSpacing = lerpHeight(4.0, 30.0);
+        final playButtonPaddingV = lerpHeight(5.0, 20.0);
+        final bottomSpacing = lerpHeight(4.0, 26.0);
 
-    final playButtonFontFactor = lerpHeight(0.92, 1.0);
+        final today = DateTime.now();
+        final normalizedToday = DateTime(today.year, today.month, today.day);
+        final monthDays =
+            DateUtils.getDaysInMonth(_visibleMonth.year, _visibleMonth.month);
+        final progress = app.completedDailyCount(_visibleMonth);
+        const challengeGoal = 30;
+        final headerProgress = progress.clamp(0, challengeGoal);
 
-    final weekdayFormatter = DateFormat.E(l10n.localeName);
-    final currentSelected = _selectedDate;
+        final textScaleFactor = media.textScaleFactor;
+        final extraTextScale =
+            (textScaleFactor - 1.0).clamp(0.0, 2.0).toDouble();
+        final baseCalendarHorizontal = lerpWidth(7.0, 18.0);
+        final calendarHorizontalPadding =
+            (baseCalendarHorizontal - 3 * extraTextScale)
+                .clamp(6.0, baseCalendarHorizontal)
+                .toDouble();
+        final baseCalendarCrossSpacing = lerpWidth(3.0, 10.0);
+        final calendarCrossSpacing =
+            (baseCalendarCrossSpacing - 2.5 * extraTextScale)
+                .clamp(2.0, baseCalendarCrossSpacing)
+                .toDouble();
+        final baseCalendarMainSpacing = lerpHeight(2.0, 12.0);
+        final calendarMainSpacing =
+            (baseCalendarMainSpacing - 2.0 * extraTextScale)
+                .clamp(2.0, baseCalendarMainSpacing)
+                .toDouble();
 
-    final firstDayOfMonth = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
-    final leadingEmpty = (firstDayOfMonth.weekday + 6) % 7;
-    final totalCells = ((leadingEmpty + monthDays + 6) ~/ 7) * 7;
+        final monthFormatter = DateFormat.MMMM(l10n.localeName);
+        final rawMonthLabel = monthFormatter.format(_visibleMonth);
+        final monthLabel =
+            toBeginningOfSentenceCase(rawMonthLabel, l10n.localeName) ??
+                rawMonthLabel;
+        final monthHeaderFontFactor = lerpHeight(0.84, 1.0);
+        final monthHeaderStyle = theme.textTheme.titleMedium
+            ?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: cs.onSurface,
+            )
+            ?.apply(fontSizeFactor: monthHeaderFontFactor);
 
-    final canGoNext = !(_visibleMonth.year == normalizedToday.year &&
-        _visibleMonth.month == normalizedToday.month);
+        final headerTitleFontFactor = lerpHeight(0.82, 1.0);
+        final headerTitleStyle = theme.textTheme.headlineMedium
+            ?.copyWith(
+              color: cs.onPrimary,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.4,
+            )
+            ?.apply(fontSizeFactor: headerTitleFontFactor);
 
-    final canPlay =
-        currentSelected != null && !currentSelected.isAfter(normalizedToday);
+        final headerScoreFontFactor = lerpHeight(0.86, 1.0);
+        final headerScoreStyle = theme.textTheme.titleMedium
+            ?.copyWith(
+              color: cs.onPrimary,
+              fontWeight: FontWeight.w700,
+            )
+            ?.apply(fontSizeFactor: headerScoreFontFactor);
 
-    final surfaceColor = cs.surface;
-    final headerGradient = LinearGradient(
-      colors: [
-        cs.primary,
-        Color.lerp(cs.primary, cs.onPrimary, 0.25) ?? cs.primary,
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
+        final playButtonFontFactor = lerpHeight(0.86, 1.0);
 
-    return Container(
-      color: cs.background,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: media.padding.bottom),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(
-                horizontalPadding,
-                headerTopPadding,
-                horizontalPadding,
-                headerBottomPadding,
-              ),
-              decoration: BoxDecoration(
-                gradient: headerGradient,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FadeTransition(
-                    opacity: _trophyOpacity,
-                    child: ScaleTransition(
-                      scale: _trophyScale,
-                      child: Container(
-                        width: trophyDiameter,
-                        height: trophyDiameter,
-                        decoration: BoxDecoration(
-                          color: cs.onPrimary.withOpacity(0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.emoji_events_rounded,
-                          color: cs.onPrimary,
-                          size: trophyIconSize,
+        final weekdayFormatter = DateFormat.E(l10n.localeName);
+        final currentSelected = _selectedDate;
+
+        final firstDayOfMonth =
+            DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+        final leadingEmpty = (firstDayOfMonth.weekday + 6) % 7;
+        final totalCells = ((leadingEmpty + monthDays + 6) ~/ 7) * 7;
+
+        final canGoNext = !(_visibleMonth.year == normalizedToday.year &&
+            _visibleMonth.month == normalizedToday.month);
+
+        final canPlay =
+            currentSelected != null && !currentSelected.isAfter(normalizedToday);
+
+        final surfaceColor = cs.surface;
+        final headerGradient = LinearGradient(
+          colors: [
+            cs.primary,
+            Color.lerp(cs.primary, cs.onPrimary, 0.25) ?? cs.primary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+
+        return Container(
+          color: cs.background,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: media.padding.bottom),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalPadding,
+                    headerTopPadding,
+                    horizontalPadding,
+                    headerBottomPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: headerGradient,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FadeTransition(
+                        opacity: _trophyOpacity,
+                        child: ScaleTransition(
+                          scale: _trophyScale,
+                          child: Container(
+                            width: trophyDiameter,
+                            height: trophyDiameter,
+                            decoration: BoxDecoration(
+                              color: cs.onPrimary.withOpacity(0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.emoji_events_rounded,
+                              color: cs.onPrimary,
+                              size: trophyIconSize,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: headerTrophySpacing),
-                  FadeTransition(
-                    opacity: _headerOpacity,
-                    child: SlideTransition(
-                      position: _headerOffset,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            l10n.navDaily,
-                            textAlign: TextAlign.center,
-                            style: headerTitleStyle,
-                          ),
-                          SizedBox(height: headerTitleSpacing),
-                          Row(
+                      SizedBox(height: headerTrophySpacing),
+                      FadeTransition(
+                        opacity: _headerOpacity,
+                        child: SlideTransition(
+                          position: _headerOffset,
+                          child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.star_rounded,
-                                color: const Color(0xFFFFD54F),
-                                size: headerStatIconSize,
-                              ),
-                              SizedBox(width: headerStatSpacing),
                               Text(
-                                '$headerProgress/$challengeGoal',
-                                style: headerScoreStyle,
+                                l10n.navDaily,
+                                textAlign: TextAlign.center,
+                                style: headerTitleStyle,
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(0, -headerOverlap),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: SlideTransition(
-                  position: _calendarOffset,
-                  child: FadeTransition(
-                    opacity: _calendarOpacity,
-                    child: Container(
-                      padding: EdgeInsets.fromLTRB(
-                        calendarHorizontalPadding,
-                        calendarVerticalPadding,
-                        calendarHorizontalPadding,
-                        calendarVerticalPadding,
-                      ),
-                      decoration: BoxDecoration(
-                        color: surfaceColor,
-                        borderRadius: const BorderRadius.all(Radius.circular(28)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.shadowColor,
-                            blurRadius: 30,
-                            offset: const Offset(0, 18),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                visualDensity: VisualDensity.compact,
-                                icon: const Icon(Icons.chevron_left_rounded),
-                                onPressed: () => _changeMonth(-1),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Text(
-                                    monthLabel,
-                                    style: monthHeaderStyle,
+                              SizedBox(height: headerTitleSpacing),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.star_rounded,
+                                    color: const Color(0xFFFFD54F),
+                                    size: headerStatIconSize,
                                   ),
-                                ),
-                              ),
-                              IconButton(
-                                visualDensity: VisualDensity.compact,
-                                icon: const Icon(Icons.chevron_right_rounded),
-                                onPressed: canGoNext ? () => _changeMonth(1) : null,
+                                  SizedBox(width: headerStatSpacing),
+                                  Text(
+                                    '$headerProgress/$challengeGoal',
+                                    style: headerScoreStyle,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          SizedBox(height: calendarHeaderSpacing),
-                          Row(
-                            children: List.generate(7, (index) {
-                              final label =
-                                  weekdayFormatter.format(DateTime(2020, 1, 6 + index));
-                              return Expanded(
-                                key: ValueKey('weekday-$index'),
-                                child: Center(
-                                  child: Text(
-                                    label.toUpperCase(),
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: cs.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Transform.translate(
+                  offset: Offset(0, -headerOverlap),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: SlideTransition(
+                      position: _calendarOffset,
+                      child: FadeTransition(
+                        opacity: _calendarOpacity,
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(
+                            calendarHorizontalPadding,
+                            calendarVerticalPadding,
+                            calendarHorizontalPadding,
+                            calendarVerticalPadding,
+                          ),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: const BorderRadius.all(Radius.circular(28)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.shadowColor,
+                                blurRadius: 30,
+                                offset: const Offset(0, 18),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    icon: const Icon(Icons.chevron_left_rounded),
+                                    onPressed: () => _changeMonth(-1),
+                                  ),
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        monthLabel,
+                                        style: monthHeaderStyle,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }),
-                          ),
-                          SizedBox(height: calendarWeekdaySpacing),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: totalCells,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 7,
-                              mainAxisSpacing: calendarMainSpacing,
-                              crossAxisSpacing: calendarCrossSpacing,
-                            ),
-                            itemBuilder: (context, index) {
-                              final day = index - leadingEmpty + 1;
-                              if (day < 1 || day > monthDays) {
-                                return const SizedBox.shrink();
-                              }
-                              final date =
-                                  DateTime(_visibleMonth.year, _visibleMonth.month, day);
-                              final isToday =
-                                  DateUtils.isSameDay(date, normalizedToday);
-                              final isPast = date.isBefore(normalizedToday);
-                              final locked = date.isAfter(normalizedToday);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: _CalendarDayButton(
-                                  key: ValueKey('calendar-${date.toIso8601String()}'),
-                                  date: date,
-                                  selected: currentSelected != null &&
-                                      DateUtils.isSameDay(currentSelected, date),
-                                  today: isToday,
-                                  past: isPast,
-                                  completed: app.isDailyCompleted(date),
-                                  locked: locked,
-                                  sudokuTheme: sudokuTheme,
-                                  onTap: locked ? null : () => _onSelect(date),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: calendarBottomSpacing),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: canPlay && currentSelected != null
-                                  ? () => _startDaily(currentSelected)
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: cs.primary,
-                                foregroundColor: cs.onPrimary,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: playButtonPaddingV,
-                                  horizontal: 16,
-                                ),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(22)),
-                                ),
-                                elevation: 0,
+                                  IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    icon: const Icon(Icons.chevron_right_rounded),
+                                    onPressed:
+                                        canGoNext ? () => _changeMonth(1) : null,
+                                  ),
+                                ],
                               ),
-                              child: Text(
-                                l10n.playAction,
-                                style: theme.textTheme.titleMedium
-                                    ?.copyWith(
-                                      color: cs.onPrimary,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 0.1,
-                                    )
-                                    ?.apply(fontSizeFactor: playButtonFontFactor),
+                              SizedBox(height: calendarHeaderSpacing),
+                              Row(
+                                children: List.generate(7, (index) {
+                                  final label = weekdayFormatter
+                                      .format(DateTime(2020, 1, 6 + index));
+                                  return Expanded(
+                                    key: ValueKey('weekday-$index'),
+                                    child: Center(
+                                      child: Text(
+                                        label.toUpperCase(),
+                                        style: theme.textTheme.labelSmall?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: cs.onSurface,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
-                            ),
+                              SizedBox(height: calendarWeekdaySpacing),
+                              GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: totalCells,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 7,
+                                  mainAxisSpacing: calendarMainSpacing,
+                                  crossAxisSpacing: calendarCrossSpacing,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final day = index - leadingEmpty + 1;
+                                  if (day < 1 || day > monthDays) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  final date = DateTime(
+                                      _visibleMonth.year, _visibleMonth.month, day);
+                                  final isToday =
+                                      DateUtils.isSameDay(date, normalizedToday);
+                                  final isPast = date.isBefore(normalizedToday);
+                                  final locked = date.isAfter(normalizedToday);
+                                  return AspectRatio(
+                                    aspectRatio: 1,
+                                    child: _CalendarDayButton(
+                                      key:
+                                          ValueKey('calendar-${date.toIso8601String()}'),
+                                      date: date,
+                                      selected: currentSelected != null &&
+                                          DateUtils.isSameDay(currentSelected, date),
+                                      today: isToday,
+                                      past: isPast,
+                                      completed: app.isDailyCompleted(date),
+                                      locked: locked,
+                                      sudokuTheme: sudokuTheme,
+                                      onTap: locked ? null : () => _onSelect(date),
+                                    ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: calendarBottomSpacing),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: canPlay && currentSelected != null
+                                      ? () => _startDaily(currentSelected)
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: cs.primary,
+                                    foregroundColor: cs.onPrimary,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: playButtonPaddingV,
+                                      horizontal: 16,
+                                    ),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(22)),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    l10n.playAction,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          color: cs.onPrimary,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.1,
+                                        )
+                                        ?.apply(fontSizeFactor: playButtonFontFactor),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+                SizedBox(height: bottomSpacing),
+              ],
             ),
-            SizedBox(height: bottomSpacing),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
