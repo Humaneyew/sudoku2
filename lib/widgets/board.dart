@@ -7,6 +7,12 @@ import '../theme.dart';
 
 const BorderRadius _boardOuterRadius = BorderRadius.all(Radius.circular(28));
 const BorderRadius _boardInnerRadius = BorderRadius.all(Radius.circular(12));
+// Percentage (in decimal form) used to increase the opacity/intensity of
+// the selected cell highlight relative to the board background.
+const double _selectedCellOpacityBoost = 0.35;
+// Percentage used to increase the opacity for the cells containing the same
+// number as the selected one.
+const double _sameNumberOpacityBoost = 0.15;
 
 class Board extends StatelessWidget {
   const Board({super.key});
@@ -188,6 +194,26 @@ Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
   );
 }
 
+/// Returns a new [Color] that is visually further away from [base] by the
+/// provided [increase] ratio, effectively reducing the transparency of
+/// [highlight] when drawn on top of [base].
+Color _emphasizeHighlight(Color base, Color highlight, double increase) {
+  if (increase <= 0 || highlight == base) return highlight;
+
+  int adjustChannel(int baseChannel, int highlightChannel) {
+    final diff = highlightChannel - baseChannel;
+    final value = baseChannel + diff * (1 + increase);
+    return value.clamp(0, 255).round();
+  }
+
+  return Color.fromARGB(
+    highlight.alpha,
+    adjustChannel(base.red, highlight.red),
+    adjustChannel(base.green, highlight.green),
+    adjustChannel(base.blue, highlight.blue),
+  );
+}
+
 class _BoardCell extends StatelessWidget {
   final int index;
 
@@ -250,16 +276,25 @@ class _BoardCell extends StatelessWidget {
             cell.value != 0 && cell.sameValue && !cell.isSelected;
         final highlightCrosshair =
             (cell.sameRow || cell.sameColumn) && !cell.isSelected;
+        final selectedBackground = _emphasizeHighlight(
+          baseInner,
+          colors.selectedCell,
+          _selectedCellOpacityBoost,
+        );
+        final sameNumberBackground = _emphasizeHighlight(
+          baseInner,
+          colors.sameNumberCell,
+          _sameNumberOpacityBoost,
+        );
         final crosshairColor =
-            Color.lerp(baseInner, colors.selectedCell, 0.45) ??
-                colors.selectedCell;
+            Color.lerp(baseInner, selectedBackground, 0.45) ?? selectedBackground;
         final backgroundColor = cell.isSelected
-            ? colors.selectedCell
+            ? selectedBackground
             : highlightSameValue
-                ? colors.sameNumberCell
+                ? sameNumberBackground
                 : highlightCrosshair
                     ? crosshairColor
-                    : colors.boardInner;
+                    : baseInner;
 
         return GestureDetector(
           onTap: () => context.read<AppState>().selectCell(index),
