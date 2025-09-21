@@ -15,8 +15,6 @@ import 'widgets/board.dart';
 import 'widgets/control_panel.dart';
 import 'widgets/theme_menu.dart';
 
-final _elapsedMsExpando = Expando<int>('elapsedMs');
-
 const int _kInitialHints = 3;
 const int _kInitialLives = 3;
 const double _kGameplayUiScale = 1.1;
@@ -28,12 +26,6 @@ const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
-
-extension _GameStateElapsedMs on GameState {
-  int get elapsedMs => _elapsedMsExpando[this] ?? 0;
-
-  set elapsedMs(int value) => _elapsedMsExpando[this] = value;
-}
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
