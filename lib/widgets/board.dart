@@ -165,32 +165,32 @@ class _NotesGrid extends StatelessWidget {
 }
 
 Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
-  const thinLineWidth = 0.5;
-  const boldLineWidth = 1.6;
+  const thinLineWidth = 0.6;
+  const boldLineWidth = 2.3;
 
   final row = index ~/ 9;
   final col = index % 9;
 
   final isTopEdge = row == 0;
+  final isBottomEdge = row == 8;
   final isLeftEdge = col == 0;
-  final topIsBold = row % 3 == 0;
-  final leftIsBold = col % 3 == 0;
+  final isRightEdge = col == 8;
+
+  final showTop = !isTopEdge && row % 3 != 0;
+  final showLeft = !isLeftEdge && col % 3 != 0;
+  final showRight = !isRightEdge && (col + 1) % 3 == 0;
+  final showBottom = !isBottomEdge && (row + 1) % 3 == 0;
+
+  BorderSide buildSide({required bool bold}) => BorderSide(
+        color: bold ? boldLineColor : thinLineColor,
+        width: bold ? boldLineWidth : thinLineWidth,
+      );
 
   return Border(
-    top: isTopEdge
-        ? BorderSide.none
-        : BorderSide(
-            color: topIsBold ? boldLineColor : thinLineColor,
-            width: topIsBold ? boldLineWidth : thinLineWidth,
-          ),
-    left: isLeftEdge
-        ? BorderSide.none
-        : BorderSide(
-            color: leftIsBold ? boldLineColor : thinLineColor,
-            width: leftIsBold ? boldLineWidth : thinLineWidth,
-          ),
-    right: BorderSide.none,
-    bottom: BorderSide.none,
+    top: showTop ? buildSide(bold: false) : BorderSide.none,
+    left: showLeft ? buildSide(bold: false) : BorderSide.none,
+    right: showRight ? buildSide(bold: true) : BorderSide.none,
+    bottom: showBottom ? buildSide(bold: true) : BorderSide.none,
   );
 }
 
@@ -264,11 +264,11 @@ class _BoardCell extends StatelessWidget {
         final colors = theme.extension<SudokuColors>()!;
         final baseInner = colors.boardInner;
         final thinColor = Color.alphaBlend(
-          cs.onSurface.withOpacity(0.08),
+          cs.onSurface.withOpacity(0.18),
           baseInner,
         );
         final boldColor = Color.alphaBlend(
-          cs.onSurface.withOpacity(0.18),
+          cs.onSurface.withOpacity(0.85),
           baseInner,
         );
         final border = _cellBorder(index, thinColor, boldColor);
