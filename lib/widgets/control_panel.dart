@@ -8,11 +8,13 @@ import '../models.dart';
 import '../theme.dart';
 import '../undo_ad_controller.dart';
 
-const BorderRadius _actionButtonRadius = BorderRadius.all(Radius.circular(20));
-const BorderRadius _actionBadgeRadius = BorderRadius.all(Radius.circular(12));
+const double _actionButtonRadiusValue = 20;
+const double _actionBadgeRadiusValue = 12;
 
 class ControlPanel extends StatelessWidget {
-  const ControlPanel({super.key});
+  final double scale;
+
+  const ControlPanel({super.key, this.scale = 1.0});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,10 @@ class ControlPanel extends StatelessWidget {
       key: const ValueKey('control-panel'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
-          _ActionRow(),
-          SizedBox(height: 20),
-          _NumberPad(),
+        children: [
+          _ActionRow(scale: scale),
+          SizedBox(height: 20 * scale),
+          _NumberPad(scale: scale),
         ],
       ),
     );
@@ -31,26 +33,30 @@ class ControlPanel extends StatelessWidget {
 }
 
 class _ActionRow extends StatelessWidget {
-  const _ActionRow();
+  final double scale;
+
+  const _ActionRow({required this.scale});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
-        Expanded(child: _UndoButton()),
-        SizedBox(width: 12),
-        Expanded(child: _EraseButton()),
-        SizedBox(width: 12),
-        Expanded(child: _NotesButton()),
-        SizedBox(width: 12),
-        Expanded(child: _HintButton()),
+      children: [
+        Expanded(child: _UndoButton(scale: scale)),
+        SizedBox(width: 12 * scale),
+        Expanded(child: _EraseButton(scale: scale)),
+        SizedBox(width: 12 * scale),
+        Expanded(child: _NotesButton(scale: scale)),
+        SizedBox(width: 12 * scale),
+        Expanded(child: _HintButton(scale: scale)),
       ],
     );
   }
 }
 
 class _UndoButton extends StatelessWidget {
-  const _UndoButton();
+  final double scale;
+
+  const _UndoButton({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +71,7 @@ class _UndoButton extends StatelessWidget {
                 canUndo && (!useUndoAd || undoAds.isAdAvailable);
             return _ActionButton(
               key: const ValueKey('action-undo'),
+              scale: scale,
               icon: Icons.undo_rounded,
               label: l10n.undo,
               onPressed: undoEnabled
@@ -91,7 +98,9 @@ class _UndoButton extends StatelessWidget {
 }
 
 class _EraseButton extends StatelessWidget {
-  const _EraseButton();
+  final double scale;
+
+  const _EraseButton({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +109,7 @@ class _EraseButton extends StatelessWidget {
       selector: (_, app) => app.canErase,
       builder: (context, canErase, __) => _ActionButton(
         key: const ValueKey('action-erase'),
+        scale: scale,
         icon: Icons.backspace_outlined,
         label: l10n.erase,
         onPressed: canErase ? context.read<AppState>().eraseCell : null,
@@ -109,7 +119,9 @@ class _EraseButton extends StatelessWidget {
 }
 
 class _NotesButton extends StatelessWidget {
-  const _NotesButton();
+  final double scale;
+
+  const _NotesButton({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +130,7 @@ class _NotesButton extends StatelessWidget {
       selector: (_, app) => app.isNotesMode,
       builder: (context, notesMode, __) => _ActionButton(
         key: const ValueKey('action-notes'),
+        scale: scale,
         icon: Icons.edit_note,
         label: l10n.notes,
         onPressed: context.read<AppState>().toggleNotesMode,
@@ -128,7 +141,9 @@ class _NotesButton extends StatelessWidget {
 }
 
 class _HintButton extends StatelessWidget {
-  const _HintButton();
+  final double scale;
+
+  const _HintButton({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +157,7 @@ class _HintButton extends StatelessWidget {
         final badgeColor = enabled ? cs.secondary : theme.disabledColor;
         return _ActionButton(
           key: const ValueKey('action-hint'),
+          scale: scale,
           icon: Icons.lightbulb_outline,
           label: l10n.hint,
           onPressed: enabled ? context.read<AppState>().useHint : null,
@@ -160,6 +176,7 @@ class _ActionButton extends StatelessWidget {
   final String? badge;
   final Color? badgeColor;
   final bool active;
+  final double scale;
 
   const _ActionButton({
     super.key,
@@ -169,6 +186,7 @@ class _ActionButton extends StatelessWidget {
     this.badge,
     this.badgeColor,
     this.active = false,
+    required this.scale,
   });
 
   @override
@@ -209,24 +227,35 @@ class _ActionButton extends StatelessWidget {
 
     final mediaQuery = MediaQuery.of(context);
     final clampedTextScale = mediaQuery.textScaleFactor.clamp(0.0, 1.2);
+    final height = 84 * scale;
+    final borderRadius = BorderRadius.circular(_actionButtonRadiusValue * scale);
+    final badgeRadius = BorderRadius.circular(_actionBadgeRadiusValue * scale);
+    final blurRadius = 12 * scale;
+    final offsetY = 6 * scale;
+    final verticalPadding = 12 * scale;
+    final horizontalPadding = 8 * scale;
+    final badgeHorizontalPadding = 6 * scale;
+    final badgeVerticalPadding = 2 * scale;
+    final iconSize = 26 * scale;
+    final spacing = 8 * scale;
 
     return MediaQuery(
       data: mediaQuery.copyWith(textScaleFactor: clampedTextScale),
       child: SizedBox(
-        height: 84,
+        height: height,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
           curve: Curves.easeOut,
           decoration: BoxDecoration(
             color: background,
-            borderRadius: _actionButtonRadius,
+            borderRadius: borderRadius,
             border: Border.all(color: effectiveBorder),
             boxShadow: isActive
                 ? [
                     BoxShadow(
                       color: colors.shadowColor,
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+                      blurRadius: blurRadius,
+                      offset: Offset(0, offsetY),
                     ),
                   ]
                 : null,
@@ -234,12 +263,12 @@ class _ActionButton extends StatelessWidget {
           child: Material(
             type: MaterialType.transparency,
             child: InkWell(
-              borderRadius: _actionButtonRadius,
+              borderRadius: borderRadius,
               onTap: enabled ? onPressed : null,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 8,
+                padding: EdgeInsets.symmetric(
+                  vertical: verticalPadding,
+                  horizontal: horizontalPadding,
                 ),
                 child: Stack(
                   children: [
@@ -248,13 +277,13 @@ class _ActionButton extends StatelessWidget {
                         top: 0,
                         right: 0,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: badgeHorizontalPadding,
+                            vertical: badgeVerticalPadding,
                           ),
                           decoration: BoxDecoration(
                             color: badgeBackground,
-                            borderRadius: _actionBadgeRadius,
+                            borderRadius: badgeRadius,
                           ),
                           child: Text(
                             badge!,
@@ -270,8 +299,8 @@ class _ActionButton extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(icon, size: 26, color: iconColor),
-                          const SizedBox(height: 8),
+                          Icon(icon, size: iconSize, color: iconColor),
+                          SizedBox(height: spacing),
                           SizedBox(
                             width: double.infinity,
                             child: FittedBox(
@@ -343,7 +372,9 @@ class _DigitVM {
 }
 
 class _NumberPad extends StatelessWidget {
-  const _NumberPad();
+  final double scale;
+
+  const _NumberPad({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -353,18 +384,22 @@ class _NumberPad extends StatelessWidget {
     final reduceMotion = media.disableAnimations;
     final bool isTablet = media.size.shortestSide >= 600;
 
-    final horizontalPadding = isTablet ? 20.0 : 8.0;
-    final verticalPadding = isTablet ? 20.0 : 16.0;
+    final baseHorizontalPadding = isTablet ? 20.0 : 8.0;
+    final horizontalPadding = baseHorizontalPadding / scale;
+    final verticalPadding = (isTablet ? 20.0 : 16.0) * scale;
+    final borderRadius = BorderRadius.circular(28 * scale);
+    final blurRadius = 20 * scale;
+    final offsetY = 12 * scale;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.numberPadBackground,
-        borderRadius: const BorderRadius.all(Radius.circular(28)),
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
-            blurRadius: 20,
-            offset: const Offset(0, 12),
+            blurRadius: blurRadius,
+            offset: Offset(0, offsetY),
           ),
         ],
       ),
@@ -404,8 +439,9 @@ class _NumberPad extends StatelessWidget {
           final double heightMultiplier = isTablet ? 1.18 : 1.12;
           final double buttonHeight =
               math.max(minHeight, buttonWidth * heightMultiplier);
+          final double scaledButtonHeight = buttonHeight * scale;
           final double labelSpacing =
-              (buttonHeight * 0.1).clamp(4.0, 12.0).toDouble();
+              (scaledButtonHeight * 0.1).clamp(4.0 * scale, 12.0 * scale).toDouble();
 
           final children = <Widget>[];
           for (var i = 0; i < 9; i++) {
@@ -416,9 +452,10 @@ class _NumberPad extends StatelessWidget {
                   theme: theme,
                   colors: colors,
                   reduceMotion: reduceMotion,
-                  buttonHeight: buttonHeight,
+                  buttonHeight: scaledButtonHeight,
                   widthScale: widthScale,
                   labelSpacing: labelSpacing,
+                  scale: scale,
                 ),
               ),
             );
@@ -445,6 +482,7 @@ class _DigitButton extends StatelessWidget {
   final double buttonHeight;
   final double widthScale;
   final double labelSpacing;
+  final double scale;
 
   const _DigitButton({
     required this.number,
@@ -454,6 +492,7 @@ class _DigitButton extends StatelessWidget {
     required this.buttonHeight,
     required this.widthScale,
     required this.labelSpacing,
+    required this.scale,
   });
 
   @override
@@ -487,6 +526,7 @@ class _DigitButton extends StatelessWidget {
           height: buttonHeight,
           widthScale: widthScale,
           labelSpacing: labelSpacing,
+          scale: scale,
         );
       },
     );
@@ -510,6 +550,7 @@ class _NumberButton extends StatelessWidget {
   final double height;
   final double widthScale;
   final double labelSpacing;
+  final double scale;
 
   const _NumberButton({
     super.key,
@@ -529,6 +570,7 @@ class _NumberButton extends StatelessWidget {
     required this.height,
     required this.widthScale,
     required this.labelSpacing,
+    required this.scale,
   });
 
   @override
@@ -576,13 +618,13 @@ class _NumberButton extends StatelessWidget {
         ? [
             BoxShadow(
               color: colors.shadowColor,
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              blurRadius: 12 * scale,
+              offset: Offset(0, 6 * scale),
             ),
           ]
         : null;
     final borderRadius = BorderRadius.circular(
-      math.max(18.0, math.min(24.0, height / 2.2)),
+      math.max(18.0 * scale, math.min(24.0 * scale, height / 2.2)),
     );
 
     return AnimatedOpacity(
@@ -608,7 +650,7 @@ class _NumberButton extends StatelessWidget {
             border: Border.all(color: borderColor),
             boxShadow: shadow,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 4),
+          padding: EdgeInsets.symmetric(horizontal: 4 * scale),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

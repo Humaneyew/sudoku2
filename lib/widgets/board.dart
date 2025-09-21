@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import '../models.dart';
 import '../theme.dart';
 
-const BorderRadius _boardOuterRadius = BorderRadius.all(Radius.circular(28));
-const BorderRadius _boardInnerRadius = BorderRadius.all(Radius.circular(12));
+const double _boardOuterRadiusValue = 28;
+const double _boardInnerRadiusValue = 12;
 // Percentage (in decimal form) used to increase the opacity/intensity of
 // the selected cell highlight relative to the board background.
 const double _selectedCellOpacityBoost = 0.35;
@@ -15,7 +15,9 @@ const double _selectedCellOpacityBoost = 0.35;
 const double _sameNumberOpacityBoost = 0.15;
 
 class Board extends StatelessWidget {
-  const Board({super.key});
+  final double scale;
+
+  const Board({super.key, this.scale = 1.0});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,12 @@ class Board extends StatelessWidget {
     final cs = theme.colorScheme;
     final colors = theme.extension<SudokuColors>()!;
     final surfaceColor = cs.surface;
+    final outerRadius = BorderRadius.circular(_boardOuterRadiusValue * scale);
+    final innerRadius = BorderRadius.circular(_boardInnerRadiusValue * scale);
+    final outerPadding = 16.0 * scale;
+    final borderWidth = 4.0 * scale;
+    final shadowBlur = 24.0 * scale;
+    final shadowOffset = Offset(0, 16 * scale);
 
     return Selector<AppState, bool>(
       selector: (_, app) => app.current != null,
@@ -33,33 +41,33 @@ class Board extends StatelessWidget {
 
         final outerDecoration = BoxDecoration(
           color: surfaceColor,
-          borderRadius: _boardOuterRadius,
+          borderRadius: outerRadius,
           boxShadow: [
             BoxShadow(
               color: colors.shadowColor,
-              blurRadius: 24,
-              offset: const Offset(0, 16),
+              blurRadius: shadowBlur,
+              offset: shadowOffset,
             ),
           ],
         );
 
         final innerDecoration = BoxDecoration(
           color: colors.boardInner,
-          borderRadius: _boardInnerRadius,
-          border: Border.all(color: colors.boardBorder, width: 4),
+          borderRadius: innerRadius,
+          border: Border.all(color: colors.boardBorder, width: borderWidth),
         );
 
         return RepaintBoundary(
           key: const ValueKey('board-root'),
           child: Container(
             decoration: outerDecoration,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(outerPadding),
             child: AspectRatio(
               aspectRatio: 1,
               child: DecoratedBox(
                 decoration: innerDecoration,
                 child: ClipRRect(
-                  borderRadius: _boardInnerRadius,
+                  borderRadius: innerRadius,
                   child: GridView.builder(
                     padding: EdgeInsets.zero,
                     physics: const NeverScrollableScrollPhysics(),
