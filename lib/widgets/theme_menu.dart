@@ -123,6 +123,7 @@ class _ThemeCircle extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final baseColor = themePreviewColor(option);
+    final innerBorder = themePreviewInnerBorder(option);
     final borderColor = active ? cs.primary : cs.outlineVariant;
 
     return GestureDetector(
@@ -148,6 +149,7 @@ class _ThemeCircle extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: baseColor,
+                border: innerBorder,
               ),
             ),
             if (active)
