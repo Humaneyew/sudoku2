@@ -425,21 +425,72 @@ class _ChallengeCarousel extends StatelessWidget {
       cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
     }
 
+    final listView = ListView.separated(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+      clipBehavior: Clip.none,
+      itemBuilder: (context, index) {
+        return SizedBox(
+          key: ValueKey('challenge-card-$index'),
+          width: cardWidth,
+          child: cards[index],
+        );
+      },
+      separatorBuilder: (_, __) => const SizedBox(width: cardSpacing),
+      itemCount: cards.length,
+    );
+
+    if (theme.colorScheme.brightness != Brightness.dark) {
+      return SizedBox(height: cardHeight, child: listView);
+    }
+
+    final backgroundColor = theme.scaffoldBackgroundColor;
     return SizedBox(
       height: cardHeight,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
-        clipBehavior: Clip.none,
-        itemBuilder: (context, index) {
-          return SizedBox(
-            key: ValueKey('challenge-card-$index'),
-            width: cardWidth,
-            child: cards[index],
-          );
-        },
-        separatorBuilder: (_, __) => const SizedBox(width: cardSpacing),
-        itemCount: cards.length,
+      child: Stack(
+        children: [
+          listView,
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              child: Container(
+                width: 32,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      backgroundColor,
+                      backgroundColor.withOpacity(0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              child: Container(
+                width: 32,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      backgroundColor.withOpacity(0),
+                      backgroundColor,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -477,17 +528,35 @@ class _ChallengeCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final onPrimary = cs.onPrimary;
+    final isDark = cs.brightness == Brightness.dark;
+    final accentColor = data.gradient.colors.last;
+    final baseTextColor =
+        isDark ? const Color(0xFFE0E0E0) : onPrimary;
+    final secondaryTextColor = isDark
+        ? const Color(0xFFBDBDBD)
+        : onPrimary.withOpacity(0.7);
+    final highlightTextColor = isDark
+        ? const Color(0xFFE0E0E0)
+        : onPrimary.withOpacity(0.85);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(28)),
-        gradient: data.gradient,
+        color: isDark ? const Color(0xFF1E1E1E) : null,
+        gradient: isDark ? null : data.gradient,
         boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor,
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
+          if (isDark)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            )
+          else
+            BoxShadow(
+              color: theme.shadowColor,
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
         ],
       ),
       padding: const EdgeInsets.all(20),
@@ -500,12 +569,14 @@ class _ChallengeCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: onPrimary,
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : onPrimary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   data.icon,
-                  color: data.gradient.colors.last,
+                  color: isDark ? baseTextColor : accentColor,
                   size: 22,
                 ),
               ),
@@ -517,13 +588,15 @@ class _ChallengeCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: onPrimary.withOpacity(0.18),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.08)
+                        : onPrimary.withOpacity(0.18),
                     borderRadius: const BorderRadius.all(Radius.circular(30)),
                   ),
                   child: Text(
                     data.badge!,
                     style: TextStyle(
-                      color: onPrimary,
+                      color: baseTextColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -534,7 +607,7 @@ class _ChallengeCard extends StatelessWidget {
           Text(
             data.title,
             style: theme.textTheme.titleMedium?.copyWith(
-              color: onPrimary,
+              color: baseTextColor,
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -545,7 +618,7 @@ class _ChallengeCard extends StatelessWidget {
           Text(
             data.subtitle,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: onPrimary.withOpacity(0.7),
+              color: secondaryTextColor,
               fontSize: 14,
             ),
             maxLines: 1,
@@ -556,12 +629,12 @@ class _ChallengeCard extends StatelessWidget {
             Text(
               data.secondaryLine!,
               style: theme.textTheme.bodySmall?.copyWith(
-                    color: onPrimary.withOpacity(0.85),
+                    color: highlightTextColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ) ??
                   TextStyle(
-                    color: onPrimary.withOpacity(0.85),
+                    color: highlightTextColor,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -572,8 +645,8 @@ class _ChallengeCard extends StatelessWidget {
             height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: onPrimary,
-                foregroundColor: data.gradient.colors.last,
+                backgroundColor: isDark ? accentColor : onPrimary,
+                foregroundColor: isDark ? Colors.white : accentColor,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18)),
                 ),
@@ -611,19 +684,34 @@ class _ChampionshipCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final onPrimary = cs.onPrimary;
+    final isDark = cs.brightness == Brightness.dark;
+    final accentColor = gradient.colors.last;
+    final baseTextColor =
+        isDark ? const Color(0xFFE0E0E0) : onPrimary;
+    final secondaryTextColor = isDark
+        ? const Color(0xFFBDBDBD)
+        : onPrimary.withOpacity(0.7);
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(28)),
-        gradient: gradient,
+        color: isDark ? const Color(0xFF1E1E1E) : null,
+        gradient: isDark ? null : gradient,
         boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor,
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
+          if (isDark)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            )
+          else
+            BoxShadow(
+              color: theme.shadowColor,
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
         ],
       ),
       padding: const EdgeInsets.all(20),
@@ -636,12 +724,14 @@ class _ChampionshipCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: onPrimary,
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : onPrimary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
-                  color: gradient.colors.last,
+                  color: isDark ? baseTextColor : accentColor,
                   size: 22,
                 ),
               ),
@@ -653,14 +743,16 @@ class _ChampionshipCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: onPrimary.withOpacity(0.18),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.08)
+                        : onPrimary.withOpacity(0.18),
                     borderRadius:
                         const BorderRadius.all(Radius.circular(30)),
                   ),
                   child: Text(
                     badge!,
                     style: TextStyle(
-                      color: onPrimary,
+                      color: baseTextColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -671,7 +763,7 @@ class _ChampionshipCard extends StatelessWidget {
           Text(
             l10n.championshipTitle,
             style: theme.textTheme.titleMedium?.copyWith(
-                  color: onPrimary,
+                  color: baseTextColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -682,7 +774,7 @@ class _ChampionshipCard extends StatelessWidget {
           Text(
             l10n.championshipScore(score),
             style: theme.textTheme.bodySmall?.copyWith(
-                  color: onPrimary.withOpacity(0.7),
+                  color: secondaryTextColor,
                   fontSize: 14,
                 ),
             maxLines: 1,
@@ -693,8 +785,8 @@ class _ChampionshipCard extends StatelessWidget {
             height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: onPrimary,
-                foregroundColor: gradient.colors.last,
+                backgroundColor: isDark ? accentColor : onPrimary,
+                foregroundColor: isDark ? Colors.white : accentColor,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(18)),
                 ),
