@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -1601,24 +1603,37 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final l10n = AppLocalizations.of(context)!;
     final media = MediaQuery.of(context);
     final size = media.size;
-    final isCompactHeight = size.height < 720;
-    final isCompactWidth = size.width < 380;
-    final horizontalPadding = isCompactWidth ? 20.0 : 24.0;
-    final headerTopPadding = media.padding.top + (isCompactHeight ? 24.0 : 32.0);
-    final headerBottomPadding = isCompactHeight ? 96.0 : 120.0;
-    final headerOverlap = isCompactHeight ? 68.0 : 80.0;
-    final trophyDiameter = isCompactHeight ? 96.0 : 110.0;
-    final trophyIconSize = isCompactHeight ? 54.0 : 60.0;
-    final headerTrophySpacing = isCompactHeight ? 16.0 : 20.0;
-    final headerTitleSpacing = isCompactHeight ? 10.0 : 12.0;
-    final headerStatIconSize = isCompactHeight ? 22.0 : 24.0;
-    final headerStatSpacing = isCompactHeight ? 6.0 : 8.0;
-    final calendarVerticalPadding = isCompactHeight ? 24.0 : 28.0;
-    final calendarHeaderSpacing = isCompactHeight ? 16.0 : 20.0;
-    final calendarWeekdaySpacing = isCompactHeight ? 12.0 : 16.0;
-    final calendarBottomSpacing = isCompactHeight ? 24.0 : 28.0;
-    final playButtonPaddingV = isCompactHeight ? 16.0 : 18.0;
-    final bottomSpacing = isCompactHeight ? 16.0 : 24.0;
+    const minHeight = 620.0;
+    const maxHeight = 880.0;
+    final heightFactor = ((size.height.clamp(minHeight, maxHeight) - minHeight) /
+            (maxHeight - minHeight))
+        .toDouble();
+    const minWidth = 320.0;
+    const maxWidth = 430.0;
+    final widthFactor = ((size.width.clamp(minWidth, maxWidth) - minWidth) /
+            (maxWidth - minWidth))
+        .toDouble();
+    double lerpHeight(double small, double large) =>
+        lerpDouble(small, large, heightFactor)!;
+    double lerpWidth(double small, double large) =>
+        lerpDouble(small, large, widthFactor)!;
+
+    final horizontalPadding = lerpWidth(18.0, 28.0);
+    final headerTopPadding = media.padding.top + lerpHeight(20.0, 36.0);
+    final headerBottomPadding = lerpHeight(72.0, 132.0);
+    final headerOverlap = lerpHeight(52.0, 88.0);
+    final trophyDiameter = lerpHeight(84.0, 116.0);
+    final trophyIconSize = lerpHeight(48.0, 64.0);
+    final headerTrophySpacing = lerpHeight(12.0, 22.0);
+    final headerTitleSpacing = lerpHeight(8.0, 14.0);
+    final headerStatIconSize = lerpHeight(20.0, 26.0);
+    final headerStatSpacing = lerpHeight(4.0, 10.0);
+    final calendarVerticalPadding = lerpHeight(20.0, 32.0);
+    final calendarHeaderSpacing = lerpHeight(12.0, 22.0);
+    final calendarWeekdaySpacing = lerpHeight(10.0, 18.0);
+    final calendarBottomSpacing = lerpHeight(16.0, 30.0);
+    final playButtonPaddingV = lerpHeight(14.0, 20.0);
+    final bottomSpacing = lerpHeight(12.0, 26.0);
 
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
@@ -1630,20 +1645,20 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final textScaleFactor = media.textScaleFactor;
     final extraTextScale =
         (textScaleFactor - 1.0).clamp(0.0, 2.0).toDouble();
-    final baseCalendarHorizontal = isCompactWidth ? 14.0 : 16.0;
+    final baseCalendarHorizontal = lerpWidth(12.0, 18.0);
     final calendarHorizontalPadding =
         (baseCalendarHorizontal - 3 * extraTextScale)
-            .clamp(10.0, baseCalendarHorizontal)
+            .clamp(8.0, baseCalendarHorizontal)
             .toDouble();
-    final baseCalendarCrossSpacing = isCompactWidth ? 8.0 : 10.0;
+    final baseCalendarCrossSpacing = lerpWidth(6.0, 10.0);
     final calendarCrossSpacing =
         (baseCalendarCrossSpacing - 2.5 * extraTextScale)
-            .clamp(6.0, baseCalendarCrossSpacing)
+            .clamp(4.0, baseCalendarCrossSpacing)
             .toDouble();
-    final baseCalendarMainSpacing = isCompactHeight ? 11.0 : 12.0;
+    final baseCalendarMainSpacing = lerpHeight(8.0, 12.0);
     final calendarMainSpacing =
-        (baseCalendarMainSpacing - 2.5 * extraTextScale)
-            .clamp(8.0, baseCalendarMainSpacing)
+        (baseCalendarMainSpacing - 2.0 * extraTextScale)
+            .clamp(6.0, baseCalendarMainSpacing)
             .toDouble();
 
     final monthFormatter = DateFormat.MMMM(l10n.localeName);
@@ -1653,27 +1668,32 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
           l10n.localeName,
         ) ??
         rawMonthLabel;
+    final monthHeaderFontFactor = lerpHeight(0.92, 1.0);
     final monthHeaderStyle = theme.textTheme.titleMedium
         ?.copyWith(
           fontWeight: FontWeight.w700,
           color: cs.onSurface,
         )
-        ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0);
+        ?.apply(fontSizeFactor: monthHeaderFontFactor);
 
+    final headerTitleFontFactor = lerpHeight(0.9, 1.0);
     final headerTitleStyle = theme.textTheme.headlineMedium
         ?.copyWith(
           color: cs.onPrimary,
           fontWeight: FontWeight.w800,
           letterSpacing: -0.4,
         )
-        ?.apply(fontSizeFactor: isCompactHeight ? 0.94 : 1.0);
+        ?.apply(fontSizeFactor: headerTitleFontFactor);
 
+    final headerScoreFontFactor = lerpHeight(0.92, 1.0);
     final headerScoreStyle = theme.textTheme.titleMedium
         ?.copyWith(
           color: cs.onPrimary,
           fontWeight: FontWeight.w700,
         )
-        ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0);
+        ?.apply(fontSizeFactor: headerScoreFontFactor);
+
+    final playButtonFontFactor = lerpHeight(0.92, 1.0);
 
     final weekdayFormatter = DateFormat.E(l10n.localeName);
     final currentSelected = _selectedDate;
@@ -1701,6 +1721,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     return Container(
       color: cs.background,
       child: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: media.padding.bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -1911,7 +1932,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: 0.1,
                                     )
-                                    ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0),
+                                    ?.apply(fontSizeFactor: playButtonFontFactor),
                               ),
                             ),
                           ),
