@@ -423,21 +423,18 @@ class _ChallengeCarousel extends StatelessWidget {
 
     final screenWidth = media.size.width;
     final isCompactHeight = media.size.height < 720;
-    final bool useSingleCardLayout = screenWidth < 420;
-    final bool showTwoCards = !useSingleCardLayout && screenWidth < 600;
-    final double cardSpacing = useSingleCardLayout ? 14.0 : 16.0;
+    final bool showTwoCards = screenWidth < 600;
+    const double cardSpacing = 16.0;
     final double cardHeight = isCompactHeight ? 184.0 : 196.0;
     final availableWidth = screenWidth - horizontalPadding * 2;
 
     final double cardWidth;
-    if (useSingleCardLayout) {
-      cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
-    } else if (showTwoCards) {
+    if (showTwoCards) {
       final widthForTwoCards = availableWidth - cardSpacing;
       if (widthForTwoCards > 0) {
         cardWidth = widthForTwoCards / 2;
       } else {
-        cardWidth = availableWidth > 0 ? availableWidth : 0;
+        cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
       }
     } else {
       cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
