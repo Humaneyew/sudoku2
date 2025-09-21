@@ -25,7 +25,7 @@ const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
 const double _kGameContentTopPadding = 10.0;
 const double _kGameContentBottomPadding = 28.0;
-const double _kBoardToControlsSpacing = 16.0;
+const double _kBoardToControlsSpacing = 14.0;
 const double _kTextHeightMultiplier = 1.1;
 
 extension _GameStateElapsedMs on GameState {

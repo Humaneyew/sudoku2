@@ -10,7 +10,7 @@ import '../undo_ad_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
-const double kControlPanelVerticalSpacing = 16.0;
+const double kControlPanelVerticalSpacing = 14.0;
 
 class ControlPanel extends StatelessWidget {
   final double scale;
