@@ -207,7 +207,12 @@ class _BoardCell extends StatelessWidget {
             ? const <int>[]
             : List<int>.unmodifiable(List<int>.from(notesSet)..sort());
         final given = game.given[index];
-        final isSelected = app.selectedCell == index;
+        final selected = app.selectedCell;
+        final isSelected = selected == index;
+        final sameRow =
+            selected != null && (selected ~/ 9) == (index ~/ 9);
+        final sameColumn =
+            selected != null && (selected % 9) == (index % 9);
         final sameValue = app.isSameAsSelectedValue(index);
         final incorrect =
             !given && value != 0 && !app.isMoveValid(index, value);
@@ -215,6 +220,8 @@ class _BoardCell extends StatelessWidget {
           value: value,
           notes: notes,
           isSelected: isSelected,
+          sameRow: sameRow,
+          sameColumn: sameColumn,
           sameValue: sameValue,
           incorrect: incorrect,
           fontScale: app.fontScale,
@@ -241,11 +248,18 @@ class _BoardCell extends StatelessWidget {
         final border = _cellBorder(index, thinColor, boldColor);
         final highlightSameValue =
             cell.value != 0 && cell.sameValue && !cell.isSelected;
+        final highlightCrosshair =
+            (cell.sameRow || cell.sameColumn) && !cell.isSelected;
+        final crosshairColor =
+            Color.lerp(baseInner, colors.selectedCell, 0.45) ??
+                colors.selectedCell;
         final backgroundColor = cell.isSelected
             ? colors.selectedCell
             : highlightSameValue
                 ? colors.sameNumberCell
-                : colors.boardInner;
+                : highlightCrosshair
+                    ? crosshairColor
+                    : colors.boardInner;
 
         return GestureDetector(
           onTap: () => context.read<AppState>().selectCell(index),
@@ -271,6 +285,8 @@ class _CellState {
   final int value;
   final List<int> notes;
   final bool isSelected;
+  final bool sameRow;
+  final bool sameColumn;
   final bool sameValue;
   final bool incorrect;
   final double fontScale;
@@ -279,6 +295,8 @@ class _CellState {
     required this.value,
     required this.notes,
     required this.isSelected,
+    required this.sameRow,
+    required this.sameColumn,
     required this.sameValue,
     required this.incorrect,
     required this.fontScale,
@@ -291,6 +309,8 @@ class _CellState {
             other.value == value &&
             listEquals(other.notes, notes) &&
             other.isSelected == isSelected &&
+            other.sameRow == sameRow &&
+            other.sameColumn == sameColumn &&
             other.sameValue == sameValue &&
             other.incorrect == incorrect &&
             other.fontScale == fontScale;
@@ -301,6 +321,8 @@ class _CellState {
         value,
         Object.hashAll(notes),
         isSelected,
+        sameRow,
+        sameColumn,
         sameValue,
         incorrect,
         fontScale,
