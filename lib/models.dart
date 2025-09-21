@@ -254,7 +254,6 @@ class AppState extends ChangeNotifier {
   int hintsLeft = _maxHints;
   int livesLeft = _maxLives;
   bool soundsEnabled = true;
-  bool musicEnabled = true;
   bool vibrationEnabled = true;
   int? highlightedNumber;
   bool _madeMistake = false;
@@ -396,7 +395,6 @@ class AppState extends ChangeNotifier {
       }
 
       soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
-      musicEnabled = prefs.getBool('musicEnabled') ?? musicEnabled;
       vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
       final savedGame = prefs.getString('currentGame');
       if (savedGame != null) {
@@ -604,15 +602,6 @@ class AppState extends ChangeNotifier {
     soundsEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('soundsEnabled', enabled);
-    });
-    notifyListeners();
-  }
-
-  void toggleMusic(bool enabled) {
-    if (musicEnabled == enabled) return;
-    musicEnabled = enabled;
-    _persist((prefs) async {
-      await prefs.setBool('musicEnabled', enabled);
     });
     notifyListeners();
   }
@@ -868,6 +857,7 @@ class AppState extends ChangeNotifier {
       livesLeft = math.max(0, livesLeft - 1);
       consumedLife = true;
       _madeMistake = true;
+      _handleMistakeFeedback();
     } else {
       currentScore += 12;
       _handleCorrectFeedback();
@@ -1203,6 +1193,10 @@ class AppState extends ChangeNotifier {
   void _handleCorrectFeedback() {
     _playSound(SystemSoundType.click);
     _triggerVibration(HapticFeedback.selectionClick);
+  }
+
+  void _handleMistakeFeedback() {
+    _triggerVibration(HapticFeedback.lightImpact);
   }
 
   void _handleVictoryFeedback() {

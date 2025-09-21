@@ -212,8 +212,6 @@ abstract class AppLocalizations {
 
   String get vibrationLabel;
 
-  String get musicLabel;
-
   String get miscSectionTitle;
 
   String get championshipLocalSection;
@@ -674,9 +672,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get vibrationLabel => "Vibration";
 
   @override
-  String get musicLabel => "Hintergrundmusik";
-
-  @override
   String get miscSectionTitle => "Sonstiges";
 
   @override
@@ -1113,9 +1108,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vibrationLabel => "Vibration";
-
-  @override
-  String get musicLabel => "Background music";
 
   @override
   String get miscSectionTitle => "Other";
@@ -1556,9 +1548,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get vibrationLabel => "Vibración";
 
   @override
-  String get musicLabel => "Música de fondo";
-
-  @override
   String get miscSectionTitle => "Otro";
 
   @override
@@ -1995,9 +1984,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get vibrationLabel => "Vibration";
-
-  @override
-  String get musicLabel => "Musique de fond";
 
   @override
   String get miscSectionTitle => "Autre";
@@ -2438,9 +2424,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get vibrationLabel => "कंपन";
 
   @override
-  String get musicLabel => "पृष्ठभूमि संगीत";
-
-  @override
   String get miscSectionTitle => "अन्य";
 
   @override
@@ -2877,9 +2860,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get vibrationLabel => "Vibrazione";
-
-  @override
-  String get musicLabel => "Musica di sottofondo";
 
   @override
   String get miscSectionTitle => "Altro";
@@ -3320,9 +3300,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get vibrationLabel => "振動";
 
   @override
-  String get musicLabel => "バックグラウンドミュージック";
-
-  @override
   String get miscSectionTitle => "他の";
 
   @override
@@ -3761,9 +3738,6 @@ class AppLocalizationsKa extends AppLocalizations {
   String get vibrationLabel => "ვიბრაცია";
 
   @override
-  String get musicLabel => "ფონური მუსიკა";
-
-  @override
   String get miscSectionTitle => "სხვა";
 
   @override
@@ -4200,9 +4174,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get vibrationLabel => "진동";
-
-  @override
-  String get musicLabel => "배경 음악";
 
   @override
   String get miscSectionTitle => "다른";
@@ -4647,9 +4618,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get vibrationLabel => "Вибрация";
 
   @override
-  String get musicLabel => "Фоновая музыка";
-
-  @override
   String get miscSectionTitle => "Другое";
 
   @override
@@ -5092,9 +5060,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get vibrationLabel => "Вібрація";
 
   @override
-  String get musicLabel => "Фонова музика";
-
-  @override
   String get miscSectionTitle => "Інше";
 
   @override
@@ -5529,9 +5494,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get vibrationLabel => "震动";
-
-  @override
-  String get musicLabel => "背景音乐";
 
   @override
   String get miscSectionTitle => "其他";

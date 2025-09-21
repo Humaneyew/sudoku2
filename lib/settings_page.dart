@@ -76,13 +76,6 @@ class SettingsPage extends StatelessWidget {
             secondary: const Icon(Icons.vibration),
           ),
           SwitchListTile(
-            key: const ValueKey('settings-music'),
-            title: Text(l10n.musicLabel),
-            value: app.musicEnabled,
-            onChanged: (v) => app.toggleMusic(v),
-            secondary: const Icon(Icons.music_note),
-          ),
-          SwitchListTile(
             key: const ValueKey('settings-champ-auto-scroll'),
             title: Text(l10n.championshipAutoScroll),
             value: championship.autoScrollEnabled,
