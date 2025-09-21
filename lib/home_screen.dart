@@ -93,6 +93,15 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final app = context.watch<AppState>();
     final theme = Theme.of(context);
+    final media = MediaQuery.of(context);
+    final size = media.size;
+    final isCompactHeight = size.height < 720;
+    final isCompactWidth = size.width < 380;
+    final horizontalPadding = isCompactWidth ? 20.0 : 24.0;
+    final verticalPadding = isCompactHeight ? 20.0 : 24.0;
+    final topSpacing = isCompactHeight ? 20.0 : 24.0;
+    final carouselSpacing = isCompactHeight ? 24.0 : 32.0;
+    final bodySpacing = isCompactHeight ? 14.0 : 18.0;
     final difficulty = app.featuredStatsDifficulty;
     final stats = app.statsFor(difficulty);
     final l10n = AppLocalizations.of(context)!;
@@ -112,12 +121,12 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: _TopBar(
               title: l10n.appTitle,
               titleStyle: titleStyle,
@@ -131,20 +140,21 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: topSpacing),
           _ChallengeCarousel(
             battleWinRate: app.battleWinRate,
             onOpenChallenge: widget.onOpenChallenge,
+            horizontalPadding: horizontalPadding,
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: carouselSpacing),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: titlePlaceholderHeight),
                 _DailyChain(streak: app.dailyStreak),
-                const SizedBox(height: 18),
+                SizedBox(height: bodySpacing),
                 _ProgressCard(
                   stats: stats,
                   onNewGame: () => _openDifficultySheet(context),
@@ -353,10 +363,12 @@ void _startDailyChallengeGame(BuildContext context, DateTime date) {
 class _ChallengeCarousel extends StatelessWidget {
   final int battleWinRate;
   final VoidCallback onOpenChallenge;
+  final double horizontalPadding;
 
   const _ChallengeCarousel({
     required this.battleWinRate,
     required this.onOpenChallenge,
+    required this.horizontalPadding,
   });
 
   @override
@@ -368,6 +380,7 @@ class _ChallengeCarousel extends StatelessWidget {
     final normalizedToday = DateTime(now.year, now.month, now.day);
     final today = formatter.format(normalizedToday);
     final colors = theme.extension<SudokuColors>()!;
+    final media = MediaQuery.of(context);
 
     final cards = <Widget>[
       _ChallengeCard(
@@ -406,15 +419,18 @@ class _ChallengeCarousel extends StatelessWidget {
       ),
     ];
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    const horizontalPadding = 24.0;
-    const cardSpacing = 16.0;
-    const cardHeight = 196.0;
+    final screenWidth = media.size.width;
+    final isCompactHeight = media.size.height < 720;
+    final bool useSingleCardLayout = screenWidth < 420;
+    final bool showTwoCards = !useSingleCardLayout && screenWidth < 600;
+    final double cardSpacing = useSingleCardLayout ? 14.0 : 16.0;
+    final double cardHeight = isCompactHeight ? 184.0 : 196.0;
     final availableWidth = screenWidth - horizontalPadding * 2;
 
-    final showTwoCards = screenWidth < 600;
     final double cardWidth;
-    if (showTwoCards) {
+    if (useSingleCardLayout) {
+      cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
+    } else if (showTwoCards) {
       final widthForTwoCards = availableWidth - cardSpacing;
       if (widthForTwoCards > 0) {
         cardWidth = widthForTwoCards / 2;
@@ -427,7 +443,7 @@ class _ChallengeCarousel extends StatelessWidget {
 
     final listView = ListView.separated(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       clipBehavior: Clip.none,
       itemBuilder: (context, index) {
         return SizedBox(
@@ -436,7 +452,7 @@ class _ChallengeCarousel extends StatelessWidget {
           child: cards[index],
         );
       },
-      separatorBuilder: (_, __) => const SizedBox(width: cardSpacing),
+      separatorBuilder: (_, __) => SizedBox(width: cardSpacing),
       itemCount: cards.length,
     );
 
@@ -518,6 +534,80 @@ class _ChallengeCardData {
   });
 }
 
+class _ChallengeCardGeometry {
+  final double padding;
+  final double iconPadding;
+  final double iconSize;
+  final double badgeHorizontalPadding;
+  final double badgeVerticalPadding;
+  final double titleFontSize;
+  final double subtitleFontSize;
+  final double secondaryFontSize;
+  final double subtitleSpacing;
+  final double secondarySpacing;
+  final double buttonSpacing;
+  final double buttonHeight;
+  final double buttonHorizontalPadding;
+
+  const _ChallengeCardGeometry._({
+    required this.padding,
+    required this.iconPadding,
+    required this.iconSize,
+    required this.badgeHorizontalPadding,
+    required this.badgeVerticalPadding,
+    required this.titleFontSize,
+    required this.subtitleFontSize,
+    required this.secondaryFontSize,
+    required this.subtitleSpacing,
+    required this.secondarySpacing,
+    required this.buttonSpacing,
+    required this.buttonHeight,
+    required this.buttonHorizontalPadding,
+  });
+
+  factory _ChallengeCardGeometry.resolve(BoxConstraints constraints) {
+    final height = constraints.maxHeight.isFinite ? constraints.maxHeight : 0;
+    final width = constraints.maxWidth.isFinite ? constraints.maxWidth : 0;
+    final isCompactHeight = height > 0 && height < 190;
+    final isCompactWidth = width > 0 && width < 170;
+    final compact = isCompactHeight || isCompactWidth;
+
+    if (compact) {
+      return const _ChallengeCardGeometry._(
+        padding: 16,
+        iconPadding: 8,
+        iconSize: 20,
+        badgeHorizontalPadding: 9,
+        badgeVerticalPadding: 3,
+        titleFontSize: 16,
+        subtitleFontSize: 13,
+        secondaryFontSize: 12,
+        subtitleSpacing: 2,
+        secondarySpacing: 2,
+        buttonSpacing: 14,
+        buttonHeight: 36,
+        buttonHorizontalPadding: 20,
+      );
+    }
+
+    return const _ChallengeCardGeometry._(
+      padding: 20,
+      iconPadding: 10,
+      iconSize: 22,
+      badgeHorizontalPadding: 10,
+      badgeVerticalPadding: 4,
+      titleFontSize: 18,
+      subtitleFontSize: 14,
+      secondaryFontSize: 13,
+      subtitleSpacing: 4,
+      secondarySpacing: 3,
+      buttonSpacing: 18,
+      buttonHeight: 40,
+      buttonHorizontalPadding: 24,
+    );
+  }
+}
+
 class _ChallengeCard extends StatelessWidget {
   final _ChallengeCardData data;
 
@@ -525,142 +615,153 @@ class _ChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final onPrimary = cs.onPrimary;
-    final isDark = cs.brightness == Brightness.dark;
-    final accentColor = data.gradient.colors.last;
-    final baseTextColor =
-        isDark ? const Color(0xFFE0E0E0) : onPrimary;
-    final secondaryTextColor = isDark
-        ? const Color(0xFFBDBDBD)
-        : onPrimary.withOpacity(0.7);
-    final highlightTextColor = isDark
-        ? const Color(0xFFE0E0E0)
-        : onPrimary.withOpacity(0.85);
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(28)),
-        color: isDark ? const Color(0xFF1E1E1E) : null,
-        gradient: isDark ? null : data.gradient,
-        boxShadow: [
-          if (isDark)
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            )
-          else
-            BoxShadow(
-              color: theme.shadowColor,
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : onPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  data.icon,
-                  color: isDark ? baseTextColor : accentColor,
-                  size: 22,
-                ),
-              ),
-              const Spacer(),
-              if (data.badge != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.08)
-                        : onPrimary.withOpacity(0.18),
-                    borderRadius: const BorderRadius.all(Radius.circular(30)),
-                  ),
-                  child: Text(
-                    data.badge!,
-                    style: TextStyle(
-                      color: baseTextColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final geometry = _ChallengeCardGeometry.resolve(constraints);
+        final theme = Theme.of(context);
+        final cs = theme.colorScheme;
+        final onPrimary = cs.onPrimary;
+        final isDark = cs.brightness == Brightness.dark;
+        final accentColor = data.gradient.colors.last;
+        final baseTextColor =
+            isDark ? const Color(0xFFE0E0E0) : onPrimary;
+        final secondaryTextColor = isDark
+            ? const Color(0xFFBDBDBD)
+            : onPrimary.withOpacity(0.7);
+        final highlightTextColor = isDark
+            ? const Color(0xFFE0E0E0)
+            : onPrimary.withOpacity(0.85);
+
+        final secondaryStyle = theme.textTheme.bodySmall?.copyWith(
+              color: highlightTextColor,
+              fontSize: geometry.secondaryFontSize,
+              fontWeight: FontWeight.w600,
+            ) ??
+            TextStyle(
+              color: highlightTextColor,
+              fontSize: geometry.secondaryFontSize,
+              fontWeight: FontWeight.w600,
+            );
+
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(28)),
+            color: isDark ? const Color(0xFF1E1E1E) : null,
+            gradient: isDark ? null : data.gradient,
+            boxShadow: [
+              if (isDark)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 6,
+                  offset: const Offset(0, 4),
+                )
+              else
+                BoxShadow(
+                  color: theme.shadowColor,
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
                 ),
             ],
           ),
-          const Spacer(),
-          Text(
-            data.title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: baseTextColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            data.subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: secondaryTextColor,
-              fontSize: 14,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (data.secondaryLine != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              data.secondaryLine!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                    color: highlightTextColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ) ??
-                  TextStyle(
-                    color: highlightTextColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+          padding: EdgeInsets.all(geometry.padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(geometry.iconPadding),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.1)
+                          : onPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      data.icon,
+                      color: isDark ? baseTextColor : accentColor,
+                      size: geometry.iconSize,
+                    ),
                   ),
-            ),
-          ],
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? accentColor : onPrimary,
-                foregroundColor: isDark ? Colors.white : accentColor,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
+                  const Spacer(),
+                  if (data.badge != null)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: geometry.badgeHorizontalPadding,
+                        vertical: geometry.badgeVerticalPadding,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : onPrimary.withOpacity(0.18),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
+                      ),
+                      child: Text(
+                        data.badge!,
+                        style: TextStyle(
+                          color: baseTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const Spacer(),
+              Text(
+                data.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: baseTextColor,
+                  fontSize: geometry.titleFontSize,
+                  fontWeight: FontWeight.w700,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              onPressed: data.onPressed,
-              child: Text(
-                data.buttonLabel,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+              SizedBox(height: geometry.subtitleSpacing),
+              Text(
+                data.subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: secondaryTextColor,
+                  fontSize: geometry.subtitleFontSize,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
+              if (data.secondaryLine != null) ...[
+                SizedBox(height: geometry.secondarySpacing),
+                Text(
+                  data.secondaryLine!,
+                  style: secondaryStyle,
+                ),
+              ],
+              SizedBox(height: geometry.buttonSpacing),
+              SizedBox(
+                height: geometry.buttonHeight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? accentColor : onPrimary,
+                    foregroundColor: isDark ? Colors.white : accentColor,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: geometry.buttonHorizontalPadding,
+                    ),
+                  ),
+                  onPressed: data.onPressed,
+                  child: Text(
+                    data.buttonLabel,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -681,128 +782,135 @@ class _ChampionshipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
-    final onPrimary = cs.onPrimary;
-    final isDark = cs.brightness == Brightness.dark;
-    final accentColor = gradient.colors.last;
-    final baseTextColor =
-        isDark ? const Color(0xFFE0E0E0) : onPrimary;
-    final secondaryTextColor = isDark
-        ? const Color(0xFFBDBDBD)
-        : onPrimary.withOpacity(0.7);
-    final l10n = AppLocalizations.of(context)!;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final geometry = _ChallengeCardGeometry.resolve(constraints);
+        final theme = Theme.of(context);
+        final cs = theme.colorScheme;
+        final onPrimary = cs.onPrimary;
+        final isDark = cs.brightness == Brightness.dark;
+        final accentColor = gradient.colors.last;
+        final baseTextColor =
+            isDark ? const Color(0xFFE0E0E0) : onPrimary;
+        final secondaryTextColor = isDark
+            ? const Color(0xFFBDBDBD)
+            : onPrimary.withOpacity(0.7);
+        final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(28)),
-        color: isDark ? const Color(0xFF1E1E1E) : null,
-        gradient: isDark ? null : gradient,
-        boxShadow: [
-          if (isDark)
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            )
-          else
-            BoxShadow(
-              color: theme.shadowColor,
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : onPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  icon,
-                  color: isDark ? baseTextColor : accentColor,
-                  size: 22,
-                ),
-              ),
-              const Spacer(),
-              if (badge != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.08)
-                        : onPrimary.withOpacity(0.18),
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(30)),
-                  ),
-                  child: Text(
-                    badge!,
-                    style: TextStyle(
-                      color: baseTextColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(28)),
+            color: isDark ? const Color(0xFF1E1E1E) : null,
+            gradient: isDark ? null : gradient,
+            boxShadow: [
+              if (isDark)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 6,
+                  offset: const Offset(0, 4),
+                )
+              else
+                BoxShadow(
+                  color: theme.shadowColor,
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
                 ),
             ],
           ),
-          const Spacer(),
-          Text(
-            l10n.championshipTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
-                  color: baseTextColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            l10n.championshipScore(score),
-            style: theme.textTheme.bodySmall?.copyWith(
-                  color: secondaryTextColor,
-                  fontSize: 14,
-                ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? accentColor : onPrimary,
-                foregroundColor: isDark ? Colors.white : accentColor,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.all(geometry.padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(geometry.iconPadding),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.1)
+                          : onPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      icon,
+                      color: isDark ? baseTextColor : accentColor,
+                      size: geometry.iconSize,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (badge != null)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: geometry.badgeHorizontalPadding,
+                        vertical: geometry.badgeVerticalPadding,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.08)
+                            : onPrimary.withOpacity(0.18),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
+                      ),
+                      child: Text(
+                        badge!,
+                        style: TextStyle(
+                          color: baseTextColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              onPressed: () {
-                Navigator.pushNamed(context, '/championship');
-              },
-              child: Text(
-                l10n.play,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+              const Spacer(),
+              Text(
+                l10n.championshipTitle,
+                style: theme.textTheme.titleMedium?.copyWith(
+                      color: baseTextColor,
+                      fontSize: geometry.titleFontSize,
+                      fontWeight: FontWeight.w700,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
+              SizedBox(height: geometry.subtitleSpacing),
+              Text(
+                l10n.championshipScore(score),
+                style: theme.textTheme.bodySmall?.copyWith(
+                      color: secondaryTextColor,
+                      fontSize: geometry.subtitleFontSize,
+                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: geometry.buttonSpacing),
+              SizedBox(
+                height: geometry.buttonHeight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? accentColor : onPrimary,
+                    foregroundColor: isDark ? Colors.white : accentColor,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: geometry.buttonHorizontalPadding,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/championship');
+                  },
+                  child: Text(
+                    l10n.play,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -1491,6 +1599,26 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final media = MediaQuery.of(context);
+    final size = media.size;
+    final isCompactHeight = size.height < 720;
+    final isCompactWidth = size.width < 380;
+    final horizontalPadding = isCompactWidth ? 20.0 : 24.0;
+    final headerTopPadding = media.padding.top + (isCompactHeight ? 24.0 : 32.0);
+    final headerBottomPadding = isCompactHeight ? 96.0 : 120.0;
+    final headerOverlap = isCompactHeight ? 68.0 : 80.0;
+    final trophyDiameter = isCompactHeight ? 96.0 : 110.0;
+    final trophyIconSize = isCompactHeight ? 54.0 : 60.0;
+    final headerTrophySpacing = isCompactHeight ? 16.0 : 20.0;
+    final headerTitleSpacing = isCompactHeight ? 10.0 : 12.0;
+    final headerStatIconSize = isCompactHeight ? 22.0 : 24.0;
+    final headerStatSpacing = isCompactHeight ? 6.0 : 8.0;
+    final calendarVerticalPadding = isCompactHeight ? 24.0 : 28.0;
+    final calendarHeaderSpacing = isCompactHeight ? 16.0 : 20.0;
+    final calendarWeekdaySpacing = isCompactHeight ? 12.0 : 16.0;
+    final calendarBottomSpacing = isCompactHeight ? 24.0 : 28.0;
+    final playButtonPaddingV = isCompactHeight ? 16.0 : 18.0;
+    final bottomSpacing = isCompactHeight ? 16.0 : 24.0;
 
     final today = DateTime.now();
     final normalizedToday = DateTime(today.year, today.month, today.day);
@@ -1499,15 +1627,24 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
     const challengeGoal = 30;
     final headerProgress = progress.clamp(0, challengeGoal);
 
-    final textScaleFactor = MediaQuery.textScaleFactorOf(context);
+    final textScaleFactor = media.textScaleFactor;
     final extraTextScale =
         (textScaleFactor - 1.0).clamp(0.0, 2.0).toDouble();
+    final baseCalendarHorizontal = isCompactWidth ? 14.0 : 16.0;
     final calendarHorizontalPadding =
-        (16 - 3 * extraTextScale).clamp(10.0, 16.0).toDouble();
+        (baseCalendarHorizontal - 3 * extraTextScale)
+            .clamp(10.0, baseCalendarHorizontal)
+            .toDouble();
+    final baseCalendarCrossSpacing = isCompactWidth ? 8.0 : 10.0;
     final calendarCrossSpacing =
-        (10 - 2.5 * extraTextScale).clamp(6.0, 10.0).toDouble();
+        (baseCalendarCrossSpacing - 2.5 * extraTextScale)
+            .clamp(6.0, baseCalendarCrossSpacing)
+            .toDouble();
+    final baseCalendarMainSpacing = isCompactHeight ? 11.0 : 12.0;
     final calendarMainSpacing =
-        (12 - 2.5 * extraTextScale).clamp(8.0, 12.0).toDouble();
+        (baseCalendarMainSpacing - 2.5 * extraTextScale)
+            .clamp(8.0, baseCalendarMainSpacing)
+            .toDouble();
 
     final monthFormatter = DateFormat.MMMM(l10n.localeName);
     final rawMonthLabel = monthFormatter.format(_visibleMonth);
@@ -1516,10 +1653,27 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
           l10n.localeName,
         ) ??
         rawMonthLabel;
-    final monthHeaderStyle = theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.w700,
-      color: cs.onSurface,
-    );
+    final monthHeaderStyle = theme.textTheme.titleMedium
+        ?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: cs.onSurface,
+        )
+        ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0);
+
+    final headerTitleStyle = theme.textTheme.headlineMedium
+        ?.copyWith(
+          color: cs.onPrimary,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.4,
+        )
+        ?.apply(fontSizeFactor: isCompactHeight ? 0.94 : 1.0);
+
+    final headerScoreStyle = theme.textTheme.titleMedium
+        ?.copyWith(
+          color: cs.onPrimary,
+          fontWeight: FontWeight.w700,
+        )
+        ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0);
 
     final weekdayFormatter = DateFormat.E(l10n.localeName);
     final currentSelected = _selectedDate;
@@ -1553,10 +1707,10 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
             Container(
               width: double.infinity,
               padding: EdgeInsets.fromLTRB(
-                24,
-                MediaQuery.of(context).padding.top + 32,
-                24,
-                120,
+                horizontalPadding,
+                headerTopPadding,
+                horizontalPadding,
+                headerBottomPadding,
               ),
               decoration: BoxDecoration(
                 gradient: headerGradient,
@@ -1568,22 +1722,22 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                     opacity: _trophyOpacity,
                     child: ScaleTransition(
                       scale: _trophyScale,
-                        child: Container(
-                          width: 110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            color: cs.onPrimary.withOpacity(0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.emoji_events_rounded,
-                            color: cs.onPrimary,
-                            size: 60,
-                          ),
+                      child: Container(
+                        width: trophyDiameter,
+                        height: trophyDiameter,
+                        decoration: BoxDecoration(
+                          color: cs.onPrimary.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.emoji_events_rounded,
+                          color: cs.onPrimary,
+                          size: trophyIconSize,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: headerTrophySpacing),
                   FadeTransition(
                     opacity: _headerOpacity,
                     child: SlideTransition(
@@ -1595,29 +1749,22 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                           Text(
                             l10n.navDaily,
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              color: cs.onPrimary,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.4,
-                            ),
+                            style: headerTitleStyle,
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: headerTitleSpacing),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.star_rounded,
-                                color: Color(0xFFFFD54F),
-                                size: 24,
+                                color: const Color(0xFFFFD54F),
+                                size: headerStatIconSize,
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: headerStatSpacing),
                               Text(
                                 '$headerProgress/$challengeGoal',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: cs.onPrimary,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: headerScoreStyle,
                               ),
                             ],
                           ),
@@ -1629,9 +1776,9 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
               ),
             ),
             Transform.translate(
-              offset: const Offset(0, -80),
+              offset: Offset(0, -headerOverlap),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: SlideTransition(
                   position: _calendarOffset,
                   child: FadeTransition(
@@ -1639,9 +1786,9 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                     child: Container(
                       padding: EdgeInsets.fromLTRB(
                         calendarHorizontalPadding,
-                        28,
+                        calendarVerticalPadding,
                         calendarHorizontalPadding,
-                        28,
+                        calendarVerticalPadding,
                       ),
                       decoration: BoxDecoration(
                         color: surfaceColor,
@@ -1679,7 +1826,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: calendarHeaderSpacing),
                           Row(
                             children: List.generate(7, (index) {
                               final label =
@@ -1698,7 +1845,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               );
                             }),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: calendarWeekdaySpacing),
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -1737,7 +1884,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               );
                             },
                           ),
-                          const SizedBox(height: 28),
+                          SizedBox(height: calendarBottomSpacing),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -1747,8 +1894,10 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: cs.primary,
                                 foregroundColor: cs.onPrimary,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: playButtonPaddingV,
+                                  horizontal: 16,
+                                ),
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(22)),
                                 ),
@@ -1756,11 +1905,13 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                               ),
                               child: Text(
                                 l10n.playAction,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: cs.onPrimary,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.1,
-                                ),
+                                style: theme.textTheme.titleMedium
+                                    ?.copyWith(
+                                      color: cs.onPrimary,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.1,
+                                    )
+                                    ?.apply(fontSizeFactor: isCompactHeight ? 0.96 : 1.0),
                               ),
                             ),
                           ),
@@ -1771,7 +1922,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: bottomSpacing),
           ],
         ),
       ),
