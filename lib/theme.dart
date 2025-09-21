@@ -650,8 +650,22 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
 
 /// Цвет, который используется для предпросмотра темы в меню выбора.
 Color themePreviewColor(SudokuTheme theme) {
-  if (theme == SudokuTheme.black) {
-    return const Color(0xFF000000);
+  switch (theme) {
+    case SudokuTheme.black:
+      return const Color(0xFF000000);
+    case SudokuTheme.cream:
+      return const Color(0xFFFFF5E1);
+    default:
+      return _themeConfigs[theme]!.primary;
   }
-  return _themeConfigs[theme]!.primary;
+}
+
+Border? themePreviewInnerBorder(SudokuTheme theme) {
+  if (theme == SudokuTheme.cream) {
+    return Border.all(
+      color: const Color(0xFFBEBEBE),
+      width: 1,
+    );
+  }
+  return null;
 }
