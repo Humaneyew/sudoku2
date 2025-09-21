@@ -10,6 +10,7 @@ import '../undo_ad_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
+const double kControlPanelVerticalSpacing = 16.0;
 
 class ControlPanel extends StatelessWidget {
   final double scale;
@@ -24,7 +25,7 @@ class ControlPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _ActionRow(scale: scale),
-          SizedBox(height: 20 * scale),
+          SizedBox(height: kControlPanelVerticalSpacing * scale),
           _NumberPad(scale: scale),
         ],
       ),
@@ -679,5 +680,45 @@ class _NumberButton extends StatelessWidget {
       ),
     );
   }
+}
+
+double estimateControlPanelHeight({
+  required double maxWidth,
+  required double scale,
+  required bool isTablet,
+}) {
+  if (maxWidth <= 0 || scale <= 0) {
+    return 0;
+  }
+
+  const double minGap = 2.0;
+  const double maxGap = 4.0;
+  final double actionRowHeight = 84 * scale;
+  final double spacing = kControlPanelVerticalSpacing * scale;
+  final double horizontalPadding = (isTablet ? 20.0 : 8.0) / scale;
+  final double verticalPadding = (isTablet ? 20.0 : 16.0) * scale;
+
+  final double innerWidth = math.max(0.0, maxWidth - horizontalPadding * 2);
+
+  double gap = maxGap;
+  double availableWidth = innerWidth - gap * 8;
+  if (availableWidth < 0) {
+    gap = minGap;
+    availableWidth = innerWidth - gap * 8;
+    if (availableWidth < 0) {
+      gap = 0.0;
+      availableWidth = innerWidth;
+    }
+  }
+
+  availableWidth = math.max(0.0, availableWidth);
+  final double buttonWidth = availableWidth / 9;
+  final double minHeight = isTablet ? 80.0 : 68.0;
+  final double heightMultiplier = isTablet ? 1.18 : 1.12;
+  final double buttonHeight = math.max(minHeight, buttonWidth * heightMultiplier);
+  final double scaledButtonHeight = buttonHeight * scale;
+  final double numberPadHeight = verticalPadding * 2 + scaledButtonHeight;
+
+  return actionRowHeight + spacing + numberPadHeight;
 }
 
