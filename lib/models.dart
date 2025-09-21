@@ -131,6 +131,14 @@ class GameState {
   });
 }
 
+final _elapsedMsExpando = Expando<int>('elapsedMs');
+
+extension GameStateElapsedMs on GameState {
+  int get elapsedMs => _elapsedMsExpando[this] ?? 0;
+
+  set elapsedMs(int value) => _elapsedMsExpando[this] = value;
+}
+
 /// Хранит статистику для конкретного уровня сложности.
 class DifficultyStats {
   int gamesStarted;
