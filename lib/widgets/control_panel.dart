@@ -11,7 +11,11 @@ import '../undo_ad_controller.dart';
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
 const double kControlPanelVerticalSpacing = 10.0;
-const double _kNumberPadVerticalPaddingScale = 0.95;
+// Targets roughly a 7% reduction in the keypad banner height while
+// preserving the digit sizing.
+const double _kNumberPadVerticalPaddingScale = 0.7125;
+// Keep the surrounding banner spacing aligned with the historical layout.
+const double _kNumberPadSpacingCompensationScale = 0.05;
 const double _kCompactHeightBreakpoint = 720.0;
 
 double _numberPadBasePadding({required bool isTablet}) => isTablet ? 18.0 : 14.0;
@@ -73,7 +77,7 @@ ControlPanelLayoutConfig resolveControlPanelLayoutConfig({
   );
   final basePadding = _numberPadBasePadding(isTablet: isTablet) * scale * effectiveHeightFactor;
   final verticalPadding = basePadding * _kNumberPadVerticalPaddingScale;
-  final spacingCompensation = basePadding - verticalPadding;
+  final spacingCompensation = basePadding * _kNumberPadSpacingCompensationScale;
 
   return ControlPanelLayoutConfig(
     heightFactor: heightFactor,
