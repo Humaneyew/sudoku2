@@ -88,6 +88,8 @@
   },
   "playerFlagSettingTitle": "खिलाड़ी का झंडा",
   "selectPlayerFlag": "अपना झंडा चुनें",
+  "confirmFlagSelectionTitle": "अपने झंडे की पुष्टि करें",
+  "confirmFlagSelectionMessage": "आप बाद में खेल की सेटिंग्स में अपना झंडा बदल सकते हैं।",
   "startAction": "शुरू करें",
   "levelHeading": "स्तर {level} — {difficulty}",
   "@levelHeading": {
