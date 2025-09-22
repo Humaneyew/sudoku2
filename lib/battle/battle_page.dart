@@ -228,7 +228,7 @@ class _BattlePageState extends State<BattlePage>
     }
 
     final initialSolved = _countSolvedCells(game);
-    final totalCells = game.board.length;
+    final totalCells = _countPlayableCells(game);
     final initialProgress =
         totalCells == 0 ? 0.0 : initialSolved / totalCells.toDouble();
     final nextOpponentName =
@@ -244,7 +244,7 @@ class _BattlePageState extends State<BattlePage>
       _opponentSolvedCells = initialSolved;
       _opponentTargetSolvedCells = initialSolved;
       _opponentFinished =
-          totalCells > 0 && initialSolved >= totalCells;
+          totalCells <= 0 ? true : initialSolved >= totalCells;
       _defeatShown = false;
     });
 
@@ -272,8 +272,9 @@ class _BattlePageState extends State<BattlePage>
     if (game == null) {
       return;
     }
-    final totalCells = game.board.length;
+    final totalCells = _countPlayableCells(game);
     if (totalCells <= 0) {
+      _opponentTicker?.stop();
       return;
     }
 
@@ -382,11 +383,23 @@ class _BattlePageState extends State<BattlePage>
   int _countSolvedCells(GameState game) {
     var solved = 0;
     for (var i = 0; i < game.board.length; i++) {
-      if (game.board[i] != 0 && game.board[i] == game.solution[i]) {
+      if (!game.given[i] &&
+          game.board[i] != 0 &&
+          game.board[i] == game.solution[i]) {
         solved++;
       }
     }
     return solved;
+  }
+
+  int _countPlayableCells(GameState game) {
+    var playable = 0;
+    for (var i = 0; i < game.given.length; i++) {
+      if (!game.given[i]) {
+        playable++;
+      }
+    }
+    return playable;
   }
 
   double _estimateOpponentTempo(AppState app, int totalCells) {
@@ -598,7 +611,10 @@ class _BattlePageState extends State<BattlePage>
             final bool isCompactHeight =
                 !isTablet && availableHeight < _kCompactHeightBreakpoint;
             final solvedCells = _countSolvedCells(game);
-            final playerProgress = solvedCells / game.board.length;
+            final totalPlayableCells = _countPlayableCells(game);
+            final playerProgress = totalPlayableCells == 0
+                ? 0.0
+                : solvedCells / totalPlayableCells;
 
             final lives = app.livesLeft;
 
