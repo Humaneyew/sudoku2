@@ -7,7 +7,7 @@ import '../theme.dart';
 
 const double _boardOuterRadiusValue = 28;
 const double _boardInnerRadiusValue = 12;
-const double _boardOuterPaddingValue = 12;
+const double _boardOuterPaddingValue = 10;
 
 class Board extends StatelessWidget {
   final double scale;
