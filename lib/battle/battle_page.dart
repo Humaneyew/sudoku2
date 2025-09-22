@@ -610,6 +610,14 @@ class _BattlePageState extends State<BattlePage>
             );
             final bool isCompactHeight =
                 !isTablet && availableHeight < _kCompactHeightBreakpoint;
+            final controlPanelLayout = resolveControlPanelLayoutConfig(
+              scale: scale,
+              isTablet: isTablet,
+              compactLayout: isCompactHeight,
+              screenHeight: media.size.height,
+            );
+            final double controlPanelTopInset =
+                controlPanelLayout.spacingCompensation;
             final solvedCells = _countSolvedCells(game);
             final totalPlayableCells = _countPlayableCells(game);
             final playerProgress = totalPlayableCells == 0
@@ -650,6 +658,7 @@ class _BattlePageState extends State<BattlePage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            SizedBox(height: controlPanelTopInset),
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
@@ -664,7 +673,13 @@ class _BattlePageState extends State<BattlePage>
                                 );
                               },
                             ),
-                            SizedBox(height: _kBoardToControlsSpacing * scale),
+                            SizedBox(
+                              height: math.max(
+                                0.0,
+                                _kBoardToControlsSpacing * scale -
+                                    controlPanelTopInset,
+                              ),
+                            ),
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
@@ -1282,6 +1297,7 @@ double _estimateGameplayHeight({
     maxWidth: controlPanelWidth,
     scale: scale,
     isTablet: isTablet,
+    screenHeight: availableHeight,
     isCompact: isCompactHeight,
   );
   final statusPadding = _kStatusBarOuterPadding * 2 * scale;
