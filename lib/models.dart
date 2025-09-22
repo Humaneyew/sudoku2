@@ -257,6 +257,7 @@ class AppState extends ChangeNotifier {
   int battleWinRate = 87;
   int championshipScore = 4473;
   int dailyStreak = 0;
+  DateTime? _lastVictoryDate;
   int heartBonus = 1;
 
   final Set<String> _completedDailyChallenges = <String>{};
@@ -286,6 +287,7 @@ class AppState extends ChangeNotifier {
 
       _dailyChallengeDate = null;
       _currentGameId = null;
+      _lastVictoryDate = null;
 
       final completedDaily = prefs.getStringList('dailyCompleted');
       if (completedDaily != null) {
@@ -299,6 +301,13 @@ class AppState extends ChangeNotifier {
         try {
           final map = jsonDecode(profileJson) as Map<String, dynamic>;
           dailyStreak = map['dailyStreak'] ?? dailyStreak;
+          final lastVictory = map['lastVictoryDate'];
+          if (lastVictory is String && lastVictory.isNotEmpty) {
+            final parsed = DateTime.tryParse(lastVictory);
+            if (parsed != null) {
+              _lastVictoryDate = _dateOnly(parsed);
+            }
+          }
           totalStars = map['totalStars'] ?? totalStars;
           championshipScore = map['championshipScore'] ?? championshipScore;
           battleWinRate = map['battleWinRate'] ?? battleWinRate;
@@ -506,7 +515,7 @@ class AppState extends ChangeNotifier {
       }());
     }
 
-    _recalculateDailyStreak();
+    _refreshDailyStreak();
 
     await _ensureDateLocaleInited(lang.toLocaleTag());
     notifyListeners();
@@ -519,8 +528,11 @@ class AppState extends ChangeNotifier {
       for (final entry in statsByDifficulty.entries)
         entry.key.name: entry.value.toJson(),
     };
+    final lastVictoryDate =
+        _lastVictoryDate == null ? null : _dateOnly(_lastVictoryDate!).toIso8601String();
     final profile = jsonEncode({
       'dailyStreak': dailyStreak,
+      'lastVictoryDate': lastVictoryDate,
       'totalStars': totalStars,
       'championshipScore': championshipScore,
       'battleWinRate': battleWinRate,
@@ -535,6 +547,7 @@ class AppState extends ChangeNotifier {
   void resetStats() {
     statsByDifficulty = _defaultStats();
     dailyStreak = 0;
+    _lastVictoryDate = null;
     totalStars = 0;
     championshipScore = 4473;
     battleWinRate = 87;
@@ -1087,6 +1100,7 @@ class AppState extends ChangeNotifier {
     _gameCompleted = true;
     totalStars += 1;
     _handleVictoryFeedback();
+    _registerVictory();
 
     final diff = currentDifficulty;
     if (diff != null) {
@@ -1133,6 +1147,7 @@ class AppState extends ChangeNotifier {
 
     _gameCompleted = true;
     _handleVictoryFeedback();
+    _registerVictory();
     battleWinRate++;
     game.elapsedMs = elapsedMs;
     _clearSavedGame();
@@ -1340,7 +1355,7 @@ class AppState extends ChangeNotifier {
     if (added) {
       _saveDailyProgress();
     }
-    _recalculateDailyStreak();
+    _refreshDailyStreak();
   }
 
   void _saveDailyProgress() {
@@ -1350,22 +1365,56 @@ class AppState extends ChangeNotifier {
     });
   }
 
-  void _recalculateDailyStreak() {
+  void _refreshDailyStreak() {
+    final lastVictory = _lastVictoryDate;
+    if (lastVictory == null) {
+      dailyStreak = 0;
+      return;
+    }
+
     final today = _dateOnly(DateTime.now());
-    DateTime cursor = today;
-    if (!isDailyCompleted(cursor)) {
-      cursor = cursor.subtract(const Duration(days: 1));
-      if (!isDailyCompleted(cursor)) {
-        dailyStreak = 0;
-        return;
-      }
+    final normalizedLast = _dateOnly(lastVictory);
+
+    if (normalizedLast.isAfter(today)) {
+      dailyStreak = 0;
+      _lastVictoryDate = null;
+      return;
     }
-    var streak = 0;
-    while (isDailyCompleted(cursor)) {
-      streak++;
-      cursor = cursor.subtract(const Duration(days: 1));
+
+    if (normalizedLast == today) {
+      dailyStreak = math.max(dailyStreak, 1);
+      return;
     }
-    dailyStreak = streak;
+
+    if (normalizedLast == today.subtract(const Duration(days: 1))) {
+      dailyStreak = math.max(dailyStreak, 1);
+      return;
+    }
+
+    dailyStreak = 0;
+  }
+
+  void _registerVictory() {
+    _refreshDailyStreak();
+
+    final today = _dateOnly(DateTime.now());
+    final lastVictory = _lastVictoryDate == null
+        ? null
+        : _dateOnly(_lastVictoryDate!);
+
+    if (lastVictory == today) {
+      dailyStreak = math.max(dailyStreak, 1);
+      return;
+    }
+
+    if (lastVictory != null &&
+        lastVictory == today.subtract(const Duration(days: 1))) {
+      dailyStreak = math.max(0, dailyStreak) + 1;
+    } else {
+      dailyStreak = 1;
+    }
+
+    _lastVictoryDate = today;
   }
 
   static DateTime _dateOnly(DateTime date) =>
