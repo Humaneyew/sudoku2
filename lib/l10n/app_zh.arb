@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "玩家旗帜",
   "selectPlayerFlag": "选择你的旗帜",
   "confirmFlagSelectionTitle": "确认你的旗帜",
-  "confirmFlagSelectionMessage": "你可以稍后在游戏设置中更改你的旗帜。",
+  "confirmFlagSelectionMessage": "你确定要选择这面旗帜吗？你可以稍后在游戏设置中更改你的旗帜。",
+  "confirmFlagSelectionConfirm": "确认",
   "startAction": "开始",
   "levelHeading": "等级 {level} — {difficulty}",
   "@levelHeading": {

@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "მოთამაშის დროშა",
   "selectPlayerFlag": "აირჩიე შენი დროშა",
   "confirmFlagSelectionTitle": "დაადასტურე შენი დროშა",
-  "confirmFlagSelectionMessage": "შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.",
+  "confirmFlagSelectionMessage": "დარწმუნებული ხარ, რომ ამ დროშას ირჩევ? შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.",
+  "confirmFlagSelectionConfirm": "დადასტურება",
   "startAction": "დაწყება",
   "levelHeading": "დონე {level} — {difficulty}",
   "@levelHeading": {

@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "Прапор гравця",
   "selectPlayerFlag": "Обери свій прапор",
   "confirmFlagSelectionTitle": "Підтвердь свій прапор",
-  "confirmFlagSelectionMessage": "Ти зможеш змінити прапор пізніше в налаштуваннях гри.",
+  "confirmFlagSelectionMessage": "Ти впевнений, що хочеш обрати цей прапор? Ти зможеш змінити прапор пізніше в налаштуваннях гри.",
+  "confirmFlagSelectionConfirm": "Підтверджую",
   "startAction": "Почати",
   "levelHeading": "Рівень {level} — {difficulty}",
   "@levelHeading": {

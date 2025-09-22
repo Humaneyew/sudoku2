@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "プレイヤーの旗",
   "selectPlayerFlag": "自分の旗を選択",
   "confirmFlagSelectionTitle": "フラグを確認",
-  "confirmFlagSelectionMessage": "フラグは後でゲーム設定で変更できます。",
+  "confirmFlagSelectionMessage": "この旗を選択してもよろしいですか？後でゲーム設定で旗を変更できます。",
+  "confirmFlagSelectionConfirm": "確認する",
   "startAction": "始める",
   "levelHeading": "レベル {level} — {difficulty}",
   "@levelHeading": {

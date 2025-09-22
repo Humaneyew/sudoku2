@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "Spielerflagge",
   "selectPlayerFlag": "Wähle deine Flagge",
   "confirmFlagSelectionTitle": "Bestätige deine Flagge",
-  "confirmFlagSelectionMessage": "Du kannst deine Flagge später in den Spieleinstellungen ändern.",
+  "confirmFlagSelectionMessage": "Bist du sicher, dass du diese Flagge auswählen möchtest? Du kannst deine Flagge später in den Spieleinstellungen ändern.",
+  "confirmFlagSelectionConfirm": "Bestätigen",
   "startAction": "Starten",
   "levelHeading": "Level {level} — {difficulty}",
   "@levelHeading": {

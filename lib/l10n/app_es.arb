@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "Bandera del jugador",
   "selectPlayerFlag": "Elige tu bandera",
   "confirmFlagSelectionTitle": "Confirma tu bandera",
-  "confirmFlagSelectionMessage": "Podrás cambiar tu bandera más adelante en los ajustes del juego.",
+  "confirmFlagSelectionMessage": "¿Estás seguro de que quieres elegir esta bandera? Podrás cambiar tu bandera más adelante en los ajustes del juego.",
+  "confirmFlagSelectionConfirm": "Confirmar",
   "startAction": "Comenzar",
   "levelHeading": "Nivel {level} — {difficulty}",
   "@levelHeading": {

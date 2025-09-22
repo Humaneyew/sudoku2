@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "Drapeau du joueur",
   "selectPlayerFlag": "Choisis ton drapeau",
   "confirmFlagSelectionTitle": "Confirme ton drapeau",
-  "confirmFlagSelectionMessage": "Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.",
+  "confirmFlagSelectionMessage": "Es-tu sûr de vouloir choisir ce drapeau ? Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.",
+  "confirmFlagSelectionConfirm": "Confirmer",
   "startAction": "Commencer",
   "levelHeading": "Niveau {level} — {difficulty}",
   "@levelHeading": {
