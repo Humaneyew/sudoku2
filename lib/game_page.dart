@@ -27,6 +27,7 @@ const double _kBoardToControlsSpacing = 8.0;
 const double _kStatusBarBannerScale = 1.157625;
 const double _kBoardBannerScale = 1.16865;
 const double _kControlPanelBannerScale = 1.157625;
+const double _kGameplayBannerScaleIncrease = 1.05;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
 
@@ -199,10 +200,18 @@ class _GamePageState extends State<GamePage>
             final scaledMedia = media.copyWith(
               textScaleFactor: media.textScaleFactor * scale,
             );
-            final statusScale = scale * _kStatusBarBannerScale;
-            final boardScale = scale * _kBoardBannerScale;
-            final controlPanelScale = scale * _kControlPanelBannerScale;
-            final spacingScale = math.max(boardScale, controlPanelScale);
+            final statusSpacingScale = scale * _kStatusBarBannerScale;
+            final statusScale =
+                statusSpacingScale * _kGameplayBannerScaleIncrease;
+            final statusContentScale = scale * _kGameplayBannerScaleIncrease;
+            final boardSpacingScale = scale * _kBoardBannerScale;
+            final boardScale =
+                boardSpacingScale * _kGameplayBannerScaleIncrease;
+            final controlPanelSpacingScale = scale * _kControlPanelBannerScale;
+            final controlPanelScale =
+                controlPanelSpacingScale * _kGameplayBannerScaleIncrease;
+            final spacingScale =
+                math.max(boardSpacingScale, controlPanelSpacingScale);
             final availableHeight = constraints.maxHeight;
             final topContentPadding = _calculateGameContentTopPadding(
               availableHeight: availableHeight,
@@ -250,7 +259,8 @@ class _GamePageState extends State<GamePage>
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: _kStatusBarOuterPadding * statusScale,
+                        vertical:
+                            _kStatusBarOuterPadding * statusSpacingScale,
                       ),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
@@ -265,7 +275,7 @@ class _GamePageState extends State<GamePage>
                             ),
                             child: _StatusBarContainer(
                               containerScale: statusScale,
-                              contentScale: scale,
+                              contentScale: statusContentScale,
                             ),
                           );
                         },
@@ -808,12 +818,16 @@ double _estimateGameplayHeight({
 }) {
   final textScale = baseTextScaleFactor * scale;
   final headerHeight = (8.0 + 48.0) * scale;
-  final statusScale = scale * _kStatusBarBannerScale;
-  final boardScale = scale * _kBoardBannerScale;
-  final controlPanelScale = scale * _kControlPanelBannerScale;
+  final statusBaseScale = scale * _kStatusBarBannerScale;
+  final boardBaseScale = scale * _kBoardBannerScale;
+  final controlPanelBaseScale = scale * _kControlPanelBannerScale;
+  final statusScale = statusBaseScale * _kGameplayBannerScaleIncrease;
+  final boardScale = boardBaseScale * _kGameplayBannerScaleIncrease;
+  final controlPanelScale =
+      controlPanelBaseScale * _kGameplayBannerScaleIncrease;
   final statusHeight = _estimateStatusBarHeight(
     containerScale: statusScale,
-    contentScale: scale,
+    contentScale: scale * _kGameplayBannerScaleIncrease,
     textScaleFactor: textScale,
     theme: theme,
   );
@@ -829,7 +843,7 @@ double _estimateGameplayHeight({
     screenHeight: availableHeight,
     isCompact: isCompactHeight,
   );
-  final statusPadding = _kStatusBarOuterPadding * 2 * statusScale;
+  final statusPadding = _kStatusBarOuterPadding * 2 * statusBaseScale;
   final topPadding = _calculateGameContentTopPadding(
     availableHeight: availableHeight,
     scale: scale,
@@ -845,7 +859,8 @@ double _estimateGameplayHeight({
       statusHeight +
       contentPadding +
       boardSize +
-      _kBoardToControlsSpacing * math.max(boardScale, controlPanelScale) +
+      _kBoardToControlsSpacing *
+          math.max(boardBaseScale, controlPanelBaseScale) +
       controlPanelHeight;
 }
 
@@ -855,14 +870,18 @@ double _estimateStatusBarHeight({
   required double textScaleFactor,
   required ThemeData theme,
 }) {
-  final difficultyFont = theme.textTheme.titleMedium?.fontSize ?? 16.0;
+  final double fontMultiplier = _kGameplayBannerScaleIncrease;
+  final difficultyFont =
+      (theme.textTheme.titleMedium?.fontSize ?? 16.0) * fontMultiplier;
   final difficultyHeight =
       difficultyFont * textScaleFactor * _kTextHeightMultiplier;
 
-  final baseBadgeFont = math.max(
-    theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
-    _statusBarBadgeTextSize,
-  );
+  final baseBadgeFont =
+      math.max(
+            theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
+            _statusBarBadgeTextSize,
+          ) *
+          fontMultiplier;
   final badgeTextHeight =
       baseBadgeFont * textScaleFactor * _kTextHeightMultiplier;
   final badgeHeight = (_statusBarBadgeVerticalPadding * 2 * contentScale) +
@@ -1139,8 +1158,9 @@ class _StatusBar extends StatelessWidget {
     final badgeRadius =
         BorderRadius.circular(_statusBarBadgeRadiusValue * contentScale);
 
+    final double fontMultiplier = _kGameplayBannerScaleIncrease;
     final baseDifficultySize =
-        theme.textTheme.titleMedium?.fontSize ?? 16.0;
+        (theme.textTheme.titleMedium?.fontSize ?? 16.0) * fontMultiplier;
     final difficultyStyle = (theme.textTheme.titleMedium ??
             const TextStyle(fontSize: 16))
         .copyWith(
@@ -1149,9 +1169,10 @@ class _StatusBar extends StatelessWidget {
       fontSize: baseDifficultySize,
     );
     final baseBadgeSize = math.max(
-      theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
-      _statusBarBadgeTextSize,
-    );
+          theme.textTheme.titleMedium?.fontSize ?? _statusBarBadgeTextSize,
+          _statusBarBadgeTextSize,
+        ) *
+        fontMultiplier;
     final badgeTextStyle = (theme.textTheme.titleMedium ??
             const TextStyle(fontSize: _statusBarBadgeTextSize))
         .copyWith(

@@ -10,12 +10,15 @@ import '../undo_ad_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
-const double kControlPanelVerticalSpacing = 10.0;
+const double _kControlPanelScaleIncrease = 1.05;
+const double kControlPanelVerticalSpacing =
+    10.0 / _kControlPanelScaleIncrease;
 // Targets roughly a 7% reduction in the keypad banner height while
 // preserving the digit sizing.
 const double _kNumberPadVerticalPaddingScale = 0.7125;
 // Keep the surrounding banner spacing aligned with the historical layout.
-const double _kNumberPadSpacingCompensationScale = 0.05;
+const double _kNumberPadSpacingCompensationScale =
+    0.05 / _kControlPanelScaleIncrease;
 const double _kCompactHeightBreakpoint = 720.0;
 
 double _numberPadBasePadding({required bool isTablet}) => isTablet ? 18.0 : 14.0;
@@ -414,7 +417,7 @@ class _ActionButton extends StatelessWidget {
                           child: Text(
                             badge!,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 11 * _kControlPanelScaleIncrease,
                               fontWeight: FontWeight.w700,
                               color: badgeForeground,
                             ),
@@ -436,7 +439,7 @@ class _ActionButton extends StatelessWidget {
                                 maxLines: 1,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12 * _kControlPanelScaleIncrease,
                                   fontWeight: FontWeight.w600,
                                   color: textColor,
                                 ),
