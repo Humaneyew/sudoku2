@@ -67,22 +67,10 @@ class ChampionshipPage extends StatelessWidget {
 
   void _startChampionshipGame(BuildContext context) {
     final championship = context.read<ChampionshipModel>();
-    final rounds = championship.rounds;
-    ChampionshipRound? target;
-    for (final round in rounds) {
-      if (round.status == ChampionshipRoundStatus.inProgress) {
-        target = round;
-        break;
-      }
-    }
-    target ??= rounds.firstWhere(
-      (round) => round.status != ChampionshipRoundStatus.completed,
-      orElse: () => rounds.first,
-    );
-
-    championship.startRound(target.difficulty);
+    final difficulty = championship.recommendedDifficulty;
+    championship.startRound(difficulty);
     final app = context.read<AppState>();
-    app.startGame(target.difficulty);
+    app.startGame(difficulty);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
