@@ -67,7 +67,7 @@
   "bestLabel": "საუკეთესო",
   "play": "თამაში",
   "battleTitle": "ბრძოლა",
-  "battleWinRate": "მოგებები {count}",
+  "battleWinRate": "მოგებები {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

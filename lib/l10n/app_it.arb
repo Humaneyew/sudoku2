@@ -67,7 +67,7 @@
   "bestLabel": "Migliore",
   "play": "Giocare",
   "battleTitle": "Battaglia",
-  "battleWinRate": "Vittorie {count}",
+  "battleWinRate": "Vittorie {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

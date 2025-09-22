@@ -67,7 +67,7 @@
   "bestLabel": "최상의",
   "play": "놀다",
   "battleTitle": "전투",
-  "battleWinRate": "승리 {count}",
+  "battleWinRate": "승리 {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

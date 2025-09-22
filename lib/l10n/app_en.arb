@@ -67,8 +67,9 @@
   "bestLabel": "Best",
   "play": "Play",
   "battleTitle": "Battle",
-  "battleWinRate": "Wins {count}",
+  "battleWinRate": "Wins {count}%",
   "@battleWinRate": {
+    "description": "Battle mode win percentage label.",
     "placeholders": {
       "count": {
         "type": "int"

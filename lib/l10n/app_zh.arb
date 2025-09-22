@@ -67,7 +67,7 @@
   "bestLabel": "最佳成绩",
   "play": "游玩",
   "battleTitle": "对战",
-  "battleWinRate": "胜场 {count}",
+  "battleWinRate": "胜场 {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {
