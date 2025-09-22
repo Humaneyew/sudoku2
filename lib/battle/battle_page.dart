@@ -874,42 +874,143 @@ class _BattleHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
     final cs = theme.colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ValueListenableBuilder<int>(
-          valueListenable: elapsed,
-          builder: (_, value, __) {
-            return Text(
-              formatDuration(value),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+    final l10n = AppLocalizations.of(context)!;
+
+    String formatScoreLabel(String name, int score, {required bool opponent}) {
+      final trimmed = name.trim();
+      if (trimmed.isEmpty) {
+        return score.toString();
+      }
+      return opponent ? '($score) $trimmed' : '$trimmed ($score)';
+    }
+
+    final playerLabel = formatScoreLabel(playerName, playerScore, opponent: false);
+    final opponentLabel = formatScoreLabel(opponentName, opponentScore, opponent: true);
+
+    final modeStyle = theme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: cs.onSurface,
+    );
+    final nameStyle = theme.textTheme.titleSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: cs.onSurface,
+    );
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: _kBattleBannerHorizontalPadding * scale,
+        vertical: _kBattleBannerVerticalPadding * scale,
+      ),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadowColor,
+            blurRadius: 20 * scale,
+            offset: Offset(0, 10 * scale),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: _kBattleBannerSectionSpacing * scale,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        l10n.battleTitle,
+                        style: modeStyle,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _BattleProgressTrack(
-                playerName: playerName,
-                opponentName: opponentName,
-                playerScore: playerScore,
-                opponentScore: opponentScore,
-                playerProgress: playerProgress,
-                opponentProgress: opponentProgress,
-                lineColor: colors.battleChallengeGradient.colors.last,
-                trackColor: cs.onSurface.withOpacity(0.08),
+              Expanded(
+                flex: 3,
+                child: ValueListenableBuilder<int>(
+                  valueListenable: elapsed,
+                  builder: (_, value, __) {
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        formatDuration(value),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            SizedBox(width: 16 * scale),
-            _BattleLivesIndicator(lives: lives, scale: scale),
-          ],
-        ),
-      ],
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: _kBattleBannerSectionSpacing * scale,
+                  ),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            playerLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: nameStyle,
+                          ),
+                        ),
+                        SizedBox(height: _kBattleBannerNameSpacing * scale),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            opponentLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            style: nameStyle,
+                          ),
+                        ),
+                        SizedBox(height: _kBattleBannerLivesSpacing * scale),
+                        _BattleLivesIndicator(lives: lives, scale: scale),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: _kBattleBannerRowSpacing * scale),
+          _BattleProgressBar(
+            scale: scale,
+            playerProgress: playerProgress,
+            opponentProgress: opponentProgress,
+            lineColor: colors.battleChallengeGradient.colors.last,
+            trackColor: cs.onSurface.withOpacity(0.08),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -992,90 +1093,52 @@ class _BattleAppBarButton extends StatelessWidget {
   }
 }
 
-class _BattleProgressTrack extends StatelessWidget {
-  final String playerName;
-  final String opponentName;
-  final int playerScore;
-  final int opponentScore;
+class _BattleProgressBar extends StatelessWidget {
   final double playerProgress;
   final double opponentProgress;
   final Color lineColor;
   final Color trackColor;
+  final double scale;
 
-  const _BattleProgressTrack({
-    required this.playerName,
-    required this.opponentName,
-    required this.playerScore,
-    required this.opponentScore,
+  const _BattleProgressBar({
     required this.playerProgress,
     required this.opponentProgress,
     required this.lineColor,
     required this.trackColor,
+    required this.scale,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final opponentLineColor = lineColor.withOpacity(0.7);
-    const double lineThickness = 8;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+    final double lineThickness = _kBattleProgressBarHeight * scale;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(lineThickness / 2),
+      child: SizedBox(
+        height: lineThickness,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Expanded(
-              child: Text(
-                '$playerName ($playerScore)',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-                overflow: TextOverflow.ellipsis,
+            Container(color: trackColor),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: playerProgress.clamp(0.0, 1.0),
+                alignment: Alignment.centerLeft,
+                child: Container(color: lineColor),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                '($opponentScore) $opponentName',
-                textAlign: TextAlign.right,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-                overflow: TextOverflow.ellipsis,
+            Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: opponentProgress.clamp(0.0, 1.0),
+                alignment: Alignment.centerRight,
+                child: Container(color: opponentLineColor),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(lineThickness / 2),
-          child: SizedBox(
-            height: lineThickness,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(color: trackColor),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: FractionallySizedBox(
-                    widthFactor: playerProgress.clamp(0.0, 1.0),
-                    alignment: Alignment.centerLeft,
-                    child: Container(color: lineColor),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FractionallySizedBox(
-                    widthFactor: opponentProgress.clamp(0.0, 1.0),
-                    alignment: Alignment.centerRight,
-                    child: Container(color: opponentLineColor),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -1086,6 +1149,13 @@ const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
 const double _kStatusBarHeartSpacing = 8.0;
 const double _kStatusBarHeartIconSize = 24.0;
+const double _kBattleBannerHorizontalPadding = 24.0;
+const double _kBattleBannerVerticalPadding = 20.0;
+const double _kBattleBannerSectionSpacing = 16.0;
+const double _kBattleBannerRowSpacing = 20.0;
+const double _kBattleBannerNameSpacing = 6.0;
+const double _kBattleBannerLivesSpacing = 12.0;
+const double _kBattleProgressBarHeight = 8.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
