@@ -24,9 +24,9 @@ const double _kStatusBarOuterPadding = 10.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
-const double _kStatusBarBannerScale = 1.1025;
-const double _kBoardBannerScale = 1.113;
-const double _kControlPanelBannerScale = 1.1025;
+const double _kStatusBarBannerScale = 1.157625;
+const double _kBoardBannerScale = 1.16865;
+const double _kControlPanelBannerScale = 1.157625;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
 
@@ -214,6 +214,14 @@ class _GamePageState extends State<GamePage>
             );
             final bool isCompactHeight =
                 !isTablet && availableHeight < _kCompactHeightBreakpoint;
+            final controlPanelLayout = resolveControlPanelLayoutConfig(
+              scale: controlPanelScale,
+              isTablet: isTablet,
+              compactLayout: isCompactHeight,
+              screenHeight: media.size.height,
+            );
+            final double controlPanelTopInset =
+                controlPanelLayout.spacingCompensation;
 
             return MediaQuery(
               data: scaledMedia,
@@ -274,6 +282,7 @@ class _GamePageState extends State<GamePage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            SizedBox(height: controlPanelTopInset),
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
@@ -290,7 +299,11 @@ class _GamePageState extends State<GamePage>
                               },
                             ),
                             SizedBox(
-                              height: _kBoardToControlsSpacing * spacingScale,
+                              height: math.max(
+                                0.0,
+                                _kBoardToControlsSpacing * spacingScale -
+                                    controlPanelTopInset,
+                              ),
                             ),
                             LayoutBuilder(
                               builder: (context, constraints) {
@@ -813,6 +826,7 @@ double _estimateGameplayHeight({
     maxWidth: controlPanelWidth,
     scale: controlPanelScale,
     isTablet: isTablet,
+    screenHeight: availableHeight,
     isCompact: isCompactHeight,
   );
   final statusPadding = _kStatusBarOuterPadding * 2 * statusScale;

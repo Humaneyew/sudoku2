@@ -11,7 +11,77 @@ import '../undo_ad_controller.dart';
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
 const double kControlPanelVerticalSpacing = 10.0;
+const double _kNumberPadVerticalPaddingScale = 0.95;
 const double _kCompactHeightBreakpoint = 720.0;
+
+double _numberPadBasePadding({required bool isTablet}) => isTablet ? 18.0 : 14.0;
+
+double _resolveHeightFactor({
+  required bool isTablet,
+  required bool compactLayout,
+  required double screenHeight,
+}) {
+  if (compactLayout) {
+    return 0.9;
+  }
+  if (!isTablet && screenHeight < _kCompactHeightBreakpoint) {
+    return 0.9;
+  }
+  return 1.0;
+}
+
+double _resolveEffectiveHeightFactor({
+  required bool isTablet,
+  required double heightFactor,
+  required double screenHeight,
+}) {
+  if (heightFactor < 1.0) {
+    return heightFactor;
+  }
+  if (!isTablet && screenHeight < _kCompactHeightBreakpoint) {
+    return 0.9;
+  }
+  return 1.0;
+}
+
+class ControlPanelLayoutConfig {
+  final double heightFactor;
+  final double effectiveHeightFactor;
+  final double numberPadVerticalPadding;
+  final double spacingCompensation;
+
+  const ControlPanelLayoutConfig({
+    required this.heightFactor,
+    required this.effectiveHeightFactor,
+    required this.numberPadVerticalPadding,
+    required this.spacingCompensation,
+  });
+}
+
+ControlPanelLayoutConfig resolveControlPanelLayoutConfig({
+  required double scale,
+  required bool isTablet,
+  required bool compactLayout,
+  required double screenHeight,
+}) {
+  final heightFactor =
+      _resolveHeightFactor(isTablet: isTablet, compactLayout: compactLayout, screenHeight: screenHeight);
+  final effectiveHeightFactor = _resolveEffectiveHeightFactor(
+    isTablet: isTablet,
+    heightFactor: heightFactor,
+    screenHeight: screenHeight,
+  );
+  final basePadding = _numberPadBasePadding(isTablet: isTablet) * scale * effectiveHeightFactor;
+  final verticalPadding = basePadding * _kNumberPadVerticalPaddingScale;
+  final spacingCompensation = basePadding - verticalPadding;
+
+  return ControlPanelLayoutConfig(
+    heightFactor: heightFactor,
+    effectiveHeightFactor: effectiveHeightFactor,
+    numberPadVerticalPadding: verticalPadding,
+    spacingCompensation: spacingCompensation,
+  );
+}
 
 class ControlPanel extends StatelessWidget {
   final double scale;
@@ -27,18 +97,33 @@ class ControlPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
     final bool isTablet = media.size.shortestSide >= 600;
-    final bool isCompactHeight =
-        compactLayout || (!isTablet && media.size.height < _kCompactHeightBreakpoint);
-    final double heightFactor = isCompactHeight ? 0.9 : 1.0;
+    final layout = resolveControlPanelLayoutConfig(
+      scale: scale,
+      isTablet: isTablet,
+      compactLayout: compactLayout,
+      screenHeight: media.size.height,
+    );
+    final double heightFactor = layout.heightFactor;
+    final double effectiveHeightFactor = layout.effectiveHeightFactor;
+    final double topInset = layout.spacingCompensation;
+    final double spacingHeight =
+        kControlPanelVerticalSpacing * scale * heightFactor + topInset;
 
     return RepaintBoundary(
       key: const ValueKey('control-panel'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SizedBox(height: topInset),
           _ActionRow(scale: scale, heightFactor: heightFactor),
-          SizedBox(height: kControlPanelVerticalSpacing * scale * heightFactor),
-          _NumberPad(scale: scale, heightFactor: heightFactor),
+          SizedBox(height: spacingHeight),
+          _NumberPad(
+            scale: scale,
+            heightFactor: heightFactor,
+            isTablet: isTablet,
+            effectiveHeightFactor: effectiveHeightFactor,
+            verticalPadding: layout.numberPadVerticalPadding,
+          ),
         ],
       ),
     );
@@ -411,8 +496,17 @@ class _DigitVM {
 class _NumberPad extends StatelessWidget {
   final double scale;
   final double heightFactor;
+  final bool isTablet;
+  final double effectiveHeightFactor;
+  final double verticalPadding;
 
-  const _NumberPad({required this.scale, required this.heightFactor});
+  const _NumberPad({
+    required this.scale,
+    required this.heightFactor,
+    required this.isTablet,
+    required this.effectiveHeightFactor,
+    required this.verticalPadding,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -420,17 +514,8 @@ class _NumberPad extends StatelessWidget {
     final colors = theme.extension<SudokuColors>()!;
     final media = MediaQuery.of(context);
     final reduceMotion = media.disableAnimations;
-    final bool isTablet = media.size.shortestSide >= 600;
-    final bool isCompactHeight = heightFactor < 1.0;
-    final double effectiveHeightFactor = isCompactHeight
-        ? heightFactor
-        : (!isTablet && media.size.height < _kCompactHeightBreakpoint
-            ? 0.9
-            : 1.0);
-
     final baseHorizontalPadding = isTablet ? 20.0 : 8.0;
     final horizontalPadding = baseHorizontalPadding / scale;
-    final verticalPadding = (isTablet ? 18.0 : 14.0) * scale * effectiveHeightFactor;
     final double radiusValue =
         math.max(18.0, 28 * scale * effectiveHeightFactor);
     final borderRadius = BorderRadius.circular(radiusValue);
@@ -735,6 +820,7 @@ double estimateControlPanelHeight({
   required double maxWidth,
   required double scale,
   required bool isTablet,
+  required double screenHeight,
   bool isCompact = false,
 }) {
   if (maxWidth <= 0 || scale <= 0) {
@@ -743,13 +829,20 @@ double estimateControlPanelHeight({
 
   const double minGap = 2.0;
   const double maxGap = 4.0;
-  final double heightFactor = isCompact ? 0.9 : 1.0;
+  final layout = resolveControlPanelLayoutConfig(
+    scale: scale,
+    isTablet: isTablet,
+    compactLayout: isCompact,
+    screenHeight: screenHeight,
+  );
+  final double heightFactor = layout.heightFactor;
+  final double effectiveHeightFactor = layout.effectiveHeightFactor;
+  final double topInset = layout.spacingCompensation;
   final double actionRowHeight =
       math.max(56.0 * scale, 72 * scale * heightFactor);
-  final double spacing = kControlPanelVerticalSpacing * scale * heightFactor;
+  final double baseSpacing = kControlPanelVerticalSpacing * scale * heightFactor;
   final double horizontalPadding = (isTablet ? 20.0 : 8.0) / scale;
-  final double verticalPadding =
-      (isTablet ? 18.0 : 14.0) * scale * heightFactor;
+  final double verticalPadding = layout.numberPadVerticalPadding;
 
   final double innerWidth = math.max(0.0, maxWidth - horizontalPadding * 2);
 
@@ -769,9 +862,9 @@ double estimateControlPanelHeight({
   final double minHeight = isTablet ? 80.0 : 68.0;
   final double heightMultiplier = isTablet ? 1.18 : 1.12;
   final double buttonHeight = math.max(minHeight, buttonWidth * heightMultiplier);
-  final double scaledButtonHeight = buttonHeight * scale * heightFactor;
+  final double scaledButtonHeight = buttonHeight * scale * effectiveHeightFactor;
   final double numberPadHeight = verticalPadding * 2 + scaledButtonHeight;
 
-  return actionRowHeight + spacing + numberPadHeight;
+  return topInset + actionRowHeight + baseSpacing + topInset + numberPadHeight;
 }
 
