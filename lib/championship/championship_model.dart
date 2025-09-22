@@ -186,13 +186,7 @@ class ChampionshipModel extends ChangeNotifier {
   static const int _opponentsCount = 100;
   static const int _maxMyScore = 2000000000;
 
-  static const Map<Difficulty, int> _baseScoreByDifficulty = {
-    Difficulty.novice: 60,
-    Difficulty.medium: 140,
-    Difficulty.high: 260,
-    Difficulty.expert: 420,
-    Difficulty.master: 600,
-  };
+  static const int _winAward = 350;
   static const List<String> _fallbackNames = [
     'Alex',
     'Sam',
@@ -229,6 +223,31 @@ class ChampionshipModel extends ChangeNotifier {
   Leaderboard get leaderboard => _leaderboard;
 
   bool get autoScrollEnabled => _autoScrollEnabled;
+
+  Difficulty get recommendedDifficulty {
+    final opponents = _leaderboard.opponents;
+    final totalParticipants = opponents.length + 1;
+    final normalizedRank = myRank.clamp(1, totalParticipants);
+    final denominator = math.max(1, totalParticipants - 1);
+    final rankProgress =
+        (totalParticipants - normalizedRank) / denominator;
+
+    var topScore = _myScore;
+    for (final opponent in opponents) {
+      if (opponent.score > topScore) {
+        topScore = opponent.score;
+      }
+    }
+    topScore = math.max(topScore, 1);
+    final scoreProgress = math.min(_myScore / topScore, 1.0);
+
+    final combinedProgress = math.min(
+      math.max((rankProgress + scoreProgress) / 2.0, 0.0),
+      1.0,
+    );
+
+    return _difficultyForProgress(combinedProgress);
+  }
 
   int get myRank {
     final opponents = _leaderboard.opponents;
@@ -514,27 +533,8 @@ class ChampionshipModel extends ChangeNotifier {
     if (_lastAwardedGameId != null && _lastAwardedGameId == gameId) {
       return 0;
     }
-    final base = _baseScoreByDifficulty[difficulty] ?? 60;
-    final normalizedTime = timeMs <= 0 ? 1 : timeMs;
-    final normalizedMistakes = math.max(0, mistakes);
-    final normalizedHints = math.max(0, hints);
-    final timePenalty = (normalizedTime ~/ 30000) * 5;
-    final mistakesPenalty = normalizedMistakes * 20;
-    final hintsPenalty = normalizedHints * 30;
-    final flawlessBonus =
-        (normalizedMistakes == 0 && normalizedHints == 0) ? 50 : 0;
-    final dailyBonus = isDailyChallenge ? 30 : 0;
-
-    var delta =
-        base + flawlessBonus + dailyBonus - timePenalty - mistakesPenalty - hintsPenalty;
-    if (delta < 10) {
-      delta = 10;
-    } else if (delta > 800) {
-      delta = 800;
-    }
-
     final previousScore = _myScore;
-    final tentativeScore = previousScore + delta;
+    final tentativeScore = previousScore + _winAward;
     _myScore = _clampScore(tentativeScore);
     final appliedDelta = _myScore - previousScore;
     _lastAwardedGameId = gameId;
@@ -572,24 +572,81 @@ class ChampionshipModel extends ChangeNotifier {
           throw ArgumentError('Unknown championship difficulty: $difficulty'),
     );
 
-    if (round.status == ChampionshipRoundStatus.completed) {
-      return;
+    var changed = false;
+    final now = DateTime.now().toUtc();
+    if (round.status != ChampionshipRoundStatus.inProgress) {
+      round
+        ..status = ChampionshipRoundStatus.inProgress
+        ..finishedAt = null
+        ..startedAt = now;
+      changed = true;
+    } else {
+      if (round.startedAt == null || round.startedAt!.isBefore(now)) {
+        round.startedAt = now;
+        changed = true;
+      }
+      if (round.finishedAt != null) {
+        round.finishedAt = null;
+        changed = true;
+      }
     }
 
-    var changed = false;
-    if (round.status != ChampionshipRoundStatus.inProgress) {
-      round.status = ChampionshipRoundStatus.inProgress;
-      round.startedAt ??= DateTime.now().toUtc();
-      changed = true;
-    } else if (round.startedAt == null) {
-      round.startedAt = DateTime.now().toUtc();
-      changed = true;
+    final targetIndex = _difficultyIndex(difficulty);
+    for (final other in _state.rounds) {
+      if (identical(other, round)) {
+        continue;
+      }
+      final otherIndex = _difficultyIndex(other.difficulty);
+      if (otherIndex < targetIndex) {
+        if (other.status != ChampionshipRoundStatus.completed ||
+            other.finishedAt == null) {
+          other
+            ..status = ChampionshipRoundStatus.completed
+            ..startedAt ??= now
+            ..finishedAt ??= now;
+          changed = true;
+        }
+      } else {
+        if (other.status != ChampionshipRoundStatus.notStarted ||
+            other.startedAt != null ||
+            other.finishedAt != null) {
+          other
+            ..status = ChampionshipRoundStatus.notStarted
+            ..startedAt = null
+            ..finishedAt = null;
+          changed = true;
+        }
+      }
     }
 
     if (changed) {
       notifyListeners();
       unawaited(saveToPrefs());
     }
+  }
+
+  Difficulty _difficultyForProgress(double progress) {
+    if (progress >= 0.8) {
+      return Difficulty.master;
+    }
+    if (progress >= 0.6) {
+      return Difficulty.expert;
+    }
+    if (progress >= 0.4) {
+      return Difficulty.high;
+    }
+    if (progress >= 0.2) {
+      return Difficulty.medium;
+    }
+    return Difficulty.novice;
+  }
+
+  int _difficultyIndex(Difficulty difficulty) {
+    final index = _defaultDifficultyOrder.indexOf(difficulty);
+    if (index >= 0) {
+      return index;
+    }
+    return difficulty.index;
   }
 
   void completeCurrentRound() {
