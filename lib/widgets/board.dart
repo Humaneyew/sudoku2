@@ -22,7 +22,6 @@ class Board extends StatelessWidget {
     final outerRadius = BorderRadius.circular(_boardOuterRadiusValue * scale);
     final innerRadius = BorderRadius.circular(_boardInnerRadiusValue * scale);
     final outerPadding = 16.0 * scale;
-    final borderWidth = 4.0 * scale;
     final shadowBlur = 24.0 * scale;
     final shadowOffset = Offset(0, 16 * scale);
 
@@ -48,7 +47,6 @@ class Board extends StatelessWidget {
         final innerDecoration = BoxDecoration(
           color: colors.boardInner,
           borderRadius: innerRadius,
-          border: Border.all(color: colors.boardBorder, width: borderWidth),
         );
 
         return RepaintBoundary(
