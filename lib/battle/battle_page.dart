@@ -101,12 +101,93 @@ class _BattlePageState extends State<BattlePage>
     if (app.playerFlag != null && app.playerFlag!.isNotEmpty) {
       return;
     }
-    final selected = await showFlagPicker(context);
-    if (selected != null && selected.isNotEmpty) {
-      app.setPlayerFlag(selected);
-    } else if (app.playerFlag == null || app.playerFlag!.isEmpty) {
+
+    while (mounted && (app.playerFlag == null || app.playerFlag!.isEmpty)) {
+      final selected = await showFlagPicker(context);
+      if (!mounted) return;
+
+      if (selected == null || selected.isEmpty) {
+        break;
+      }
+
+      final confirmed = await _showFlagConfirmationDialog(selected);
+      if (!mounted) return;
+
+      if (confirmed == true) {
+        app.setPlayerFlag(selected);
+        return;
+      }
+    }
+
+    if (app.playerFlag == null || app.playerFlag!.isEmpty) {
       app.setPlayerFlag(kWorldFlags.first);
     }
+  }
+
+  Future<bool?> _showFlagConfirmationDialog(String flag) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final scheme = theme.colorScheme;
+        return Dialog(
+          backgroundColor: scheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.confirmFlagSelectionTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  flag,
+                  style: const TextStyle(fontSize: 48),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.confirmFlagSelectionMessage,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurface.withOpacity(0.7),
+                      ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(l10n.cancel),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(l10n.confirm),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _handleAppStateChanged() {
@@ -453,15 +534,25 @@ class _BattlePageState extends State<BattlePage>
       appBar: AppBar(
         title: Text(l10n.battleTitle),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.palette_outlined),
-            onPressed: () => showThemeMenu(context),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: Center(
+              child: _BattleAppBarButton(
+                icon: Icons.palette_outlined,
+                onTap: () => showThemeMenu(context),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsPage()),
+          Padding(
+            padding: const EdgeInsets.only(right: 12, left: 4, top: 6, bottom: 6),
+            child: Center(
+              child: _BattleAppBarButton(
+                icon: Icons.settings_outlined,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsPage()),
+                ),
+              ),
             ),
           ),
         ],
@@ -499,6 +590,8 @@ class _BattlePageState extends State<BattlePage>
             final solvedCells = _countSolvedCells(game);
             final playerProgress = solvedCells / game.board.length;
 
+            final lives = app.livesLeft;
+
             return MediaQuery(
               data: scaledMedia,
               child: Padding(
@@ -513,6 +606,8 @@ class _BattlePageState extends State<BattlePage>
                       opponentProgress: _opponentProgress,
                       playerScore: solvedCells,
                       opponentScore: _opponentSolvedCells,
+                      lives: lives,
+                      scale: scale,
                     ),
                     SizedBox(height: _kStatusBarOuterPadding * scale),
                     Expanded(
@@ -759,6 +854,8 @@ class _BattleHeader extends StatelessWidget {
   final double opponentProgress;
   final int playerScore;
   final int opponentScore;
+  final int lives;
+  final double scale;
 
   const _BattleHeader({
     required this.elapsed,
@@ -768,6 +865,8 @@ class _BattleHeader extends StatelessWidget {
     required this.opponentProgress,
     required this.playerScore,
     required this.opponentScore,
+    required this.lives,
+    required this.scale,
   });
 
   @override
@@ -791,17 +890,104 @@ class _BattleHeader extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        _BattleProgressTrack(
-          playerName: playerName,
-          opponentName: opponentName,
-          playerScore: playerScore,
-          opponentScore: opponentScore,
-          playerProgress: playerProgress,
-          opponentProgress: opponentProgress,
-          lineColor: colors.battleChallengeGradient.colors.last,
-          trackColor: cs.onSurface.withOpacity(0.08),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _BattleProgressTrack(
+                playerName: playerName,
+                opponentName: opponentName,
+                playerScore: playerScore,
+                opponentScore: opponentScore,
+                playerProgress: playerProgress,
+                opponentProgress: opponentProgress,
+                lineColor: colors.battleChallengeGradient.colors.last,
+                trackColor: cs.onSurface.withOpacity(0.08),
+              ),
+            ),
+            SizedBox(width: 16 * scale),
+            _BattleLivesIndicator(lives: lives, scale: scale),
+          ],
         ),
       ],
+    );
+  }
+}
+
+class _BattleLivesIndicator extends StatelessWidget {
+  final int lives;
+  final double scale;
+
+  const _BattleLivesIndicator({required this.lives, required this.scale});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final inactive = scheme.outlineVariant;
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(3, (index) {
+          final active = index < lives;
+          return Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : _kStatusBarHeartSpacing * scale,
+            ),
+            child: Icon(
+              Icons.favorite,
+              size: _kStatusBarHeartIconSize * scale,
+              color: active ? scheme.error : inactive,
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class _BattleAppBarButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double scale;
+
+  const _BattleAppBarButton({
+    required this.icon,
+    required this.onTap,
+    this.scale = 1.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<SudokuColors>()!;
+    final radiusValue = 24 * scale;
+    final borderRadius = BorderRadius.circular(radiusValue);
+    final blurRadius = 12 * scale;
+    final offsetY = 6 * scale;
+    return InkResponse(
+      radius: 28 * scale,
+      onTap: onTap,
+      child: Container(
+        width: 48 * scale,
+        height: 48 * scale,
+        decoration: BoxDecoration(
+          color: colors.headerButtonBackground,
+          borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: colors.shadowColor,
+              blurRadius: blurRadius,
+              offset: Offset(0, offsetY),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          color: colors.headerButtonIcon,
+          size: 24 * scale,
+        ),
+      ),
     );
   }
 }
@@ -898,6 +1084,8 @@ const double _kGameplayUiScale = 1.1;
 const double _kGameplayMinUiScale = 0.7;
 const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
+const double _kStatusBarHeartSpacing = 8.0;
+const double _kStatusBarHeartIconSize = 24.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
@@ -1015,7 +1203,7 @@ double _estimateStatusBarHeight({
   final badgeHeight = (12 * scale) +
       math.max(24 * scale, badgeTextHeight);
 
-  final heartsHeight = 24 * scale;
+  final heartsHeight = _kStatusBarHeartIconSize * scale;
   final contentHeight = math.max(
     difficultyHeight,
     math.max(badgeHeight, heartsHeight),

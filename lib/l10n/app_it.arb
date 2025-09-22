@@ -88,6 +88,8 @@
   },
   "playerFlagSettingTitle": "Bandiera del giocatore",
   "selectPlayerFlag": "Scegli la tua bandiera",
+  "confirmFlagSelectionTitle": "Conferma la tua bandiera",
+  "confirmFlagSelectionMessage": "Potrai cambiare la tua bandiera più tardi nelle impostazioni del gioco.",
   "startAction": "Inizio",
   "levelHeading": "Livello {level} — {difficulty}",
   "@levelHeading": {
