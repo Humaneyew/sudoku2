@@ -78,13 +78,14 @@ class _ThemeDialog extends StatelessWidget {
                     ),
                     Expanded(
                       child: Slider(
-                        value: app.fontSizeSp,
-                        min: AppState.minFontSizeSp,
-                        max: AppState.maxFontSizeSp,
+                        value: app.fontSizeIndex.toDouble(),
+                        min: 0,
+                        max: (AppState.fontSizeOptionsSp.length - 1)
+                            .toDouble(),
                         divisions: AppState.fontSizeOptionsSp.length - 1,
                         onChanged: (value) =>
-                            app.setFontSizeSp(value, save: false),
-                        onChangeEnd: app.setFontSizeSp,
+                            app.setFontSizeByIndex(value, save: false),
+                        onChangeEnd: app.setFontSizeByIndex,
                       ),
                     ),
                     Text(

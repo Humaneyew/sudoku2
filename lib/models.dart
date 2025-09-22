@@ -233,9 +233,22 @@ class AppState extends ChangeNotifier {
 
   SudokuTheme theme = SudokuTheme.white;
   AppLanguage lang = AppLanguage.uk;
-  static const double minFontSizeSp = 15.0;
-  static const double maxFontSizeSp = 19.0;
-  static const List<double> fontSizeOptionsSp = [15.0, 17.0, 19.0];
+  // Перенастраиваем шкалу размеров шрифтов без изменения верстки:
+  // Small берёт прежний Medium (17 sp), Medium — прежний Large (19 sp),
+  // а Large увеличиваем пропорционально относительно нового Medium.
+  static const double _previousMediumFontSizeSp = 17.0;
+  static const double _previousLargeFontSizeSp = 19.0;
+  static const double minFontSizeSp = _previousMediumFontSizeSp;
+  static const double mediumFontSizeSp = _previousLargeFontSizeSp;
+  static const double _fontStepMultiplier =
+      mediumFontSizeSp / minFontSizeSp;
+  static const double maxFontSizeSp =
+      mediumFontSizeSp * _fontStepMultiplier;
+  static const List<double> fontSizeOptionsSp = [
+    minFontSizeSp,
+    mediumFontSizeSp,
+    maxFontSizeSp,
+  ];
   static const double _baseFontSizeSp = 16.0;
   static const double minFontScale = minFontSizeSp / _baseFontSizeSp;
   static const double maxFontScale = maxFontSizeSp / _baseFontSizeSp;
@@ -629,9 +642,22 @@ class AppState extends ChangeNotifier {
     setFontScale(value / _baseFontSizeSp, save: save);
   }
 
+  void setFontSizeByIndex(double value, {bool save = true}) {
+    final maxIndex = fontSizeOptionsSp.length - 1;
+    final normalized = value.clamp(0, maxIndex.toDouble());
+    final targetIndex = math.max(0, math.min(maxIndex, normalized.round()));
+    setFontSizeSp(fontSizeOptionsSp[targetIndex], save: save);
+  }
+
   double get fontScale => _fontScale;
 
   double get fontSizeSp => _fontScale * _baseFontSizeSp;
+
+  int get fontSizeIndex {
+    final current = _nearestFontSize(fontSizeSp);
+    final index = fontSizeOptionsSp.indexOf(current);
+    return index == -1 ? 0 : index;
+  }
 
   static double _normalizeFontScale(double scale) {
     final clamped = scale.clamp(minFontScale, maxFontScale).toDouble();
