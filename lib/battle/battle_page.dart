@@ -937,13 +937,13 @@ class _BattleHeader extends StatelessWidget {
               );
             },
           ),
-          SizedBox(height: _kBattleBannerNameSpacing * scale),
+          SizedBox(height: _kBattleBannerTimerToLivesSpacing * scale),
           Center(child: _BattleLivesIndicator(lives: lives, scale: scale)),
-          SizedBox(height: _kBattleBannerLivesSpacing * scale),
+          SizedBox(height: _kBattleBannerLivesToNamesSpacing * scale),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              Flexible(
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FittedBox(
@@ -958,7 +958,7 @@ class _BattleHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
+              Flexible(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FittedBox(
@@ -976,7 +976,7 @@ class _BattleHeader extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: _kBattleBannerNameSpacing * scale),
+          SizedBox(height: _kBattleBannerNamesToProgressSpacing * scale),
           _BattleProgressBar(
             scale: scale,
             playerProgress: playerProgress,
@@ -1126,9 +1126,10 @@ const double _kStatusBarHeartSpacing = 8.0;
 const double _kStatusBarHeartIconSize = 24.0;
 const double _kBattleBannerRadius = 28.0;
 const double _kBattleBannerHorizontalPadding = 24.0;
-const double _kBattleBannerVerticalPadding = 20.0;
-const double _kBattleBannerNameSpacing = 6.0;
-const double _kBattleBannerLivesSpacing = 12.0;
+const double _kBattleBannerVerticalPadding = 12.0;
+const double _kBattleBannerTimerToLivesSpacing = 4.0;
+const double _kBattleBannerLivesToNamesSpacing = 4.0;
+const double _kBattleBannerNamesToProgressSpacing = 2.0;
 const double _kBattleProgressBarHeight = 8.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
