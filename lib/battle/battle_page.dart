@@ -42,6 +42,7 @@ class _BattlePageState extends State<BattlePage>
   final math.Random _random = math.Random();
 
   String _opponentName = '';
+  String _opponentFlag = '';
   double _opponentProgress = 0;
   int _opponentSolvedCells = 0;
   int _opponentTargetSolvedCells = 0;
@@ -226,15 +227,19 @@ class _BattlePageState extends State<BattlePage>
       return;
     }
 
-    if (resetProfile || _opponentName.isEmpty) {
-      _opponentName = _generateOpponentName();
-    }
-
     final initialSolved = _countSolvedCells(game);
     final totalCells = game.board.length;
     final initialProgress =
         totalCells == 0 ? 0.0 : initialSolved / totalCells.toDouble();
+    final nextOpponentName =
+        resetProfile || _opponentName.isEmpty ? _generateOpponentName() : _opponentName;
+    final nextOpponentFlag = resetProfile || _opponentFlag.isEmpty
+        ? randomFlag(random: _random, exclude: app.playerFlag?.trim())
+        : _opponentFlag;
+
     setState(() {
+      _opponentName = nextOpponentName;
+      _opponentFlag = nextOpponentFlag;
       _opponentProgress = initialProgress;
       _opponentSolvedCells = initialSolved;
       _opponentTargetSolvedCells = initialSolved;
@@ -606,12 +611,14 @@ class _BattlePageState extends State<BattlePage>
                     SizedBox(height: _kStatusBarOuterPadding * scale),
                     _BattleHeader(
                       elapsed: _elapsedVN,
+                      playerFlag: app.playerFlag,
                       playerName: l10n.battleYouLabel,
                       opponentName: _opponentName,
                       playerProgress: playerProgress,
                       opponentProgress: _opponentProgress,
                       playerScore: solvedCells,
                       opponentScore: _opponentSolvedCells,
+                      opponentFlag: _opponentFlag,
                       lives: lives,
                       scale: scale,
                     ),
@@ -854,23 +861,27 @@ class _BattlePageState extends State<BattlePage>
 
 class _BattleHeader extends StatelessWidget {
   final ValueListenable<int> elapsed;
+  final String? playerFlag;
   final String playerName;
   final String opponentName;
   final double playerProgress;
   final double opponentProgress;
   final int playerScore;
   final int opponentScore;
+  final String? opponentFlag;
   final int lives;
   final double scale;
 
   const _BattleHeader({
     required this.elapsed,
+    required this.playerFlag,
     required this.playerName,
     required this.opponentName,
     required this.playerProgress,
     required this.opponentProgress,
     required this.playerScore,
     required this.opponentScore,
+    required this.opponentFlag,
     required this.lives,
     required this.scale,
   });
@@ -880,26 +891,70 @@ class _BattleHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
     final cs = theme.colorScheme;
-    String formatScoreLabel(String name, int score) {
-      final trimmed = name.trim();
+    String sanitizeFlag(String? value) {
+      final trimmed = value?.trim() ?? '';
       if (trimmed.isEmpty) {
-        return score.toString();
+        return '🏳️';
       }
-      return '$trimmed ($score)';
+      return trimmed;
     }
-
-    final playerLabel = formatScoreLabel(playerName, playerScore);
-    final opponentLabel = formatScoreLabel(opponentName, opponentScore);
 
     final nameStyle = theme.textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: cs.onSurface,
     );
+    final TextStyle? flagStyle = nameStyle?.fontSize != null
+        ? nameStyle!.copyWith(fontSize: nameStyle.fontSize! * 1.08)
+        : nameStyle;
     final timerStyle = theme.textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w700,
       color: cs.onSurface,
     );
     final borderRadius = BorderRadius.circular(_kBattleBannerRadius * scale);
+
+    final playerNameTrimmed = playerName.trim();
+    final opponentNameTrimmed = opponentName.trim();
+    final playerScoreText = '($playerScore)';
+    final opponentScoreText = '($opponentScore)';
+    final playerFlagEmoji = sanitizeFlag(playerFlag);
+    final opponentFlagEmoji = sanitizeFlag(opponentFlag);
+    final double flagSpacing = 6.0 * scale;
+
+    InlineSpan buildFlagSpan(String flag) => WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Text(
+            flag,
+            style: flagStyle,
+          ),
+        );
+
+    InlineSpan buildSpacingSpan() => WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: SizedBox(width: flagSpacing),
+        );
+
+    final List<InlineSpan> playerSpans = <InlineSpan>[];
+    if (playerFlagEmoji.isNotEmpty) {
+      playerSpans.add(buildFlagSpan(playerFlagEmoji));
+      playerSpans.add(buildSpacingSpan());
+    }
+    if (playerNameTrimmed.isNotEmpty) {
+      playerSpans.add(TextSpan(text: playerNameTrimmed));
+      playerSpans.add(TextSpan(text: ' $playerScoreText'));
+    } else {
+      playerSpans.add(TextSpan(text: playerScoreText));
+    }
+
+    final List<InlineSpan> opponentSpans = <InlineSpan>[
+      TextSpan(text: opponentScoreText),
+    ];
+    if (opponentNameTrimmed.isNotEmpty) {
+      opponentSpans.add(TextSpan(text: ' $opponentNameTrimmed'));
+    }
+    if (opponentFlagEmoji.isNotEmpty) {
+      opponentSpans.add(buildSpacingSpan());
+      opponentSpans.add(buildFlagSpan(opponentFlagEmoji));
+    }
 
     return Container(
       width: double.infinity,
@@ -949,10 +1004,12 @@ class _BattleHeader extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      playerLabel,
+                    child: Text.rich(
+                      TextSpan(children: playerSpans),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      overflow: TextOverflow.visible,
+                      textAlign: TextAlign.left,
                       style: nameStyle,
                     ),
                   ),
@@ -964,10 +1021,11 @@ class _BattleHeader extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
-                    child: Text(
-                      opponentLabel,
+                    child: Text.rich(
+                      TextSpan(children: opponentSpans),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      overflow: TextOverflow.visible,
                       textAlign: TextAlign.right,
                       style: nameStyle,
                     ),
