@@ -529,10 +529,15 @@ class _BattlePageState extends State<BattlePage>
 
     final media = MediaQuery.of(context);
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Scaffold(
+      backgroundColor: scheme.background,
       appBar: AppBar(
         title: Text(l10n.battleTitle),
+        backgroundColor: scheme.background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
@@ -598,6 +603,7 @@ class _BattlePageState extends State<BattlePage>
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Column(
                   children: [
+                    SizedBox(height: _kStatusBarOuterPadding * scale),
                     _BattleHeader(
                       elapsed: _elapsedVN,
                       playerName: l10n.battleYouLabel,
