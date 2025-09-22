@@ -116,6 +116,8 @@ abstract class AppLocalizations {
 
   String get confirmFlagSelectionMessage;
 
+  String get confirmFlagSelectionConfirm;
+
   String get startAction;
 
   String levelHeading(int level, String difficulty);
@@ -519,7 +521,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Du kannst deine Flagge später in den Spieleinstellungen ändern.";
+      "Bist du sicher, dass du diese Flagge auswählen möchtest? Du kannst deine Flagge später in den Spieleinstellungen ändern.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Bestätigen";
 
   @override
   String get startAction => "Starten";
@@ -983,7 +988,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "You can change your flag later in the game settings.";
+      "Are you sure you want to choose this flag? You can change your flag later in the game settings.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Confirm";
 
   @override
   String get startAction => "Start";
@@ -1447,7 +1455,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Podrás cambiar tu bandera más adelante en los ajustes del juego.";
+      "¿Estás seguro de que quieres elegir esta bandera? Podrás cambiar tu bandera más adelante en los ajustes del juego.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Confirmar";
 
   @override
   String get startAction => "Comenzar";
@@ -1911,7 +1922,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.";
+      "Es-tu sûr de vouloir choisir ce drapeau ? Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Confirmer";
 
   @override
   String get startAction => "Commencer";
@@ -2375,7 +2389,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "आप बाद में खेल की सेटिंग्स में अपना झंडा बदल सकते हैं।";
+      "क्या आप सुनिश्चित हैं कि आप इस झंडे को चुनना चाहते हैं? आप बाद में खेल की सेटिंग्स में अपना झंडा बदल सकते हैं।";
+
+  @override
+  String get confirmFlagSelectionConfirm => "पुष्टि करें";
 
   @override
   String get startAction => "शुरू करें";
@@ -2839,7 +2856,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Potrai cambiare la tua bandiera più tardi nelle impostazioni del gioco.";
+      "Sei sicuro di voler scegliere questa bandiera? Potrai cambiare la tua bandiera più tardi nelle impostazioni del gioco.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Conferma";
 
   @override
   String get startAction => "Inizio";
@@ -3303,7 +3323,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "フラグは後でゲーム設定で変更できます。";
+      "この旗を選択してもよろしいですか？後でゲーム設定で旗を変更できます。";
+
+  @override
+  String get confirmFlagSelectionConfirm => "確認する";
 
   @override
   String get startAction => "始める";
@@ -3767,7 +3790,10 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.";
+      "დარწმუნებული ხარ, რომ ამ დროშას ირჩევ? შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "დადასტურება";
 
   @override
   String get startAction => "დაწყება";
@@ -4231,7 +4257,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "나중에 게임 설정에서 깃발을 변경할 수 있습니다.";
+      "이 깃발을 선택하시겠습니까? 나중에 게임 설정에서 깃발을 변경할 수 있습니다.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "확인";
 
   @override
   String get startAction => "시작";
@@ -4695,7 +4724,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Вы сможете сменить флаг позже в настройках игры.";
+      "Вы уверены, что хотите выбрать этот флаг? Флаг можно будет изменить в настройках игры.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Подтверждаю";
 
   @override
   String get startAction => "Начать";
@@ -5163,7 +5195,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "Ти зможеш змінити прапор пізніше в налаштуваннях гри.";
+      "Ти впевнений, що хочеш обрати цей прапор? Ти зможеш змінити прапор пізніше в налаштуваннях гри.";
+
+  @override
+  String get confirmFlagSelectionConfirm => "Підтверджую";
 
   @override
   String get startAction => "Почати";
@@ -5631,7 +5666,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get confirmFlagSelectionMessage =>
-      "你可以稍后在游戏设置中更改你的旗帜。";
+      "你确定要选择这面旗帜吗？你可以稍后在游戏设置中更改你的旗帜。";
+
+  @override
+  String get confirmFlagSelectionConfirm => "确认";
 
   @override
   String get startAction => "开始";

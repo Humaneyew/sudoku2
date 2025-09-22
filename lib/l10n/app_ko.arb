@@ -89,7 +89,8 @@
   "playerFlagSettingTitle": "플레이어 깃발",
   "selectPlayerFlag": "깃발을 선택하세요",
   "confirmFlagSelectionTitle": "깃발 확인",
-  "confirmFlagSelectionMessage": "나중에 게임 설정에서 깃발을 변경할 수 있습니다.",
+  "confirmFlagSelectionMessage": "이 깃발을 선택하시겠습니까? 나중에 게임 설정에서 깃발을 변경할 수 있습니다.",
+  "confirmFlagSelectionConfirm": "확인",
   "startAction": "시작",
   "levelHeading": "레벨 {level} — {difficulty}",
   "@levelHeading": {

@@ -178,7 +178,7 @@ class _BattlePageState extends State<BattlePage>
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context, true),
-                        child: Text(l10n.confirm),
+                        child: Text(l10n.confirmFlagSelectionConfirm),
                       ),
                     ),
                   ],
