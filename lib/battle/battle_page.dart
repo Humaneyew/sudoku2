@@ -874,27 +874,26 @@ class _BattleHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
     final cs = theme.colorScheme;
-    final l10n = AppLocalizations.of(context)!;
-
-    String formatScoreLabel(String name, int score, {required bool opponent}) {
+    String formatScoreLabel(String name, int score) {
       final trimmed = name.trim();
       if (trimmed.isEmpty) {
         return score.toString();
       }
-      return opponent ? '($score) $trimmed' : '$trimmed ($score)';
+      return '$trimmed ($score)';
     }
 
-    final playerLabel = formatScoreLabel(playerName, playerScore, opponent: false);
-    final opponentLabel = formatScoreLabel(opponentName, opponentScore, opponent: true);
+    final playerLabel = formatScoreLabel(playerName, playerScore);
+    final opponentLabel = formatScoreLabel(opponentName, opponentScore);
 
-    final modeStyle = theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.w700,
-      color: cs.onSurface,
-    );
     final nameStyle = theme.textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.w700,
       color: cs.onSurface,
     );
+    final timerStyle = theme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: cs.onSurface,
+    );
+    final borderRadius = BorderRadius.circular(_kBattleBannerRadius * scale);
 
     return Container(
       width: double.infinity,
@@ -904,6 +903,7 @@ class _BattleHeader extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: cs.surface,
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
@@ -916,92 +916,61 @@ class _BattleHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
+          ValueListenableBuilder<int>(
+            valueListenable: elapsed,
+            builder: (_, value, __) {
+              return Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    formatDuration(value),
+                    textAlign: TextAlign.center,
+                    style: timerStyle,
+                  ),
+                ),
+              );
+            },
+          ),
+          SizedBox(height: _kBattleBannerNameSpacing * scale),
+          Center(child: _BattleLivesIndicator(lives: lives, scale: scale)),
+          SizedBox(height: _kBattleBannerLivesSpacing * scale),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: _kBattleBannerSectionSpacing * scale,
-                  ),
-                  child: Align(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        l10n.battleTitle,
-                        style: modeStyle,
-                        maxLines: 1,
-                      ),
+                    child: Text(
+                      playerLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: nameStyle,
                     ),
                   ),
                 ),
               ),
               Expanded(
-                flex: 3,
-                child: ValueListenableBuilder<int>(
-                  valueListenable: elapsed,
-                  builder: (_, value, __) {
-                    return FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        formatDuration(value),
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: _kBattleBannerSectionSpacing * scale,
-                  ),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            playerLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: nameStyle,
-                          ),
-                        ),
-                        SizedBox(height: _kBattleBannerNameSpacing * scale),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            opponentLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.right,
-                            style: nameStyle,
-                          ),
-                        ),
-                        SizedBox(height: _kBattleBannerLivesSpacing * scale),
-                        _BattleLivesIndicator(lives: lives, scale: scale),
-                      ],
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      opponentLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: nameStyle,
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: _kBattleBannerRowSpacing * scale),
+          SizedBox(height: _kBattleBannerNameSpacing * scale),
           _BattleProgressBar(
             scale: scale,
             playerProgress: playerProgress,
@@ -1027,7 +996,7 @@ class _BattleLivesIndicator extends StatelessWidget {
     final inactive = scheme.outlineVariant;
     return FittedBox(
       fit: BoxFit.scaleDown,
-      alignment: Alignment.centerRight,
+      alignment: Alignment.center,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(3, (index) {
@@ -1149,10 +1118,9 @@ const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
 const double _kStatusBarHeartSpacing = 8.0;
 const double _kStatusBarHeartIconSize = 24.0;
+const double _kBattleBannerRadius = 28.0;
 const double _kBattleBannerHorizontalPadding = 24.0;
 const double _kBattleBannerVerticalPadding = 20.0;
-const double _kBattleBannerSectionSpacing = 16.0;
-const double _kBattleBannerRowSpacing = 20.0;
 const double _kBattleBannerNameSpacing = 6.0;
 const double _kBattleBannerLivesSpacing = 12.0;
 const double _kBattleProgressBarHeight = 8.0;
