@@ -24,6 +24,9 @@ const double _kStatusBarOuterPadding = 10.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
+const double _kStatusBarBannerScale = 1.05;
+const double _kBoardBannerScale = 1.06;
+const double _kControlPanelBannerScale = 1.05;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
 
@@ -196,6 +199,10 @@ class _GamePageState extends State<GamePage>
             final scaledMedia = media.copyWith(
               textScaleFactor: media.textScaleFactor * scale,
             );
+            final statusScale = scale * _kStatusBarBannerScale;
+            final boardScale = scale * _kBoardBannerScale;
+            final controlPanelScale = scale * _kControlPanelBannerScale;
+            final spacingScale = math.max(boardScale, controlPanelScale);
             final availableHeight = constraints.maxHeight;
             final topContentPadding = _calculateGameContentTopPadding(
               availableHeight: availableHeight,
@@ -235,19 +242,23 @@ class _GamePageState extends State<GamePage>
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: _kStatusBarOuterPadding * scale,
+                        vertical: _kStatusBarOuterPadding * statusScale,
                       ),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           final width = constraints.maxWidth;
-                          final targetWidth = _calculateBoardExtent(width, scale);
+                          final targetWidth =
+                              _calculateBoardExtent(width, boardScale);
                           final innerPadding =
                               math.max(0.0, (width - targetWidth) / 2);
                           return Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: innerPadding,
                             ),
-                            child: _StatusBarContainer(scale: scale),
+                            child: _StatusBarContainer(
+                              containerScale: statusScale,
+                              contentScale: scale,
+                            ),
                           );
                         },
                       ),
@@ -267,23 +278,26 @@ class _GamePageState extends State<GamePage>
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
                                 final targetWidth =
-                                    _calculateBoardExtent(width, scale);
+                                    _calculateBoardExtent(width, boardScale);
                                 final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: innerPadding,
                                   ),
-                                  child: Board(scale: scale),
+                                  child: Board(scale: boardScale),
                                 );
                               },
                             ),
-                            SizedBox(height: _kBoardToControlsSpacing * scale),
+                            SizedBox(
+                              height: _kBoardToControlsSpacing * spacingScale,
+                            ),
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
                                 final targetWidth =
-                                    _calculateControlPanelWidth(width, scale);
+                                    _calculateControlPanelWidth(
+                                        width, controlPanelScale);
                                 final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
@@ -291,7 +305,7 @@ class _GamePageState extends State<GamePage>
                                     horizontal: innerPadding,
                                   ),
                                   child: ControlPanel(
-                                    scale: scale,
+                                    scale: controlPanelScale,
                                     compactLayout: isCompactHeight,
                                   ),
                                 );
@@ -781,22 +795,27 @@ double _estimateGameplayHeight({
 }) {
   final textScale = baseTextScaleFactor * scale;
   final headerHeight = (8.0 + 48.0) * scale;
+  final statusScale = scale * _kStatusBarBannerScale;
+  final boardScale = scale * _kBoardBannerScale;
+  final controlPanelScale = scale * _kControlPanelBannerScale;
   final statusHeight = _estimateStatusBarHeight(
-    scale: scale,
+    containerScale: statusScale,
+    contentScale: scale,
     textScaleFactor: textScale,
     theme: theme,
   );
-  final boardSize = _calculateBoardExtent(contentWidth, scale);
-  final controlPanelWidth = _calculateControlPanelWidth(contentWidth, scale);
+  final boardSize = _calculateBoardExtent(contentWidth, boardScale);
+  final controlPanelWidth =
+      _calculateControlPanelWidth(contentWidth, controlPanelScale);
   final bool isCompactHeight =
       !isTablet && availableHeight < _kCompactHeightBreakpoint;
   final controlPanelHeight = estimateControlPanelHeight(
     maxWidth: controlPanelWidth,
-    scale: scale,
+    scale: controlPanelScale,
     isTablet: isTablet,
     isCompact: isCompactHeight,
   );
-  final statusPadding = _kStatusBarOuterPadding * 2 * scale;
+  final statusPadding = _kStatusBarOuterPadding * 2 * statusScale;
   final topPadding = _calculateGameContentTopPadding(
     availableHeight: availableHeight,
     scale: scale,
@@ -812,12 +831,13 @@ double _estimateGameplayHeight({
       statusHeight +
       contentPadding +
       boardSize +
-      _kBoardToControlsSpacing * scale +
+      _kBoardToControlsSpacing * math.max(boardScale, controlPanelScale) +
       controlPanelHeight;
 }
 
 double _estimateStatusBarHeight({
-  required double scale,
+  required double containerScale,
+  required double contentScale,
   required double textScaleFactor,
   required ThemeData theme,
 }) {
@@ -831,16 +851,16 @@ double _estimateStatusBarHeight({
   );
   final badgeTextHeight =
       baseBadgeFont * textScaleFactor * _kTextHeightMultiplier;
-  final badgeHeight = (_statusBarBadgeVerticalPadding * 2 * scale) +
-      math.max(_statusBarBadgeIconSize * scale, badgeTextHeight);
+  final badgeHeight = (_statusBarBadgeVerticalPadding * 2 * contentScale) +
+      math.max(_statusBarBadgeIconSize * contentScale, badgeTextHeight);
 
-  final heartsHeight = _statusBarHeartIconSize * scale;
+  final heartsHeight = _statusBarHeartIconSize * contentScale;
   final contentHeight = math.max(
     difficultyHeight,
     math.max(badgeHeight, heartsHeight),
   );
 
-  return (_statusBarVerticalPadding * 2 * scale) + contentHeight;
+  return (_statusBarVerticalPadding * 2 * containerScale) + contentHeight;
 }
 
 double _calculateBoardExtent(double width, double scale) {
@@ -1001,9 +1021,13 @@ class _HeaderButton extends StatelessWidget {
 }
 
 class _StatusBarContainer extends StatelessWidget {
-  final double scale;
+  final double containerScale;
+  final double contentScale;
 
-  const _StatusBarContainer({required this.scale});
+  const _StatusBarContainer({
+    required this.containerScale,
+    required this.contentScale,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1028,7 +1052,8 @@ class _StatusBarContainer extends StatelessWidget {
           return const SizedBox.shrink();
         }
         return _StatusBar(
-          scale: scale,
+          containerScale: containerScale,
+          contentScale: contentScale,
           difficulty: data.difficulty.title(l10n),
           stars: data.stars,
           lives: data.lives,
@@ -1079,13 +1104,15 @@ class _StatusBar extends StatelessWidget {
   final String difficulty;
   final int stars;
   final int lives;
-  final double scale;
+  final double containerScale;
+  final double contentScale;
 
   const _StatusBar({
     required this.difficulty,
     required this.stars,
     required this.lives,
-    required this.scale,
+    required this.containerScale,
+    required this.contentScale,
   });
 
   @override
@@ -1093,8 +1120,10 @@ class _StatusBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.extension<SudokuColors>()!;
     final scheme = theme.colorScheme;
-    final borderRadius = BorderRadius.circular(_statusBarRadiusValue * scale);
-    final badgeRadius = BorderRadius.circular(_statusBarBadgeRadiusValue * scale);
+    final borderRadius =
+        BorderRadius.circular(_statusBarRadiusValue * containerScale);
+    final badgeRadius =
+        BorderRadius.circular(_statusBarBadgeRadiusValue * contentScale);
 
     final baseDifficultySize =
         theme.textTheme.titleMedium?.fontSize ?? 16.0;
@@ -1120,8 +1149,8 @@ class _StatusBar extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: _statusBarHorizontalPadding * scale,
-        vertical: _statusBarVerticalPadding * scale,
+        horizontal: _statusBarHorizontalPadding * containerScale,
+        vertical: _statusBarVerticalPadding * containerScale,
       ),
       decoration: BoxDecoration(
         color: scheme.surface,
@@ -1129,8 +1158,8 @@ class _StatusBar extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: colors.shadowColor,
-            blurRadius: 20 * scale,
-            offset: Offset(0, 10 * scale),
+            blurRadius: 20 * containerScale,
+            offset: Offset(0, 10 * containerScale),
           ),
         ],
       ),
@@ -1149,20 +1178,20 @@ class _StatusBar extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: _statusBarItemsSpacing * scale),
+          SizedBox(width: _statusBarItemsSpacing * containerScale),
           _ScoreBadge(
             badgeRadius: badgeRadius,
-            scale: scale,
+            scale: contentScale,
             scheme: scheme,
             stars: stars,
             textStyle: badgeTextStyle,
           ),
-          SizedBox(width: _statusBarItemsSpacing * scale),
+          SizedBox(width: _statusBarItemsSpacing * containerScale),
           Flexible(
             fit: FlexFit.loose,
             child: Align(
               alignment: Alignment.centerRight,
-              child: _HeartsIndicator(lives: lives, scale: scale),
+              child: _HeartsIndicator(lives: lives, scale: contentScale),
             ),
           ),
         ],
