@@ -736,7 +736,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -1203,7 +1203,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -1670,7 +1670,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -2137,7 +2137,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -2604,7 +2604,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -3071,7 +3071,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -3538,7 +3538,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "©2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -4005,7 +4005,7 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -4472,7 +4472,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -4943,7 +4943,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -5414,7 +5414,7 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -5879,7 +5879,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "© 2025 Sudoku Inc.";
+  String get aboutLegalese => "Nahreba \ UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
