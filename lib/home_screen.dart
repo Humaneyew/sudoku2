@@ -2086,13 +2086,16 @@ class _CalendarDayButton extends StatelessWidget {
           color: selected ? cs.primary : Colors.transparent,
           border: border,
         ),
+        alignment: Alignment.center,
         padding: const EdgeInsets.all(3),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: locked ? null : onTap,
-            child: Center(child: dayContent),
+            child: SizedBox.expand(
+              child: Center(child: dayContent),
+            ),
           ),
         ),
       ),
