@@ -7,6 +7,7 @@ import '../theme.dart';
 
 const double _boardOuterRadiusValue = 28;
 const double _boardInnerRadiusValue = 12;
+const double _boardOuterPaddingValue = 12;
 
 class Board extends StatelessWidget {
   final double scale;
@@ -21,7 +22,7 @@ class Board extends StatelessWidget {
     final surfaceColor = cs.surface;
     final outerRadius = BorderRadius.circular(_boardOuterRadiusValue * scale);
     final innerRadius = BorderRadius.circular(_boardInnerRadiusValue * scale);
-    final outerPadding = 16.0 * scale;
+    final outerPadding = _boardOuterPaddingValue * scale;
     final shadowBlur = 24.0 * scale;
     final shadowOffset = Offset(0, 16 * scale);
 
