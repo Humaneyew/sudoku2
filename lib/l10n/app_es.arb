@@ -67,7 +67,7 @@
   "bestLabel": "Mejor",
   "play": "Jugar",
   "battleTitle": "Batalla",
-  "battleWinRate": "Victorias {count}",
+  "battleWinRate": "Victorias {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

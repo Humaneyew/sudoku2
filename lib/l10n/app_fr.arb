@@ -67,7 +67,7 @@
   "bestLabel": "Meilleur",
   "play": "Jouer",
   "battleTitle": "Duel",
-  "battleWinRate": "Victoires {count}",
+  "battleWinRate": "Victoires {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

@@ -67,7 +67,7 @@
   "bestLabel": "Найкращий результат",
   "play": "Грати",
   "battleTitle": "Битва",
-  "battleWinRate": "Перемог {count}",
+  "battleWinRate": "Перемог {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

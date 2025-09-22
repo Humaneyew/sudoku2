@@ -67,7 +67,7 @@
   "bestLabel": "Лучший результат",
   "play": "Играть",
   "battleTitle": "Битва",
-  "battleWinRate": "Побед {count}",
+  "battleWinRate": "Побед {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

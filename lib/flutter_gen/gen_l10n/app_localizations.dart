@@ -493,7 +493,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Siege ${count}";
+    return "Siege ${count}%";
   }
 
   @override
@@ -960,7 +960,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Wins ${count}";
+    return "Wins ${count}%";
   }
 
   @override
@@ -1427,7 +1427,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Victorias ${count}";
+    return "Victorias ${count}%";
   }
 
   @override
@@ -1894,7 +1894,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Victoires ${count}";
+    return "Victoires ${count}%";
   }
 
   @override
@@ -2361,7 +2361,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "जीतें ${count}";
+    return "जीतें ${count}%";
   }
 
   @override
@@ -2828,7 +2828,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Vittorie ${count}";
+    return "Vittorie ${count}%";
   }
 
   @override
@@ -3295,7 +3295,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "勝利 ${count}";
+    return "勝利 ${count}%";
   }
 
   @override
@@ -3762,7 +3762,7 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "მოგებები ${count}";
+    return "მოგებები ${count}%";
   }
 
   @override
@@ -4229,7 +4229,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "승리 ${count}";
+    return "승리 ${count}%";
   }
 
   @override
@@ -4696,7 +4696,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Побед ${count}";
+    return "Побед ${count}%";
   }
 
   @override
@@ -5167,7 +5167,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "Перемог ${count}";
+    return "Перемог ${count}%";
   }
 
   @override
@@ -5638,7 +5638,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String battleWinRate(int count) {
-    return "胜场 ${count}";
+    return "胜场 ${count}%";
   }
 
   @override

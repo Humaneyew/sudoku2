@@ -67,7 +67,7 @@
   "bestLabel": "最高",
   "play": "遊ぶ",
   "battleTitle": "戦い",
-  "battleWinRate": "勝利 {count}",
+  "battleWinRate": "勝利 {count}%",
   "@battleWinRate": {
     "placeholders": {
       "count": {

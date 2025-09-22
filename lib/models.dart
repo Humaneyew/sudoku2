@@ -254,11 +254,20 @@ class AppState extends ChangeNotifier {
   String? playerFlag;
 
   int totalStars = 0;
-  int battleWinRate = 87;
+  int battleGamesWon = 0;
+  int battleGamesPlayed = 0;
   int championshipScore = 4473;
   int dailyStreak = 0;
   DateTime? _lastVictoryDate;
   int heartBonus = 1;
+
+  int get battleWinRate {
+    if (battleGamesPlayed == 0) {
+      return 0;
+    }
+    final rate = ((battleGamesWon / battleGamesPlayed) * 100).round();
+    return math.max(0, math.min(100, rate));
+  }
 
   final Set<String> _completedDailyChallenges = <String>{};
   DateTime? _dailyChallengeDate;
@@ -310,7 +319,29 @@ class AppState extends ChangeNotifier {
           }
           totalStars = map['totalStars'] ?? totalStars;
           championshipScore = map['championshipScore'] ?? championshipScore;
-          battleWinRate = map['battleWinRate'] ?? battleWinRate;
+          battleGamesWon =
+              (map['battleGamesWon'] as num?)?.toInt() ?? battleGamesWon;
+          battleGamesPlayed =
+              (map['battleGamesPlayed'] as num?)?.toInt() ?? battleGamesPlayed;
+          if (battleGamesWon < 0) {
+            battleGamesWon = 0;
+          }
+          if (battleGamesPlayed < battleGamesWon) {
+            battleGamesPlayed = battleGamesWon;
+          }
+          if (battleGamesWon == 0 && battleGamesPlayed == 0) {
+            final legacyBattleWins = map['battleWinRate'];
+            if (legacyBattleWins is num) {
+              final wins = legacyBattleWins.toInt();
+              if (wins > 87) {
+                battleGamesWon = wins - 87;
+                battleGamesPlayed = battleGamesWon;
+              } else if (wins == 87) {
+                battleGamesWon = 0;
+                battleGamesPlayed = 0;
+              }
+            }
+          }
           heartBonus = map['heartBonus'] ?? heartBonus;
           playerFlag = (map['playerFlag'] as String?) ?? playerFlag;
 
@@ -535,6 +566,8 @@ class AppState extends ChangeNotifier {
       'lastVictoryDate': lastVictoryDate,
       'totalStars': totalStars,
       'championshipScore': championshipScore,
+      'battleGamesWon': battleGamesWon,
+      'battleGamesPlayed': battleGamesPlayed,
       'battleWinRate': battleWinRate,
       'heartBonus': heartBonus,
       'playerFlag': playerFlag,
@@ -550,7 +583,8 @@ class AppState extends ChangeNotifier {
     _lastVictoryDate = null;
     totalStars = 0;
     championshipScore = 4473;
-    battleWinRate = 87;
+    battleGamesWon = 0;
+    battleGamesPlayed = 0;
     heartBonus = 1;
     _completedDailyChallenges.clear();
     _dailyChallengeDate = null;
@@ -1148,7 +1182,8 @@ class AppState extends ChangeNotifier {
     _gameCompleted = true;
     _handleVictoryFeedback();
     _registerVictory();
-    battleWinRate++;
+    battleGamesWon++;
+    battleGamesPlayed++;
     game.elapsedMs = elapsedMs;
     _clearSavedGame();
     saveProfile();
@@ -1171,6 +1206,9 @@ class AppState extends ChangeNotifier {
   }
 
   void loseBattle() {
+    if (currentMode == GameMode.battle) {
+      battleGamesPlayed++;
+    }
     _handleDefeatFeedback();
     abandonGame();
     saveProfile();
