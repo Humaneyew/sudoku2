@@ -10,7 +10,7 @@ import '../undo_ad_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
-const double kControlPanelVerticalSpacing = 8.0;
+const double kControlPanelVerticalSpacing = 10.0;
 const double _kCompactHeightBreakpoint = 720.0;
 
 class ControlPanel extends StatelessWidget {
@@ -430,7 +430,7 @@ class _NumberPad extends StatelessWidget {
 
     final baseHorizontalPadding = isTablet ? 20.0 : 8.0;
     final horizontalPadding = baseHorizontalPadding / scale;
-    final verticalPadding = (isTablet ? 20.0 : 16.0) * scale * effectiveHeightFactor;
+    final verticalPadding = (isTablet ? 18.0 : 14.0) * scale * effectiveHeightFactor;
     final double radiusValue =
         math.max(18.0, 28 * scale * effectiveHeightFactor);
     final borderRadius = BorderRadius.circular(radiusValue);
@@ -749,7 +749,7 @@ double estimateControlPanelHeight({
   final double spacing = kControlPanelVerticalSpacing * scale * heightFactor;
   final double horizontalPadding = (isTablet ? 20.0 : 8.0) / scale;
   final double verticalPadding =
-      (isTablet ? 20.0 : 16.0) * scale * heightFactor;
+      (isTablet ? 18.0 : 14.0) * scale * heightFactor;
 
   final double innerWidth = math.max(0.0, maxWidth - horizontalPadding * 2);
 

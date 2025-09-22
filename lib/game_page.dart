@@ -24,9 +24,9 @@ const double _kStatusBarOuterPadding = 10.0;
 const double _kGameContentTopPadding = 16.0;
 const double _kGameContentBottomPadding = 40.0;
 const double _kBoardToControlsSpacing = 8.0;
-const double _kStatusBarBannerScale = 1.05;
-const double _kBoardBannerScale = 1.06;
-const double _kControlPanelBannerScale = 1.05;
+const double _kStatusBarBannerScale = 1.1025;
+const double _kBoardBannerScale = 1.113;
+const double _kControlPanelBannerScale = 1.1025;
 const double _kCompactHeightBreakpoint = 720.0;
 const double _kTextHeightMultiplier = 1.1;
 
