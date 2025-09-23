@@ -8,6 +8,7 @@ import 'battle/flag_picker.dart';
 import 'championship/championship_model.dart';
 import 'language_settings_page.dart';
 import 'models.dart';
+import 'widgets/how_to_play_dialog.dart';
 import 'widgets/theme_menu.dart';
 import 'layout/layout_scale.dart';
 
@@ -118,6 +119,20 @@ class SettingsPage extends StatelessWidget {
           Divider(height: 32 * scale),
 
           _sectionTitle(context, l10n.miscSectionTitle),
+          ListTile(
+            key: const ValueKey('settings-how-to-play'),
+            leading: Icon(Icons.help_outline, size: iconSize),
+            title: Text(l10n.howToPlayTitle),
+            onTap: () async {
+              final acknowledged = await showHowToPlayDialog(context);
+              if (!context.mounted) {
+                return;
+              }
+              if (acknowledged) {
+                app.markTutorialSeen();
+              }
+            },
+          ),
           ListTile(
             key: const ValueKey('settings-about'),
             leading: Icon(Icons.info_outline, size: iconSize),

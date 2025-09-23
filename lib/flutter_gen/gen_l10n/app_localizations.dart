@@ -248,6 +248,18 @@ abstract class AppLocalizations {
 
   String get miscSectionTitle;
 
+  String get howToPlayTitle;
+
+  String get howToPlayRowRule;
+
+  String get howToPlayColumnRule;
+
+  String get howToPlayBoxRule;
+
+  String get howToPlayFooter;
+
+  String get howToPlayAction;
+
   String get championshipLocalSection;
 
   String get hideCompletedNumbersLabel;
@@ -766,6 +778,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get miscSectionTitle => "Sonstiges";
 
   @override
+  String get howToPlayTitle => "So spielst du";
+
+  @override
+  String get howToPlayRowRule =>
+      "In jeder Zeile stehen die Ziffern 1 bis 9 ohne Wiederholung";
+
+  @override
+  String get howToPlayColumnRule =>
+      "In jeder Spalte stehen die Ziffern 1 bis 9 ohne Wiederholung";
+
+  @override
+  String get howToPlayBoxRule =>
+      "In jedem 3×3-Block stehen die Ziffern 1 bis 9 ohne Wiederholung";
+
+  @override
+  String get howToPlayFooter => "Fülle alle Felder aus – und du gewinnst!";
+
+  @override
+  String get howToPlayAction => "Alles klar";
+
+  @override
   String get championshipLocalSection => "Meisterschaft (lokal)";
 
   @override
@@ -1259,6 +1292,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Other";
+
+  @override
+  String get howToPlayTitle => "How to play";
+
+  @override
+  String get howToPlayRowRule =>
+      "Each row has the digits 1 to 9 with no repeats";
+
+  @override
+  String get howToPlayColumnRule =>
+      "Each column has the digits 1 to 9 with no repeats";
+
+  @override
+  String get howToPlayBoxRule =>
+      "Each 3×3 box has the digits 1 to 9 with no repeats";
+
+  @override
+  String get howToPlayFooter => "Fill every cell and you win!";
+
+  @override
+  String get howToPlayAction => "Got it";
 
   @override
   String get championshipLocalSection => "Championship (local)";
@@ -1756,6 +1810,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get miscSectionTitle => "Otro";
 
   @override
+  String get howToPlayTitle => "Cómo jugar";
+
+  @override
+  String get howToPlayRowRule =>
+      "Cada fila tiene los números del 1 al 9 sin repetir";
+
+  @override
+  String get howToPlayColumnRule =>
+      "Cada columna tiene los números del 1 al 9 sin repetir";
+
+  @override
+  String get howToPlayBoxRule =>
+      "Cada cuadrado 3×3 tiene los números del 1 al 9 sin repetir";
+
+  @override
+  String get howToPlayFooter => "¡Rellena todas las casillas y gana!";
+
+  @override
+  String get howToPlayAction => "Entendido";
+
+  @override
   String get championshipLocalSection => "Campeonato (local)";
 
   @override
@@ -2249,6 +2324,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Autre";
+
+  @override
+  String get howToPlayTitle => "Comment jouer";
+
+  @override
+  String get howToPlayRowRule =>
+      "Chaque ligne contient les chiffres de 1 à 9 sans doublons";
+
+  @override
+  String get howToPlayColumnRule =>
+      "Chaque colonne contient les chiffres de 1 à 9 sans doublons";
+
+  @override
+  String get howToPlayBoxRule =>
+      "Chaque carré 3×3 contient les chiffres de 1 à 9 sans doublons";
+
+  @override
+  String get howToPlayFooter => "Remplis toutes les cases et tu gagnes !";
+
+  @override
+  String get howToPlayAction => "Compris";
 
   @override
   String get championshipLocalSection => "Championnat (local)";
@@ -2746,6 +2842,27 @@ class AppLocalizationsHi extends AppLocalizations {
   String get miscSectionTitle => "अन्य";
 
   @override
+  String get howToPlayTitle => "कैसे खेलें";
+
+  @override
+  String get howToPlayRowRule =>
+      "हर पंक्ति में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+
+  @override
+  String get howToPlayColumnRule =>
+      "हर स्तंभ में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+
+  @override
+  String get howToPlayBoxRule =>
+      "हर 3×3 बॉक्स में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+
+  @override
+  String get howToPlayFooter => "सभी खाने भरें और जीत जाएँ!";
+
+  @override
+  String get howToPlayAction => "ठीक है";
+
+  @override
   String get championshipLocalSection => "चैम्पियनशिप (स्थानीय)";
 
   @override
@@ -3239,6 +3356,27 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "Altro";
+
+  @override
+  String get howToPlayTitle => "Come si gioca";
+
+  @override
+  String get howToPlayRowRule =>
+      "Ogni riga contiene i numeri da 1 a 9 senza ripetizioni";
+
+  @override
+  String get howToPlayColumnRule =>
+      "Ogni colonna contiene i numeri da 1 a 9 senza ripetizioni";
+
+  @override
+  String get howToPlayBoxRule =>
+      "Ogni riquadro 3×3 contiene i numeri da 1 a 9 senza ripetizioni";
+
+  @override
+  String get howToPlayFooter => "Riempi tutte le caselle e vinci!";
+
+  @override
+  String get howToPlayAction => "Ho capito";
 
   @override
   String get championshipLocalSection => "Campionato (locale)";
@@ -3736,6 +3874,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get miscSectionTitle => "他の";
 
   @override
+  String get howToPlayTitle => "遊び方";
+
+  @override
+  String get howToPlayRowRule => "各行には1〜9の数字を重複なく入れます";
+
+  @override
+  String get howToPlayColumnRule => "各列には1〜9の数字を重複なく入れます";
+
+  @override
+  String get howToPlayBoxRule => "各3×3ブロックには1〜9の数字を重複なく入れます";
+
+  @override
+  String get howToPlayFooter => "すべてのマスを埋めたらクリア！";
+
+  @override
+  String get howToPlayAction => "わかった";
+
+  @override
   String get championshipLocalSection => "チャンピオンシップ（ローカル）";
 
   @override
@@ -4231,6 +4387,27 @@ class AppLocalizationsKa extends AppLocalizations {
   String get miscSectionTitle => "სხვა";
 
   @override
+  String get howToPlayTitle => "როგორ ვითამაშოთ";
+
+  @override
+  String get howToPlayRowRule =>
+      "ყოველ რიგში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+
+  @override
+  String get howToPlayColumnRule =>
+      "ყოველ სვეტში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+
+  @override
+  String get howToPlayBoxRule =>
+      "ყოველ 3×3 კვადრატში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+
+  @override
+  String get howToPlayFooter => "შეავსე ყველა უჯრა და გაიმარჯვე!";
+
+  @override
+  String get howToPlayAction => "გასაგებია";
+
+  @override
   String get championshipLocalSection => "ჩემპიონატი (ლოკალური)";
 
   @override
@@ -4724,6 +4901,27 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "다른";
+
+  @override
+  String get howToPlayTitle => "플레이 방법";
+
+  @override
+  String get howToPlayRowRule =>
+      "각 가로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+
+  @override
+  String get howToPlayColumnRule =>
+      "각 세로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+
+  @override
+  String get howToPlayBoxRule =>
+      "각 3×3 칸에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+
+  @override
+  String get howToPlayFooter => "모든 칸을 채우면 승리예요!";
+
+  @override
+  String get howToPlayAction => "알겠어요";
 
   @override
   String get championshipLocalSection => "챔피언십 (지역)";
@@ -5225,6 +5423,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get miscSectionTitle => "Другое";
 
   @override
+  String get howToPlayTitle => "Как играть";
+
+  @override
+  String get howToPlayRowRule =>
+      "В каждой строке цифры от 1 до 9 без повторов";
+
+  @override
+  String get howToPlayColumnRule =>
+      "В каждом столбце цифры от 1 до 9 без повторов";
+
+  @override
+  String get howToPlayBoxRule =>
+      "В каждом квадрате 3×3 цифры от 1 до 9 без повторов";
+
+  @override
+  String get howToPlayFooter => "Заполни все клетки — и победа!";
+
+  @override
+  String get howToPlayAction => "ОК";
+
+  @override
   String get championshipLocalSection => "Чемпионат (локально)";
 
   @override
@@ -5724,6 +5943,27 @@ class AppLocalizationsUk extends AppLocalizations {
   String get miscSectionTitle => "Інше";
 
   @override
+  String get howToPlayTitle => "Як грати";
+
+  @override
+  String get howToPlayRowRule =>
+      "У кожному рядку цифри від 1 до 9 без повторів";
+
+  @override
+  String get howToPlayColumnRule =>
+      "У кожній колонці цифри від 1 до 9 без повторів";
+
+  @override
+  String get howToPlayBoxRule =>
+      "У кожному квадраті 3×3 цифри від 1 до 9 без повторів";
+
+  @override
+  String get howToPlayFooter => "Заповни всі клітинки — і переможи!";
+
+  @override
+  String get howToPlayAction => "Зрозуміло";
+
+  @override
   String get championshipLocalSection => "Чемпіонат (локально)";
 
   @override
@@ -6215,6 +6455,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get miscSectionTitle => "其他";
+
+  @override
+  String get howToPlayTitle => "怎么玩";
+
+  @override
+  String get howToPlayRowRule => "每一行都要填上1到9且不重复";
+
+  @override
+  String get howToPlayColumnRule => "每一列都要填上1到9且不重复";
+
+  @override
+  String get howToPlayBoxRule => "每个3×3宫都要填上1到9且不重复";
+
+  @override
+  String get howToPlayFooter => "填满所有格子就赢了！";
+
+  @override
+  String get howToPlayAction => "知道了";
 
   @override
   String get championshipLocalSection => "锦标赛（本地）";

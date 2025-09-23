@@ -269,6 +269,7 @@ class AppState extends ChangeNotifier {
   Difficulty featuredDifficulty = Difficulty.novice;
 
   String? playerFlag;
+  bool tutorialSeen = false;
 
   int totalStars = 0;
   int battleGamesWon = 0;
@@ -469,6 +470,7 @@ class AppState extends ChangeNotifier {
 
       soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
       vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
+      tutorialSeen = prefs.getBool('tutorialSeen') ?? tutorialSeen;
       final savedGame = prefs.getString('currentGame');
       if (savedGame != null) {
         try {
@@ -729,6 +731,15 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void markTutorialSeen() {
+    if (tutorialSeen) return;
+    tutorialSeen = true;
+    _persist((prefs) async {
+      await prefs.setBool('tutorialSeen', true);
     });
     notifyListeners();
   }
