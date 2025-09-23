@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "あなたは負けました",
+  "battleExitToMainMenu": "メインメニューに戻る",
   "playerFlagSettingTitle": "プレイヤーの旗",
   "selectPlayerFlag": "自分の旗を選択",
   "confirmFlagSelectionTitle": "フラグを確認",

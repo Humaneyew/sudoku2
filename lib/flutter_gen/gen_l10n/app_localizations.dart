@@ -110,6 +110,8 @@ abstract class AppLocalizations {
 
   String get battleSimpleDefeatTitle;
 
+  String get battleExitToMainMenu;
+
   String get playerFlagSettingTitle;
 
   String get selectPlayerFlag;
@@ -526,6 +528,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "Du hast verloren";
+
+  @override
+  String get battleExitToMainMenu => "Zum Hauptmenü";
 
   @override
   String get playerFlagSettingTitle => "Spielerflagge";
@@ -1020,6 +1025,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get battleSimpleDefeatTitle => "You lost";
 
   @override
+  String get battleExitToMainMenu => "Main menu";
+
+  @override
   String get playerFlagSettingTitle => "Player flag";
 
   @override
@@ -1510,6 +1518,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "Has perdido";
+
+  @override
+  String get battleExitToMainMenu => "Menú principal";
 
   @override
   String get playerFlagSettingTitle => "Bandera del jugador";
@@ -2004,6 +2015,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get battleSimpleDefeatTitle => "Vous avez perdu";
 
   @override
+  String get battleExitToMainMenu => "Menu principal";
+
+  @override
   String get playerFlagSettingTitle => "Drapeau du joueur";
 
   @override
@@ -2494,6 +2508,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "आप हार गए";
+
+  @override
+  String get battleExitToMainMenu => "मुख्य मेनू पर जाएं";
 
   @override
   String get playerFlagSettingTitle => "खिलाड़ी का झंडा";
@@ -2988,6 +3005,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get battleSimpleDefeatTitle => "Hai perso";
 
   @override
+  String get battleExitToMainMenu => "Menu principale";
+
+  @override
   String get playerFlagSettingTitle => "Bandiera del giocatore";
 
   @override
@@ -3478,6 +3498,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "あなたは負けました";
+
+  @override
+  String get battleExitToMainMenu => "メインメニューに戻る";
 
   @override
   String get playerFlagSettingTitle => "プレイヤーの旗";
@@ -3972,6 +3995,9 @@ class AppLocalizationsKa extends AppLocalizations {
   String get battleSimpleDefeatTitle => "თქვენ დამარცხდით";
 
   @override
+  String get battleExitToMainMenu => "მთავარ მენიუში დაბრუნება";
+
+  @override
   String get playerFlagSettingTitle => "მოთამაშის დროშა";
 
   @override
@@ -4464,6 +4490,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get battleSimpleDefeatTitle => "패배했습니다";
 
   @override
+  String get battleExitToMainMenu => "메인 메뉴로 나가기";
+
+  @override
   String get playerFlagSettingTitle => "플레이어 깃발";
 
   @override
@@ -4954,6 +4983,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "Вы проиграли";
+
+  @override
+  String get battleExitToMainMenu => "Выйти в главное меню";
 
   @override
   String get playerFlagSettingTitle => "Флаг игрока";
@@ -5452,6 +5484,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get battleSimpleDefeatTitle => "Ви програли";
 
   @override
+  String get battleExitToMainMenu => "Головне меню";
+
+  @override
   String get playerFlagSettingTitle => "Прапор гравця";
 
   @override
@@ -5946,6 +5981,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get battleSimpleDefeatTitle => "你输了";
+
+  @override
+  String get battleExitToMainMenu => "返回主菜单";
 
   @override
   String get playerFlagSettingTitle => "玩家旗帜";

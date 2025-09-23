@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "Hai perso",
+  "battleExitToMainMenu": "Menu principale",
   "playerFlagSettingTitle": "Bandiera del giocatore",
   "selectPlayerFlag": "Scegli la tua bandiera",
   "confirmFlagSelectionTitle": "Conferma la tua bandiera",

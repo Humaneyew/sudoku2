@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "Ви програли",
+  "battleExitToMainMenu": "Головне меню",
   "playerFlagSettingTitle": "Прапор гравця",
   "selectPlayerFlag": "Обери свій прапор",
   "confirmFlagSelectionTitle": "Підтвердь свій прапор",
