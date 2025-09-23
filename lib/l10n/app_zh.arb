@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "你输了",
   "playerFlagSettingTitle": "玩家旗帜",
   "selectPlayerFlag": "选择你的旗帜",
   "confirmFlagSelectionTitle": "确认你的旗帜",
@@ -162,6 +163,16 @@
   "hintAdDescription": "观看短广告即可获得提示。",
   "hintAdCountdown": "广告将在 {seconds} 秒后结束",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "观看广告以恢复爱心",
+  "lifeAdDescription": "观看这段短广告以恢复一个红心并继续游戏。",
+  "lifeAdCountdown": "广告将在 {seconds} 秒后结束",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

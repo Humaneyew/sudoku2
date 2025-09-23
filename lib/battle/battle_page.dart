@@ -812,7 +812,6 @@ class _BattlePageState extends State<BattlePage>
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
         final theme = Theme.of(context);
-        final colors = theme.extension<SudokuColors>()!;
         return Dialog(
           backgroundColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
@@ -823,63 +822,26 @@ class _BattlePageState extends State<BattlePage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: colors.failureBadgeGradient,
-                  ),
-                  child: Icon(
-                    Icons.flash_on,
-                    color: theme.colorScheme.onPrimary,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(height: 18),
                 Text(
-                  l10n.battleDefeatTitle,
+                  l10n.battleSimpleDefeatTitle,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.battleDefeatMessage(_opponentName),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                    fontSize: 14,
-                  ),
-                ),
                 const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                          app.loseBattle();
-                          Navigator.pop(context);
-                        },
-                        child: Text(l10n.backToHome),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                          app.loseBattle();
-                          _startRematch(app);
-                        },
-                        child: Text(l10n.playAnother),
-                      ),
-                    ),
-                  ],
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () {
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                      app.loseBattle();
+                      _startRematch(app);
+                    },
+                    child: Text(l10n.newGame),
+                  ),
                 ),
               ],
             ),

@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "Du hast verloren",
   "playerFlagSettingTitle": "Spielerflagge",
   "selectPlayerFlag": "Wähle deine Flagge",
   "confirmFlagSelectionTitle": "Bestätige deine Flagge",
@@ -162,6 +163,16 @@
   "hintAdDescription": "Sieh dir diese kurze Werbung an, um einen Tipp zu erhalten.",
   "hintAdCountdown": "Werbung endet in {seconds} s",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "Werbung ansehen, um ein Herz wiederherzustellen",
+  "lifeAdDescription": "Sieh dir diese kurze Werbung an, um ein rotes Herz wiederherzustellen und weiterzuspielen.",
+  "lifeAdCountdown": "Werbung endet in {seconds} s",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

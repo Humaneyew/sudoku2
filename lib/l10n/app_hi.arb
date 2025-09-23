@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "आप हार गए",
   "playerFlagSettingTitle": "खिलाड़ी का झंडा",
   "selectPlayerFlag": "अपना झंडा चुनें",
   "confirmFlagSelectionTitle": "अपने झंडे की पुष्टि करें",
@@ -162,6 +163,16 @@
   "hintAdDescription": "एक संकेत पाने के लिए यह छोटा विज्ञापन देखें।",
   "hintAdCountdown": "विज्ञापन {seconds} सेकंड में समाप्त होगा",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "दिल बहाल करने के लिए विज्ञापन देखें",
+  "lifeAdDescription": "यह छोटा विज्ञापन देखें ताकि लाल दिल बहाल हो और खेल जारी रखें।",
+  "lifeAdCountdown": "विज्ञापन {seconds} सेकंड में समाप्त होगा",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

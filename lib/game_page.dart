@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'championship/championship_model.dart';
+import 'life_ad_controller.dart';
 import 'models.dart';
 import 'settings_page.dart';
 import 'theme.dart';
@@ -702,10 +703,13 @@ class _GamePageState extends State<GamePage>
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        if (context.mounted) {
-                          Navigator.pop(context, true);
+                      onPressed: () async {
+                        final lifeAd = context.read<LifeAdController>();
+                        final success = await lifeAd.showAd(context);
+                        if (!context.mounted) {
+                          return;
                         }
+                        Navigator.pop(context, success);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.error,

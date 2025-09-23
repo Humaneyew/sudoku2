@@ -87,6 +87,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "You lost",
   "playerFlagSettingTitle": "Player flag",
   "selectPlayerFlag": "Choose your flag",
   "confirmFlagSelectionTitle": "Confirm your flag",
@@ -163,6 +164,16 @@
   "hintAdDescription": "Watch this short ad to earn a hint.",
   "hintAdCountdown": "Ad ends in {seconds}s",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "Watch ad to restore a heart",
+  "lifeAdDescription": "Watch this short ad to restore a red heart and keep playing.",
+  "lifeAdCountdown": "Ad ends in {seconds}s",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"
