@@ -9,6 +9,7 @@ import 'championship/championship_model.dart';
 import 'language_settings_page.dart';
 import 'models.dart';
 import 'widgets/theme_menu.dart';
+import 'layout/layout_scale.dart';
 
 const _appVersion = '1.0.0';
 
@@ -20,29 +21,33 @@ class SettingsPage extends StatelessWidget {
     final app = context.watch<AppState>();
     final championship = context.watch<ChampionshipModel>();
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.layoutScale;
+    final iconSize = 24 * scale;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.settingsTitle),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _sectionTitle(l10n.themeSectionTitle),
+      body: IconTheme.merge(
+        data: IconThemeData(size: iconSize),
+        child: ListView(
+          padding: EdgeInsets.all(16 * scale),
+          children: [
+            _sectionTitle(context, l10n.themeSectionTitle),
           ListTile(
             key: const ValueKey('settings-theme'),
-            leading: const Icon(Icons.palette_outlined),
+            leading: Icon(Icons.palette_outlined, size: iconSize),
             title: Text(app.resolvedThemeName(l10n)),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: Icon(Icons.chevron_right, size: iconSize),
             onTap: () => showThemeMenu(context),
           ),
           ListTile(
             key: const ValueKey('settings-player-flag'),
-            leading: const Icon(Icons.flag_outlined),
+            leading: Icon(Icons.flag_outlined, size: iconSize),
             title: Text(l10n.playerFlagSettingTitle),
             trailing: Text(
               app.playerFlag ?? '🏳️',
-              style: const TextStyle(fontSize: 24),
+              style: TextStyle(fontSize: 24 * scale),
             ),
             onTap: () async {
               final selected = await showFlagPicker(
@@ -55,19 +60,19 @@ class SettingsPage extends StatelessWidget {
               app.setPlayerFlag(selected);
             },
           ),
-          const Divider(height: 32),
+          Divider(height: 32 * scale),
 
-          _sectionTitle(l10n.languageSectionTitle),
+          _sectionTitle(context, l10n.languageSectionTitle),
           ListTile(
             key: const ValueKey('settings-language'),
-            leading: const Icon(Icons.language_outlined),
+            leading: Icon(Icons.language_outlined, size: iconSize),
             title: Text(l10n.languageSectionTitle),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(app.lang.displayName(l10n)),
-                const SizedBox(width: 8),
-                const Icon(Icons.chevron_right),
+                SizedBox(width: 8 * scale),
+                Icon(Icons.chevron_right, size: iconSize),
               ],
             ),
             onTap: () {
@@ -78,44 +83,44 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          const Divider(height: 32),
+          Divider(height: 32 * scale),
 
-          _sectionTitle(l10n.audioSectionTitle),
+          _sectionTitle(context, l10n.audioSectionTitle),
           SwitchListTile(
             key: const ValueKey('settings-sounds'),
             title: Text(l10n.soundsEffectsLabel),
             value: app.soundsEnabled,
             onChanged: (v) => app.toggleSounds(v),
-            secondary: const Icon(Icons.volume_up),
+            secondary: Icon(Icons.volume_up, size: iconSize),
           ),
           SwitchListTile(
             key: const ValueKey('settings-vibration'),
             title: Text(l10n.vibrationLabel),
             value: app.vibrationEnabled,
             onChanged: (v) => app.toggleVibration(v),
-            secondary: const Icon(Icons.vibration),
+            secondary: Icon(Icons.vibration, size: iconSize),
           ),
           SwitchListTile(
             key: const ValueKey('settings-champ-auto-scroll'),
             title: Text(l10n.championshipAutoScroll),
             value: championship.autoScrollEnabled,
             onChanged: (v) => championship.setAutoScrollEnabled(v),
-            secondary: const Icon(Icons.my_location),
+            secondary: Icon(Icons.my_location, size: iconSize),
           ),
-          const Divider(height: 32),
+          Divider(height: 32 * scale),
 
-          _sectionTitle(l10n.championshipLocalSection),
+          _sectionTitle(context, l10n.championshipLocalSection),
           ListTile(
-            leading: const Icon(Icons.restart_alt_rounded),
+            leading: Icon(Icons.restart_alt_rounded, size: iconSize),
             title: Text(l10n.resetMyScore),
             onTap: () => _resetChampionshipScore(context, championship),
           ),
-          const Divider(height: 32),
+          Divider(height: 32 * scale),
 
-          _sectionTitle(l10n.miscSectionTitle),
+          _sectionTitle(context, l10n.miscSectionTitle),
           ListTile(
             key: const ValueKey('settings-about'),
-            leading: const Icon(Icons.info_outline),
+            leading: Icon(Icons.info_outline, size: iconSize),
             title: Text(l10n.aboutApp),
             subtitle: Text(l10n.versionLabel(_appVersion)),
             onTap: () {
@@ -127,17 +132,22 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _sectionTitle(String text) {
+  Widget _sectionTitle(BuildContext context, String text) {
+    final scale = context.layoutScale;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8 * scale),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 18 * scale,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

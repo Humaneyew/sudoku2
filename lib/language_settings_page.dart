@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
+import 'layout/layout_scale.dart';
 
 class LanguageSettingsPage extends StatelessWidget {
   const LanguageSettingsPage({super.key});
@@ -13,6 +14,7 @@ class LanguageSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.layoutScale;
 
     return Scaffold(
       appBar: AppBar(
@@ -20,7 +22,7 @@ class LanguageSettingsPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 8 * scale),
         children: [
           ...AppLanguage.values.map(
             (lang) => RadioListTile<AppLanguage>(
@@ -33,7 +35,8 @@ class LanguageSettingsPage extends StatelessWidget {
                   unawaited(app.setLang(value));
                 }
               },
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16 * scale),
             ),
           ),
         ],

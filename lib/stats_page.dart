@@ -4,9 +4,10 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'models.dart';
 import 'stats_format.dart';
+import 'layout/layout_scale.dart';
 
-const BorderRadius _statsSectionRadius = BorderRadius.all(Radius.circular(28));
-const BorderRadius _statIconRadius = BorderRadius.all(Radius.circular(16));
+const double _statsSectionRadiusValue = 28.0;
+const double _statIconRadiusValue = 16.0;
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -60,6 +61,7 @@ class _StatsTabState extends State<StatsTab>
     final averageTimeAccent = blend(cs.primary, cs.onSurface, 0.4);
     final currentStreakAccent = blend(cs.error, cs.secondary, 0.35);
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.layoutScale;
     final stats = context.select<AppState, _DifficultyStatsView>((app) {
       final data = app.statsFor(_selected);
       final formatted = StatsFormatter.formatNumbers(data, l10n.localeName);
@@ -67,7 +69,10 @@ class _StatsTabState extends State<StatsTab>
     });
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      padding: EdgeInsets.symmetric(
+        horizontal: 24 * scale,
+        vertical: 24 * scale,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,14 +80,16 @@ class _StatsTabState extends State<StatsTab>
             l10n.statsTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,
+              fontSize:
+                  (theme.textTheme.headlineSmall?.fontSize ?? 24) * scale,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * scale),
           _DifficultySelector(
             selected: _selected,
             onChanged: (diff) => setState(() => _selected = diff),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * scale),
           _StatsSection(
             title: l10n.statsGamesSection,
             rows: [
@@ -112,7 +119,7 @@ class _StatsTabState extends State<StatsTab>
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * scale),
           _StatsSection(
             title: l10n.statsTimeSection,
             rows: [
@@ -130,7 +137,7 @@ class _StatsTabState extends State<StatsTab>
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * scale),
           _StatsSection(
             title: l10n.statsStreakSection,
             rows: [
@@ -232,9 +239,10 @@ class _DifficultySelector extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final scale = context.layoutScale;
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 8 * scale,
+      runSpacing: 8 * scale,
       children: [
         for (final diff in Difficulty.values)
           ChoiceChip(
@@ -247,13 +255,17 @@ class _DifficultySelector extends StatelessWidget {
             labelStyle: theme.textTheme.labelLarge?.copyWith(
               color: diff == selected ? cs.onPrimary : cs.onSurface,
               fontWeight: FontWeight.w600,
+              fontSize:
+                  (theme.textTheme.labelLarge?.fontSize ?? 14) * scale,
             ),
             backgroundColor: cs.surfaceVariant,
             side: BorderSide(
               color: diff == selected ? cs.primary : cs.outlineVariant,
             ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(18)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(18 * scale),
+              ),
             ),
           ),
       ],
@@ -271,18 +283,19 @@ class _StatsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final scale = context.layoutScale;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24 * scale),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: _statsSectionRadius,
+        borderRadius: BorderRadius.circular(_statsSectionRadiusValue * scale),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
-            blurRadius: 18,
-            offset: const Offset(0, 12),
+            blurRadius: 18 * scale,
+            offset: Offset(0, 12 * scale),
           ),
         ],
       ),
@@ -294,9 +307,11 @@ class _StatsSection extends StatelessWidget {
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: cs.onSurface,
+              fontSize:
+                  (theme.textTheme.titleMedium?.fontSize ?? 20) * scale,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16 * scale),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -305,7 +320,7 @@ class _StatsSection extends StatelessWidget {
               data: rows[index],
             ),
             separatorBuilder: (context, _) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 12 * scale),
               child: Divider(
                 height: 1,
                 color: cs.outlineVariant,
@@ -342,24 +357,32 @@ class _StatRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final scale = context.layoutScale;
     return Row(
       children: [
         Container(
-          width: 46,
-          height: 46,
+          width: 46 * scale,
+          height: 46 * scale,
           decoration: BoxDecoration(
             color: data.color.withOpacity(0.12),
-            borderRadius: _statIconRadius,
+            borderRadius:
+                BorderRadius.circular(_statIconRadiusValue * scale),
           ),
-          child: Icon(data.icon, color: data.color),
+          child: Icon(
+            data.icon,
+            color: data.color,
+            size: 24 * scale,
+          ),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: 16 * scale),
         Expanded(
           child: Text(
             data.label,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: cs.onSurface,
+              fontSize:
+                  (theme.textTheme.bodyMedium?.fontSize ?? 14) * scale,
             ),
           ),
         ),
@@ -368,6 +391,8 @@ class _StatRow extends StatelessWidget {
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
             color: cs.primary,
+            fontSize:
+                (theme.textTheme.titleMedium?.fontSize ?? 20) * scale,
           ),
         ),
       ],
