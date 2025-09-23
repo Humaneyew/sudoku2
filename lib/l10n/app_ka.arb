@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "თქვენ დამარცხდით",
+  "battleExitToMainMenu": "მთავარ მენიუში დაბრუნება",
   "playerFlagSettingTitle": "მოთამაშის დროშა",
   "selectPlayerFlag": "აირჩიე შენი დროშა",
   "confirmFlagSelectionTitle": "დაადასტურე შენი დროშა",

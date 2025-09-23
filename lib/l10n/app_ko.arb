@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "패배했습니다",
+  "battleExitToMainMenu": "메인 메뉴로 나가기",
   "playerFlagSettingTitle": "플레이어 깃발",
   "selectPlayerFlag": "깃발을 선택하세요",
   "confirmFlagSelectionTitle": "깃발 확인",

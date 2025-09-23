@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "Вы проиграли",
+  "battleExitToMainMenu": "Выйти в главное меню",
   "playerFlagSettingTitle": "Флаг игрока",
   "selectPlayerFlag": "Выбери свой флаг",
   "confirmFlagSelectionTitle": "Подтвердите флаг",

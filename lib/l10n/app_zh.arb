@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "你输了",
+  "battleExitToMainMenu": "返回主菜单",
   "playerFlagSettingTitle": "玩家旗帜",
   "selectPlayerFlag": "选择你的旗帜",
   "confirmFlagSelectionTitle": "确认你的旗帜",

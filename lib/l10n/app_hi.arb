@@ -87,6 +87,7 @@
     }
   },
   "battleSimpleDefeatTitle": "आप हार गए",
+  "battleExitToMainMenu": "मुख्य मेनू पर जाएं",
   "playerFlagSettingTitle": "खिलाड़ी का झंडा",
   "selectPlayerFlag": "अपना झंडा चुनें",
   "confirmFlagSelectionTitle": "अपने झंडे की पुष्टि करें",
