@@ -14,6 +14,7 @@ import 'stats_page.dart';
 import 'theme.dart';
 import 'championship/championship_model.dart';
 import 'layout/layout_scale.dart';
+import 'widgets/how_to_play_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,32 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTutorial());
+  }
+
+  Future<void> _maybeShowTutorial() async {
+    if (!mounted) {
+      return;
+    }
+    final app = context.read<AppState>();
+    if (app.tutorialSeen) {
+      return;
+    }
+    final accepted = await showHowToPlayDialog(
+      context,
+      barrierDismissible: false,
+    );
+    if (!mounted) {
+      return;
+    }
+    if (accepted) {
+      app.markTutorialSeen();
+    }
+  }
 
   void _onSelectTab(int index) {
     setState(() => _index = index);
