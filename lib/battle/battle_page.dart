@@ -16,6 +16,11 @@ import '../widgets/theme_menu.dart';
 import 'flag_picker.dart';
 import 'flags.dart';
 
+const double _kBattleOpponentTempoModifier = 0.85;
+const double _kBattleOpponentFallbackTempo = 0.15;
+const double _kBattleOpponentMinTempo =
+    0.12 * _kBattleOpponentTempoModifier;
+
 class BattlePage extends StatefulWidget {
   final Difficulty? difficulty;
 
@@ -415,13 +420,16 @@ class _BattlePageState extends State<BattlePage>
     final averageSeconds = averageMs / 1000.0;
     double baseTempo;
     if (averageSeconds <= 0 || totalCells <= 0) {
-      baseTempo = 0.15;
+      baseTempo = _kBattleOpponentFallbackTempo;
     } else {
       baseTempo = totalCells / averageSeconds;
     }
     final factor = 0.8 + _random.nextDouble() * 0.4;
-    final tempo = baseTempo * factor;
-    return tempo <= 0 ? 0.12 : tempo;
+    final tempo = baseTempo * factor * _kBattleOpponentTempoModifier;
+    if (tempo <= 0) {
+      return _kBattleOpponentMinTempo;
+    }
+    return tempo;
   }
 
   String _generateOpponentName() {
