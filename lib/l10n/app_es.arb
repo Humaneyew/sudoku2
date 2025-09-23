@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "Mira el anuncio para obtener una pista",
+  "hintAdDescription": "Mire este breve anuncio para conseguir una pista.",
+  "hintAdCountdown": "El anuncio termina en {seconds} s",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "No hay juego activo. Regrese a la pantalla de inicio.",
   "victoryTitle": "¡Felicidades!",

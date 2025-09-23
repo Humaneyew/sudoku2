@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "힌트를 얻으려면 광고를 시청하세요",
+  "hintAdDescription": "짧은 광고를 시청하고 힌트를 얻으세요.",
+  "hintAdCountdown": "광고가 {seconds}초 후 종료",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "스도쿠",
   "noActiveGameMessage": "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.",
   "victoryTitle": "축하해요!",

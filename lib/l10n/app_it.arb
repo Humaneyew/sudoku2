@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "Guarda l'annuncio per ottenere un suggerimento",
+  "hintAdDescription": "Guarda questo breve annuncio per ottenere un suggerimento.",
+  "hintAdCountdown": "L'annuncio termina tra {seconds} s",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "Nessun gioco attivo. Torna alla schermata principale.",
   "victoryTitle": "Congratulazioni!",

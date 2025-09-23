@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "ヒントを得るために広告を見てください",
+  "hintAdDescription": "この短い広告を見てヒントを獲得してください。",
+  "hintAdCountdown": "広告は {seconds} 秒後に終了",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "数独",
   "noActiveGameMessage": "アクティブなゲームはありません。ホーム画面に戻ります。",
   "victoryTitle": "おめでとう！",

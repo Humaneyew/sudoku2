@@ -159,6 +159,16 @@
       }
     }
   },
+  "hintAdTitle": "Watch ad to get a hint",
+  "hintAdDescription": "Watch this short ad to earn a hint.",
+  "hintAdCountdown": "Ad ends in {seconds}s",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "No active game. Return to the home screen.",
   "victoryTitle": "Congratulations!",

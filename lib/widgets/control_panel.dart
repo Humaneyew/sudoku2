@@ -6,6 +6,7 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models.dart';
 import '../theme.dart';
+import '../hint_ad_controller.dart';
 import '../undo_ad_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
@@ -263,20 +264,45 @@ class _HintButton extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    return Selector<AppState, int>(
-      selector: (_, app) => app.hintsLeft,
-      builder: (context, hintsLeft, __) {
-        final enabled = hintsLeft > 0;
-        final badgeColor = enabled ? cs.secondary : theme.disabledColor;
-        return _ActionButton(
-          key: const ValueKey('action-hint'),
-          scale: scale,
-          heightFactor: heightFactor,
-          icon: Icons.lightbulb_outline,
-          label: l10n.hint,
-          onPressed: enabled ? context.read<AppState>().useHint : null,
-          badge: hintsLeft.toString(),
-          badgeColor: badgeColor,
+    return Consumer<HintAdController>(
+      builder: (context, hintAds, _) {
+        return Selector<AppState, int>(
+          selector: (_, app) => app.hintsLeft,
+          builder: (context, hintsLeft, __) {
+            final hasHint = hintsLeft > 0;
+            final canShowAd = hintAds.isAdAvailable;
+            final badgeColor = hasHint
+                ? cs.secondary
+                : canShowAd
+                    ? cs.secondary
+                    : theme.disabledColor;
+            return _ActionButton(
+              key: const ValueKey('action-hint'),
+              scale: scale,
+              heightFactor: heightFactor,
+              icon: Icons.lightbulb_outline,
+              label: l10n.hint,
+              onPressed: hasHint
+                  ? context.read<AppState>().useHint
+                  : canShowAd
+                      ? () async {
+                          final app = context.read<AppState>();
+                          final shown = await hintAds.showAd(context);
+                          if (!context.mounted) {
+                            return;
+                          }
+                          if (!shown) {
+                            return;
+                          }
+                          app.grantHint();
+                        }
+                      : null,
+              badge: hasHint ? hintsLeft.toString() : null,
+              badgeWidget:
+                  hasHint ? null : const Icon(Icons.play_arrow_rounded),
+              badgeColor: badgeColor,
+            );
+          },
         );
       },
     );
@@ -288,6 +314,7 @@ class _ActionButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final String? badge;
+  final Widget? badgeWidget;
   final Color? badgeColor;
   final bool active;
   final double scale;
@@ -299,6 +326,7 @@ class _ActionButton extends StatelessWidget {
     required this.label,
     this.onPressed,
     this.badge,
+    this.badgeWidget,
     this.badgeColor,
     this.active = false,
     required this.scale,
@@ -339,7 +367,9 @@ class _ActionButton extends StatelessWidget {
     final badgeBackground = enabled
         ? baseBadge.withOpacity(0.18)
         : baseBadge.withOpacity(0.12);
-    final showBadge = badge != null && badge!.isNotEmpty;
+    final hasBadgeText = badge != null && badge!.isNotEmpty;
+    final hasBadgeWidget = badgeWidget != null;
+    final showBadge = hasBadgeText || hasBadgeWidget;
 
     final mediaQuery = MediaQuery.of(context);
     final clampedTextScale = mediaQuery.textScaleFactor.clamp(0.0, 1.2);
@@ -414,14 +444,22 @@ class _ActionButton extends StatelessWidget {
                             color: badgeBackground,
                             borderRadius: badgeRadius,
                           ),
-                          child: Text(
-                            badge!,
-                            style: TextStyle(
-                              fontSize: 11 * _kControlPanelScaleIncrease,
-                              fontWeight: FontWeight.w700,
-                              color: badgeForeground,
-                            ),
-                          ),
+                          child: badgeWidget != null
+                              ? IconTheme(
+                                  data: IconThemeData(
+                                    color: badgeForeground,
+                                    size: 13 * _kControlPanelScaleIncrease,
+                                  ),
+                                  child: badgeWidget!,
+                                )
+                              : Text(
+                                  badge ?? '',
+                                  style: TextStyle(
+                                    fontSize: 11 * _kControlPanelScaleIncrease,
+                                    fontWeight: FontWeight.w700,
+                                    color: badgeForeground,
+                                  ),
+                                ),
                         ),
                       ),
                     Center(
