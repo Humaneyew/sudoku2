@@ -213,7 +213,7 @@ class _BoardCell extends StatelessWidget {
         final notes = notesSet.isEmpty
             ? const <int>[]
             : List<int>.unmodifiable(List<int>.from(notesSet)..sort());
-        final given = game.given[index];
+        final fixed = game.given[index] || game.locked[index];
         final selected = app.selectedCell;
         final isSelected = selected == index;
         final row = index ~/ 9;
@@ -229,7 +229,7 @@ class _BoardCell extends StatelessWidget {
             (selectedColumn ~/ 3) == (column ~/ 3);
         final sameValue = app.isSameAsSelectedValue(index);
         final incorrect =
-            !given && value != 0 && !app.isMoveValid(index, value);
+            !fixed && value != 0 && !app.isMoveValid(index, value);
         return _CellState(
           value: value,
           notes: notes,
