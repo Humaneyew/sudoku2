@@ -122,13 +122,17 @@ class GameState {
   final List<int> solution;
   final List<bool> given;
   final List<Set<int>> notes;
+  final List<bool> locked;
 
   GameState({
     required this.board,
     required this.solution,
     required this.given,
     required this.notes,
-  });
+    List<bool>? locked,
+  }) : locked = (locked != null && locked.length == board.length)
+            ? List<bool>.from(locked)
+            : List<bool>.filled(board.length, false);
 }
 
 final _elapsedMsExpando = Expando<int>('elapsedMs');
@@ -488,6 +492,8 @@ class AppState extends ChangeNotifier {
               (map['solution'] as List?)?.map((e) => e as int).toList();
           final givenList =
               (map['given'] as List?)?.map((e) => e as bool).toList();
+          final lockedList =
+              (map['locked'] as List?)?.map((e) => e as bool).toList();
           final notesJson = map['notes'] as List?;
           final historyJson = map['history'] as List?;
           final startedAt = map['startedAt'] as String?;
@@ -514,6 +520,7 @@ class AppState extends ChangeNotifier {
               solution: solution,
               given: givenList,
               notes: notes,
+              locked: lockedList,
             );
 
             currentDifficulty = diff;
@@ -905,6 +912,9 @@ class AppState extends ChangeNotifier {
     for (var i = 0; i < game.board.length; i++) {
       game.board[i] = game.given[i] ? game.solution[i] : 0;
       game.notes[i].clear();
+      if (i < game.locked.length) {
+        game.locked[i] = false;
+      }
     }
 
     currentScore = 0;
@@ -1016,10 +1026,22 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  bool _isFixedCell(GameState game, int index) {
+    return game.given[index] || game.locked[index];
+  }
+
+  void _lockCell(GameState game, int index) {
+    if (game.locked[index]) {
+      return;
+    }
+    game.locked[index] = true;
+    _history.removeWhere((move) => move.index == index);
+  }
+
   void makeMove(int index, int value) {
     final game = current;
     if (game == null) return;
-    if (game.given[index]) return;
+    if (_isFixedCell(game, index)) return;
     if (isOutOfLives) return;
 
     final previousValue = game.board[index];
@@ -1049,6 +1071,10 @@ class AppState extends ChangeNotifier {
     game.board[index] = value;
     game.notes[index].clear();
 
+    if (correct && value != 0) {
+      _lockCell(game, index);
+    }
+
     scheduleSave();
     notifyListeners();
   }
@@ -1056,7 +1082,7 @@ class AppState extends ChangeNotifier {
   void toggleNoteAt(int index, int value) {
     final game = current;
     if (game == null) return;
-    if (game.given[index]) return;
+    if (_isFixedCell(game, index)) return;
 
     final previousNotes = _cloneNotes(index);
     final notes = game.notes[index];
@@ -1081,7 +1107,7 @@ class AppState extends ChangeNotifier {
     final game = current;
     final idx = selectedCell;
     if (game == null || idx == null) return;
-    if (game.given[idx]) return;
+    if (_isFixedCell(game, idx)) return;
     if (game.board[idx] == 0 && game.notes[idx].isEmpty) return;
 
     final previousValue = game.board[idx];
@@ -1103,7 +1129,7 @@ class AppState extends ChangeNotifier {
     final game = current;
     final idx = selectedCell;
     if (game == null || idx == null) return;
-    if (game.given[idx]) return;
+    if (_isFixedCell(game, idx)) return;
     if (hintsLeft <= 0) return;
 
     final previousValue = game.board[idx];
@@ -1120,6 +1146,7 @@ class AppState extends ChangeNotifier {
 
     game.board[idx] = correct;
     game.notes[idx].clear();
+    _lockCell(game, idx);
     hintsLeft = math.max(0, hintsLeft - 1);
     _hintsConsumed++;
     currentScore += 8;
@@ -1310,7 +1337,7 @@ class AppState extends ChangeNotifier {
     final game = current;
     final idx = selectedCell;
     if (game == null || idx == null) return false;
-    if (game.given[idx]) return false;
+    if (_isFixedCell(game, idx)) return false;
     if (game.board[idx] == 0 && game.notes[idx].isEmpty) return false;
     return true;
   }
@@ -1555,6 +1582,7 @@ class AppState extends ChangeNotifier {
       'board': game.board,
       'solution': game.solution,
       'given': game.given,
+      'locked': game.locked,
       'notes': game.notes.map((set) => set.toList()).toList(),
       'currentScore': currentScore,
       'selectedCell': selectedCell,
