@@ -599,6 +599,15 @@ class _BattlePageState extends State<BattlePage>
             final scaledMedia = media.copyWith(
               textScaleFactor: media.textScaleFactor * scale,
             );
+            final boardSpacingScale = scale * _kBoardBannerScale;
+            final boardScale =
+                boardSpacingScale * _kGameplayBannerScaleIncrease;
+            final controlPanelSpacingScale =
+                scale * _kControlPanelBannerScale;
+            final controlPanelScale =
+                controlPanelSpacingScale * _kGameplayBannerScaleIncrease;
+            final spacingScale =
+                math.max(boardSpacingScale, controlPanelSpacingScale);
             final availableHeight = constraints.maxHeight;
             final topPadding = _calculateGameContentTopPadding(
               availableHeight: availableHeight,
@@ -611,7 +620,7 @@ class _BattlePageState extends State<BattlePage>
             final bool isCompactHeight =
                 !isTablet && availableHeight < _kCompactHeightBreakpoint;
             final controlPanelLayout = resolveControlPanelLayoutConfig(
-              scale: scale,
+              scale: controlPanelScale,
               isTablet: isTablet,
               compactLayout: isCompactHeight,
               screenHeight: media.size.height,
@@ -662,21 +671,22 @@ class _BattlePageState extends State<BattlePage>
                             LayoutBuilder(
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
-                                final targetWidth = _calculateBoardExtent(width, scale);
+                                final targetWidth =
+                                    _calculateBoardExtent(width, boardScale);
                                 final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: innerPadding,
                                   ),
-                                  child: Board(scale: scale),
+                                  child: Board(scale: boardScale),
                                 );
                               },
                             ),
                             SizedBox(
                               height: math.max(
                                 0.0,
-                                _kBoardToControlsSpacing * scale -
+                                _kBoardToControlsSpacing * spacingScale -
                                     controlPanelTopInset,
                               ),
                             ),
@@ -684,7 +694,8 @@ class _BattlePageState extends State<BattlePage>
                               builder: (context, constraints) {
                                 final width = constraints.maxWidth;
                                 final targetWidth =
-                                    _calculateControlPanelWidth(width, scale);
+                                    _calculateControlPanelWidth(
+                                        width, controlPanelScale);
                                 final innerPadding =
                                     math.max(0.0, (width - targetWidth) / 2);
                                 return Padding(
@@ -692,7 +703,7 @@ class _BattlePageState extends State<BattlePage>
                                     horizontal: innerPadding,
                                   ),
                                   child: ControlPanel(
-                                    scale: scale,
+                                    scale: controlPanelScale,
                                     compactLayout: isCompactHeight,
                                   ),
                                 );
@@ -1213,6 +1224,9 @@ const double _kGameplayHorizontalPaddingFactor = 0.025;
 const double _kStatusBarOuterPadding = 10.0;
 const double _kStatusBarHeartSpacing = 8.0;
 const double _kStatusBarHeartIconSize = 24.0;
+const double _kBoardBannerScale = 1.16865;
+const double _kControlPanelBannerScale = 1.157625;
+const double _kGameplayBannerScaleIncrease = 1.05;
 const double _kBattleBannerRadius = 28.0;
 const double _kBattleBannerHorizontalPadding = 24.0;
 const double _kBattleBannerVerticalPadding = 12.0;
@@ -1284,18 +1298,25 @@ double _estimateGameplayHeight({
 }) {
   final textScale = baseTextScaleFactor * scale;
   final headerHeight = (8.0 + 48.0) * scale;
+  final boardSpacingScale = scale * _kBoardBannerScale;
+  final controlPanelSpacingScale = scale * _kControlPanelBannerScale;
+  final boardScale = boardSpacingScale * _kGameplayBannerScaleIncrease;
+  final controlPanelScale =
+      controlPanelSpacingScale * _kGameplayBannerScaleIncrease;
+  final spacingScale = math.max(boardSpacingScale, controlPanelSpacingScale);
   final statusHeight = _estimateStatusBarHeight(
     scale: scale,
     textScaleFactor: textScale,
     theme: theme,
   );
-  final boardSize = _calculateBoardExtent(contentWidth, scale);
-  final controlPanelWidth = _calculateControlPanelWidth(contentWidth, scale);
+  final boardSize = _calculateBoardExtent(contentWidth, boardScale);
+  final controlPanelWidth =
+      _calculateControlPanelWidth(contentWidth, controlPanelScale);
   final bool isCompactHeight =
       !isTablet && availableHeight < _kCompactHeightBreakpoint;
   final controlPanelHeight = estimateControlPanelHeight(
     maxWidth: controlPanelWidth,
-    scale: scale,
+    scale: controlPanelScale,
     isTablet: isTablet,
     screenHeight: availableHeight,
     isCompact: isCompactHeight,
@@ -1316,7 +1337,7 @@ double _estimateGameplayHeight({
       statusHeight +
       contentPadding +
       boardSize +
-      _kBoardToControlsSpacing * scale +
+      _kBoardToControlsSpacing * spacingScale +
       controlPanelHeight;
 }
 
@@ -1378,9 +1399,13 @@ double _calculateGameContentBottomPadding({
     return _kGameContentBottomPadding * scale;
   }
   final double basePadding = _kGameContentBottomPadding * scale;
-  final double extraPadding =
-      (availableHeight * 0.03).clamp(12.0, 36.0).toDouble();
-  return basePadding + extraPadding;
+  final double lowerBound = availableHeight * 0.08;
+  final double upperBound = availableHeight * 0.15;
+  final double targetFraction =
+      availableHeight * (availableHeight >= 900 ? 0.12 : 0.10);
+  final double fractionalPadding =
+      targetFraction.clamp(lowerBound, upperBound).toDouble();
+  return math.max(basePadding, fractionalPadding);
 }
 
 String formatDuration(int ms) {
