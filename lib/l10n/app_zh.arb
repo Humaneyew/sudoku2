@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "观看广告以获得提示",
+  "hintAdDescription": "观看短广告即可获得提示。",
+  "hintAdCountdown": "广告将在 {seconds} 秒后结束",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "数独",
   "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
   "victoryTitle": "恭喜！",

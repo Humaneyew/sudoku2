@@ -15,7 +15,6 @@ import 'widgets/board.dart';
 import 'widgets/control_panel.dart';
 import 'widgets/theme_menu.dart';
 
-const int _kInitialHints = 3;
 const int _kInitialLives = 3;
 const double _kGameplayUiScale = 1.1;
 const double _kGameplayMinUiScale = 0.7;
@@ -368,8 +367,7 @@ class _GamePageState extends State<GamePage>
           final difficulty = app.currentDifficulty ?? app.featuredDifficulty;
           final mistakes =
               (_kInitialLives - app.livesLeft).clamp(0, _kInitialLives).toInt();
-          final hintsUsed =
-              (_kInitialHints - app.hintsLeft).clamp(0, _kInitialHints).toInt();
+          final hintsUsed = app.hintsConsumed;
           final isDaily = app.activeDailyChallengeDate != null;
           previousRank = championship.myRank;
           final gameId = app.ensureCurrentGameId();

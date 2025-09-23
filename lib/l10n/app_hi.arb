@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "संकेत पाने के लिए विज्ञापन देखें",
+  "hintAdDescription": "एक संकेत पाने के लिए यह छोटा विज्ञापन देखें।",
+  "hintAdCountdown": "विज्ञापन {seconds} सेकंड में समाप्त होगा",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "सुडोकू",
   "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
   "victoryTitle": "बधाई!",

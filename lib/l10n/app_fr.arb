@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "Voir une pub pour obtenir un indice",
+  "hintAdDescription": "Regardez cette courte publicité pour obtenir un indice.",
+  "hintAdCountdown": "La pub se termine dans {seconds} s",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
   "victoryTitle": "Félicitations !",

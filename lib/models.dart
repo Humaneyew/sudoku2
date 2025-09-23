@@ -226,7 +226,7 @@ class DifficultyStats {
 
 /// Глобальное состояние приложения.
 class AppState extends ChangeNotifier {
-  static const int _maxHints = 3;
+  static const int _maxHints = 1;
   static const int _maxLives = 3;
   static const int _novicePuzzleLimit = 50;
   static final Set<String> _initedDateLocales = <String>{};
@@ -289,6 +289,7 @@ class AppState extends ChangeNotifier {
   int? selectedCell;
   bool notesMode = false;
   int hintsLeft = _maxHints;
+  int _hintsConsumed = 0;
   int livesLeft = _maxLives;
   bool soundsEnabled = true;
   bool vibrationEnabled = true;
@@ -523,6 +524,10 @@ class AppState extends ChangeNotifier {
             selectedCell = (map['selectedCell'] as num?)?.toInt();
             notesMode = map['notesMode'] as bool? ?? notesMode;
             hintsLeft = (map['hintsLeft'] as num?)?.toInt() ?? hintsLeft;
+            hintsLeft = math.max(0, math.min(_maxHints, hintsLeft));
+            _hintsConsumed = (map['hintsConsumed'] as num?)?.toInt() ??
+                (_maxHints - hintsLeft);
+            _hintsConsumed = math.max(0, _hintsConsumed);
             livesLeft = (map['livesLeft'] as num?)?.toInt() ?? livesLeft;
             _madeMistake = map['madeMistake'] as bool? ?? _madeMistake;
             _gameCompleted = false;
@@ -757,6 +762,7 @@ class AppState extends ChangeNotifier {
     selectedCell = null;
     notesMode = false;
     hintsLeft = _maxHints;
+    _hintsConsumed = 0;
     livesLeft = _maxLives;
     highlightedNumber = null;
     _madeMistake = false;
@@ -780,6 +786,7 @@ class AppState extends ChangeNotifier {
       selectedCell = null;
       notesMode = false;
       hintsLeft = _maxHints;
+      _hintsConsumed = 0;
       livesLeft = _maxLives;
       _history.clear();
       _clearSavedGame();
@@ -817,6 +824,7 @@ class AppState extends ChangeNotifier {
     selectedCell = null;
     notesMode = false;
     hintsLeft = _maxHints;
+    _hintsConsumed = 0;
     livesLeft = _maxLives;
     highlightedNumber = null;
     _madeMistake = false;
@@ -839,6 +847,7 @@ class AppState extends ChangeNotifier {
       selectedCell = null;
       notesMode = false;
       hintsLeft = _maxHints;
+      _hintsConsumed = 0;
       livesLeft = _maxLives;
       _history.clear();
       _clearSavedGame();
@@ -875,6 +884,7 @@ class AppState extends ChangeNotifier {
     selectedCell = null;
     notesMode = false;
     hintsLeft = _maxHints;
+    _hintsConsumed = 0;
     livesLeft = _maxLives;
     highlightedNumber = null;
     _madeMistake = false;
@@ -901,6 +911,7 @@ class AppState extends ChangeNotifier {
     selectedCell = null;
     notesMode = false;
     hintsLeft = _maxHints;
+    _hintsConsumed = 0;
     livesLeft = _maxLives;
     highlightedNumber = null;
     _madeMistake = false;
@@ -1110,6 +1121,7 @@ class AppState extends ChangeNotifier {
     game.board[idx] = correct;
     game.notes[idx].clear();
     hintsLeft = math.max(0, hintsLeft - 1);
+    _hintsConsumed++;
     currentScore += 8;
     scheduleSave();
     notifyListeners();
@@ -1134,6 +1146,9 @@ class AppState extends ChangeNotifier {
 
     if (last.consumedHint) {
       hintsLeft = math.min(_maxHints, hintsLeft + 1);
+      if (_hintsConsumed > 0) {
+        _hintsConsumed--;
+      }
     }
 
     if (last.consumedLife) {
@@ -1143,6 +1158,16 @@ class AppState extends ChangeNotifier {
     selectedCell = last.index;
     scheduleSave();
     notifyListeners();
+  }
+
+  bool grantHint() {
+    if (hintsLeft >= _maxHints) {
+      return false;
+    }
+    hintsLeft = math.min(_maxHints, hintsLeft + 1);
+    scheduleSave();
+    notifyListeners();
+    return true;
   }
 
   void restoreOneLife() {
@@ -1248,6 +1273,7 @@ class AppState extends ChangeNotifier {
     selectedCell = null;
     notesMode = false;
     hintsLeft = _maxHints;
+    _hintsConsumed = 0;
     livesLeft = _maxLives;
     _madeMistake = false;
     _gameCompleted = false;
@@ -1292,6 +1318,8 @@ class AppState extends ChangeNotifier {
   bool get isNotesMode => notesMode;
 
   bool get canUseHint => hintsLeft > 0;
+
+  int get hintsConsumed => _hintsConsumed;
 
   int? get selectedValue {
     final idx = selectedCell;
@@ -1532,6 +1560,7 @@ class AppState extends ChangeNotifier {
       'selectedCell': selectedCell,
       'notesMode': notesMode,
       'hintsLeft': hintsLeft,
+      'hintsConsumed': _hintsConsumed,
       'livesLeft': livesLeft,
       'madeMistake': _madeMistake,
       'startedAt': _startedAt?.toIso8601String(),

@@ -176,6 +176,12 @@ abstract class AppLocalizations {
 
   String undoAdCountdown(int seconds);
 
+  String get hintAdTitle;
+
+  String get hintAdDescription;
+
+  String hintAdCountdown(int seconds);
+
   String get gameScreenTitle;
 
   String get noActiveGameMessage;
@@ -520,8 +526,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Bestätige deine Flagge";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Bist du sicher, dass du diese Flagge auswählen möchtest? Du kannst deine Flagge später in den Spieleinstellungen ändern.";
+  String get confirmFlagSelectionMessage => "Bist du sicher, dass du diese Flagge auswählen möchtest? Du kannst deine Flagge später in den Spieleinstellungen ändern.";
 
   @override
   String get confirmFlagSelectionConfirm => "Bestätigen";
@@ -636,6 +641,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Werbung ansehen, um einen Tipp zu erhalten";
+
+  @override
+  String get hintAdDescription => "Sieh dir diese kurze Werbung an, um einen Tipp zu erhalten.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "Werbung endet in ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -736,7 +752,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -987,8 +1003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Confirm your flag";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Are you sure you want to choose this flag? You can change your flag later in the game settings.";
+  String get confirmFlagSelectionMessage => "Are you sure you want to choose this flag? You can change your flag later in the game settings.";
 
   @override
   String get confirmFlagSelectionConfirm => "Confirm";
@@ -1103,6 +1118,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Watch ad to get a hint";
+
+  @override
+  String get hintAdDescription => "Watch this short ad to earn a hint.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "Ad ends in ${seconds}s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -1203,7 +1229,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -1454,8 +1480,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Confirma tu bandera";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "¿Estás seguro de que quieres elegir esta bandera? Podrás cambiar tu bandera más adelante en los ajustes del juego.";
+  String get confirmFlagSelectionMessage => "¿Estás seguro de que quieres elegir esta bandera? Podrás cambiar tu bandera más adelante en los ajustes del juego.";
 
   @override
   String get confirmFlagSelectionConfirm => "Confirmar";
@@ -1570,6 +1595,17 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Mira el anuncio para obtener una pista";
+
+  @override
+  String get hintAdDescription => "Mire este breve anuncio para conseguir una pista.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "El anuncio termina en ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -1670,7 +1706,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -1921,8 +1957,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Confirme ton drapeau";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Es-tu sûr de vouloir choisir ce drapeau ? Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.";
+  String get confirmFlagSelectionMessage => "Es-tu sûr de vouloir choisir ce drapeau ? Tu pourras changer ton drapeau plus tard dans les paramètres du jeu.";
 
   @override
   String get confirmFlagSelectionConfirm => "Confirmer";
@@ -2037,6 +2072,17 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Voir une pub pour obtenir un indice";
+
+  @override
+  String get hintAdDescription => "Regardez cette courte publicité pour obtenir un indice.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "La pub se termine dans ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -2137,7 +2183,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -2388,8 +2434,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get confirmFlagSelectionTitle => "अपने झंडे की पुष्टि करें";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "क्या आप सुनिश्चित हैं कि आप इस झंडे को चुनना चाहते हैं? आप बाद में खेल की सेटिंग्स में अपना झंडा बदल सकते हैं।";
+  String get confirmFlagSelectionMessage => "क्या आप सुनिश्चित हैं कि आप इस झंडे को चुनना चाहते हैं? आप बाद में खेल की सेटिंग्स में अपना झंडा बदल सकते हैं।";
 
   @override
   String get confirmFlagSelectionConfirm => "पुष्टि करें";
@@ -2504,6 +2549,17 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "संकेत पाने के लिए विज्ञापन देखें";
+
+  @override
+  String get hintAdDescription => "एक संकेत पाने के लिए यह छोटा विज्ञापन देखें।";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "विज्ञापन ${seconds} सेकंड में समाप्त होगा";
+  }
+
+  @override
   String get gameScreenTitle => "सुडोकू";
 
   @override
@@ -2604,7 +2660,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -2855,8 +2911,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Conferma la tua bandiera";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Sei sicuro di voler scegliere questa bandiera? Potrai cambiare la tua bandiera più tardi nelle impostazioni del gioco.";
+  String get confirmFlagSelectionMessage => "Sei sicuro di voler scegliere questa bandiera? Potrai cambiare la tua bandiera più tardi nelle impostazioni del gioco.";
 
   @override
   String get confirmFlagSelectionConfirm => "Conferma";
@@ -2971,6 +3026,17 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Guarda l'annuncio per ottenere un suggerimento";
+
+  @override
+  String get hintAdDescription => "Guarda questo breve annuncio per ottenere un suggerimento.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "L'annuncio termina tra ${seconds} s";
+  }
+
+  @override
   String get gameScreenTitle => "Sudoku";
 
   @override
@@ -3071,7 +3137,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -3322,8 +3388,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get confirmFlagSelectionTitle => "フラグを確認";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "この旗を選択してもよろしいですか？後でゲーム設定で旗を変更できます。";
+  String get confirmFlagSelectionMessage => "この旗を選択してもよろしいですか？後でゲーム設定で旗を変更できます。";
 
   @override
   String get confirmFlagSelectionConfirm => "確認する";
@@ -3438,6 +3503,17 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "ヒントを得るために広告を見てください";
+
+  @override
+  String get hintAdDescription => "この短い広告を見てヒントを獲得してください。";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "広告は ${seconds} 秒後に終了";
+  }
+
+  @override
   String get gameScreenTitle => "数独";
 
   @override
@@ -3538,7 +3614,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -3789,8 +3865,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get confirmFlagSelectionTitle => "დაადასტურე შენი დროშა";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "დარწმუნებული ხარ, რომ ამ დროშას ირჩევ? შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.";
+  String get confirmFlagSelectionMessage => "დარწმუნებული ხარ, რომ ამ დროშას ირჩევ? შეგიძლია მოგვიანებით შეცვალო დროშა თამაშის პარამეტრებში.";
 
   @override
   String get confirmFlagSelectionConfirm => "დადასტურება";
@@ -3905,6 +3980,17 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "უყურეთ რეკლამას მინიშნების მისაღებად";
+
+  @override
+  String get hintAdDescription => "უყურეთ ამ მოკლე რეკლამას, რათა მიიღოთ მინიშნება.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "რეკლამა დასრულდება ${seconds} წმ-ში";
+  }
+
+  @override
   String get gameScreenTitle => "სუდოკუ";
 
   @override
@@ -4005,7 +4091,7 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -4256,8 +4342,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get confirmFlagSelectionTitle => "깃발 확인";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "이 깃발을 선택하시겠습니까? 나중에 게임 설정에서 깃발을 변경할 수 있습니다.";
+  String get confirmFlagSelectionMessage => "이 깃발을 선택하시겠습니까? 나중에 게임 설정에서 깃발을 변경할 수 있습니다.";
 
   @override
   String get confirmFlagSelectionConfirm => "확인";
@@ -4372,6 +4457,17 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "힌트를 얻으려면 광고를 시청하세요";
+
+  @override
+  String get hintAdDescription => "짧은 광고를 시청하고 힌트를 얻으세요.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "광고가 ${seconds}초 후 종료";
+  }
+
+  @override
   String get gameScreenTitle => "스도쿠";
 
   @override
@@ -4472,7 +4568,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -4723,8 +4819,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Подтвердите флаг";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Вы уверены, что хотите выбрать этот флаг? Флаг можно будет изменить в настройках игры.";
+  String get confirmFlagSelectionMessage => "Вы уверены, что хотите выбрать этот флаг? Флаг можно будет изменить в настройках игры.";
 
   @override
   String get confirmFlagSelectionConfirm => "Подтверждаю";
@@ -4843,6 +4938,17 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Смотреть рекламу для подсказки";
+
+  @override
+  String get hintAdDescription => "Посмотрите короткую рекламу, чтобы получить подсказку.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "Реклама завершится через ${seconds} с";
+  }
+
+  @override
   String get gameScreenTitle => "Судоку";
 
   @override
@@ -4943,7 +5049,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -5194,8 +5300,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get confirmFlagSelectionTitle => "Підтвердь свій прапор";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "Ти впевнений, що хочеш обрати цей прапор? Ти зможеш змінити прапор пізніше в налаштуваннях гри.";
+  String get confirmFlagSelectionMessage => "Ти впевнений, що хочеш обрати цей прапор? Ти зможеш змінити прапор пізніше в налаштуваннях гри.";
 
   @override
   String get confirmFlagSelectionConfirm => "Підтверджую";
@@ -5314,6 +5419,17 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "Перегляньте рекламу, щоб отримати підказку";
+
+  @override
+  String get hintAdDescription => "Перегляньте коротку рекламу, щоб отримати підказку.";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "Реклама завершиться через ${seconds} с";
+  }
+
+  @override
   String get gameScreenTitle => "Судоку";
 
   @override
@@ -5414,7 +5530,7 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";
@@ -5665,8 +5781,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get confirmFlagSelectionTitle => "确认你的旗帜";
 
   @override
-  String get confirmFlagSelectionMessage =>
-      "你确定要选择这面旗帜吗？你可以稍后在游戏设置中更改你的旗帜。";
+  String get confirmFlagSelectionMessage => "你确定要选择这面旗帜吗？你可以稍后在游戏设置中更改你的旗帜。";
 
   @override
   String get confirmFlagSelectionConfirm => "确认";
@@ -5779,6 +5894,17 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get hintAdTitle => "观看广告以获得提示";
+
+  @override
+  String get hintAdDescription => "观看短广告即可获得提示。";
+
+  @override
+  String hintAdCountdown(int seconds) {
+    return "广告将在 ${seconds} 秒后结束";
+  }
+
+  @override
   String get gameScreenTitle => "数独";
 
   @override
@@ -5879,7 +6005,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get aboutLegalese => "Nahreba \ UZOR Inc.";
+  String get aboutLegalese => "Nahreba UZOR Inc.";
 
   @override
   String get languageEnglish => "English";

@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "უყურეთ რეკლამას მინიშნების მისაღებად",
+  "hintAdDescription": "უყურეთ ამ მოკლე რეკლამას, რათა მიიღოთ მინიშნება.",
+  "hintAdCountdown": "რეკლამა დასრულდება {seconds} წმ-ში",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "სუდოკუ",
   "noActiveGameMessage": "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.",
   "victoryTitle": "გილოცავთ!",

@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "Werbung ansehen, um einen Tipp zu erhalten",
+  "hintAdDescription": "Sieh dir diese kurze Werbung an, um einen Tipp zu erhalten.",
+  "hintAdCountdown": "Werbung endet in {seconds} s",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Sudoku",
   "noActiveGameMessage": "Kein aktives Spiel. Kehre zum Startbildschirm zurück.",
   "victoryTitle": "Glückwunsch!",

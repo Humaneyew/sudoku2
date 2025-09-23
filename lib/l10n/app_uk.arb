@@ -158,6 +158,16 @@
       }
     }
   },
+  "hintAdTitle": "Перегляньте рекламу, щоб отримати підказку",
+  "hintAdDescription": "Перегляньте коротку рекламу, щоб отримати підказку.",
+  "hintAdCountdown": "Реклама завершиться через {seconds} с",
+  "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "gameScreenTitle": "Судоку",
   "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
   "victoryTitle": "Вітаємо!",
