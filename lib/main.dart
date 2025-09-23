@@ -13,6 +13,7 @@ import 'models.dart';
 import 'screens/intro_screen.dart';
 import 'theme.dart';
 import 'hint_ad_controller.dart';
+import 'life_ad_controller.dart';
 import 'undo_ad_controller.dart';
 
 Future<void> main() async {
@@ -37,6 +38,7 @@ Future<void> main() async {
           },
           lazy: false,
         ),
+        ChangeNotifierProvider(create: (_) => LifeAdController()),
         ChangeNotifierProvider(create: (_) => UndoAdController()),
         ChangeNotifierProvider(create: (_) => HintAdController()),
       ],

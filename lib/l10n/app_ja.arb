@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "あなたは負けました",
   "playerFlagSettingTitle": "プレイヤーの旗",
   "selectPlayerFlag": "自分の旗を選択",
   "confirmFlagSelectionTitle": "フラグを確認",
@@ -162,6 +163,16 @@
   "hintAdDescription": "この短い広告を見てヒントを獲得してください。",
   "hintAdCountdown": "広告は {seconds} 秒後に終了",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "ハートを復元するために広告を見てください",
+  "lifeAdDescription": "赤いハートを復元してプレイを続けるために、この短い広告を視聴してください。",
+  "lifeAdCountdown": "広告は {seconds} 秒後に終了",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

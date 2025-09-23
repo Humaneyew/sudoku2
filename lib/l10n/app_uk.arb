@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "Ви програли",
   "playerFlagSettingTitle": "Прапор гравця",
   "selectPlayerFlag": "Обери свій прапор",
   "confirmFlagSelectionTitle": "Підтвердь свій прапор",
@@ -162,6 +163,16 @@
   "hintAdDescription": "Перегляньте коротку рекламу, щоб отримати підказку.",
   "hintAdCountdown": "Реклама завершиться через {seconds} с",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "Перегляньте рекламу, щоб відновити серце",
+  "lifeAdDescription": "Перегляньте коротку рекламу, щоб відновити червоне серце й продовжити гру.",
+  "lifeAdCountdown": "Реклама завершиться через {seconds} с",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

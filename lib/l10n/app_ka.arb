@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "თქვენ დამარცხდით",
   "playerFlagSettingTitle": "მოთამაშის დროშა",
   "selectPlayerFlag": "აირჩიე შენი დროშა",
   "confirmFlagSelectionTitle": "დაადასტურე შენი დროშა",
@@ -162,6 +163,16 @@
   "hintAdDescription": "უყურეთ ამ მოკლე რეკლამას, რათა მიიღოთ მინიშნება.",
   "hintAdCountdown": "რეკლამა დასრულდება {seconds} წმ-ში",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "უყურეთ რეკლამას გულის აღსადგენად",
+  "lifeAdDescription": "უყურეთ ამ მოკლე რეკლამას, რათა აღდგეს წითელი გული და გააგრძელოთ თამაში.",
+  "lifeAdCountdown": "რეკლამა დასრულდება {seconds} წმ-ში",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "Вы проиграли",
   "playerFlagSettingTitle": "Флаг игрока",
   "selectPlayerFlag": "Выбери свой флаг",
   "confirmFlagSelectionTitle": "Подтвердите флаг",
@@ -162,6 +163,16 @@
   "hintAdDescription": "Посмотрите короткую рекламу, чтобы получить подсказку.",
   "hintAdCountdown": "Реклама завершится через {seconds} с",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "Смотрите рекламу, чтобы восстановить сердце",
+  "lifeAdDescription": "Посмотрите эту короткую рекламу, чтобы восстановить красное сердце и продолжить игру.",
+  "lifeAdCountdown": "Реклама завершится через {seconds} с",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"

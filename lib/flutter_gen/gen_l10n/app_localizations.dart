@@ -108,6 +108,8 @@ abstract class AppLocalizations {
 
   String battleDefeatMessage(String name);
 
+  String get battleSimpleDefeatTitle;
+
   String get playerFlagSettingTitle;
 
   String get selectPlayerFlag;
@@ -181,6 +183,12 @@ abstract class AppLocalizations {
   String get hintAdDescription;
 
   String hintAdCountdown(int seconds);
+
+  String get lifeAdTitle;
+
+  String get lifeAdDescription;
+
+  String lifeAdCountdown(int seconds);
 
   String get gameScreenTitle;
 
@@ -517,6 +525,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Du hast verloren";
+
+  @override
   String get playerFlagSettingTitle => "Spielerflagge";
 
   @override
@@ -648,6 +659,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "Werbung endet in ${seconds} s";
+  }
+
+  @override
+  String get lifeAdTitle => "Werbung ansehen, um ein Herz wiederherzustellen";
+
+  @override
+  String get lifeAdDescription =>
+      "Sieh dir diese kurze Werbung an, um ein rotes Herz wiederherzustellen und weiterzuspielen.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "Werbung endet in ${seconds} s";
   }
 
@@ -994,6 +1017,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "You lost";
+
+  @override
   String get playerFlagSettingTitle => "Player flag";
 
   @override
@@ -1125,6 +1151,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "Ad ends in ${seconds}s";
+  }
+
+  @override
+  String get lifeAdTitle => "Watch ad to restore a heart";
+
+  @override
+  String get lifeAdDescription =>
+      "Watch this short ad to restore a red heart and keep playing.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "Ad ends in ${seconds}s";
   }
 
@@ -1471,6 +1509,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Has perdido";
+
+  @override
   String get playerFlagSettingTitle => "Bandera del jugador";
 
   @override
@@ -1602,6 +1643,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "El anuncio termina en ${seconds} s";
+  }
+
+  @override
+  String get lifeAdTitle => "Mira el anuncio para restaurar un corazón";
+
+  @override
+  String get lifeAdDescription =>
+      "Mira este breve anuncio para restaurar un corazón rojo y seguir jugando.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "El anuncio termina en ${seconds} s";
   }
 
@@ -1948,6 +2001,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Vous avez perdu";
+
+  @override
   String get playerFlagSettingTitle => "Drapeau du joueur";
 
   @override
@@ -2079,6 +2135,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "La pub se termine dans ${seconds} s";
+  }
+
+  @override
+  String get lifeAdTitle => "Voir une pub pour restaurer un cœur";
+
+  @override
+  String get lifeAdDescription =>
+      "Regardez cette courte publicité pour restaurer un cœur rouge et continuer à jouer.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "La pub se termine dans ${seconds} s";
   }
 
@@ -2425,6 +2493,9 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "आप हार गए";
+
+  @override
   String get playerFlagSettingTitle => "खिलाड़ी का झंडा";
 
   @override
@@ -2556,6 +2627,18 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "विज्ञापन ${seconds} सेकंड में समाप्त होगा";
+  }
+
+  @override
+  String get lifeAdTitle => "दिल बहाल करने के लिए विज्ञापन देखें";
+
+  @override
+  String get lifeAdDescription =>
+      "यह छोटा विज्ञापन देखें ताकि लाल दिल बहाल हो और खेल जारी रखें।";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "विज्ञापन ${seconds} सेकंड में समाप्त होगा";
   }
 
@@ -2902,6 +2985,9 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Hai perso";
+
+  @override
   String get playerFlagSettingTitle => "Bandiera del giocatore";
 
   @override
@@ -3033,6 +3119,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "L'annuncio termina tra ${seconds} s";
+  }
+
+  @override
+  String get lifeAdTitle => "Guarda l'annuncio per ripristinare un cuore";
+
+  @override
+  String get lifeAdDescription =>
+      "Guarda questo breve annuncio per ripristinare un cuore rosso e continuare a giocare.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "L'annuncio termina tra ${seconds} s";
   }
 
@@ -3379,6 +3477,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "あなたは負けました";
+
+  @override
   String get playerFlagSettingTitle => "プレイヤーの旗";
 
   @override
@@ -3510,6 +3611,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "広告は ${seconds} 秒後に終了";
+  }
+
+  @override
+  String get lifeAdTitle => "ハートを復元するために広告を見てください";
+
+  @override
+  String get lifeAdDescription =>
+      "赤いハートを復元してプレイを続けるために、この短い広告を視聴してください。";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "広告は ${seconds} 秒後に終了";
   }
 
@@ -3856,6 +3969,9 @@ class AppLocalizationsKa extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "თქვენ დამარცხდით";
+
+  @override
   String get playerFlagSettingTitle => "მოთამაშის დროშა";
 
   @override
@@ -3987,6 +4103,18 @@ class AppLocalizationsKa extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "რეკლამა დასრულდება ${seconds} წმ-ში";
+  }
+
+  @override
+  String get lifeAdTitle => "უყურეთ რეკლამას გულის აღსადგენად";
+
+  @override
+  String get lifeAdDescription =>
+      "უყურეთ ამ მოკლე რეკლამას, რათა აღდგეს წითელი გული და გააგრძელოთ თამაში.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "რეკლამა დასრულდება ${seconds} წმ-ში";
   }
 
@@ -4333,6 +4461,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "패배했습니다";
+
+  @override
   String get playerFlagSettingTitle => "플레이어 깃발";
 
   @override
@@ -4464,6 +4595,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "광고가 ${seconds}초 후 종료";
+  }
+
+  @override
+  String get lifeAdTitle => "하트를 복원하려면 광고를 시청하세요";
+
+  @override
+  String get lifeAdDescription =>
+      "짧은 광고를 시청하여 빨간 하트를 복원하고 게임을 계속하세요.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "광고가 ${seconds}초 후 종료";
   }
 
@@ -4810,6 +4953,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Вы проиграли";
+
+  @override
   String get playerFlagSettingTitle => "Флаг игрока";
 
   @override
@@ -4945,6 +5091,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "Реклама завершится через ${seconds} с";
+  }
+
+  @override
+  String get lifeAdTitle => "Смотрите рекламу, чтобы восстановить сердце";
+
+  @override
+  String get lifeAdDescription =>
+      "Посмотрите эту короткую рекламу, чтобы восстановить красное сердце и продолжить игру.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "Реклама завершится через ${seconds} с";
   }
 
@@ -5291,6 +5449,9 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "Ви програли";
+
+  @override
   String get playerFlagSettingTitle => "Прапор гравця";
 
   @override
@@ -5426,6 +5587,18 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "Реклама завершиться через ${seconds} с";
+  }
+
+  @override
+  String get lifeAdTitle => "Перегляньте рекламу, щоб відновити серце";
+
+  @override
+  String get lifeAdDescription =>
+      "Перегляньте коротку рекламу, щоб відновити червоне серце й продовжити гру.";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "Реклама завершиться через ${seconds} с";
   }
 
@@ -5772,6 +5945,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get battleSimpleDefeatTitle => "你输了";
+
+  @override
   String get playerFlagSettingTitle => "玩家旗帜";
 
   @override
@@ -5901,6 +6077,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String hintAdCountdown(int seconds) {
+    return "广告将在 ${seconds} 秒后结束";
+  }
+
+  @override
+  String get lifeAdTitle => "观看广告以恢复爱心";
+
+  @override
+  String get lifeAdDescription =>
+      "观看这段短广告以恢复一个红心并继续游戏。";
+
+  @override
+  String lifeAdCountdown(int seconds) {
     return "广告将在 ${seconds} 秒后结束";
   }
 

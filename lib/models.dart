@@ -1171,7 +1171,7 @@ class AppState extends ChangeNotifier {
   }
 
   void restoreOneLife() {
-    livesLeft = math.max(1, livesLeft);
+    livesLeft = math.min(_maxLives, livesLeft + 1);
     scheduleSave();
     notifyListeners();
   }

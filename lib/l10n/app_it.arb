@@ -86,6 +86,7 @@
       }
     }
   },
+  "battleSimpleDefeatTitle": "Hai perso",
   "playerFlagSettingTitle": "Bandiera del giocatore",
   "selectPlayerFlag": "Scegli la tua bandiera",
   "confirmFlagSelectionTitle": "Conferma la tua bandiera",
@@ -162,6 +163,16 @@
   "hintAdDescription": "Guarda questo breve annuncio per ottenere un suggerimento.",
   "hintAdCountdown": "L'annuncio termina tra {seconds} s",
   "@hintAdCountdown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeAdTitle": "Guarda l'annuncio per ripristinare un cuore",
+  "lifeAdDescription": "Guarda questo breve annuncio per ripristinare un cuore rosso e continuare a giocare.",
+  "lifeAdCountdown": "L'annuncio termina tra {seconds} s",
+  "@lifeAdCountdown": {
     "placeholders": {
       "seconds": {
         "type": "int"
