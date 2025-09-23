@@ -13,6 +13,7 @@ import 'settings_page.dart';
 import 'stats_page.dart';
 import 'theme.dart';
 import 'championship/championship_model.dart';
+import 'layout/layout_scale.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -99,23 +100,29 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
     final size = media.size;
-    final isCompactHeight = size.height < 720;
-    final isCompactWidth = size.width < 380;
-    final horizontalPadding = isCompactWidth ? 20.0 : 24.0;
-    final verticalPadding = isCompactHeight ? 20.0 : 24.0;
-    final topSpacing = isCompactHeight ? 20.0 : 24.0;
-    final carouselSpacing = isCompactHeight ? 24.0 : 32.0;
-    final bodySpacing = isCompactHeight ? 14.0 : 18.0;
+    final scale = context.layoutScale;
+    final viewPadding = media.viewPadding;
+    final safeWidth = math.max(0.0, size.width - viewPadding.left - viewPadding.right);
+    final safeHeight = math.max(0.0, size.height - viewPadding.top - viewPadding.bottom);
+    final isCompactHeight = safeHeight < 720;
+    final isCompactWidth = safeWidth < 380;
+    final horizontalPadding = (isCompactWidth ? 20.0 : 24.0) * scale;
+    final verticalPadding = (isCompactHeight ? 20.0 : 24.0) * scale;
+    final topSpacing = (isCompactHeight ? 20.0 : 24.0) * scale;
+    final carouselSpacing = (isCompactHeight ? 24.0 : 32.0) * scale;
+    final bodySpacing = (isCompactHeight ? 14.0 : 18.0) * scale;
     final difficulty = app.featuredStatsDifficulty;
     final stats = app.statsFor(difficulty);
     final l10n = AppLocalizations.of(context)!;
 
-    final titleStyle = theme.textTheme.headlineSmall?.copyWith(
+    final baseTitle = theme.textTheme.headlineSmall;
+    final titleStyle = baseTitle?.copyWith(
       fontWeight: FontWeight.w700,
-      letterSpacing: -0.5,
+      letterSpacing: -0.5 * scale,
+      fontSize: (baseTitle.fontSize ?? 24) * scale,
     );
 
-    double titlePlaceholderHeight = 12;
+    double titlePlaceholderHeight = 12 * scale;
     if (titleStyle != null) {
       final textPainter = TextPainter(
         text: TextSpan(text: l10n.appTitle, style: titleStyle),
@@ -125,8 +132,8 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     }
 
     final dailyContentTopSpacing = math.max(
-      8.0,
-      titlePlaceholderHeight - (isCompactHeight ? 12.0 : 16.0),
+      8.0 * scale,
+      titlePlaceholderHeight - (isCompactHeight ? 12.0 : 16.0) * scale,
     );
 
     return SingleChildScrollView(
@@ -137,6 +144,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: _TopBar(
+              scale: scale,
               title: l10n.appTitle,
               titleStyle: titleStyle,
               onStatsTap: () => Navigator.push(
@@ -155,6 +163,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             onOpenChallenge: widget.onOpenChallenge,
             onOpenBattle: () => _startBattle(context),
             horizontalPadding: horizontalPadding,
+            scale: scale,
           ),
           SizedBox(height: carouselSpacing),
           Padding(
@@ -163,9 +172,10 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: dailyContentTopSpacing),
-                _DailyChain(streak: app.dailyStreak),
+                _DailyChain(streak: app.dailyStreak, scale: scale),
                 SizedBox(height: bodySpacing),
                 _ProgressCard(
+                  scale: scale,
                   stats: stats,
                   onNewGame: () => _openDifficultySheet(context),
                   onContinue: app.hasUnfinishedGame
@@ -182,16 +192,20 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
+    final bottomSheetScale = context.layoutScale;
     final result = await showModalBottomSheet<Difficulty>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(32 * bottomSheetScale),
+        ),
       ),
       builder: (context) {
         final theme = Theme.of(context);
         final palette = _DifficultySheetPalette.fromTheme(theme);
+        final scale = context.layoutScale;
         final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
@@ -217,10 +231,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   );
                 }
               },
+              scale: scale,
             ),
           );
           if (index < items.length - 1) {
-            tiles.add(const SizedBox(height: 12));
+            tiles.add(SizedBox(height: 12 * scale));
           }
         }
 
@@ -228,7 +243,12 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           top: false,
           bottom: true,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            padding: EdgeInsets.fromLTRB(
+              24 * scale,
+              16 * scale,
+              24 * scale,
+              32 * scale,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -238,18 +258,21 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                     child: _DifficultySheetCloseButton(
                       palette: palette,
                       onPressed: () => Navigator.pop(context),
+                      scale: scale,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8 * scale),
                   Text(
                     sheetL10n.selectDifficultyTitle,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: palette.titleColor,
+                      fontSize:
+                          (theme.textTheme.titleMedium?.fontSize ?? 20) * scale,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20 * scale),
                   ...tiles,
                 ],
               ),
@@ -312,12 +335,14 @@ String _difficultyKey(Difficulty difficulty) {
 }
 
 class _TopBar extends StatelessWidget {
+  final double scale;
   final String title;
   final TextStyle? titleStyle;
   final VoidCallback onStatsTap;
   final VoidCallback onSettingsTap;
 
   const _TopBar({
+    required this.scale,
     required this.title,
     required this.titleStyle,
     required this.onStatsTap,
@@ -337,10 +362,18 @@ class _TopBar extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 12),
-        _CircleButton(icon: Icons.leaderboard_outlined, onTap: onStatsTap),
-        const SizedBox(width: 12),
-        _CircleButton(icon: Icons.settings_outlined, onTap: onSettingsTap),
+        SizedBox(width: 12 * scale),
+        _CircleButton(
+          icon: Icons.leaderboard_outlined,
+          onTap: onStatsTap,
+          scale: scale,
+        ),
+        SizedBox(width: 12 * scale),
+        _CircleButton(
+          icon: Icons.settings_outlined,
+          onTap: onSettingsTap,
+          scale: scale,
+        ),
       ],
     );
   }
@@ -349,8 +382,9 @@ class _TopBar extends StatelessWidget {
 class _CircleButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final double scale;
 
-  const _CircleButton({required this.icon, required this.onTap});
+  const _CircleButton({required this.icon, required this.onTap, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -358,22 +392,26 @@ class _CircleButton extends StatelessWidget {
     final colors = theme.extension<SudokuColors>()!;
     return InkResponse(
       onTap: onTap,
-      radius: 28,
+      radius: 28 * scale,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 48 * scale,
+        height: 48 * scale,
         decoration: BoxDecoration(
           color: colors.headerButtonBackground,
-          borderRadius: const BorderRadius.all(Radius.circular(24)),
+          borderRadius: BorderRadius.all(Radius.circular(24 * scale)),
           boxShadow: [
             BoxShadow(
               color: theme.shadowColor,
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              blurRadius: 12 * scale,
+              offset: Offset(0, 6 * scale),
             ),
           ],
         ),
-        child: Icon(icon, color: colors.headerButtonIcon),
+        child: Icon(
+          icon,
+          color: colors.headerButtonIcon,
+          size: 24 * scale,
+        ),
       ),
     );
   }
@@ -399,12 +437,14 @@ class _ChallengeCarousel extends StatelessWidget {
   final VoidCallback onOpenChallenge;
   final VoidCallback onOpenBattle;
   final double horizontalPadding;
+  final double scale;
 
   const _ChallengeCarousel({
     required this.battleWinRate,
     required this.onOpenChallenge,
     required this.onOpenBattle,
     required this.horizontalPadding,
+    required this.scale,
   });
 
   @override
@@ -420,6 +460,7 @@ class _ChallengeCarousel extends StatelessWidget {
 
     final cards = <Widget>[
       _ChallengeCard(
+        scale: scale,
         key: const ValueKey('challenge-card-daily'),
         data: _ChallengeCardData(
           title: l10n.navDaily,
@@ -434,6 +475,7 @@ class _ChallengeCarousel extends StatelessWidget {
         selector: (_, model) => _ChampionshipCardVm.fromModel(model),
         builder: (context, vm, _) {
           return _ChampionshipCard(
+            scale: scale,
             key: const ValueKey('challenge-card-championship'),
             score: vm.score,
             gradient: colors.championshipChallengeGradient,
@@ -443,6 +485,7 @@ class _ChallengeCarousel extends StatelessWidget {
         },
       ),
       _ChallengeCard(
+        scale: scale,
         key: const ValueKey('challenge-card-battle'),
         data: _ChallengeCardData(
           title: l10n.battleTitle,
@@ -458,20 +501,21 @@ class _ChallengeCarousel extends StatelessWidget {
     final screenWidth = media.size.width;
     final isCompactHeight = media.size.height < 720;
     final bool showTwoCards = screenWidth < 600;
-    const double cardSpacing = 16.0;
-    final double cardHeight = isCompactHeight ? 184.0 : 196.0;
+    final double cardSpacing = 16.0 * scale;
+    final double cardHeight = (isCompactHeight ? 184.0 : 196.0) * scale;
     final availableWidth = screenWidth - horizontalPadding * 2;
+    final double maxCardWidth = 360.0 * scale;
 
     final double cardWidth;
     if (showTwoCards) {
       final widthForTwoCards = availableWidth - cardSpacing;
       if (widthForTwoCards > 0) {
-        cardWidth = widthForTwoCards / 2;
+        cardWidth = math.min(widthForTwoCards / 2, maxCardWidth);
       } else {
-        cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
+        cardWidth = availableWidth.clamp(0.0, maxCardWidth).toDouble();
       }
     } else {
-      cardWidth = availableWidth.clamp(0.0, 360.0).toDouble();
+      cardWidth = availableWidth.clamp(0.0, maxCardWidth).toDouble();
     }
 
     final listView = ListView.separated(
@@ -505,7 +549,7 @@ class _ChallengeCarousel extends StatelessWidget {
             bottom: 0,
             child: IgnorePointer(
               child: Container(
-                width: 32,
+                width: 32 * scale,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft,
@@ -525,7 +569,7 @@ class _ChallengeCarousel extends StatelessWidget {
             bottom: 0,
             child: IgnorePointer(
               child: Container(
-                width: 32,
+                width: 32 * scale,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft,
@@ -598,59 +642,69 @@ class _ChallengeCardGeometry {
     required this.buttonHorizontalPadding,
   });
 
-  factory _ChallengeCardGeometry.resolve(BoxConstraints constraints) {
-    final height = constraints.maxHeight.isFinite ? constraints.maxHeight : 0;
-    final width = constraints.maxWidth.isFinite ? constraints.maxWidth : 0;
+  factory _ChallengeCardGeometry.resolve(
+    BoxConstraints constraints,
+    double scale,
+  ) {
+    final safeScale = scale <= 0 ? 1.0 : scale;
+    final height = constraints.maxHeight.isFinite
+        ? constraints.maxHeight / safeScale
+        : 0;
+    final width = constraints.maxWidth.isFinite
+        ? constraints.maxWidth / safeScale
+        : 0;
     final isCompactHeight = height > 0 && height < 190;
     final isCompactWidth = width > 0 && width < 170;
     final compact = isCompactHeight || isCompactWidth;
 
     if (compact) {
-      return const _ChallengeCardGeometry._(
-        padding: 16,
-        iconPadding: 8,
-        iconSize: 20,
-        badgeHorizontalPadding: 9,
-        badgeVerticalPadding: 3,
-        titleFontSize: 16,
-        subtitleFontSize: 13,
-        secondaryFontSize: 12,
-        subtitleSpacing: 2,
-        secondarySpacing: 2,
-        buttonSpacing: 14,
-        buttonHeight: 36,
-        buttonHorizontalPadding: 20,
+      return _ChallengeCardGeometry._(
+        padding: 16 * safeScale,
+        iconPadding: 8 * safeScale,
+        iconSize: 20 * safeScale,
+        badgeHorizontalPadding: 9 * safeScale,
+        badgeVerticalPadding: 3 * safeScale,
+        titleFontSize: 16 * safeScale,
+        subtitleFontSize: 13 * safeScale,
+        secondaryFontSize: 12 * safeScale,
+        subtitleSpacing: 2 * safeScale,
+        secondarySpacing: 2 * safeScale,
+        buttonSpacing: 14 * safeScale,
+        buttonHeight: 36 * safeScale,
+        buttonHorizontalPadding: 20 * safeScale,
       );
     }
 
-    return const _ChallengeCardGeometry._(
-      padding: 20,
-      iconPadding: 10,
-      iconSize: 22,
-      badgeHorizontalPadding: 10,
-      badgeVerticalPadding: 4,
-      titleFontSize: 18,
-      subtitleFontSize: 14,
-      secondaryFontSize: 13,
-      subtitleSpacing: 4,
-      secondarySpacing: 3,
-      buttonSpacing: 18,
-      buttonHeight: 40,
-      buttonHorizontalPadding: 24,
+    return _ChallengeCardGeometry._(
+      padding: 20 * safeScale,
+      iconPadding: 10 * safeScale,
+      iconSize: 22 * safeScale,
+      badgeHorizontalPadding: 10 * safeScale,
+      badgeVerticalPadding: 4 * safeScale,
+      titleFontSize: 18 * safeScale,
+      subtitleFontSize: 14 * safeScale,
+      secondaryFontSize: 13 * safeScale,
+      subtitleSpacing: 4 * safeScale,
+      secondarySpacing: 3 * safeScale,
+      buttonSpacing: 18 * safeScale,
+      buttonHeight: 40 * safeScale,
+      buttonHorizontalPadding: 24 * safeScale,
     );
   }
 }
 
 class _ChallengeCard extends StatelessWidget {
   final _ChallengeCardData data;
+  final double scale;
 
-  const _ChallengeCard({Key? key, required this.data}) : super(key: key);
+  const _ChallengeCard({Key? key, required this.data, required this.scale})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final geometry = _ChallengeCardGeometry.resolve(constraints);
+        final geometry = _ChallengeCardGeometry.resolve(constraints, scale);
         final theme = Theme.of(context);
         final cs = theme.colorScheme;
         final onPrimary = cs.onPrimary;
@@ -679,21 +733,21 @@ class _ChallengeCard extends StatelessWidget {
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(28)),
+            borderRadius: BorderRadius.all(Radius.circular(28 * scale)),
             color: isDark ? const Color(0xFF1E1E1E) : null,
             gradient: isDark ? null : data.gradient,
             boxShadow: [
               if (isDark)
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: const Offset(0, 4),
+                  blurRadius: 6 * scale,
+                  offset: Offset(0, 4 * scale),
                 )
               else
                 BoxShadow(
                   color: theme.shadowColor,
-                  blurRadius: 18,
-                  offset: const Offset(0, 10),
+                  blurRadius: 18 * scale,
+                  offset: Offset(0, 10 * scale),
                 ),
             ],
           ),
@@ -729,14 +783,16 @@ class _ChallengeCard extends StatelessWidget {
                         color: isDark
                             ? Colors.white.withOpacity(0.08)
                             : onPrimary.withOpacity(0.18),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(30)),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30 * scale),
+                        ),
                       ),
                       child: Text(
                         data.badge!,
                         style: TextStyle(
                           color: baseTextColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: 12 * scale,
                         ),
                       ),
                     ),
@@ -777,8 +833,10 @@ class _ChallengeCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? accentColor : onPrimary,
                     foregroundColor: isDark ? Colors.white : accentColor,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(18 * scale),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(
                       horizontal: geometry.buttonHorizontalPadding,
@@ -787,7 +845,10 @@ class _ChallengeCard extends StatelessWidget {
                   onPressed: data.onPressed,
                   child: Text(
                     data.buttonLabel,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16 * scale,
+                    ),
                   ),
                 ),
               ),
@@ -806,18 +867,20 @@ class _ChampionshipCard extends StatelessWidget {
     required this.gradient,
     required this.icon,
     this.badge,
+    required this.scale,
   }) : super(key: key);
 
   final int score;
   final LinearGradient gradient;
   final IconData icon;
   final String? badge;
+  final double scale;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final geometry = _ChallengeCardGeometry.resolve(constraints);
+        final geometry = _ChallengeCardGeometry.resolve(constraints, scale);
         final theme = Theme.of(context);
         final cs = theme.colorScheme;
         final onPrimary = cs.onPrimary;
@@ -833,21 +896,21 @@ class _ChampionshipCard extends StatelessWidget {
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(28)),
+            borderRadius: BorderRadius.all(Radius.circular(28 * scale)),
             color: isDark ? const Color(0xFF1E1E1E) : null,
             gradient: isDark ? null : gradient,
             boxShadow: [
               if (isDark)
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: const Offset(0, 4),
+                  blurRadius: 6 * scale,
+                  offset: Offset(0, 4 * scale),
                 )
               else
                 BoxShadow(
                   color: theme.shadowColor,
-                  blurRadius: 18,
-                  offset: const Offset(0, 10),
+                  blurRadius: 18 * scale,
+                  offset: Offset(0, 10 * scale),
                 ),
             ],
           ),
@@ -883,14 +946,16 @@ class _ChampionshipCard extends StatelessWidget {
                         color: isDark
                             ? Colors.white.withOpacity(0.08)
                             : onPrimary.withOpacity(0.18),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(30)),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(30 * scale),
+                        ),
                       ),
                       child: Text(
                         badge!,
                         style: TextStyle(
                           color: baseTextColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: 12 * scale,
                         ),
                       ),
                     ),
@@ -911,9 +976,9 @@ class _ChampionshipCard extends StatelessWidget {
               Text(
                 l10n.championshipScore(score),
                 style: theme.textTheme.bodySmall?.copyWith(
-                      color: secondaryTextColor,
-                      fontSize: geometry.subtitleFontSize,
-                    ),
+                  color: secondaryTextColor,
+                  fontSize: geometry.subtitleFontSize,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -924,8 +989,10 @@ class _ChampionshipCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? accentColor : onPrimary,
                     foregroundColor: isDark ? Colors.white : accentColor,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(18 * scale),
+                      ),
                     ),
                     padding: EdgeInsets.symmetric(
                       horizontal: geometry.buttonHorizontalPadding,
@@ -936,7 +1003,10 @@ class _ChampionshipCard extends StatelessWidget {
                   },
                   child: Text(
                     l10n.play,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16 * scale,
+                    ),
                   ),
                 ),
               ),
@@ -975,8 +1045,9 @@ class _ChampionshipCardVm {
 
 class _DailyChain extends StatelessWidget {
   final int streak;
+  final double scale;
 
-  const _DailyChain({required this.streak});
+  const _DailyChain({required this.streak, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -985,42 +1056,55 @@ class _DailyChain extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final accent = cs.error;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: 18 * scale,
+        vertical: 12 * scale,
+      ),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(20 * scale)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            blurRadius: 16 * scale,
+            offset: Offset(0, 8 * scale),
           ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.local_fire_department, color: accent),
-          const SizedBox(width: 8),
+          Icon(
+            Icons.local_fire_department,
+            color: accent,
+            size: 20 * scale,
+          ),
+          SizedBox(width: 8 * scale),
           Text(
             l10n.dailyStreak,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: cs.onSurface,
+              fontSize:
+                  (theme.textTheme.bodyMedium?.fontSize ?? 14) * scale,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12 * scale),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(
+              horizontal: 10 * scale,
+              vertical: 4 * scale,
+            ),
             decoration: BoxDecoration(
               color: Color.alphaBlend(accent.withOpacity(0.16), cs.surface),
-              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              borderRadius: BorderRadius.all(Radius.circular(16 * scale)),
             ),
             child: Text(
               streak.toString(),
               style: TextStyle(
                 color: accent,
                 fontWeight: FontWeight.w600,
+                fontSize: 14 * scale,
               ),
             ),
           ),
@@ -1034,11 +1118,13 @@ class _ProgressCard extends StatelessWidget {
   final DifficultyStats stats;
   final VoidCallback onNewGame;
   final VoidCallback? onContinue;
+  final double scale;
 
   const _ProgressCard({
     required this.stats,
     required this.onNewGame,
     this.onContinue,
+    required this.scale,
   });
 
   @override
@@ -1049,15 +1135,15 @@ class _ProgressCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24 * scale),
       decoration: BoxDecoration(
         color: cs.surface,
-        borderRadius: const BorderRadius.all(Radius.circular(28)),
+        borderRadius: BorderRadius.all(Radius.circular(28 * scale)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor,
-            blurRadius: 24,
-            offset: const Offset(0, 16),
+            blurRadius: 24 * scale,
+            offset: Offset(0, 16 * scale),
           ),
         ],
       ),
@@ -1068,13 +1154,15 @@ class _ProgressCard extends StatelessWidget {
             l10n.rankProgress,
             style: theme.textTheme.labelLarge?.copyWith(
               color: cs.onSurface.withOpacity(0.68),
+              fontSize:
+                  (theme.textTheme.labelLarge?.fontSize ?? 14) * scale,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8 * scale),
           ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(Radius.circular(12 * scale)),
             child: LinearProgressIndicator(
-              minHeight: 10,
+              minHeight: 10 * scale,
               value: stats.progressTarget == 0
                   ? 0
                   : stats.progressCurrent / stats.progressTarget,
@@ -1084,15 +1172,17 @@ class _ProgressCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8 * scale),
           Text(
             l10n.rankLabel(stats.rank),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: cs.onSurface,
+              fontSize:
+                  (theme.textTheme.bodyMedium?.fontSize ?? 14) * scale,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24 * scale),
           if (onContinue != null) ...[
             SizedBox(
               width: double.infinity,
@@ -1102,21 +1192,22 @@ class _ProgressCard extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: cs.primary,
                   side: BorderSide(color: cs.primary),
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 18 * scale, horizontal: 8 * scale),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(18 * scale)),
                   ),
                 ),
                 child: Text(
                   l10n.continueGame,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 16 * scale,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12 * scale),
           ],
           SizedBox(
             width: double.infinity,
@@ -1125,15 +1216,15 @@ class _ProgressCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: cs.primary,
                 foregroundColor: cs.onPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
+                padding: EdgeInsets.symmetric(vertical: 18 * scale),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18 * scale)),
                 ),
               ),
               child: Text(
                 l10n.newGame,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: 16 * scale,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1145,7 +1236,7 @@ class _ProgressCard extends StatelessWidget {
   }
 }
 
-const BorderRadius _difficultyTileRadius = BorderRadius.all(Radius.circular(20));
+const double _difficultyTileRadiusValue = 20.0;
 const double _difficultyProgressHeight = 6.0;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
@@ -1232,28 +1323,30 @@ class _DifficultySheetPalette {
 class _DifficultySheetCloseButton extends StatelessWidget {
   final VoidCallback onPressed;
   final _DifficultySheetPalette palette;
+  final double scale;
 
   const _DifficultySheetCloseButton({
     required this.onPressed,
     required this.palette,
+    required this.scale,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(18 * scale),
       onTap: onPressed,
       child: Ink(
         decoration: BoxDecoration(
           color: palette.closeBackground,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18 * scale),
         ),
         child: SizedBox(
-          width: 36,
-          height: 36,
+          width: 36 * scale,
+          height: 36 * scale,
           child: Icon(
             Icons.close_rounded,
-            size: 18,
+            size: 18 * scale,
             color: palette.closeIconColor,
           ),
         ),
@@ -1270,6 +1363,7 @@ class _DifficultyTile extends StatelessWidget {
   final bool isActive;
   final _DifficultySheetPalette palette;
   final VoidCallback onTap;
+  final double scale;
 
   const _DifficultyTile({
     super.key,
@@ -1280,6 +1374,7 @@ class _DifficultyTile extends StatelessWidget {
     required this.isActive,
     required this.palette,
     required this.onTap,
+    required this.scale,
   });
 
   @override
@@ -1302,9 +1397,11 @@ class _DifficultyTile extends StatelessWidget {
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: titleColor,
+          fontSize:
+              (theme.textTheme.titleMedium?.fontSize ?? 18) * scale,
         ) ??
         TextStyle(
-          fontSize: 16,
+          fontSize: 16 * scale,
           fontWeight: FontWeight.w600,
           color: titleColor,
         );
@@ -1316,9 +1413,11 @@ class _DifficultyTile extends StatelessWidget {
     final rankStyle = theme.textTheme.labelLarge?.copyWith(
           color: rankColor,
           fontWeight: FontWeight.w700,
+          fontSize:
+              (theme.textTheme.labelLarge?.fontSize ?? 14) * scale,
         ) ??
         TextStyle(
-          fontSize: 14,
+          fontSize: 14 * scale,
           fontWeight: FontWeight.w700,
           color: rankColor,
         );
@@ -1327,9 +1426,11 @@ class _DifficultyTile extends StatelessWidget {
     final progressStyle = theme.textTheme.bodySmall?.copyWith(
           color: progressColor,
           fontWeight: FontWeight.w600,
+          fontSize:
+              (theme.textTheme.bodySmall?.fontSize ?? 12) * scale,
         ) ??
         TextStyle(
-          fontSize: 12,
+          fontSize: 12 * scale,
           fontWeight: FontWeight.w600,
           color: progressColor,
         );
@@ -1340,18 +1441,21 @@ class _DifficultyTile extends StatelessWidget {
     final fillColor =
         isActive ? palette.progressFillActiveColor : palette.progressFillColor;
 
+    final borderRadius =
+        BorderRadius.circular(_difficultyTileRadiusValue * scale);
+
     return InkWell(
-      borderRadius: _difficultyTileRadius,
+      borderRadius: borderRadius,
       onTap: onTap,
       child: Ink(
         decoration: BoxDecoration(
           color: background,
-          borderRadius: _difficultyTileRadius,
+          borderRadius: borderRadius,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 17,
-            vertical: 12.75,
+          padding: EdgeInsets.symmetric(
+            horizontal: 17 * scale,
+            vertical: 12.75 * scale,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1368,20 +1472,20 @@ class _DifficultyTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  SizedBox(width: 14 * scale),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12 * scale,
+                          vertical: 5 * scale,
                         ),
                         decoration: BoxDecoration(
                           color: rankBackground,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(999),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(999 * scale),
                           ),
                         ),
                         child: Text(
@@ -1390,7 +1494,7 @@ class _DifficultyTile extends StatelessWidget {
                         ),
                       ),
                       if (progressText != null) ...[
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4 * scale),
                         Text(
                           progressText,
                           style: progressStyle,
@@ -1404,11 +1508,12 @@ class _DifficultyTile extends StatelessWidget {
                 ],
               ),
               if (progressText != null) ...[
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * scale),
                 _DifficultyProgressBar(
                   progress: progressValue,
                   trackColor: trackColor,
                   fillColor: fillColor,
+                  scale: scale,
                 ),
               ],
             ],
@@ -1423,22 +1528,25 @@ class _DifficultyProgressBar extends StatelessWidget {
   final double progress;
   final Color trackColor;
   final Color fillColor;
+  final double scale;
 
   const _DifficultyProgressBar({
     required this.progress,
     required this.trackColor,
     required this.fillColor,
+    required this.scale,
   });
 
   @override
   Widget build(BuildContext context) {
     final clampedProgress =
         progress.isNaN ? 0.0 : progress.clamp(0.0, 1.0).toDouble();
+    final height = _difficultyProgressHeight * scale;
 
     return SizedBox(
-      height: _difficultyProgressHeight,
+      height: height,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(_difficultyProgressHeight / 2),
+        borderRadius: BorderRadius.circular(height / 2),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final targetWidth = constraints.maxWidth * clampedProgress;
@@ -1455,7 +1563,7 @@ class _DifficultyProgressBar extends StatelessWidget {
                     duration: _difficultyProgressAnimationDuration,
                     curve: Curves.easeInOut,
                     width: targetWidth,
-                    height: _difficultyProgressHeight,
+                    height: height,
                     decoration: BoxDecoration(color: fillColor),
                   ),
                 ),
