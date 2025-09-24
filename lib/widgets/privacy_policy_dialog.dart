@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../flutter_gen/gen_l10n/app_localizations.dart';
 import '../layout/layout_scale.dart';
 
-const _privacyPolicyUri = Uri.parse(
+final _privacyPolicyUri = Uri.parse(
   'https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md',
 );
 
