@@ -256,7 +256,7 @@ class AppState extends ChangeNotifier {
   static const double _baseFontSizeSp = 16.0;
   static const double minFontScale = minFontSizeSp / _baseFontSizeSp;
   static const double maxFontScale = maxFontSizeSp / _baseFontSizeSp;
-  double _fontScale = 1.0;
+  double _fontScale = mediumFontSizeSp / _baseFontSizeSp;
 
   Map<Difficulty, DifficultyStats> statsByDifficulty = _defaultStats();
 
