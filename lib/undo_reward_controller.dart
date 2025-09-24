@@ -1,109 +1,106 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
-class UndoAdController extends ChangeNotifier {
-  UndoAdController({
-    bool? integrationEnabled,
-    Duration adDuration = const Duration(seconds: 5),
-  })  : _integrationEnabled =
-            integrationEnabled ?? const bool.fromEnvironment('enableUndoAd'),
-        _adDuration = adDuration;
+class UndoRewardController extends ChangeNotifier {
+  UndoRewardController({
+    bool enabled = true,
+    Duration placeholderDuration = const Duration(seconds: 5),
+  })  : _enabled = enabled,
+        _placeholderDuration = placeholderDuration;
 
-  final bool _integrationEnabled;
-  final Duration _adDuration;
-  bool _adAvailable = true;
-  bool _showingAd = false;
-  Future<bool>? _pendingAd;
+  final bool _enabled;
+  final Duration _placeholderDuration;
+  bool _rewardAvailable = true;
+  bool _showingReward = false;
+  Future<bool>? _pendingRequest;
 
-  bool get useAdFlow => kReleaseMode && _integrationEnabled;
+  bool get isRewardEnabled => _enabled;
 
-  bool get isAdAvailable => !useAdFlow ? true : _adAvailable && !_showingAd;
+  bool get isRewardAvailable =>
+      !_enabled ? true : _rewardAvailable && !_showingReward;
 
-  Future<bool> showAd(BuildContext context) {
-    if (!useAdFlow) {
+  Future<bool> showReward(BuildContext context) {
+    if (!_enabled) {
       return Future.value(true);
     }
-    if (_pendingAd != null) {
-      return _pendingAd!;
+    if (_pendingRequest != null) {
+      return _pendingRequest!;
     }
-    if (!isAdAvailable) {
+    if (!isRewardAvailable) {
       return Future.value(false);
     }
 
-    final future = _performShowAd(context);
-    _pendingAd = future;
+    final future = _performShowReward(context);
+    _pendingRequest = future;
     future.whenComplete(() {
-      _pendingAd = null;
+      _pendingRequest = null;
     });
     return future;
   }
 
-  Future<bool> _performShowAd(BuildContext context) async {
-    _adAvailable = false;
-    _showingAd = true;
+  Future<bool> _performShowReward(BuildContext context) async {
+    _rewardAvailable = false;
+    _showingReward = true;
     notifyListeners();
 
-    await showDialog<void>(
+    final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
-        return _UndoAdDialog(
-          duration: _adDuration,
+        return _UndoRewardDialog(
+          duration: _placeholderDuration,
           title: l10n.undoAdTitle,
           description: l10n.undoAdDescription,
           countdownBuilder: l10n.undoAdCountdown,
+          cancelLabel: l10n.cancelAction,
         );
       },
     );
 
-    if (!context.mounted) {
-      _showingAd = false;
-      _adAvailable = true;
-      notifyListeners();
-      return false;
-    }
+    final rewarded = result ?? false;
 
-    _showingAd = false;
-    _adAvailable = true;
+    _showingReward = false;
+    _rewardAvailable = true;
     notifyListeners();
 
-    return true;
+    return rewarded;
   }
 
   void updateAvailability(bool available) {
-    if (!useAdFlow) {
+    if (!_enabled) {
       return;
     }
-    if (_adAvailable == available) {
+    if (_rewardAvailable == available) {
       return;
     }
-    _adAvailable = available;
+    _rewardAvailable = available;
     notifyListeners();
   }
 }
 
-class _UndoAdDialog extends StatefulWidget {
-  const _UndoAdDialog({
+class _UndoRewardDialog extends StatefulWidget {
+  const _UndoRewardDialog({
     required this.duration,
     required this.title,
     required this.description,
     required this.countdownBuilder,
+    required this.cancelLabel,
   });
 
   final Duration duration;
   final String title;
   final String description;
   final String Function(int seconds) countdownBuilder;
+  final String cancelLabel;
 
   @override
-  State<_UndoAdDialog> createState() => _UndoAdDialogState();
+  State<_UndoRewardDialog> createState() => _UndoRewardDialogState();
 }
 
-class _UndoAdDialogState extends State<_UndoAdDialog> {
+class _UndoRewardDialogState extends State<_UndoRewardDialog> {
   late int _secondsLeft;
   Timer? _timer;
 
@@ -116,10 +113,7 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
         if (!mounted) {
           return;
         }
-        final navigator = Navigator.of(context, rootNavigator: true);
-        if (navigator.canPop()) {
-          navigator.pop();
-        }
+        Navigator.of(context, rootNavigator: true).maybePop(true);
       });
       return;
     }
@@ -140,10 +134,7 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
         if (!mounted) {
           return;
         }
-        final navigator = Navigator.of(context, rootNavigator: true);
-        if (navigator.canPop()) {
-          navigator.pop();
-        }
+        Navigator.of(context, rootNavigator: true).maybePop(true);
       }
     });
   }
@@ -152,6 +143,14 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void _handleClose() {
+    _timer?.cancel();
+    final navigator = Navigator.of(context, rootNavigator: true);
+    if (navigator.canPop()) {
+      navigator.pop(false);
+    }
   }
 
   @override
@@ -165,8 +164,8 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
     final progress = total == 0 ? 1.0 : (total - seconds) / total;
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(24)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(24)),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Padding(
@@ -176,6 +175,7 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.ondemand_video, color: primary, size: 32),
                 const SizedBox(width: 12),
@@ -186,6 +186,12 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                ),
+                IconButton(
+                  onPressed: _handleClose,
+                  tooltip: widget.cancelLabel,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.close),
                 ),
               ],
             ),
@@ -217,3 +223,4 @@ class _UndoAdDialogState extends State<_UndoAdDialog> {
     );
   }
 }
+
