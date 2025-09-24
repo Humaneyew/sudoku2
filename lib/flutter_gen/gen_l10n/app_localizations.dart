@@ -316,6 +316,12 @@ abstract class AppLocalizations {
 
   String get privacyPolicyAccept;
 
+  String get privacyPolicyPrompt;
+
+  String get privacyPolicyLearnMore;
+
+  String get privacyPolicyDecline;
+
   String get privacyPolicyClose;
 
   String get privacyPolicyLoadError;
@@ -889,6 +895,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get privacyPolicyAccept => "Ich stimme zu";
 
   @override
+  String get privacyPolicyPrompt => "Akzeptieren Sie die Datenschutzerklärung?";
+
+  @override
+  String get privacyPolicyLearnMore => "Mehr erfahren →";
+
+  @override
+  String get privacyPolicyDecline => "Ich lehne ab";
+
+  @override
   String get privacyPolicyClose => "Schließen";
 
   @override
@@ -1411,6 +1426,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicyAccept => "I accept";
+
+  @override
+  String get privacyPolicyPrompt => "Do you accept the Privacy Policy?";
+
+  @override
+  String get privacyPolicyLearnMore => "Learn more →";
+
+  @override
+  String get privacyPolicyDecline => "I decline";
 
   @override
   String get privacyPolicyClose => "Close";
@@ -1937,6 +1961,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get privacyPolicyAccept => "Acepto";
 
   @override
+  String get privacyPolicyPrompt => "¿Aceptas la Política de privacidad?";
+
+  @override
+  String get privacyPolicyLearnMore => "Más información →";
+
+  @override
+  String get privacyPolicyDecline => "Rechazo";
+
+  @override
   String get privacyPolicyClose => "Cerrar";
 
   @override
@@ -2459,6 +2492,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyPolicyAccept => "J'accepte";
+
+  @override
+  String get privacyPolicyPrompt => "Acceptez-vous la politique de confidentialité ?";
+
+  @override
+  String get privacyPolicyLearnMore => "En savoir plus →";
+
+  @override
+  String get privacyPolicyDecline => "Je refuse";
 
   @override
   String get privacyPolicyClose => "Fermer";
@@ -2985,6 +3027,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get privacyPolicyAccept => "मैं सहमत हूँ";
 
   @override
+  String get privacyPolicyPrompt => "क्या आप गोपनीयता नीति को स्वीकार करते हैं?";
+
+  @override
+  String get privacyPolicyLearnMore => "अधिक जानें →";
+
+  @override
+  String get privacyPolicyDecline => "मैं अस्वीकार करता हूँ";
+
+  @override
   String get privacyPolicyClose => "बंद करें";
 
   @override
@@ -3507,6 +3558,15 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get privacyPolicyAccept => "Accetto";
+
+  @override
+  String get privacyPolicyPrompt => "Accetti l'informativa sulla privacy?";
+
+  @override
+  String get privacyPolicyLearnMore => "Ulteriori informazioni →";
+
+  @override
+  String get privacyPolicyDecline => "Rifiuto";
 
   @override
   String get privacyPolicyClose => "Chiudi";
@@ -4033,6 +4093,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get privacyPolicyAccept => "同意します";
 
   @override
+  String get privacyPolicyPrompt => "プライバシーポリシーに同意しますか？";
+
+  @override
+  String get privacyPolicyLearnMore => "詳しく見る →";
+
+  @override
+  String get privacyPolicyDecline => "同意しません";
+
+  @override
   String get privacyPolicyClose => "閉じる";
 
   @override
@@ -4557,6 +4626,15 @@ class AppLocalizationsKa extends AppLocalizations {
   String get privacyPolicyAccept => "ვეთანხმები";
 
   @override
+  String get privacyPolicyPrompt => "ეთანხმებით კონფიდენციალურობის პოლიტიკას?";
+
+  @override
+  String get privacyPolicyLearnMore => "გაიგეთ მეტი →";
+
+  @override
+  String get privacyPolicyDecline => "ვუარყოფ";
+
+  @override
   String get privacyPolicyClose => "დახურვა";
 
   @override
@@ -5079,6 +5157,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get privacyPolicyAccept => "동의합니다";
+
+  @override
+  String get privacyPolicyPrompt => "개인정보 처리방침에 동의하시겠습니까?";
+
+  @override
+  String get privacyPolicyLearnMore => "자세히 보기 →";
+
+  @override
+  String get privacyPolicyDecline => "동의하지 않음";
 
   @override
   String get privacyPolicyClose => "닫기";
@@ -5609,6 +5696,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get privacyPolicyAccept => "Принимаю";
 
   @override
+  String get privacyPolicyPrompt => "Вы принимаете Политику конфиденциальности?";
+
+  @override
+  String get privacyPolicyLearnMore => "Подробнее →";
+
+  @override
+  String get privacyPolicyDecline => "Отклоняю";
+
+  @override
   String get privacyPolicyClose => "Закрыть";
 
   @override
@@ -6137,6 +6233,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get privacyPolicyAccept => "Приймаю";
 
   @override
+  String get privacyPolicyPrompt => "Ви приймаєте Політику конфіденційності?";
+
+  @override
+  String get privacyPolicyLearnMore => "Детальніше →";
+
+  @override
+  String get privacyPolicyDecline => "Відхиляю";
+
+  @override
   String get privacyPolicyClose => "Закрити";
 
   @override
@@ -6657,6 +6762,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get privacyPolicyAccept => "我同意";
+
+  @override
+  String get privacyPolicyPrompt => "您是否接受隐私政策？";
+
+  @override
+  String get privacyPolicyLearnMore => "了解详情 →";
+
+  @override
+  String get privacyPolicyDecline => "我不同意";
 
   @override
   String get privacyPolicyClose => "关闭";

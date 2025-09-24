@@ -153,10 +153,7 @@ class SettingsPage extends StatelessWidget {
             leading: Icon(Icons.privacy_tip_outlined, size: iconSize),
             title: Text(l10n.privacyPolicyTitle),
             onTap: () async {
-              await showPrivacyPolicyDialog(
-                context,
-                requireAcceptance: false,
-              );
+              await openPrivacyPolicyLink(context);
             },
           ),
           ],
