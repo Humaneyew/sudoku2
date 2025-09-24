@@ -41,6 +41,7 @@ class _BattlePageState extends State<BattlePage>
 
   bool _victoryShown = false;
   bool _defeatShown = false;
+  bool _battleLossRecorded = false;
   bool _opponentFinished = false;
   int _observedSession = -1;
 
@@ -92,6 +93,7 @@ class _BattlePageState extends State<BattlePage>
     _observedSession = app.sessionId;
     _victoryShown = false;
     _defeatShown = false;
+    _battleLossRecorded = false;
     final startMs = app.current?.elapsedMs ?? 0;
     _startTimer(app, startMs);
     _setupOpponent(app, resetProfile: true);
@@ -223,6 +225,7 @@ class _BattlePageState extends State<BattlePage>
       _observedSession = app.sessionId;
       _victoryShown = false;
       _defeatShown = false;
+      _battleLossRecorded = false;
       final startMs = app.current?.elapsedMs ?? 0;
       _startTimer(app, startMs);
       _setupOpponent(app, resetProfile: true);
@@ -268,6 +271,7 @@ class _BattlePageState extends State<BattlePage>
       _opponentFinished =
           totalCells <= 0 ? true : initialSolved >= totalCells;
       _defeatShown = false;
+      _battleLossRecorded = false;
     });
 
     _baseOpponentTempo = _estimateOpponentTempo(app, totalCells);
@@ -523,18 +527,18 @@ class _BattlePageState extends State<BattlePage>
     if (!_defeatShown) {
       if (app.isOutOfLives) {
         _defeatShown = true;
+        _battleLossRecorded = false;
         _timer?.cancel();
         _opponentTicker?.stop();
-        app.loseBattle();
         _showDefeatDialog(app);
         return;
       }
 
       if (_opponentFinished && !app.isSolved) {
         _defeatShown = true;
+        _battleLossRecorded = false;
         _timer?.cancel();
         _opponentTicker?.stop();
-        app.loseBattle();
         _showDefeatDialog(app);
       }
     }
@@ -548,6 +552,10 @@ class _BattlePageState extends State<BattlePage>
 
     final app = _appState;
     if (app != null) {
+      if (_defeatShown && !_battleLossRecorded) {
+        _battleLossRecorded = true;
+        app.loseBattle();
+      }
       app.removeListener(_appStateListener);
       if (app.current != null) {
         app.current!.elapsedMs = _elapsedVN.value;
@@ -848,6 +856,7 @@ class _BattlePageState extends State<BattlePage>
     showDialog<void>(
       context: context,
       barrierDismissible: false,
+      barrierColor: Colors.black54,
       builder: (dialogContext) {
         return _BattleDefeatDialog(
           reduceMotion: reduceMotion,
@@ -856,6 +865,10 @@ class _BattlePageState extends State<BattlePage>
               return;
             }
             Navigator.of(dialogContext).pop();
+            if (!_battleLossRecorded) {
+              _battleLossRecorded = true;
+              app.loseBattle();
+            }
             _startRematch(app);
           },
           onExit: () {
@@ -864,6 +877,10 @@ class _BattlePageState extends State<BattlePage>
             }
             final navigator = Navigator.of(dialogContext);
             navigator.pop();
+            if (!_battleLossRecorded) {
+              _battleLossRecorded = true;
+              app.loseBattle();
+            }
             navigator.pop();
           },
         );
@@ -880,6 +897,7 @@ class _BattlePageState extends State<BattlePage>
     _setupOpponent(app, resetProfile: true);
     _victoryShown = false;
     _defeatShown = false;
+    _battleLossRecorded = false;
   }
 }
 
