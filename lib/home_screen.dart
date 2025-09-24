@@ -26,47 +26,102 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
+  static bool _onboardingShownThisSession = false;
+  bool _onboardingScheduled = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _maybeShowOnboarding());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scheduleOnboarding());
   }
 
-  Future<void> _maybeShowOnboarding() async {
-    if (!mounted) {
+  void _scheduleOnboarding() {
+    if (!mounted || _onboardingScheduled || _onboardingShownThisSession) {
       return;
     }
+    _onboardingScheduled = true;
+    _runOnboardingFlow();
+  }
+
+  Future<void> _runOnboardingFlow() async {
+    await _waitForRouteToBeCurrent();
+    if (!mounted) {
+      _onboardingScheduled = false;
+      return;
+    }
+
+    if (_onboardingShownThisSession) {
+      _onboardingScheduled = false;
+      return;
+    }
+
     final app = context.read<AppState>();
-    if (!app.privacyPolicyAccepted) {
+    final needsPolicy = !app.privacyPolicyAccepted;
+    final needsTutorial = !app.tutorialSeen;
+
+    if (!needsPolicy && !needsTutorial) {
+      _onboardingShownThisSession = true;
+      _onboardingScheduled = false;
+      return;
+    }
+
+    _onboardingShownThisSession = true;
+
+    if (needsPolicy) {
       final acceptedPolicy = await showPrivacyPolicyDialog(
         context,
         requireAcceptance: true,
       );
       if (!mounted) {
+        _onboardingScheduled = false;
         return;
       }
       if (!acceptedPolicy) {
+        _onboardingShownThisSession = false;
+        _onboardingScheduled = false;
+        if (mounted) {
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _scheduleOnboarding());
+        }
         return;
       }
       app.markPrivacyPolicyAccepted();
     }
+
+    if (!mounted) {
+      _onboardingScheduled = false;
+      return;
+    }
+
+    if (!app.tutorialSeen) {
+      final acceptedTutorial = await showHowToPlayDialog(
+        context,
+        barrierDismissible: false,
+      );
+      if (!mounted) {
+        _onboardingScheduled = false;
+        return;
+      }
+      if (acceptedTutorial) {
+        app.markTutorialSeen();
+      }
+    }
+
+    _onboardingScheduled = false;
+  }
+
+  Future<void> _waitForRouteToBeCurrent() async {
     if (!mounted) {
       return;
     }
-    if (app.tutorialSeen) {
-      return;
-    }
-    final accepted = await showHowToPlayDialog(
-      context,
-      barrierDismissible: false,
-    );
-    if (!mounted) {
-      return;
-    }
-    if (accepted) {
-      app.markTutorialSeen();
+    await Future<void>.delayed(Duration.zero);
+    while (mounted) {
+      final route = ModalRoute.of(context);
+      if (route == null || route.isCurrent) {
+        await Future<void>.delayed(Duration.zero);
+        return;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 16));
     }
   }
 
