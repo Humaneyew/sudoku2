@@ -844,93 +844,28 @@ class _BattlePageState extends State<BattlePage>
   }
 
   void _showDefeatDialog(AppState app) {
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
-        final l10n = AppLocalizations.of(context)!;
-        final reduceMotion = MediaQuery.of(context).disableAnimations;
-        final duration =
-            reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
-        final theme = Theme.of(context);
-        final colors = theme.extension<SudokuColors>()!;
-        return TweenAnimationBuilder<double>(
-          tween: Tween(begin: reduceMotion ? 1.0 : 0.0, end: 1.0),
-          duration: duration,
-          curve: Curves.easeOut,
-          builder: (context, value, child) {
-            final scale = reduceMotion ? 1.0 : 0.95 + 0.05 * value;
-            return Opacity(
-              opacity: value,
-              child: Transform.scale(scale: scale, child: child),
-            );
+      builder: (dialogContext) {
+        return _BattleDefeatDialog(
+          reduceMotion: reduceMotion,
+          onNewGame: () {
+            if (!mounted) {
+              return;
+            }
+            Navigator.of(dialogContext).pop();
+            _startRematch(app);
           },
-          child: Dialog(
-            insetPadding: const EdgeInsets.symmetric(horizontal: 36),
-            backgroundColor: theme.colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 88,
-                    height: 88,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: colors.failureBadgeGradient,
-                    ),
-                    child: Icon(
-                      Icons.favorite,
-                      color: theme.colorScheme.onPrimary,
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    l10n.battleSimpleDefeatTitle,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                        _startRematch(app);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.error,
-                        foregroundColor: theme.colorScheme.onError,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      child: Text(l10n.newGame),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      if (!context.mounted) return;
-                      final navigator = Navigator.of(context);
-                      navigator.pop();
-                      navigator.pop();
-                    },
-                    child: Text(l10n.battleExitToMainMenu),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          onExit: () {
+            if (!mounted) {
+              return;
+            }
+            final navigator = Navigator.of(dialogContext);
+            navigator.pop();
+            navigator.pop();
+          },
         );
       },
     );
@@ -945,6 +880,100 @@ class _BattlePageState extends State<BattlePage>
     _setupOpponent(app, resetProfile: true);
     _victoryShown = false;
     _defeatShown = false;
+  }
+}
+
+class _BattleDefeatDialog extends StatelessWidget {
+  final bool reduceMotion;
+  final VoidCallback onNewGame;
+  final VoidCallback onExit;
+
+  const _BattleDefeatDialog({
+    required this.reduceMotion,
+    required this.onNewGame,
+    required this.onExit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
+    final duration =
+        reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: reduceMotion ? 1.0 : 0.0, end: 1.0),
+      duration: duration,
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        final scale = reduceMotion ? 1.0 : 0.95 + 0.05 * value;
+        return Opacity(
+          opacity: value,
+          child: Transform.scale(
+            scale: scale,
+            child: child,
+          ),
+        );
+      },
+      child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 36),
+        backgroundColor: theme.colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: colors.failureBadgeGradient,
+                ),
+                child: Icon(
+                  Icons.favorite,
+                  color: theme.colorScheme.onPrimary,
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                l10n.battleSimpleDefeatTitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: onNewGame,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.error,
+                    foregroundColor: theme.colorScheme.onError,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text(l10n.newGame),
+                ),
+              ),
+              TextButton(
+                onPressed: onExit,
+                child: Text(l10n.battleExitToMainMenu),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
