@@ -15,7 +15,6 @@ import 'theme.dart';
 import 'championship/championship_model.dart';
 import 'layout/layout_scale.dart';
 import 'widgets/how_to_play_dialog.dart';
-import 'widgets/privacy_policy_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,21 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
     final app = context.read<AppState>();
-    if (!app.privacyAccepted) {
-      final accepted = await showPrivacyPolicyDialog(
-        context,
-        barrierDismissible: false,
-      );
-      if (!mounted) {
-        return;
-      }
-      if (accepted) {
-        app.markPrivacyAccepted();
-      }
-    }
-    if (!mounted || !app.privacyAccepted) {
-      return;
-    }
     if (app.tutorialSeen) {
       return;
     }

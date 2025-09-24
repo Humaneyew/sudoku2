@@ -260,16 +260,6 @@ abstract class AppLocalizations {
 
   String get howToPlayAction;
 
-  String get privacyPolicyTitle;
-
-  String get privacyPolicyBody;
-
-  String get privacyPolicyFullPolicyLabel;
-
-  String get privacyPolicyLinkText;
-
-  String get privacyPolicyAccept;
-
   String get championshipLocalSection;
 
   String get hideCompletedNumbersLabel;
@@ -805,21 +795,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get howToPlayAction => "Alles klar";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Dieses Spiel verwendet Google AdMob-Werbung. Wir sammeln keine personenbezogenen Daten.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Vollständige Richtlinie:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Akzeptieren";
-
-  @override
   String get championshipLocalSection => "Meisterschaft (lokal)";
 
   @override
@@ -1330,21 +1305,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howToPlayAction => "Got it";
-
-  @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "This game uses Google AdMob ads. We do not collect personal data.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Full policy:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Accept";
 
   @override
   String get championshipLocalSection => "Championship (local)";
@@ -1859,21 +1819,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get howToPlayAction => "Entendido";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Este juego utiliza anuncios de Google AdMob. No recopilamos datos personales.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Política completa:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Aceptar";
-
-  @override
   String get championshipLocalSection => "Campeonato (local)";
 
   @override
@@ -2384,21 +2329,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get howToPlayAction => "Compris";
-
-  @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Ce jeu utilise la publicité Google AdMob. Nous ne collectons aucune donnée personnelle.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Version complète de la politique :";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Accepter";
 
   @override
   String get championshipLocalSection => "Championnat (local)";
@@ -2913,21 +2843,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get howToPlayAction => "ठीक है";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "यह खेल Google AdMob विज्ञापनों का उपयोग करता है। हम व्यक्तिगत डेटा एकत्र नहीं करते।";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "पूर्ण नीति:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "स्वीकार करें";
-
-  @override
   String get championshipLocalSection => "चैम्पियनशिप (स्थानीय)";
 
   @override
@@ -3438,21 +3353,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get howToPlayAction => "Ho capito";
-
-  @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Questo gioco utilizza gli annunci di Google AdMob. Non raccogliamo dati personali.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Informativa completa:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Accetta";
 
   @override
   String get championshipLocalSection => "Campionato (locale)";
@@ -3967,21 +3867,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get howToPlayAction => "わかった";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "このゲームは Google AdMob 広告を使用しています。私たちは個人データを収集しません。";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "ポリシー全文:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "同意する";
-
-  @override
   String get championshipLocalSection => "チャンピオンシップ（ローカル）";
 
   @override
@@ -4494,21 +4379,6 @@ class AppLocalizationsKa extends AppLocalizations {
   String get howToPlayAction => "გასაგებია";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "ეს თამაში იყენებს Google AdMob რეკლამას. ჩვენ არ ვაგროვებთ პირად მონაცემებს.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "პოლიტიკის სრული ვერსია:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "ვეთანხმები";
-
-  @override
   String get championshipLocalSection => "ჩემპიონატი (ლოკალური)";
 
   @override
@@ -5019,21 +4889,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get howToPlayAction => "알겠어요";
-
-  @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "이 게임은 Google AdMob 광고를 사용합니다. 우리는 개인 데이터를 수집하지 않습니다.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "전체 정책:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "동의";
 
   @override
   String get championshipLocalSection => "챔피언십 (지역)";
@@ -5552,21 +5407,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get howToPlayAction => "ОК";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Эта игра использует рекламу Google AdMob. Мы не собираем личные данные.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Полная версия политики:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Принять";
-
-  @override
   String get championshipLocalSection => "Чемпионат (локально)";
 
   @override
@@ -6083,21 +5923,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get howToPlayAction => "Зрозуміло";
 
   @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "Ця гра використовує рекламу Google AdMob. Ми не збираємо особистих даних.";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "Повна версія політики:";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "Прийняти";
-
-  @override
   String get championshipLocalSection => "Чемпіонат (локально)";
 
   @override
@@ -6606,21 +6431,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get howToPlayAction => "知道了";
-
-  @override
-  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
-
-  @override
-  String get privacyPolicyBody => "此游戏使用 Google AdMob 广告。我们不会收集个人数据。";
-
-  @override
-  String get privacyPolicyFullPolicyLabel => "完整隐私政策：";
-
-  @override
-  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
-
-  @override
-  String get privacyPolicyAccept => "接受";
 
   @override
   String get championshipLocalSection => "锦标赛（本地）";
