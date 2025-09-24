@@ -85,7 +85,10 @@ class _BattlePageState extends State<BattlePage>
     app.addListener(_appStateListener);
 
     _ensureGameStarted(app);
-    unawaited(_promptForFlagIfNeeded(app));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_promptForFlagIfNeeded(app));
+    });
     _observedSession = app.sessionId;
     _victoryShown = false;
     _defeatShown = false;
@@ -106,18 +109,22 @@ class _BattlePageState extends State<BattlePage>
   Future<void> _promptForFlagIfNeeded(AppState app) async {
     if (!mounted) return;
     if (_flagFlowInProgress) return;
-    if (app.playerFlag != null && app.playerFlag!.isNotEmpty) {
-      return;
-    }
+    if ((app.playerFlag?.isNotEmpty ?? false)) return;
 
     _flagFlowInProgress = true;
     try {
+      await Future<void>.delayed(Duration.zero);
+      while (mounted && !(ModalRoute.of(context)?.isCurrent ?? false)) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+
       while (mounted && (app.playerFlag == null || app.playerFlag!.isEmpty)) {
         final selected = await showFlagPicker(context);
         if (!mounted) return;
 
-        await _waitForCurrentRoute();
-        if (!mounted) return;
+        while (mounted && !(ModalRoute.of(context)?.isCurrent ?? false)) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
 
         if (selected == null || selected.isEmpty) {
           break;
@@ -132,34 +139,11 @@ class _BattlePageState extends State<BattlePage>
         }
       }
 
-      if (!mounted) {
-        return;
-      }
-
-      if (app.playerFlag == null || app.playerFlag!.isEmpty) {
-        app.setPlayerFlag(kWorldFlags.first);
+      if (mounted && (app.playerFlag == null || app.playerFlag!.isEmpty)) {
+        // app.setPlayerFlag(kWorldFlags.first);
       }
     } finally {
       _flagFlowInProgress = false;
-    }
-  }
-
-  Future<void> _waitForCurrentRoute() async {
-    if (!mounted) return;
-    final completer = Completer<void>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!completer.isCompleted) {
-        completer.complete();
-      }
-    });
-    await completer.future;
-    if (!mounted) return;
-
-    while (mounted && !(ModalRoute.of(context)?.isCurrent ?? false)) {
-      await Future.delayed(const Duration(milliseconds: 50));
-      if (!mounted) {
-        break;
-      }
     }
   }
 

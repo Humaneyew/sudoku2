@@ -11,6 +11,7 @@ Future<String?> showFlagPicker(
   final l10n = AppLocalizations.of(context)!;
   return showModalBottomSheet<String>(
     context: context,
+    useRootNavigator: true,
     backgroundColor: theme.colorScheme.surface,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
