@@ -13,6 +13,7 @@ class IntroScreen extends StatefulWidget {
 class _IntroScreenState extends State<IntroScreen> {
   late final VideoPlayerController _controller;
   Timer? _navigationTimer;
+  bool _navigated = false;
 
   @override
   void initState() {
@@ -33,9 +34,10 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   void _navigateToHome() {
-    if (!mounted) {
+    if (!mounted || _navigated) {
       return;
     }
+    _navigated = true;
     Navigator.pushReplacementNamed(context, '/home');
   }
 
