@@ -59,6 +59,7 @@ class _BattlePageState extends State<BattlePage>
   double _burstDurationSeconds = 0.5;
   double _baseOpponentTempo = 0.05; // cells per second
   Duration _lastTick = Duration.zero;
+  bool _flagFlowInProgress = false;
 
   @override
   void initState() {
@@ -104,29 +105,61 @@ class _BattlePageState extends State<BattlePage>
 
   Future<void> _promptForFlagIfNeeded(AppState app) async {
     if (!mounted) return;
+    if (_flagFlowInProgress) return;
     if (app.playerFlag != null && app.playerFlag!.isNotEmpty) {
       return;
     }
 
-    while (mounted && (app.playerFlag == null || app.playerFlag!.isEmpty)) {
-      final selected = await showFlagPicker(context);
-      if (!mounted) return;
+    _flagFlowInProgress = true;
+    try {
+      while (mounted && (app.playerFlag == null || app.playerFlag!.isEmpty)) {
+        final selected = await showFlagPicker(context);
+        if (!mounted) return;
 
-      if (selected == null || selected.isEmpty) {
-        break;
+        await _waitForCurrentRoute();
+        if (!mounted) return;
+
+        if (selected == null || selected.isEmpty) {
+          break;
+        }
+
+        final confirmed = await _showFlagConfirmationDialog(selected);
+        if (!mounted) return;
+
+        if (confirmed == true) {
+          app.setPlayerFlag(selected);
+          return;
+        }
       }
 
-      final confirmed = await _showFlagConfirmationDialog(selected);
-      if (!mounted) return;
-
-      if (confirmed == true) {
-        app.setPlayerFlag(selected);
+      if (!mounted) {
         return;
       }
-    }
 
-    if (app.playerFlag == null || app.playerFlag!.isEmpty) {
-      app.setPlayerFlag(kWorldFlags.first);
+      if (app.playerFlag == null || app.playerFlag!.isEmpty) {
+        app.setPlayerFlag(kWorldFlags.first);
+      }
+    } finally {
+      _flagFlowInProgress = false;
+    }
+  }
+
+  Future<void> _waitForCurrentRoute() async {
+    if (!mounted) return;
+    final completer = Completer<void>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+    await completer.future;
+    if (!mounted) return;
+
+    while (mounted && !(ModalRoute.of(context)?.isCurrent ?? false)) {
+      await Future.delayed(const Duration(milliseconds: 50));
+      if (!mounted) {
+        break;
+      }
     }
   }
 
