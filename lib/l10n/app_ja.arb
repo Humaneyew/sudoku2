@@ -254,6 +254,10 @@
   "confirm": "確認する",
   "cancel": "キャンセル",
   "done": "終わり",
+  "privacyPolicyTitle": "プライバシーポリシー",
+  "privacyPolicyAccept": "同意します",
+  "privacyPolicyClose": "閉じる",
+  "privacyPolicyLoadError": "プライバシーポリシーを読み込めませんでした。もう一度お試しください。",
   "failed": "失敗した",
   "rankBadgeChasing": "ランク #{current} • +{delta} で #{target}へ",
   "@rankBadgeChasing": {

@@ -254,6 +254,10 @@
   "confirm": "확인하다",
   "cancel": "취소",
   "done": "완료",
+  "privacyPolicyTitle": "개인정보 처리방침",
+  "privacyPolicyAccept": "동의합니다",
+  "privacyPolicyClose": "닫기",
+  "privacyPolicyLoadError": "개인정보 처리방침을 불러오지 못했습니다. 다시 시도해 주세요.",
   "failed": "실패한",
   "rankBadgeChasing": "랭크 #{current} • +{delta} #{target}까지",
   "@rankBadgeChasing": {

@@ -254,6 +254,10 @@
   "confirm": "确认",
   "cancel": "取消",
   "done": "完成",
+  "privacyPolicyTitle": "隐私政策",
+  "privacyPolicyAccept": "我同意",
+  "privacyPolicyClose": "关闭",
+  "privacyPolicyLoadError": "无法加载隐私政策。请重试。",
   "failed": "失败",
   "rankBadgeChasing": "第 {current} 名 • 还差 {delta} 分到第 {target} 名",
   "@rankBadgeChasing": {

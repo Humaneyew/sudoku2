@@ -254,6 +254,10 @@
   "confirm": "Bestätigen",
   "cancel": "Abbrechen",
   "done": "Fertig",
+  "privacyPolicyTitle": "Datenschutzerklärung",
+  "privacyPolicyAccept": "Ich stimme zu",
+  "privacyPolicyClose": "Schließen",
+  "privacyPolicyLoadError": "Datenschutzerklärung konnte nicht geladen werden. Bitte versuche es erneut.",
   "failed": "Fehlgeschlagen",
   "rankBadgeChasing": "Rang #{current} • +{delta} bis #{target}",
   "@rankBadgeChasing": {

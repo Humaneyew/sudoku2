@@ -254,6 +254,10 @@
   "confirm": "Confermare",
   "cancel": "Cancellare",
   "done": "Fatto",
+  "privacyPolicyTitle": "Informativa sulla privacy",
+  "privacyPolicyAccept": "Accetto",
+  "privacyPolicyClose": "Chiudi",
+  "privacyPolicyLoadError": "Impossibile caricare l'informativa sulla privacy. Riprova.",
   "failed": "Fallito",
   "rankBadgeChasing": "Classifica #{current} • +{delta} fino a #{target}",
   "@rankBadgeChasing": {

@@ -312,6 +312,14 @@ abstract class AppLocalizations {
 
   String get done;
 
+  String get privacyPolicyTitle;
+
+  String get privacyPolicyAccept;
+
+  String get privacyPolicyClose;
+
+  String get privacyPolicyLoadError;
+
   String get failed;
 
   String rankBadgeChasing(int current, int delta, int target);
@@ -875,6 +883,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get done => "Fertig";
 
   @override
+  String get privacyPolicyTitle => "Datenschutzerklärung";
+
+  @override
+  String get privacyPolicyAccept => "Ich stimme zu";
+
+  @override
+  String get privacyPolicyClose => "Schließen";
+
+  @override
+  String get privacyPolicyLoadError => "Datenschutzerklärung konnte nicht geladen werden. Bitte versuche es erneut.";
+
+  @override
   String get failed => "Fehlgeschlagen";
 
   @override
@@ -1385,6 +1405,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get done => "Done";
+
+  @override
+  String get privacyPolicyTitle => "Privacy Policy";
+
+  @override
+  String get privacyPolicyAccept => "I accept";
+
+  @override
+  String get privacyPolicyClose => "Close";
+
+  @override
+  String get privacyPolicyLoadError => "Failed to load privacy policy. Please try again.";
 
   @override
   String get failed => "Failed";
@@ -1899,6 +1931,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get done => "Hecho";
 
   @override
+  String get privacyPolicyTitle => "Política de privacidad";
+
+  @override
+  String get privacyPolicyAccept => "Acepto";
+
+  @override
+  String get privacyPolicyClose => "Cerrar";
+
+  @override
+  String get privacyPolicyLoadError => "No se pudo cargar la política de privacidad. Inténtalo de nuevo.";
+
+  @override
   String get failed => "Fallido";
 
   @override
@@ -2409,6 +2453,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get done => "Terminé";
+
+  @override
+  String get privacyPolicyTitle => "Politique de confidentialité";
+
+  @override
+  String get privacyPolicyAccept => "J'accepte";
+
+  @override
+  String get privacyPolicyClose => "Fermer";
+
+  @override
+  String get privacyPolicyLoadError => "Impossible de charger la politique de confidentialité. Veuillez réessayer.";
 
   @override
   String get failed => "Échec";
@@ -2923,6 +2979,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get done => "पूर्ण";
 
   @override
+  String get privacyPolicyTitle => "गोपनीयता नीति";
+
+  @override
+  String get privacyPolicyAccept => "मैं सहमत हूँ";
+
+  @override
+  String get privacyPolicyClose => "बंद करें";
+
+  @override
+  String get privacyPolicyLoadError => "गोपनीयता नीति लोड नहीं हो सकी। कृपया दोबारा प्रयास करें।";
+
+  @override
   String get failed => "असफल";
 
   @override
@@ -3433,6 +3501,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get done => "Fatto";
+
+  @override
+  String get privacyPolicyTitle => "Informativa sulla privacy";
+
+  @override
+  String get privacyPolicyAccept => "Accetto";
+
+  @override
+  String get privacyPolicyClose => "Chiudi";
+
+  @override
+  String get privacyPolicyLoadError => "Impossibile caricare l'informativa sulla privacy. Riprova.";
 
   @override
   String get failed => "Fallito";
@@ -3947,6 +4027,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get done => "終わり";
 
   @override
+  String get privacyPolicyTitle => "プライバシーポリシー";
+
+  @override
+  String get privacyPolicyAccept => "同意します";
+
+  @override
+  String get privacyPolicyClose => "閉じる";
+
+  @override
+  String get privacyPolicyLoadError => "プライバシーポリシーを読み込めませんでした。もう一度お試しください。";
+
+  @override
   String get failed => "失敗した";
 
   @override
@@ -4459,6 +4551,18 @@ class AppLocalizationsKa extends AppLocalizations {
   String get done => "დასრულდა";
 
   @override
+  String get privacyPolicyTitle => "კონფიდენციალურობის პოლიტიკა";
+
+  @override
+  String get privacyPolicyAccept => "ვეთანხმები";
+
+  @override
+  String get privacyPolicyClose => "დახურვა";
+
+  @override
+  String get privacyPolicyLoadError => "კონფიდენციალურობის პოლიტიკის ჩატვირთვა ვერ მოხერხდა. გთხოვთ, სცადეთ ხელახლა.";
+
+  @override
   String get failed => "ვერ შესრულდა";
 
   @override
@@ -4969,6 +5073,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get done => "완료";
+
+  @override
+  String get privacyPolicyTitle => "개인정보 처리방침";
+
+  @override
+  String get privacyPolicyAccept => "동의합니다";
+
+  @override
+  String get privacyPolicyClose => "닫기";
+
+  @override
+  String get privacyPolicyLoadError => "개인정보 처리방침을 불러오지 못했습니다. 다시 시도해 주세요.";
 
   @override
   String get failed => "실패한";
@@ -5487,6 +5603,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get done => "Готово";
 
   @override
+  String get privacyPolicyTitle => "Политика конфиденциальности";
+
+  @override
+  String get privacyPolicyAccept => "Принимаю";
+
+  @override
+  String get privacyPolicyClose => "Закрыть";
+
+  @override
+  String get privacyPolicyLoadError => "Не удалось загрузить политику конфиденциальности. Повторите попытку.";
+
+  @override
   String get failed => "Ошибка";
 
   @override
@@ -6003,6 +6131,18 @@ class AppLocalizationsUk extends AppLocalizations {
   String get done => "Готово";
 
   @override
+  String get privacyPolicyTitle => "Політика конфіденційності";
+
+  @override
+  String get privacyPolicyAccept => "Приймаю";
+
+  @override
+  String get privacyPolicyClose => "Закрити";
+
+  @override
+  String get privacyPolicyLoadError => "Не вдалося завантажити політику конфіденційності. Спробуйте ще раз.";
+
+  @override
   String get failed => "Помилка";
 
   @override
@@ -6511,6 +6651,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get done => "完成";
+
+  @override
+  String get privacyPolicyTitle => "隐私政策";
+
+  @override
+  String get privacyPolicyAccept => "我同意";
+
+  @override
+  String get privacyPolicyClose => "关闭";
+
+  @override
+  String get privacyPolicyLoadError => "无法加载隐私政策。请重试。";
 
   @override
   String get failed => "失败";

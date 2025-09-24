@@ -255,6 +255,10 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "done": "Done",
+  "privacyPolicyTitle": "Privacy Policy",
+  "privacyPolicyAccept": "I accept",
+  "privacyPolicyClose": "Close",
+  "privacyPolicyLoadError": "Failed to load privacy policy. Please try again.",
   "failed": "Failed",
   "rankBadgeChasing": "Rank #{current} • +{delta} to #{target}",
   "@rankBadgeChasing": {

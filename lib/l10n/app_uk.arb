@@ -254,6 +254,10 @@
   "confirm": "Підтвердити",
   "cancel": "Скасувати",
   "done": "Готово",
+  "privacyPolicyTitle": "Політика конфіденційності",
+  "privacyPolicyAccept": "Приймаю",
+  "privacyPolicyClose": "Закрити",
+  "privacyPolicyLoadError": "Не вдалося завантажити політику конфіденційності. Спробуйте ще раз.",
   "failed": "Помилка",
   "rankBadgeChasing": "Місце #{current} • +{delta} до #{target}",
   "@rankBadgeChasing": {

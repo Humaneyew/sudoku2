@@ -9,6 +9,7 @@ import 'championship/championship_model.dart';
 import 'language_settings_page.dart';
 import 'models.dart';
 import 'widgets/how_to_play_dialog.dart';
+import 'widgets/privacy_policy_dialog.dart';
 import 'widgets/theme_menu.dart';
 import 'layout/layout_scale.dart';
 
@@ -144,6 +145,17 @@ class SettingsPage extends StatelessWidget {
                 applicationName: l10n.appTitle,
                 applicationVersion: _appVersion,
                 applicationLegalese: l10n.aboutLegalese,
+              );
+            },
+          ),
+          ListTile(
+            key: const ValueKey('settings-privacy-policy'),
+            leading: Icon(Icons.privacy_tip_outlined, size: iconSize),
+            title: Text(l10n.privacyPolicyTitle),
+            onTap: () async {
+              await showPrivacyPolicyDialog(
+                context,
+                requireAcceptance: false,
               );
             },
           ),
