@@ -1,9 +1,7 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,7 +18,6 @@ import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _initializeMobileAds();
   final defaultLocale = ui.PlatformDispatcher.instance.locale.toLanguageTag();
   await initializeDateFormatting(defaultLocale);
 
@@ -47,19 +44,6 @@ Future<void> main() async {
       child: const SudokuApp(),
     ),
   );
-}
-
-Future<void> _initializeMobileAds() async {
-  if (kIsWeb) {
-    return;
-  }
-  switch (defaultTargetPlatform) {
-    case TargetPlatform.android:
-    case TargetPlatform.iOS:
-      await MobileAds.instance.initialize();
-    default:
-      return;
-  }
 }
 
 class SudokuApp extends StatelessWidget {
