@@ -23,7 +23,9 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => AppState()),
-          ChangeNotifierProvider(create: (_) => UndoAdController()),
+          ChangeNotifierProvider(
+            create: (_) => UndoAdController(integrationEnabled: false),
+          ),
         ],
         child: const SudokuApp(),
       ),

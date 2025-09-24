@@ -1,7 +1,9 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,7 +11,7 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 import 'championship/championship_model.dart';
 import 'championship/championship_page.dart';
 import 'home_screen.dart';
-import 'models.dart';
+import 'models.dart' as models;
 import 'screens/intro_screen.dart';
 import 'theme.dart';
 import 'hint_ad_controller.dart';
@@ -18,11 +20,11 @@ import 'undo_ad_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final defaultLocale =
-      ui.PlatformDispatcher.instance.locale.toLanguageTag();
+  await _initializeMobileAds();
+  final defaultLocale = ui.PlatformDispatcher.instance.locale.toLanguageTag();
   await initializeDateFormatting(defaultLocale);
 
-  final appState = AppState();
+  final appState = models.AppState();
   await appState.load();
 
   runApp(
@@ -47,15 +49,29 @@ Future<void> main() async {
   );
 }
 
+Future<void> _initializeMobileAds() async {
+  if (kIsWeb) {
+    return;
+  }
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+    case TargetPlatform.iOS:
+      await MobileAds.instance.initialize();
+    default:
+      return;
+  }
+}
+
 class SudokuApp extends StatelessWidget {
   const SudokuApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final app = context.watch<AppState>();
+    final app = context.watch<models.AppState>();
     final activeTheme = app.resolvedTheme();
-    final theme = buildSudokuTheme(activeTheme)
-        .copyWith(pageTransitionsTheme: _pageTransitionsTheme);
+    final theme = buildSudokuTheme(
+      activeTheme,
+    ).copyWith(pageTransitionsTheme: _pageTransitionsTheme);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
