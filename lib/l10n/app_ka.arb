@@ -254,6 +254,10 @@
   "confirm": "დადასტურება",
   "cancel": "გაუქმება",
   "done": "დასრულდა",
+  "privacyPolicyTitle": "კონფიდენციალურობის პოლიტიკა",
+  "privacyPolicyAccept": "ვეთანხმები",
+  "privacyPolicyClose": "დახურვა",
+  "privacyPolicyLoadError": "კონფიდენციალურობის პოლიტიკის ჩატვირთვა ვერ მოხერხდა. გთხოვთ, სცადეთ ხელახლა.",
   "failed": "ვერ შესრულდა",
   "rankBadgeChasing": "რეიტინგი #{current} • +{delta} რათა მიაღწიოთ #{target}",
   "@rankBadgeChasing": {

@@ -254,6 +254,10 @@
   "confirm": "Подтвердить",
   "cancel": "Отмена",
   "done": "Готово",
+  "privacyPolicyTitle": "Политика конфиденциальности",
+  "privacyPolicyAccept": "Принимаю",
+  "privacyPolicyClose": "Закрыть",
+  "privacyPolicyLoadError": "Не удалось загрузить политику конфиденциальности. Повторите попытку.",
   "failed": "Ошибка",
   "rankBadgeChasing": "Место #{current} • +{delta} до #{target}",
   "@rankBadgeChasing": {

@@ -254,6 +254,10 @@
   "confirm": "पुष्टि करें",
   "cancel": "रद्द करें",
   "done": "पूर्ण",
+  "privacyPolicyTitle": "गोपनीयता नीति",
+  "privacyPolicyAccept": "मैं सहमत हूँ",
+  "privacyPolicyClose": "बंद करें",
+  "privacyPolicyLoadError": "गोपनीयता नीति लोड नहीं हो सकी। कृपया दोबारा प्रयास करें।",
   "failed": "असफल",
   "rankBadgeChasing": "रैंक #{current} • +{delta} से #{target}",
   "@rankBadgeChasing": {

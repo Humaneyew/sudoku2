@@ -254,6 +254,10 @@
   "confirm": "Confirmar",
   "cancel": "Cancelar",
   "done": "Hecho",
+  "privacyPolicyTitle": "Política de privacidad",
+  "privacyPolicyAccept": "Acepto",
+  "privacyPolicyClose": "Cerrar",
+  "privacyPolicyLoadError": "No se pudo cargar la política de privacidad. Inténtalo de nuevo.",
   "failed": "Fallido",
   "rankBadgeChasing": "Rango #{current} • +{delta} hacia #{target}",
   "@rankBadgeChasing": {
