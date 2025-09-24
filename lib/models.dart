@@ -269,6 +269,7 @@ class AppState extends ChangeNotifier {
   Difficulty featuredDifficulty = Difficulty.novice;
 
   String? playerFlag;
+  bool privacyAccepted = false;
   bool tutorialSeen = false;
 
   int totalStars = 0;
@@ -470,6 +471,7 @@ class AppState extends ChangeNotifier {
 
       soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
       vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
+      privacyAccepted = prefs.getBool('privacyAccepted') ?? privacyAccepted;
       tutorialSeen = prefs.getBool('tutorialSeen') ?? tutorialSeen;
       final savedGame = prefs.getString('currentGame');
       if (savedGame != null) {
@@ -731,6 +733,15 @@ class AppState extends ChangeNotifier {
     vibrationEnabled = enabled;
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void markPrivacyAccepted() {
+    if (privacyAccepted) return;
+    privacyAccepted = true;
+    _persist((prefs) async {
+      await prefs.setBool('privacyAccepted', true);
     });
     notifyListeners();
   }

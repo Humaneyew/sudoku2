@@ -260,6 +260,16 @@ abstract class AppLocalizations {
 
   String get howToPlayAction;
 
+  String get privacyPolicyTitle;
+
+  String get privacyPolicyBody;
+
+  String get privacyPolicyFullPolicyLabel;
+
+  String get privacyPolicyLinkText;
+
+  String get privacyPolicyAccept;
+
   String get championshipLocalSection;
 
   String get hideCompletedNumbersLabel;
@@ -683,8 +693,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get lifeAdTitle => "Werbung ansehen, um ein Herz wiederherzustellen";
 
   @override
-  String get lifeAdDescription =>
-      "Sieh dir diese kurze Werbung an, um ein rotes Herz wiederherzustellen und weiterzuspielen.";
+  String get lifeAdDescription => "Sieh dir diese kurze Werbung an, um ein rotes Herz wiederherzustellen und weiterzuspielen.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -781,22 +790,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get howToPlayTitle => "So spielst du";
 
   @override
-  String get howToPlayRowRule =>
-      "In jeder Zeile stehen die Ziffern 1 bis 9 ohne Wiederholung";
+  String get howToPlayRowRule => "In jeder Zeile stehen die Ziffern 1 bis 9 ohne Wiederholung";
 
   @override
-  String get howToPlayColumnRule =>
-      "In jeder Spalte stehen die Ziffern 1 bis 9 ohne Wiederholung";
+  String get howToPlayColumnRule => "In jeder Spalte stehen die Ziffern 1 bis 9 ohne Wiederholung";
 
   @override
-  String get howToPlayBoxRule =>
-      "In jedem 3×3-Block stehen die Ziffern 1 bis 9 ohne Wiederholung";
+  String get howToPlayBoxRule => "In jedem 3×3-Block stehen die Ziffern 1 bis 9 ohne Wiederholung";
 
   @override
   String get howToPlayFooter => "Fülle alle Felder aus – und du gewinnst!";
 
   @override
   String get howToPlayAction => "Alles klar";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Dieses Spiel verwendet Google AdMob-Werbung. Wir sammeln keine personenbezogenen Daten.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Vollständige Richtlinie:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Akzeptieren";
 
   @override
   String get championshipLocalSection => "Meisterschaft (lokal)";
@@ -1199,8 +1220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lifeAdTitle => "Watch ad to restore a heart";
 
   @override
-  String get lifeAdDescription =>
-      "Watch this short ad to restore a red heart and keep playing.";
+  String get lifeAdDescription => "Watch this short ad to restore a red heart and keep playing.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -1297,22 +1317,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howToPlayTitle => "How to play";
 
   @override
-  String get howToPlayRowRule =>
-      "Each row has the digits 1 to 9 with no repeats";
+  String get howToPlayRowRule => "Each row has the digits 1 to 9 with no repeats";
 
   @override
-  String get howToPlayColumnRule =>
-      "Each column has the digits 1 to 9 with no repeats";
+  String get howToPlayColumnRule => "Each column has the digits 1 to 9 with no repeats";
 
   @override
-  String get howToPlayBoxRule =>
-      "Each 3×3 box has the digits 1 to 9 with no repeats";
+  String get howToPlayBoxRule => "Each 3×3 box has the digits 1 to 9 with no repeats";
 
   @override
   String get howToPlayFooter => "Fill every cell and you win!";
 
   @override
   String get howToPlayAction => "Got it";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "This game uses Google AdMob ads. We do not collect personal data.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Full policy:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Accept";
 
   @override
   String get championshipLocalSection => "Championship (local)";
@@ -1715,8 +1747,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get lifeAdTitle => "Mira el anuncio para restaurar un corazón";
 
   @override
-  String get lifeAdDescription =>
-      "Mira este breve anuncio para restaurar un corazón rojo y seguir jugando.";
+  String get lifeAdDescription => "Mira este breve anuncio para restaurar un corazón rojo y seguir jugando.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -1813,22 +1844,34 @@ class AppLocalizationsEs extends AppLocalizations {
   String get howToPlayTitle => "Cómo jugar";
 
   @override
-  String get howToPlayRowRule =>
-      "Cada fila tiene los números del 1 al 9 sin repetir";
+  String get howToPlayRowRule => "Cada fila tiene los números del 1 al 9 sin repetir";
 
   @override
-  String get howToPlayColumnRule =>
-      "Cada columna tiene los números del 1 al 9 sin repetir";
+  String get howToPlayColumnRule => "Cada columna tiene los números del 1 al 9 sin repetir";
 
   @override
-  String get howToPlayBoxRule =>
-      "Cada cuadrado 3×3 tiene los números del 1 al 9 sin repetir";
+  String get howToPlayBoxRule => "Cada cuadrado 3×3 tiene los números del 1 al 9 sin repetir";
 
   @override
   String get howToPlayFooter => "¡Rellena todas las casillas y gana!";
 
   @override
   String get howToPlayAction => "Entendido";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Este juego utiliza anuncios de Google AdMob. No recopilamos datos personales.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Política completa:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Aceptar";
 
   @override
   String get championshipLocalSection => "Campeonato (local)";
@@ -2231,8 +2274,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lifeAdTitle => "Voir une pub pour restaurer un cœur";
 
   @override
-  String get lifeAdDescription =>
-      "Regardez cette courte publicité pour restaurer un cœur rouge et continuer à jouer.";
+  String get lifeAdDescription => "Regardez cette courte publicité pour restaurer un cœur rouge et continuer à jouer.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -2329,22 +2371,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get howToPlayTitle => "Comment jouer";
 
   @override
-  String get howToPlayRowRule =>
-      "Chaque ligne contient les chiffres de 1 à 9 sans doublons";
+  String get howToPlayRowRule => "Chaque ligne contient les chiffres de 1 à 9 sans doublons";
 
   @override
-  String get howToPlayColumnRule =>
-      "Chaque colonne contient les chiffres de 1 à 9 sans doublons";
+  String get howToPlayColumnRule => "Chaque colonne contient les chiffres de 1 à 9 sans doublons";
 
   @override
-  String get howToPlayBoxRule =>
-      "Chaque carré 3×3 contient les chiffres de 1 à 9 sans doublons";
+  String get howToPlayBoxRule => "Chaque carré 3×3 contient les chiffres de 1 à 9 sans doublons";
 
   @override
   String get howToPlayFooter => "Remplis toutes les cases et tu gagnes !";
 
   @override
   String get howToPlayAction => "Compris";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Ce jeu utilise la publicité Google AdMob. Nous ne collectons aucune donnée personnelle.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Version complète de la politique :";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Accepter";
 
   @override
   String get championshipLocalSection => "Championnat (local)";
@@ -2747,8 +2801,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get lifeAdTitle => "दिल बहाल करने के लिए विज्ञापन देखें";
 
   @override
-  String get lifeAdDescription =>
-      "यह छोटा विज्ञापन देखें ताकि लाल दिल बहाल हो और खेल जारी रखें।";
+  String get lifeAdDescription => "यह छोटा विज्ञापन देखें ताकि लाल दिल बहाल हो और खेल जारी रखें।";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -2845,22 +2898,34 @@ class AppLocalizationsHi extends AppLocalizations {
   String get howToPlayTitle => "कैसे खेलें";
 
   @override
-  String get howToPlayRowRule =>
-      "हर पंक्ति में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+  String get howToPlayRowRule => "हर पंक्ति में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
 
   @override
-  String get howToPlayColumnRule =>
-      "हर स्तंभ में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+  String get howToPlayColumnRule => "हर स्तंभ में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
 
   @override
-  String get howToPlayBoxRule =>
-      "हर 3×3 बॉक्स में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
+  String get howToPlayBoxRule => "हर 3×3 बॉक्स में 1 से 9 तक अंक बिना दोहराव के होने चाहिए";
 
   @override
   String get howToPlayFooter => "सभी खाने भरें और जीत जाएँ!";
 
   @override
   String get howToPlayAction => "ठीक है";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "यह खेल Google AdMob विज्ञापनों का उपयोग करता है। हम व्यक्तिगत डेटा एकत्र नहीं करते।";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "पूर्ण नीति:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "स्वीकार करें";
 
   @override
   String get championshipLocalSection => "चैम्पियनशिप (स्थानीय)";
@@ -3263,8 +3328,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get lifeAdTitle => "Guarda l'annuncio per ripristinare un cuore";
 
   @override
-  String get lifeAdDescription =>
-      "Guarda questo breve annuncio per ripristinare un cuore rosso e continuare a giocare.";
+  String get lifeAdDescription => "Guarda questo breve annuncio per ripristinare un cuore rosso e continuare a giocare.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -3361,22 +3425,34 @@ class AppLocalizationsIt extends AppLocalizations {
   String get howToPlayTitle => "Come si gioca";
 
   @override
-  String get howToPlayRowRule =>
-      "Ogni riga contiene i numeri da 1 a 9 senza ripetizioni";
+  String get howToPlayRowRule => "Ogni riga contiene i numeri da 1 a 9 senza ripetizioni";
 
   @override
-  String get howToPlayColumnRule =>
-      "Ogni colonna contiene i numeri da 1 a 9 senza ripetizioni";
+  String get howToPlayColumnRule => "Ogni colonna contiene i numeri da 1 a 9 senza ripetizioni";
 
   @override
-  String get howToPlayBoxRule =>
-      "Ogni riquadro 3×3 contiene i numeri da 1 a 9 senza ripetizioni";
+  String get howToPlayBoxRule => "Ogni riquadro 3×3 contiene i numeri da 1 a 9 senza ripetizioni";
 
   @override
   String get howToPlayFooter => "Riempi tutte le caselle e vinci!";
 
   @override
   String get howToPlayAction => "Ho capito";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Questo gioco utilizza gli annunci di Google AdMob. Non raccogliamo dati personali.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Informativa completa:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Accetta";
 
   @override
   String get championshipLocalSection => "Campionato (locale)";
@@ -3779,8 +3855,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get lifeAdTitle => "ハートを復元するために広告を見てください";
 
   @override
-  String get lifeAdDescription =>
-      "赤いハートを復元してプレイを続けるために、この短い広告を視聴してください。";
+  String get lifeAdDescription => "赤いハートを復元してプレイを続けるために、この短い広告を視聴してください。";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -3890,6 +3965,21 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get howToPlayAction => "わかった";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "このゲームは Google AdMob 広告を使用しています。私たちは個人データを収集しません。";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "ポリシー全文:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "同意する";
 
   @override
   String get championshipLocalSection => "チャンピオンシップ（ローカル）";
@@ -4292,8 +4382,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get lifeAdTitle => "უყურეთ რეკლამას გულის აღსადგენად";
 
   @override
-  String get lifeAdDescription =>
-      "უყურეთ ამ მოკლე რეკლამას, რათა აღდგეს წითელი გული და გააგრძელოთ თამაში.";
+  String get lifeAdDescription => "უყურეთ ამ მოკლე რეკლამას, რათა აღდგეს წითელი გული და გააგრძელოთ თამაში.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -4390,22 +4479,34 @@ class AppLocalizationsKa extends AppLocalizations {
   String get howToPlayTitle => "როგორ ვითამაშოთ";
 
   @override
-  String get howToPlayRowRule =>
-      "ყოველ რიგში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+  String get howToPlayRowRule => "ყოველ რიგში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
 
   @override
-  String get howToPlayColumnRule =>
-      "ყოველ სვეტში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+  String get howToPlayColumnRule => "ყოველ სვეტში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
 
   @override
-  String get howToPlayBoxRule =>
-      "ყოველ 3×3 კვადრატში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
+  String get howToPlayBoxRule => "ყოველ 3×3 კვადრატში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე";
 
   @override
   String get howToPlayFooter => "შეავსე ყველა უჯრა და გაიმარჯვე!";
 
   @override
   String get howToPlayAction => "გასაგებია";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "ეს თამაში იყენებს Google AdMob რეკლამას. ჩვენ არ ვაგროვებთ პირად მონაცემებს.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "პოლიტიკის სრული ვერსია:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "ვეთანხმები";
 
   @override
   String get championshipLocalSection => "ჩემპიონატი (ლოკალური)";
@@ -4808,8 +4909,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get lifeAdTitle => "하트를 복원하려면 광고를 시청하세요";
 
   @override
-  String get lifeAdDescription =>
-      "짧은 광고를 시청하여 빨간 하트를 복원하고 게임을 계속하세요.";
+  String get lifeAdDescription => "짧은 광고를 시청하여 빨간 하트를 복원하고 게임을 계속하세요.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -4906,22 +5006,34 @@ class AppLocalizationsKo extends AppLocalizations {
   String get howToPlayTitle => "플레이 방법";
 
   @override
-  String get howToPlayRowRule =>
-      "각 가로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+  String get howToPlayRowRule => "각 가로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
 
   @override
-  String get howToPlayColumnRule =>
-      "각 세로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+  String get howToPlayColumnRule => "각 세로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
 
   @override
-  String get howToPlayBoxRule =>
-      "각 3×3 칸에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
+  String get howToPlayBoxRule => "각 3×3 칸에는 1부터 9까지 숫자가 중복 없이 들어갑니다";
 
   @override
   String get howToPlayFooter => "모든 칸을 채우면 승리예요!";
 
   @override
   String get howToPlayAction => "알겠어요";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "이 게임은 Google AdMob 광고를 사용합니다. 우리는 개인 데이터를 수집하지 않습니다.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "전체 정책:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "동의";
 
   @override
   String get championshipLocalSection => "챔피언십 (지역)";
@@ -5328,8 +5440,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lifeAdTitle => "Смотрите рекламу, чтобы восстановить сердце";
 
   @override
-  String get lifeAdDescription =>
-      "Посмотрите эту короткую рекламу, чтобы восстановить красное сердце и продолжить игру.";
+  String get lifeAdDescription => "Посмотрите эту короткую рекламу, чтобы восстановить красное сердце и продолжить игру.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -5426,22 +5537,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get howToPlayTitle => "Как играть";
 
   @override
-  String get howToPlayRowRule =>
-      "В каждой строке цифры от 1 до 9 без повторов";
+  String get howToPlayRowRule => "В каждой строке цифры от 1 до 9 без повторов";
 
   @override
-  String get howToPlayColumnRule =>
-      "В каждом столбце цифры от 1 до 9 без повторов";
+  String get howToPlayColumnRule => "В каждом столбце цифры от 1 до 9 без повторов";
 
   @override
-  String get howToPlayBoxRule =>
-      "В каждом квадрате 3×3 цифры от 1 до 9 без повторов";
+  String get howToPlayBoxRule => "В каждом квадрате 3×3 цифры от 1 до 9 без повторов";
 
   @override
   String get howToPlayFooter => "Заполни все клетки — и победа!";
 
   @override
   String get howToPlayAction => "ОК";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Эта игра использует рекламу Google AdMob. Мы не собираем личные данные.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Полная версия политики:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Принять";
 
   @override
   String get championshipLocalSection => "Чемпионат (локально)";
@@ -5848,8 +5971,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get lifeAdTitle => "Перегляньте рекламу, щоб відновити серце";
 
   @override
-  String get lifeAdDescription =>
-      "Перегляньте коротку рекламу, щоб відновити червоне серце й продовжити гру.";
+  String get lifeAdDescription => "Перегляньте коротку рекламу, щоб відновити червоне серце й продовжити гру.";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -5946,22 +6068,34 @@ class AppLocalizationsUk extends AppLocalizations {
   String get howToPlayTitle => "Як грати";
 
   @override
-  String get howToPlayRowRule =>
-      "У кожному рядку цифри від 1 до 9 без повторів";
+  String get howToPlayRowRule => "У кожному рядку цифри від 1 до 9 без повторів";
 
   @override
-  String get howToPlayColumnRule =>
-      "У кожній колонці цифри від 1 до 9 без повторів";
+  String get howToPlayColumnRule => "У кожній колонці цифри від 1 до 9 без повторів";
 
   @override
-  String get howToPlayBoxRule =>
-      "У кожному квадраті 3×3 цифри від 1 до 9 без повторів";
+  String get howToPlayBoxRule => "У кожному квадраті 3×3 цифри від 1 до 9 без повторів";
 
   @override
   String get howToPlayFooter => "Заповни всі клітинки — і переможи!";
 
   @override
   String get howToPlayAction => "Зрозуміло";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "Ця гра використовує рекламу Google AdMob. Ми не збираємо особистих даних.";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "Повна версія політики:";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "Прийняти";
 
   @override
   String get championshipLocalSection => "Чемпіонат (локально)";
@@ -6362,8 +6496,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get lifeAdTitle => "观看广告以恢复爱心";
 
   @override
-  String get lifeAdDescription =>
-      "观看这段短广告以恢复一个红心并继续游戏。";
+  String get lifeAdDescription => "观看这段短广告以恢复一个红心并继续游戏。";
 
   @override
   String lifeAdCountdown(int seconds) {
@@ -6473,6 +6606,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get howToPlayAction => "知道了";
+
+  @override
+  String get privacyPolicyTitle => "Політика конфіденційності / Privacy Policy";
+
+  @override
+  String get privacyPolicyBody => "此游戏使用 Google AdMob 广告。我们不会收集个人数据。";
+
+  @override
+  String get privacyPolicyFullPolicyLabel => "完整隐私政策：";
+
+  @override
+  String get privacyPolicyLinkText => "https://github.com/UzorPlay/privacy-policy/blob/main/privacy-policy.md";
+
+  @override
+  String get privacyPolicyAccept => "接受";
 
   @override
   String get championshipLocalSection => "锦标赛（本地）";
