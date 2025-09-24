@@ -7,7 +7,7 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../hint_ad_controller.dart';
-import '../undo_ad_controller.dart';
+import '../undo_reward_controller.dart';
 
 const double _actionButtonRadiusValue = 20;
 const double _actionBadgeRadiusValue = 12;
@@ -179,16 +179,16 @@ class _UndoButton extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    return Consumer<UndoAdController>(
-      builder: (context, undoAds, _) {
-        final useUndoAd = undoAds.useAdFlow;
+    return Consumer<UndoRewardController>(
+      builder: (context, undoRewards, _) {
+        final requiresReward = undoRewards.isRewardEnabled;
         return Selector<AppState, bool>(
           selector: (_, app) => app.canUndoMove,
           builder: (context, canUndo, __) {
             final undoEnabled = canUndo;
-            final canShowAd = undoAds.isAdAvailable;
-            final badgeColor = useUndoAd
-                ? canShowAd
+            final canShowReward = undoRewards.isRewardAvailable;
+            final badgeColor = requiresReward
+                ? canShowReward
                       ? cs.secondary
                       : theme.disabledColor
                 : null;
@@ -201,19 +201,20 @@ class _UndoButton extends StatelessWidget {
               onPressed: undoEnabled
                   ? () async {
                       final app = context.read<AppState>();
-                      if (useUndoAd) {
-                        final shown = await undoAds.showAd(context);
+                      if (requiresReward) {
+                        final rewarded =
+                            await undoRewards.showReward(context);
                         if (!context.mounted) {
                           return;
                         }
-                        if (!shown || !app.canUndoMove) {
+                        if (!rewarded || !app.canUndoMove) {
                           return;
                         }
                       }
                       app.undoMove();
                     }
                   : null,
-              badgeWidget: useUndoAd
+              badgeWidget: requiresReward
                   ? const Icon(Icons.play_arrow_rounded)
                   : null,
               badgeColor: badgeColor,

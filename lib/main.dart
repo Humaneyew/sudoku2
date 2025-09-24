@@ -14,7 +14,7 @@ import 'screens/intro_screen.dart';
 import 'theme.dart';
 import 'hint_ad_controller.dart';
 import 'life_ad_controller.dart';
-import 'undo_ad_controller.dart';
+import 'undo_reward_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +38,7 @@ Future<void> main() async {
           lazy: false,
         ),
         ChangeNotifierProvider(create: (_) => LifeAdController()),
-        ChangeNotifierProvider(create: (_) => UndoAdController()),
+        ChangeNotifierProvider(create: (_) => UndoRewardController()),
         ChangeNotifierProvider(create: (_) => HintAdController()),
       ],
       child: const SudokuApp(),
