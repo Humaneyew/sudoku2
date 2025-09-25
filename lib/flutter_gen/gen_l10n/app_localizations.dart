@@ -210,8 +210,6 @@ abstract class AppLocalizations {
 
   String get restoreLifeAction;
 
-  String get rewardAdUnavailable;
-
   String get cancelAction;
 
   String get settingsTitle;
@@ -733,10 +731,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get outOfLivesDescription => "Stelle ein rotes Herz wieder her, um weiterzuspielen.";
 
   @override
-  String get restoreLifeAction => "Erhalte ein weiteres Herz (Werbung ansehen)";
-
-  @override
-  String get rewardAdUnavailable => "Anzeige ist derzeit nicht verfügbar.";
+  String get restoreLifeAction => "1 rotes Herz wiederherstellen";
 
   @override
   String get cancelAction => "Abbrechen";
@@ -1269,10 +1264,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get outOfLivesDescription => "Restore one red heart to keep playing.";
 
   @override
-  String get restoreLifeAction => "Get one more heart (watch an ad)";
-
-  @override
-  String get rewardAdUnavailable => "Ad is not available right now.";
+  String get restoreLifeAction => "Restore 1 red heart";
 
   @override
   String get cancelAction => "Cancel";
@@ -1805,10 +1797,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get outOfLivesDescription => "Restaurar un corazón rojo para seguir jugando.";
 
   @override
-  String get restoreLifeAction => "Obtén un corazón más (ver anuncio)";
-
-  @override
-  String get rewardAdUnavailable => "El anuncio no está disponible en este momento.";
+  String get restoreLifeAction => "Restaurar 1 corazón rojo";
 
   @override
   String get cancelAction => "Cancelar";
@@ -2341,10 +2330,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get outOfLivesDescription => "Restaurez un cœur rouge pour continuer.";
 
   @override
-  String get restoreLifeAction => "Obtenir un cœur supplémentaire (regarder une pub)";
-
-  @override
-  String get rewardAdUnavailable => "La publicité n'est pas disponible pour le moment.";
+  String get restoreLifeAction => "Restaurer 1 cœur rouge";
 
   @override
   String get cancelAction => "Annuler";
@@ -2877,10 +2863,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get outOfLivesDescription => "खेल जारी रखने के लिए एक लाल दिल पुनर्स्थापित करें।";
 
   @override
-  String get restoreLifeAction => "एक और दिल पाएं (विज्ञापन देखें)";
-
-  @override
-  String get rewardAdUnavailable => "विज्ञापन अभी उपलब्ध नहीं है।";
+  String get restoreLifeAction => "1 लाल दिल पुनर्स्थापित करें";
 
   @override
   String get cancelAction => "रद्द करें";
@@ -3413,10 +3396,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get outOfLivesDescription => "Ripristina un cuore rosso per continuare a giocare.";
 
   @override
-  String get restoreLifeAction => "Ottieni un altro cuore (guarda un annuncio)";
-
-  @override
-  String get rewardAdUnavailable => "L'annuncio non è al momento disponibile.";
+  String get restoreLifeAction => "Ripristina 1 cuore rosso";
 
   @override
   String get cancelAction => "Cancellare";
@@ -3949,10 +3929,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get outOfLivesDescription => "1つの赤い心を回復してプレイし続けます。";
 
   @override
-  String get restoreLifeAction => "ハートをもう1つ獲得（広告を見る）";
-
-  @override
-  String get rewardAdUnavailable => "現在、広告を利用できません。";
+  String get restoreLifeAction => "1つの赤いハートを復元します";
 
   @override
   String get cancelAction => "キャンセル";
@@ -4485,10 +4462,7 @@ class AppLocalizationsKa extends AppLocalizations {
   String get outOfLivesDescription => "თამაშის გასაგრძელებლად აღადგინეთ ერთი წითელი გული.";
 
   @override
-  String get restoreLifeAction => "მიიღე კიდევ ერთი გული (უყურე რეკლამას)";
-
-  @override
-  String get rewardAdUnavailable => "რეკლამა ამჟამად ხელმისაწვდომი არ არის.";
+  String get restoreLifeAction => "1 წითელი გულის აღდგენა";
 
   @override
   String get cancelAction => "გაუქმება";
@@ -5021,10 +4995,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get outOfLivesDescription => "붉은 심장 하나를 회복하여 계속 연주하십시오.";
 
   @override
-  String get restoreLifeAction => "하트를 하나 더 받기 (광고 시청)";
-
-  @override
-  String get rewardAdUnavailable => "현재 광고를 이용할 수 없습니다.";
+  String get restoreLifeAction => "1 개의 붉은 심장을 복원하십시오";
 
   @override
   String get cancelAction => "취소";
@@ -5561,10 +5532,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get outOfLivesDescription => "Восстановите одно красное сердце, чтобы продолжить игру.";
 
   @override
-  String get restoreLifeAction => "Получить ещё одно сердце (посмотреть рекламу)";
-
-  @override
-  String get rewardAdUnavailable => "Реклама сейчас недоступна.";
+  String get restoreLifeAction => "Восстановить 1 красное сердце";
 
   @override
   String get cancelAction => "Отмена";
@@ -6101,10 +6069,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get outOfLivesDescription => "Відновіть одне червоне серце, щоб продовжити гру.";
 
   @override
-  String get restoreLifeAction => "Отримати ще одне серце (за перегляд реклами)";
-
-  @override
-  String get rewardAdUnavailable => "Реклама недоступна зараз.";
+  String get restoreLifeAction => "Відновити 1 червоне серце";
 
   @override
   String get cancelAction => "Скасувати";
@@ -6635,10 +6600,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get outOfLivesDescription => "恢复一个红心以继续游戏。";
 
   @override
-  String get restoreLifeAction => "再获得一颗爱心（观看广告）";
-
-  @override
-  String get rewardAdUnavailable => "广告目前不可用。";
+  String get restoreLifeAction => "恢复 1 个红心";
 
   @override
   String get cancelAction => "取消";
