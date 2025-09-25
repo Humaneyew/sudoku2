@@ -1,12 +1,10 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'championship/championship_model.dart';
 import 'championship/championship_page.dart';
@@ -25,7 +23,6 @@ Future<void> main() async {
 
   final appState = models.AppState();
   await appState.load();
-  await _initializeMobileAds();
 
   runApp(
     MultiProvider(
@@ -47,14 +44,6 @@ Future<void> main() async {
       child: const SudokuApp(),
     ),
   );
-}
-
-Future<void> _initializeMobileAds() async {
-  try {
-    await MobileAds.instance.initialize();
-  } catch (error) {
-    debugPrint('Failed to initialize mobile ads: $error');
-  }
 }
 
 class SudokuApp extends StatelessWidget {

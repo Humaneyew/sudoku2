@@ -8,14 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'championship/championship_model.dart';
-import 'hint_ad_controller.dart';
 import 'life_ad_controller.dart';
 import 'models.dart';
 import 'settings_page.dart';
 import 'theme.dart';
 import 'widgets/board.dart';
 import 'widgets/control_panel.dart';
-import 'undo_reward_controller.dart';
 import 'widgets/theme_menu.dart';
 
 const int _kInitialLives = 3;
@@ -52,7 +50,6 @@ class _GamePageState extends State<GamePage>
   bool _gameStateScheduled = false;
   OverlayEntry? _scoreToastEntry;
   AnimationController? _scoreToastController;
-  GameMode? _adsConfiguredForMode;
 
   @override
   void initState() {
@@ -352,7 +349,6 @@ class _GamePageState extends State<GamePage>
   }
 
   Future<void> _handleGameState(AppState app) async {
-    _syncClassicRewardedAds(app);
     if (app.current == null) return;
 
     if (app.isSolved && !app.gameCompleted) {
@@ -415,21 +411,6 @@ class _GamePageState extends State<GamePage>
     } else {
       _failureShown = false;
     }
-  }
-
-  void _syncClassicRewardedAds(AppState app) {
-    final mode = app.currentMode;
-    if (_adsConfiguredForMode == mode) {
-      return;
-    }
-    _adsConfiguredForMode = mode;
-    final isClassic = mode == GameMode.classic;
-    final hintAds = context.read<HintAdController>();
-    final undoAds = context.read<UndoRewardController>();
-    final lifeAds = context.read<LifeAdController>();
-    hintAds.enableForClassicMode(isClassic);
-    undoAds.enableForClassicMode(isClassic);
-    lifeAds.enableForClassicMode(isClassic);
   }
 
   void _showScoreToast(AppLocalizations l10n, int delta) {
