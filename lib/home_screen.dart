@@ -1894,7 +1894,7 @@ class _DailyChallengesTabState extends State<_DailyChallengesTab>
         final monthDays =
             DateUtils.getDaysInMonth(_visibleMonth.year, _visibleMonth.month);
         final progress = app.completedDailyCount(_visibleMonth);
-        const challengeGoal = 30;
+        final challengeGoal = monthDays;
         final headerProgress = progress.clamp(0, challengeGoal);
 
         final textScaleFactor = media.textScaleFactor;
