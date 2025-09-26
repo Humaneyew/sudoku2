@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Combo x{count}",
+  "@comboX": {
+    "description": "Badge de multiplicateur de combo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Série {count}",
+  "@streakN": {
+    "description": "Badge de série",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Bonus de vitesse ({time})",
+  "@speedBonus": {
+    "description": "Récompense pour avoir terminé plus vite que l'objectif",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Ligne parfaite",
+  "perfectCol": "Colonne parfaite",
+  "perfectBox": "Bloc parfait",
   "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
   "victoryTitle": "Félicitations !",
   "victoryMessage": "Énigme résolue en {time}.",

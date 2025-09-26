@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Combo x{count}",
+  "@comboX": {
+    "description": "Badge moltiplicatore combo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Serie {count}",
+  "@streakN": {
+    "description": "Badge serie",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Bonus velocità ({time})",
+  "@speedBonus": {
+    "description": "Ricompensa per aver terminato prima dell'obiettivo",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Riga perfetta",
+  "perfectCol": "Colonna perfetta",
+  "perfectBox": "Box perfetto",
   "noActiveGameMessage": "Nessun gioco attivo. Torna alla schermata principale.",
   "victoryTitle": "Congratulazioni!",
   "victoryMessage": "Schema risolto in {time}.",

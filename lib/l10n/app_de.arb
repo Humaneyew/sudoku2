@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Combo x{count}",
+  "@comboX": {
+    "description": "Combo-Multiplikator-Abzeichen",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Serie {count}",
+  "@streakN": {
+    "description": "Abzeichen für Siegesserie",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Tempo-Bonus ({time})",
+  "@speedBonus": {
+    "description": "Belohnung für schnelleres Abschließen als das Ziel",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Perfekte Zeile",
+  "perfectCol": "Perfekte Spalte",
+  "perfectBox": "Perfekter Block",
   "noActiveGameMessage": "Kein aktives Spiel. Kehre zum Startbildschirm zurück.",
   "victoryTitle": "Glückwunsch!",
   "victoryMessage": "Rätsel gelöst in {time}.",

@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "კომბო x{count}",
+  "@comboX": {
+    "description": "კომბოს გამამრავლებელი ბეჯი",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "სერია {count}",
+  "@streakN": {
+    "description": "სერიის ბეჯი",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "სისწრაფის ბონუსი ({time})",
+  "@speedBonus": {
+    "description": "ჯილდო მიზნამდე უფრო სწრაფად დასრულებისთვის",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "სრულყოფილი რიგი",
+  "perfectCol": "სრულყოფილი სვეტი",
+  "perfectBox": "სრულყოფილი ბლოკი",
   "noActiveGameMessage": "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.",
   "victoryTitle": "გილოცავთ!",
   "victoryMessage": "თავსატეხი ამოხსნილია {time}-ში.",

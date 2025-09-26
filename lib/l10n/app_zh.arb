@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "连击 x{count}",
+  "@comboX": {
+    "description": "连击倍率徽章",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "连胜 {count}",
+  "@streakN": {
+    "description": "连胜徽章",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "极速奖励 ({time})",
+  "@speedBonus": {
+    "description": "比目标更快完成的奖励",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "完美行",
+  "perfectCol": "完美列",
+  "perfectBox": "完美宫",
   "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
   "victoryTitle": "恭喜！",
   "victoryMessage": "在 {time} 内完成谜题。",
