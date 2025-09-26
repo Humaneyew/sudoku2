@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "コンボ x{count}",
+  "@comboX": {
+    "description": "コンボ倍率バッジ",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "ストリーク {count}",
+  "@streakN": {
+    "description": "連勝バッジ",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "スピードボーナス ({time})",
+  "@speedBonus": {
+    "description": "目標より速くクリアした報酬",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "パーフェクト行",
+  "perfectCol": "パーフェクト列",
+  "perfectBox": "パーフェクトブロック",
   "noActiveGameMessage": "アクティブなゲームはありません。ホーム画面に戻ります。",
   "victoryTitle": "おめでとう！",
   "victoryMessage": "パズルを {time} で解きました。",

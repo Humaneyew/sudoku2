@@ -209,6 +209,36 @@
       }
     }
   },
+  "comboX": "Combo x{count}",
+  "@comboX": {
+    "description": "Combo multiplier badge",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Streak {count}",
+  "@streakN": {
+    "description": "Streak badge",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Speed Bonus ({time})",
+  "@speedBonus": {
+    "description": "Award for finishing faster than target",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Perfect Row",
+  "perfectCol": "Perfect Column",
+  "perfectBox": "Perfect Box",
   "noActiveGameMessage": "No active game. Return to the home screen.",
   "victoryTitle": "Congratulations!",
   "victoryMessage": "Puzzle solved in {time}.",

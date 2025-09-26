@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Комбо x{count}",
+  "@comboX": {
+    "description": "Значок множителя комбо",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Серия {count}",
+  "@streakN": {
+    "description": "Значок серии побед",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Бонус скорости ({time})",
+  "@speedBonus": {
+    "description": "Награда за прохождение быстрее цели",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Идеальная строка",
+  "perfectCol": "Идеальный столбец",
+  "perfectBox": "Идеальный блок",
   "noActiveGameMessage": "Нет активной игры. Вернитесь на главный экран.",
   "victoryTitle": "Поздравляем!",
   "victoryMessage": "Головоломка решена за {time}.",

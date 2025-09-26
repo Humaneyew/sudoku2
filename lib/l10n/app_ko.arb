@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "콤보 x{count}",
+  "@comboX": {
+    "description": "콤보 배수 배지",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "연속 {count}",
+  "@streakN": {
+    "description": "연속 기록 배지",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "속도 보너스 ({time})",
+  "@speedBonus": {
+    "description": "목표보다 빨리 완료했을 때의 보상",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "완벽한 행",
+  "perfectCol": "완벽한 열",
+  "perfectBox": "완벽한 박스",
   "noActiveGameMessage": "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.",
   "victoryTitle": "축하해요!",
   "victoryMessage": "퍼즐을 {time}에 해결했습니다.",

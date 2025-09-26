@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Комбо x{count}",
+  "@comboX": {
+    "description": "Значок множника комбо",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Серія {count}",
+  "@streakN": {
+    "description": "Значок серії",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Бонус швидкості ({time})",
+  "@speedBonus": {
+    "description": "Нагорода за проходження швидше за ціль",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Ідеальний рядок",
+  "perfectCol": "Ідеальний стовпець",
+  "perfectBox": "Ідеальний блок",
   "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
   "victoryTitle": "Вітаємо!",
   "victoryMessage": "Головоломку розв'язано за {time}.",

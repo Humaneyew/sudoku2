@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "कॉम्बो x{count}",
+  "@comboX": {
+    "description": "कॉम्बो गुणक बैज",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "स्ट्रिक {count}",
+  "@streakN": {
+    "description": "स्ट्रिक बैज",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "स्पीड बोनस ({time})",
+  "@speedBonus": {
+    "description": "लक्ष्य से तेज़ समाप्त करने पर पुरस्कार",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "परफ़ेक्ट पंक्ति",
+  "perfectCol": "परफ़ेक्ट स्तंभ",
+  "perfectBox": "परफ़ेक्ट बॉक्स",
   "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
   "victoryTitle": "बधाई!",
   "victoryMessage": "{time} में पहेली हल हुई।",

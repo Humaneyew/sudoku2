@@ -208,6 +208,36 @@
       }
     }
   },
+  "comboX": "Combo x{count}",
+  "@comboX": {
+    "description": "Insignia de multiplicador de combo",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakN": "Racha {count}",
+  "@streakN": {
+    "description": "Insignia de racha",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "speedBonus": "Bonificación de velocidad ({time})",
+  "@speedBonus": {
+    "description": "Premio por terminar antes del objetivo",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "perfectRow": "Fila perfecta",
+  "perfectCol": "Columna perfecta",
+  "perfectBox": "Cuadro perfecto",
   "noActiveGameMessage": "No hay juego activo. Regrese a la pantalla de inicio.",
   "victoryTitle": "¡Felicidades!",
   "victoryMessage": "Rompecabezas resuelto en {time}.",
