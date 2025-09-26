@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "სუდოკუ",
+  "combo_x": "კომბო ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "სერია {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "სრულყოფილი რიგი",
+  "perfect_col": "სრულყოფილი სვეტი",
+  "perfect_box": "სრულყოფილი ბლოკი",
+  "speed_bonus": "სისწრაფის ბონუსი {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.",
   "victoryTitle": "გილოცავთ!",
   "victoryMessage": "თავსატეხი ამოხსნილია {time}-ში.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "ხმა და მუსიკა",
   "soundsEffectsLabel": "ხმის ეფექტები",
   "vibrationLabel": "ვიბრაცია",
+  "comboBadgesLabel": "კომბო ბეჯები",
+  "comboHapticsLabel": "ბეჯების ჰაპტიკა",
   "miscSectionTitle": "სხვა",
   "howToPlayTitle": "როგორ ვითამაშოთ",
   "howToPlayRowRule": "ყოველ რიგში უნდა იყოს ციფრები 1-დან 9-მდე გამეორებების გარეშე",

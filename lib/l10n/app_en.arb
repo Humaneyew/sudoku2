@@ -182,6 +182,33 @@
     }
   },
   "gameScreenTitle": "Sudoku",
+  "combo_x": "Combo ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Streak {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Perfect Row",
+  "perfect_col": "Perfect Column",
+  "perfect_box": "Perfect Box",
+  "speed_bonus": "Speed Bonus {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "No active game. Return to the home screen.",
   "victoryTitle": "Congratulations!",
   "victoryMessage": "Puzzle solved in {time}.",
@@ -215,6 +242,8 @@
   "audioSectionTitle": "Sound & music",
   "soundsEffectsLabel": "Sound effects",
   "vibrationLabel": "Vibration",
+  "comboBadgesLabel": "Combo badges",
+  "comboHapticsLabel": "Badge haptics",
   "miscSectionTitle": "Other",
   "howToPlayTitle": "How to play",
   "howToPlayRowRule": "Each row has the digits 1 to 9 with no repeats",

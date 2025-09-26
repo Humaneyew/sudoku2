@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'championship/championship_model.dart';
+import 'combo/combo_controller.dart';
 import 'life_ad_controller.dart';
 import 'models.dart';
 import 'settings_page.dart';
@@ -39,7 +40,8 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with WidgetsBindingObserver, TickerProviderStateMixin
+    implements ComboHost {
   final ValueNotifier<int> _elapsedVN = ValueNotifier<int>(0);
   Timer? _t;
   int _observedSession = -1;
@@ -50,12 +52,14 @@ class _GamePageState extends State<GamePage>
   bool _gameStateScheduled = false;
   OverlayEntry? _scoreToastEntry;
   AnimationController? _scoreToastController;
+  late final ComboController _comboController;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _appStateListener = _handleAppStateChanged;
+    _comboController = ComboController(host: this);
   }
 
   @override
@@ -71,6 +75,7 @@ class _GamePageState extends State<GamePage>
     }
 
     _appState?.removeListener(_appStateListener);
+    _appState?.attachComboSink(null);
     _appState = app;
     _observedSession = app.sessionId;
     _victoryShown = false;
@@ -78,6 +83,7 @@ class _GamePageState extends State<GamePage>
     final startMs = app.current?.elapsedMs ?? 0;
     _startTimer(app, startMs);
     app.addListener(_appStateListener);
+    app.attachComboSink(_comboController);
     _scheduleHandleGameState();
   }
 
@@ -139,12 +145,14 @@ class _GamePageState extends State<GamePage>
         app.current!.elapsedMs = _elapsedVN.value;
         unawaited(app.save());
       }
+      app.attachComboSink(null);
     }
 
     _scoreToastController?.dispose();
     _scoreToastEntry?.remove();
     _scoreToastController = null;
     _scoreToastEntry = null;
+    _comboController.dispose();
 
     _elapsedVN.dispose();
     super.dispose();
@@ -753,6 +761,12 @@ class _GamePageState extends State<GamePage>
       }
     }
   }
+
+  @override
+  TickerProvider get vsync => this;
+
+  @override
+  double get fontScale => context.read<AppState>().fontScale;
 }
 
 String formatDuration(int ms) {

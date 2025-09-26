@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "스도쿠",
+  "combo_x": "콤보 ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "연속 {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "완벽한 행",
+  "perfect_col": "완벽한 열",
+  "perfect_box": "완벽한 박스",
+  "speed_bonus": "속도 보너스 {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.",
   "victoryTitle": "축하해요!",
   "victoryMessage": "퍼즐을 {time}에 해결했습니다.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "소리와 음악",
   "soundsEffectsLabel": "음향 효과",
   "vibrationLabel": "진동",
+  "comboBadgesLabel": "콤보 배지",
+  "comboHapticsLabel": "배지 햅틱",
   "miscSectionTitle": "다른",
   "howToPlayTitle": "플레이 방법",
   "howToPlayRowRule": "각 가로줄에는 1부터 9까지 숫자가 중복 없이 들어갑니다",

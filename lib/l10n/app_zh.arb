@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "数独",
+  "combo_x": "连击 ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "连胜 {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "完美行",
+  "perfect_col": "完美列",
+  "perfect_box": "完美宫",
+  "speed_bonus": "极速奖励 {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
   "victoryTitle": "恭喜！",
   "victoryMessage": "在 {time} 内完成谜题。",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "声音与音乐",
   "soundsEffectsLabel": "音效",
   "vibrationLabel": "震动",
+  "comboBadgesLabel": "连击徽章",
+  "comboHapticsLabel": "徽章触感反馈",
   "miscSectionTitle": "其他",
   "howToPlayTitle": "怎么玩",
   "howToPlayRowRule": "每一行都要填上1到9且不重复",

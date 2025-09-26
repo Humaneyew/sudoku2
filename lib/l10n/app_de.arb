@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Sudoku",
+  "combo_x": "Combo ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Serie {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Perfekte Zeile",
+  "perfect_col": "Perfekte Spalte",
+  "perfect_box": "Perfekter Block",
+  "speed_bonus": "Tempo-Bonus {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "Kein aktives Spiel. Kehre zum Startbildschirm zurück.",
   "victoryTitle": "Glückwunsch!",
   "victoryMessage": "Rätsel gelöst in {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Sound & Musik",
   "soundsEffectsLabel": "Soundeffekte",
   "vibrationLabel": "Vibration",
+  "comboBadgesLabel": "Combo-Badges",
+  "comboHapticsLabel": "Badge-Haptik",
   "miscSectionTitle": "Sonstiges",
   "howToPlayTitle": "So spielst du",
   "howToPlayRowRule": "In jeder Zeile stehen die Ziffern 1 bis 9 ohne Wiederholung",

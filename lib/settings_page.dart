@@ -103,6 +103,21 @@ class SettingsPage extends StatelessWidget {
             secondary: Icon(Icons.vibration, size: iconSize),
           ),
           SwitchListTile(
+            key: const ValueKey('settings-combo-badges'),
+            title: Text(l10n.comboBadgesLabel),
+            value: app.comboBadgesEnabled,
+            onChanged: (v) => app.toggleComboBadges(v),
+            secondary: Icon(Icons.stars_outlined, size: iconSize),
+          ),
+          SwitchListTile(
+            key: const ValueKey('settings-combo-haptics'),
+            title: Text(l10n.comboHapticsLabel),
+            value: app.comboHapticsEnabled,
+            onChanged:
+                app.comboBadgesEnabled ? (v) => app.toggleComboHaptics(v) : null,
+            secondary: Icon(Icons.touch_app_outlined, size: iconSize),
+          ),
+          SwitchListTile(
             key: const ValueKey('settings-champ-auto-scroll'),
             title: Text(l10n.championshipAutoScroll),
             value: championship.autoScrollEnabled,
