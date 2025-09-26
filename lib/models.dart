@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -466,7 +467,11 @@ class AppState extends ChangeNotifier {
       if (langName != null) {
         try {
           lang = AppLanguage.values.byName(langName);
-        } catch (_) {}
+        } catch (_) {
+          lang = AppLanguage.en;
+        }
+      } else {
+        lang = _resolveInitialLanguage();
       }
 
       soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
@@ -580,6 +585,33 @@ class AppState extends ChangeNotifier {
 
     await _ensureDateLocaleInited(lang.toLocaleTag());
     notifyListeners();
+  }
+
+  static AppLanguage _resolveInitialLanguage() {
+    final dispatcher = ui.PlatformDispatcher.instance;
+    for (final locale in dispatcher.locales) {
+      final resolved = _languageFromLocale(locale);
+      if (resolved != null) {
+        return resolved;
+      }
+    }
+
+    final fallback = _languageFromLocale(dispatcher.locale);
+    return fallback ?? AppLanguage.en;
+  }
+
+  static AppLanguage? _languageFromLocale(ui.Locale? locale) {
+    if (locale == null) {
+      return null;
+    }
+
+    final languageCode = locale.languageCode.toLowerCase();
+    for (final candidate in AppLanguage.values) {
+      if (candidate.locale.languageCode == languageCode) {
+        return candidate;
+      }
+    }
+    return null;
   }
 
   /// Сохраняем статистику и прочие данные.
