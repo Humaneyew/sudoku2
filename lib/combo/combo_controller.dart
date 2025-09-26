@@ -173,15 +173,17 @@ class ComboController implements ComboEventSink {
     }
     final seconds = (durationMs / 1000).round();
     final label = l10n.speedBonus(secondsFormat(seconds));
-    _enqueueToast(
-      _ToastRequest(
-        type: _ToastType.speed,
-        label: label,
-        iconAsset: _speedIcon,
-        level: 0,
-        difficulty: difficulty,
-      ),
-    );
+    Future.delayed(const Duration(milliseconds: 250), () {
+      _enqueueToast(
+        _ToastRequest(
+          type: _ToastType.speed,
+          label: label,
+          iconAsset: _speedIcon,
+          level: 0,
+          difficulty: difficulty,
+        ),
+      );
+    });
   }
 
   @override
@@ -248,10 +250,15 @@ class ComboController implements ComboEventSink {
         request.level >= _activeToast!.level) {
       _activeToast = request;
       _overlayEntry?.markNeedsBuild();
+      _extendActiveDisplay();
       return;
     }
     if (_queue.length >= comboTheme.maxQueue) {
-      _queue.removeFirst();
+      if (_queue.isNotEmpty && _queue.last.type == request.type) {
+        _queue.removeLast();
+      } else {
+        _queue.removeFirst();
+      }
     }
     _queue.add(request);
     _scheduleShow();
@@ -306,7 +313,8 @@ class ComboController implements ComboEventSink {
   }
 
   Future<void> _showToast(_ToastRequest request) async {
-    final overlay = Overlay.of(host.context);
+    final overlay = Navigator.of(host.context, rootNavigator: true).overlay ??
+        Overlay.of(host.context);
     if (overlay == null) {
       return;
     }
@@ -398,6 +406,19 @@ class ComboController implements ComboEventSink {
     _showing = false;
   }
 
+  void _extendActiveDisplay({int extraMs = 450}) {
+    if (_dismissTimer != null) {
+      _dismissTimer!.cancel();
+      final theme = Theme.of(host.context);
+      final comboTheme = theme.extension<ComboTheme>() ?? _fallbackTheme;
+      final extend = Duration(milliseconds: extraMs);
+      _dismissTimer = Timer(
+        Duration(milliseconds: comboTheme.displayMs) + extend,
+        () => _dismissActive(),
+      );
+    }
+  }
+
   Future<void> _hideActive({bool immediate = false}) async {
     _dismissTimer?.cancel();
     _dismissTimer = null;
@@ -476,8 +497,8 @@ class ComboController implements ComboEventSink {
     baseHeight: 56,
     displayMs: 1000,
     elevation: 2,
-    containerOpacity: 0.85,
-    outlineOpacity: 0.24,
+    containerOpacity: 0.84,
+    outlineOpacity: 0.20,
   );
 
   static const Map<Difficulty, int> _speedThresholdMs = {
