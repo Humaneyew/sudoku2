@@ -580,7 +580,7 @@ class _ChallengeCarousel extends StatelessWidget {
             score: vm.score,
             gradient: colors.championshipChallengeGradient,
             icon: Icons.workspace_premium_outlined,
-            badge: '2G',
+            badge: vm.rankLabel,
           );
         },
       ),
@@ -1121,13 +1121,18 @@ class _ChampionshipCard extends StatelessWidget {
 class _ChampionshipCardVm {
   const _ChampionshipCardVm({
     required this.score,
+    required this.rank,
   });
 
   final int score;
+  final int rank;
+
+  String get rankLabel => math.max(1, math.min(rank, 101)).toString();
 
   factory _ChampionshipCardVm.fromModel(ChampionshipModel model) {
     return _ChampionshipCardVm(
       score: model.myScore,
+      rank: model.myRank,
     );
   }
 
@@ -1136,11 +1141,13 @@ class _ChampionshipCardVm {
     if (identical(this, other)) {
       return true;
     }
-    return other is _ChampionshipCardVm && other.score == score;
+    return other is _ChampionshipCardVm &&
+        other.score == score &&
+        other.rank == rank;
   }
 
   @override
-  int get hashCode => score.hashCode;
+  int get hashCode => Object.hash(score, rank);
 }
 
 class _DailyChain extends StatelessWidget {
