@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Судоку",
+  "combo_x": "Комбо ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Серія {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Ідеальний рядок",
+  "perfect_col": "Ідеальний стовпець",
+  "perfect_box": "Ідеальний блок",
+  "speed_bonus": "Бонус швидкості {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
   "victoryTitle": "Вітаємо!",
   "victoryMessage": "Головоломку розв'язано за {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Звуки та музика",
   "soundsEffectsLabel": "Звукові ефекти",
   "vibrationLabel": "Вібрація",
+  "comboBadgesLabel": "Значки комбо",
+  "comboHapticsLabel": "Вібрація значків",
   "miscSectionTitle": "Інше",
   "howToPlayTitle": "Як грати",
   "howToPlayRowRule": "У кожному рядку цифри від 1 до 9 без повторів",

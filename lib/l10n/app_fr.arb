@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Sudoku",
+  "combo_x": "Combo ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Série {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Ligne parfaite",
+  "perfect_col": "Colonne parfaite",
+  "perfect_box": "Bloc parfait",
+  "speed_bonus": "Bonus de vitesse {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
   "victoryTitle": "Félicitations !",
   "victoryMessage": "Énigme résolue en {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Son & musique",
   "soundsEffectsLabel": "Effets sonores",
   "vibrationLabel": "Vibration",
+  "comboBadgesLabel": "Badges combo",
+  "comboHapticsLabel": "Retour haptique des badges",
   "miscSectionTitle": "Autre",
   "howToPlayTitle": "Comment jouer",
   "howToPlayRowRule": "Chaque ligne contient les chiffres de 1 à 9 sans doublons",

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'combo/combo_theme.dart';
+
 /// Список доступных цветовых тем приложения.
 enum SudokuTheme { white, cream, green, black }
 
@@ -542,6 +544,61 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
   ),
 };
 
+final Map<SudokuTheme, ComboTheme> _comboThemes = {
+  SudokuTheme.white: const ComboTheme(
+    tintStrength: 0.1,
+    maxQueue: 5,
+    throttleMs: 800,
+    inMs: 200,
+    outMs: 200,
+    offsetY: 10,
+    baseHeight: 56,
+    displayMs: 1000,
+    elevation: 2,
+    containerOpacity: 0.85,
+    outlineOpacity: 0.24,
+  ),
+  SudokuTheme.cream: const ComboTheme(
+    tintStrength: 0.09,
+    maxQueue: 5,
+    throttleMs: 820,
+    inMs: 200,
+    outMs: 200,
+    offsetY: 10,
+    baseHeight: 56,
+    displayMs: 1000,
+    elevation: 2,
+    containerOpacity: 0.86,
+    outlineOpacity: 0.24,
+  ),
+  SudokuTheme.green: const ComboTheme(
+    tintStrength: 0.1,
+    maxQueue: 5,
+    throttleMs: 850,
+    inMs: 200,
+    outMs: 200,
+    offsetY: 10,
+    baseHeight: 56,
+    displayMs: 1000,
+    elevation: 2,
+    containerOpacity: 0.85,
+    outlineOpacity: 0.24,
+  ),
+  SudokuTheme.black: const ComboTheme(
+    tintStrength: 0.12,
+    maxQueue: 5,
+    throttleMs: 900,
+    inMs: 200,
+    outMs: 200,
+    offsetY: 10,
+    baseHeight: 58,
+    displayMs: 1000,
+    elevation: 1,
+    containerOpacity: 0.86,
+    outlineOpacity: 0.32,
+  ),
+};
+
 final Map<SudokuTheme, ThemeData> _themeCache = {};
 
 ThemeData buildSudokuTheme(SudokuTheme theme) {
@@ -643,7 +700,10 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
         thumbColor: config.primary,
         overlayColor: config.primary.withOpacity(0.12),
       ),
-      extensions: [config.colors],
+      extensions: [
+        config.colors,
+        _comboThemes[theme]!,
+      ],
     );
   });
 }

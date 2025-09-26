@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Sudoku",
+  "combo_x": "Combo ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Serie {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Riga perfetta",
+  "perfect_col": "Colonna perfetta",
+  "perfect_box": "Box perfetto",
+  "speed_bonus": "Bonus velocità {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "Nessun gioco attivo. Torna alla schermata principale.",
   "victoryTitle": "Congratulazioni!",
   "victoryMessage": "Schema risolto in {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Suono e musica",
   "soundsEffectsLabel": "Effetti sonori",
   "vibrationLabel": "Vibrazione",
+  "comboBadgesLabel": "Badge combo",
+  "comboHapticsLabel": "Feedback aptico badge",
   "miscSectionTitle": "Altro",
   "howToPlayTitle": "Come si gioca",
   "howToPlayRowRule": "Ogni riga contiene i numeri da 1 a 9 senza ripetizioni",

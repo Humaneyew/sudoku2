@@ -136,6 +136,26 @@ class GameState {
             : List<bool>.filled(board.length, false);
 }
 
+abstract class ComboEventSink {
+  void updateSettings({required bool enabled, required bool hapticsEnabled});
+  void onCellFilled({
+    required bool correct,
+    required int timestampMs,
+    Difficulty? difficulty,
+  });
+  void onPerfectRow(Difficulty? difficulty);
+  void onPerfectColumn(Difficulty? difficulty);
+  void onPerfectBox(Difficulty? difficulty);
+  void onNoHintStep(Difficulty? difficulty);
+  void onHintUsed();
+  void onLevelFinished({
+    required Difficulty? difficulty,
+    required int durationMs,
+  });
+  void reset();
+  void dispose();
+}
+
 final _elapsedMsExpando = Expando<int>('elapsedMs');
 
 extension GameStateElapsedMs on GameState {
@@ -300,6 +320,8 @@ class AppState extends ChangeNotifier {
   int livesLeft = _maxLives;
   bool soundsEnabled = true;
   bool vibrationEnabled = true;
+  bool comboBadgesEnabled = true;
+  bool comboHapticsEnabled = true;
   int? highlightedNumber;
   bool _madeMistake = false;
   bool _gameCompleted = false;
@@ -309,6 +331,10 @@ class AppState extends ChangeNotifier {
 
   final List<_Move> _history = [];
   Timer? _saveDebounce;
+  final Set<int> _completedPerfectRows = <int>{};
+  final Set<int> _completedPerfectColumns = <int>{};
+  final Set<int> _completedPerfectBoxes = <int>{};
+  ComboEventSink? _comboSink;
 
   /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
@@ -476,6 +502,10 @@ class AppState extends ChangeNotifier {
 
       soundsEnabled = prefs.getBool('soundsEnabled') ?? soundsEnabled;
       vibrationEnabled = prefs.getBool('vibrationEnabled') ?? vibrationEnabled;
+      comboBadgesEnabled =
+          prefs.getBool('comboBadgesEnabled') ?? comboBadgesEnabled;
+      comboHapticsEnabled =
+          prefs.getBool('comboHapticsEnabled') ?? comboHapticsEnabled;
       privacyPolicyAccepted =
           prefs.getBool('privacyPolicyAccepted') ?? privacyPolicyAccepted;
       tutorialSeen = prefs.getBool('tutorialSeen') ?? tutorialSeen;
@@ -584,6 +614,7 @@ class AppState extends ChangeNotifier {
     _refreshDailyStreak();
 
     await _ensureDateLocaleInited(lang.toLocaleTag());
+    _resetComboTracking(resetSink: false);
     notifyListeners();
   }
 
@@ -767,7 +798,69 @@ class AppState extends ChangeNotifier {
     _persist((prefs) async {
       await prefs.setBool('vibrationEnabled', enabled);
     });
+    _comboSink?.updateSettings(
+      enabled: comboBadgesEnabled,
+      hapticsEnabled: comboHapticsEnabled && vibrationEnabled,
+    );
     notifyListeners();
+  }
+
+  void toggleComboBadges(bool enabled) {
+    if (comboBadgesEnabled == enabled) return;
+    comboBadgesEnabled = enabled;
+    if (!enabled) {
+      _comboSink?.reset();
+    }
+    _comboSink?.updateSettings(
+      enabled: comboBadgesEnabled,
+      hapticsEnabled: comboHapticsEnabled && vibrationEnabled,
+    );
+    _persist((prefs) async {
+      await prefs.setBool('comboBadgesEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void toggleComboHaptics(bool enabled) {
+    if (comboHapticsEnabled == enabled) return;
+    comboHapticsEnabled = enabled;
+    _comboSink?.updateSettings(
+      enabled: comboBadgesEnabled,
+      hapticsEnabled: comboHapticsEnabled && vibrationEnabled,
+    );
+    _persist((prefs) async {
+      await prefs.setBool('comboHapticsEnabled', enabled);
+    });
+    notifyListeners();
+  }
+
+  void attachComboSink(ComboEventSink? sink) {
+    if (identical(_comboSink, sink)) {
+      if (sink != null) {
+        sink.updateSettings(
+          enabled: comboBadgesEnabled,
+          hapticsEnabled: comboHapticsEnabled && vibrationEnabled,
+        );
+      }
+      return;
+    }
+    _comboSink = sink;
+    if (sink != null) {
+      sink.updateSettings(
+        enabled: comboBadgesEnabled,
+        hapticsEnabled: comboHapticsEnabled && vibrationEnabled,
+      );
+      sink.reset();
+    }
+  }
+
+  void _resetComboTracking({bool resetSink = true}) {
+    _completedPerfectRows.clear();
+    _completedPerfectColumns.clear();
+    _completedPerfectBoxes.clear();
+    if (resetSink) {
+      _comboSink?.reset();
+    }
   }
 
   void markPrivacyPolicyAccepted() {
@@ -832,6 +925,7 @@ class AppState extends ChangeNotifier {
     _history.clear();
     _startedAt = DateTime.now();
     _currentGameId = _composeGameId(Difficulty.medium);
+    _resetComboTracking();
 
     statsByDifficulty[Difficulty.medium]?.gamesStarted++;
     scheduleSave();
@@ -894,6 +988,7 @@ class AppState extends ChangeNotifier {
     _history.clear();
     _startedAt = DateTime.now();
     _currentGameId = _composeGameId(diff);
+    _resetComboTracking();
 
     statsByDifficulty[diff]?.gamesStarted++;
     scheduleSave();
@@ -954,6 +1049,7 @@ class AppState extends ChangeNotifier {
     _history.clear();
     _startedAt = DateTime.now();
     _currentGameId = _composeGameId(diff);
+    _resetComboTracking();
 
     scheduleSave();
     notifyListeners();
@@ -986,6 +1082,7 @@ class AppState extends ChangeNotifier {
     _startedAt = DateTime.now();
     final diff = currentDifficulty;
     _currentGameId = diff == null ? null : _composeGameId(diff);
+    _resetComboTracking();
 
     scheduleSave();
     notifyListeners();
@@ -1093,18 +1190,80 @@ class AppState extends ChangeNotifier {
     _history.removeWhere((move) => move.index == index);
   }
 
+  void _checkPerfectGroups(GameState game, int index) {
+    final diff = currentDifficulty;
+    final row = index ~/ 9;
+    final column = index % 9;
+    final box = (row ~/ 3) * 3 + (column ~/ 3);
+
+    if (!_completedPerfectRows.contains(row) && _isRowPerfect(game, row)) {
+      _completedPerfectRows.add(row);
+      _comboSink?.onPerfectRow(diff);
+    }
+    if (!_completedPerfectColumns.contains(column) &&
+        _isColumnPerfect(game, column)) {
+      _completedPerfectColumns.add(column);
+      _comboSink?.onPerfectColumn(diff);
+    }
+    if (!_completedPerfectBoxes.contains(box) && _isBoxPerfect(game, box)) {
+      _completedPerfectBoxes.add(box);
+      _comboSink?.onPerfectBox(diff);
+    }
+  }
+
+  bool _isRowPerfect(GameState game, int row) {
+    for (var col = 0; col < 9; col++) {
+      final idx = row * 9 + col;
+      if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _isColumnPerfect(GameState game, int column) {
+    for (var row = 0; row < 9; row++) {
+      final idx = row * 9 + column;
+      if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _isBoxPerfect(GameState game, int box) {
+    final startRow = (box ~/ 3) * 3;
+    final startCol = (box % 3) * 3;
+    for (var r = 0; r < 3; r++) {
+      for (var c = 0; c < 3; c++) {
+        final idx = (startRow + r) * 9 + startCol + c;
+        if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   void makeMove(int index, int value) {
     final game = current;
     if (game == null) return;
     if (_isFixedCell(game, index)) return;
     if (isOutOfLives) return;
 
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
     final previousValue = game.board[index];
     final previousNotes = _cloneNotes(index);
     if (previousValue == value) return;
 
     final correct = isMoveValid(index, value);
     var consumedLife = false;
+
+    _comboSink?.onCellFilled(
+      correct: correct,
+      timestampMs: timestamp,
+      difficulty: currentDifficulty,
+    );
 
     if (!correct) {
       livesLeft = math.max(0, livesLeft - 1);
@@ -1114,6 +1273,7 @@ class AppState extends ChangeNotifier {
     } else {
       currentScore += 12;
       _handleCorrectFeedback();
+      _comboSink?.onNoHintStep(currentDifficulty);
     }
 
     _history.add(_Move(
@@ -1128,6 +1288,7 @@ class AppState extends ChangeNotifier {
 
     if (correct && value != 0) {
       _lockCell(game, index);
+      _checkPerfectGroups(game, index);
     }
 
     scheduleSave();
@@ -1202,9 +1363,11 @@ class AppState extends ChangeNotifier {
     game.board[idx] = correct;
     game.notes[idx].clear();
     _lockCell(game, idx);
+    _checkPerfectGroups(game, idx);
     hintsLeft = math.max(0, hintsLeft - 1);
     _hintsConsumed++;
     currentScore += 8;
+    _comboSink?.onHintUsed();
     scheduleSave();
     notifyListeners();
   }
@@ -1268,6 +1431,10 @@ class AppState extends ChangeNotifier {
     totalStars += 1;
     _handleVictoryFeedback();
     _registerVictory();
+    _comboSink?.onLevelFinished(
+      difficulty: currentDifficulty,
+      durationMs: elapsedMs,
+    );
 
     final diff = currentDifficulty;
     if (diff != null) {
@@ -1315,6 +1482,10 @@ class AppState extends ChangeNotifier {
     _gameCompleted = true;
     _handleVictoryFeedback();
     _registerVictory();
+    _comboSink?.onLevelFinished(
+      difficulty: currentDifficulty,
+      durationMs: elapsedMs,
+    );
     battleGamesWon++;
     battleGamesPlayed++;
     game.elapsedMs = elapsedMs;
@@ -1334,6 +1505,7 @@ class AppState extends ChangeNotifier {
     }
     _dailyChallengeDate = null;
     _clearSavedGame();
+    _resetComboTracking();
     saveProfile();
     notifyListeners();
   }
@@ -1363,6 +1535,7 @@ class AppState extends ChangeNotifier {
     highlightedNumber = null;
     _dailyChallengeDate = null;
     _clearSavedGame();
+    _resetComboTracking();
     notifyListeners();
   }
 

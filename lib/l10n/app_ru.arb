@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Судоку",
+  "combo_x": "Комбо ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Серия {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Идеальная строка",
+  "perfect_col": "Идеальный столбец",
+  "perfect_box": "Идеальный блок",
+  "speed_bonus": "Бонус скорости {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "Нет активной игры. Вернитесь на главный экран.",
   "victoryTitle": "Поздравляем!",
   "victoryMessage": "Головоломка решена за {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Звук и музыка",
   "soundsEffectsLabel": "Звуковые эффекты",
   "vibrationLabel": "Вибрация",
+  "comboBadgesLabel": "Бейджи комбо",
+  "comboHapticsLabel": "Вибрация бейджей",
   "miscSectionTitle": "Другое",
   "howToPlayTitle": "Как играть",
   "howToPlayRowRule": "В каждой строке цифры от 1 до 9 без повторов",

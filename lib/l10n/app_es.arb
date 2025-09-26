@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "Sudoku",
+  "combo_x": "Combo ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "Racha {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "Fila perfecta",
+  "perfect_col": "Columna perfecta",
+  "perfect_box": "Cuadro perfecto",
+  "speed_bonus": "Bonificación de velocidad {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "No hay juego activo. Regrese a la pantalla de inicio.",
   "victoryTitle": "¡Felicidades!",
   "victoryMessage": "Rompecabezas resuelto en {time}.",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "Sonido y música",
   "soundsEffectsLabel": "Efectos sonoros",
   "vibrationLabel": "Vibración",
+  "comboBadgesLabel": "Insignias de combo",
+  "comboHapticsLabel": "Háptica de insignias",
   "miscSectionTitle": "Otro",
   "howToPlayTitle": "Cómo jugar",
   "howToPlayRowRule": "Cada fila tiene los números del 1 al 9 sin repetir",

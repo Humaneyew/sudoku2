@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "数独",
+  "combo_x": "コンボ ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "ストリーク {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "パーフェクト行",
+  "perfect_col": "パーフェクト列",
+  "perfect_box": "パーフェクトブロック",
+  "speed_bonus": "スピードボーナス {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "アクティブなゲームはありません。ホーム画面に戻ります。",
   "victoryTitle": "おめでとう！",
   "victoryMessage": "パズルを {time} で解きました。",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "サウンドと音楽",
   "soundsEffectsLabel": "効果音",
   "vibrationLabel": "振動",
+  "comboBadgesLabel": "コンボバッジ",
+  "comboHapticsLabel": "バッジの触覚フィードバック",
   "miscSectionTitle": "他の",
   "howToPlayTitle": "遊び方",
   "howToPlayRowRule": "各行には1〜9の数字を重複なく入れます",

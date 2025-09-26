@@ -181,6 +181,33 @@
     }
   },
   "gameScreenTitle": "सुडोकू",
+  "combo_x": "कॉम्बो ×{count}",
+  "@combo_x": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streak_n": "स्ट्रिक {count}",
+  "@streak_n": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfect_row": "परफ़ेक्ट पंक्ति",
+  "perfect_col": "परफ़ेक्ट स्तंभ",
+  "perfect_box": "परफ़ेक्ट बॉक्स",
+  "speed_bonus": "स्पीड बोनस {time}",
+  "@speed_bonus": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
   "victoryTitle": "बधाई!",
   "victoryMessage": "{time} में पहेली हल हुई।",
@@ -214,6 +241,8 @@
   "audioSectionTitle": "ध्वनि और संगीत",
   "soundsEffectsLabel": "ध्वनि प्रभाव",
   "vibrationLabel": "कंपन",
+  "comboBadgesLabel": "कॉम्बो बैज",
+  "comboHapticsLabel": "बैज हैप्टिक्स",
   "miscSectionTitle": "अन्य",
   "howToPlayTitle": "कैसे खेलें",
   "howToPlayRowRule": "हर पंक्ति में 1 से 9 तक अंक बिना दोहराव के होने चाहिए",
