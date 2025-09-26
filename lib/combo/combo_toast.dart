@@ -75,18 +75,18 @@ class ComboToast extends StatelessWidget {
           ),
           child: Container(
             height: resolvedHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             alignment: Alignment.center,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SvgPicture.asset(
                   iconAsset,
-                  width: 28,
-                  height: 28,
+                  width: 20,
+                  height: 20,
                   colorFilter: ColorFilter.mode(onSurface, BlendMode.srcIn),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     message,
