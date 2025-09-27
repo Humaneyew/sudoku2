@@ -269,14 +269,10 @@ class _BoardCell extends StatelessWidget {
         final selectedBackground = colors.selectedCell;
         final sameNumberBackground =
             Color.alphaBlend(colors.sameNumberCell, baseInner);
-        final blockBackground = Color.alphaBlend(
-          _increaseHighlightOpacity(colors.blockHighlight),
-          baseInner,
-        );
-        final crosshairBackground = Color.alphaBlend(
-          _increaseHighlightOpacity(colors.crosshairHighlight),
-          baseInner,
-        );
+        final blockBackground =
+            Color.alphaBlend(colors.blockHighlight, baseInner);
+        final crosshairBackground =
+            Color.alphaBlend(colors.crosshairHighlight, baseInner);
         final backgroundColor = cell.isSelected
             ? selectedBackground
             : highlightSameValue
@@ -357,9 +353,4 @@ class _CellState {
         incorrect,
         fontScale,
       );
-}
-
-Color _increaseHighlightOpacity(Color color) {
-  final increasedOpacity = (color.opacity * 1.21).clamp(0.0, 1.0);
-  return color.withOpacity(increasedOpacity);
 }
