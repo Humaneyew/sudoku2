@@ -196,35 +196,11 @@ Border _cellBorder(
         width: bold ? scaledBoldLineWidth : scaledThinLineWidth,
       );
 
-  BorderSide? topSide;
-  if (isTopEdge) {
-    topSide = buildSide(bold: true);
-  } else if (showTop) {
-    topSide = buildSide(bold: false);
-  }
-
-  BorderSide? leftSide;
-  if (isLeftEdge) {
-    leftSide = buildSide(bold: true);
-  } else if (showLeft) {
-    leftSide = buildSide(bold: false);
-  }
-
-  BorderSide? rightSide;
-  if (isRightEdge || showRight) {
-    rightSide = buildSide(bold: true);
-  }
-
-  BorderSide? bottomSide;
-  if (isBottomEdge || showBottom) {
-    bottomSide = buildSide(bold: true);
-  }
-
   return Border(
-    top: topSide ?? BorderSide.none,
-    left: leftSide ?? BorderSide.none,
-    right: rightSide ?? BorderSide.none,
-    bottom: bottomSide ?? BorderSide.none,
+    top: showTop ? buildSide(bold: false) : BorderSide.none,
+    left: showLeft ? buildSide(bold: false) : BorderSide.none,
+    right: showRight ? buildSide(bold: true) : BorderSide.none,
+    bottom: showBottom ? buildSide(bold: true) : BorderSide.none,
   );
 }
 
