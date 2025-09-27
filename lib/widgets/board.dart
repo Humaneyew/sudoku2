@@ -72,6 +72,7 @@ class Board extends StatelessWidget {
                       return _BoardCell(
                         key: ValueKey('board-cell-$index'),
                         index: index,
+                        scale: scale,
                       );
                     },
                   ),
@@ -165,9 +166,17 @@ class _NotesGrid extends StatelessWidget {
   }
 }
 
-Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
+Border _cellBorder(
+  int index,
+  double scale,
+  Color thinLineColor,
+  Color boldLineColor,
+) {
   const thinLineWidth = 0.6;
   const boldLineWidth = 2.3;
+
+  final scaledThinLineWidth = thinLineWidth * scale;
+  final scaledBoldLineWidth = boldLineWidth * scale;
 
   final row = index ~/ 9;
   final col = index % 9;
@@ -184,7 +193,7 @@ Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
 
   BorderSide buildSide({required bool bold}) => BorderSide(
         color: bold ? boldLineColor : thinLineColor,
-        width: bold ? boldLineWidth : thinLineWidth,
+        width: bold ? scaledBoldLineWidth : scaledThinLineWidth,
       );
 
   return Border(
@@ -197,8 +206,9 @@ Border _cellBorder(int index, Color thinLineColor, Color boldLineColor) {
 
 class _BoardCell extends StatelessWidget {
   final int index;
+  final double scale;
 
-  const _BoardCell({super.key, required this.index});
+  const _BoardCell({super.key, required this.index, required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +270,7 @@ class _BoardCell extends StatelessWidget {
           cs.onSurface.withOpacity(0.85),
           baseInner,
         );
-        final border = _cellBorder(index, thinColor, boldColor);
+        final border = _cellBorder(index, scale, thinColor, boldColor);
         final highlightSameValue =
             cell.value != 0 && cell.sameValue && !cell.isSelected;
         final highlightBlock = cell.sameBlock && !cell.isSelected;
