@@ -283,28 +283,15 @@ class _BoardCell extends StatelessWidget {
             Color.alphaBlend(colors.blockHighlight, baseInner);
         final crosshairBackground =
             Color.alphaBlend(colors.crosshairHighlight, baseInner);
-        var backgroundColor = baseInner;
-        if (highlightCrosshair) {
-          backgroundColor = Color.alphaBlend(
-            colors.crosshairHighlight,
-            backgroundColor,
-          );
-        }
-        if (highlightBlock) {
-          backgroundColor = Color.alphaBlend(
-            colors.blockHighlight,
-            backgroundColor,
-          );
-        }
-        if (highlightSameValue) {
-          backgroundColor = Color.alphaBlend(
-            colors.sameNumberCell,
-            backgroundColor,
-          );
-        }
-        if (cell.isSelected) {
-          backgroundColor = selectedBackground;
-        }
+        final backgroundColor = cell.isSelected
+            ? selectedBackground
+            : highlightSameValue
+                ? sameNumberBackground
+                : highlightBlock
+                    ? blockBackground
+                    : highlightCrosshair
+                        ? crosshairBackground
+                        : baseInner;
 
         return GestureDetector(
           onTap: () => context.read<AppState>().selectCell(index),
