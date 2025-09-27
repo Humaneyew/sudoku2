@@ -360,6 +360,6 @@ class _CellState {
 }
 
 Color _increaseHighlightOpacity(Color color) {
-  final increasedOpacity = (color.opacity * 1.1).clamp(0.0, 1.0);
+  final increasedOpacity = (color.opacity * 1.21).clamp(0.0, 1.0);
   return color.withOpacity(increasedOpacity);
 }
