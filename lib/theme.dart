@@ -640,7 +640,7 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
 
     return base.copyWith(
       textTheme: base.textTheme.apply(
-        fontFamily: 'SF Pro Text',
+        fontFamily: 'SF Pro Display',
         bodyColor: config.onSurface,
         displayColor: config.onSurface,
       ),
