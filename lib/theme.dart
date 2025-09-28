@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -254,6 +256,74 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
   }
 }
 
+class BoardHighlightTheme extends ThemeExtension<BoardHighlightTheme> {
+  final double rowColOverlayStrength;
+  final double boxOverlayStrength;
+  final double selectedOverlayStrength;
+  final double boxAccentBlend;
+
+  const BoardHighlightTheme({
+    required this.rowColOverlayStrength,
+    required this.boxOverlayStrength,
+    required this.selectedOverlayStrength,
+    this.boxAccentBlend = 0.0,
+  });
+
+  @override
+  ThemeExtension<BoardHighlightTheme> copyWith({
+    double? rowColOverlayStrength,
+    double? boxOverlayStrength,
+    double? selectedOverlayStrength,
+    double? boxAccentBlend,
+  }) {
+    return BoardHighlightTheme(
+      rowColOverlayStrength:
+          rowColOverlayStrength ?? this.rowColOverlayStrength,
+      boxOverlayStrength: boxOverlayStrength ?? this.boxOverlayStrength,
+      selectedOverlayStrength:
+          selectedOverlayStrength ?? this.selectedOverlayStrength,
+      boxAccentBlend: boxAccentBlend ?? this.boxAccentBlend,
+    );
+  }
+
+  @override
+  ThemeExtension<BoardHighlightTheme> lerp(
+    covariant ThemeExtension<BoardHighlightTheme>? other,
+    double t,
+  ) {
+    if (other is! BoardHighlightTheme) {
+      return this;
+    }
+
+    return BoardHighlightTheme(
+      rowColOverlayStrength: ui.lerpDouble(
+            rowColOverlayStrength,
+            other.rowColOverlayStrength,
+            t,
+          ) ??
+          rowColOverlayStrength,
+      boxOverlayStrength: ui.lerpDouble(
+            boxOverlayStrength,
+            other.boxOverlayStrength,
+            t,
+          ) ??
+          boxOverlayStrength,
+      selectedOverlayStrength: ui.lerpDouble(
+            selectedOverlayStrength,
+            other.selectedOverlayStrength,
+            t,
+          ) ??
+          selectedOverlayStrength,
+      boxAccentBlend: ui.lerpDouble(
+            boxAccentBlend,
+            other.boxAccentBlend,
+            t,
+          ) ??
+          boxAccentBlend,
+    );
+  }
+}
+
 class _ThemeConfig {
   final Brightness brightness;
   final Color background;
@@ -268,6 +338,7 @@ class _ThemeConfig {
   final Color outline;
   final Color outlineVariant;
   final SudokuColors colors;
+  final BoardHighlightTheme highlights;
 
   const _ThemeConfig({
     required this.brightness,
@@ -283,6 +354,7 @@ class _ThemeConfig {
     required this.outline,
     required this.outlineVariant,
     required this.colors,
+    required this.highlights,
   });
 }
 
@@ -300,6 +372,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFDDE5F6),
     outlineVariant: const Color(0xFFE8EDF9),
+    highlights: const BoardHighlightTheme(
+      rowColOverlayStrength: 0.10,
+      boxOverlayStrength: 0.14,
+      selectedOverlayStrength: 0.20,
+      boxAccentBlend: 0.0,
+    ),
     colors: const SudokuColors(
       boardInner: Color(0xFFFFFFFF),
       boardBorder: Color(0xFFC7D3F4),
@@ -366,6 +444,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFE8DCC3),
     outlineVariant: const Color(0xFFF2E7CF),
+    highlights: const BoardHighlightTheme(
+      rowColOverlayStrength: 0.10,
+      boxOverlayStrength: 0.14,
+      selectedOverlayStrength: 0.20,
+      boxAccentBlend: 0.10,
+    ),
     colors: const SudokuColors(
       boardInner: Color(0xFFFFFBF2),
       boardBorder: Color(0xFFE0D2B5),
@@ -432,6 +516,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFFCFE7DF),
     outlineVariant: const Color(0xFFE2F1EC),
+    highlights: const BoardHighlightTheme(
+      rowColOverlayStrength: 0.10,
+      boxOverlayStrength: 0.14,
+      selectedOverlayStrength: 0.20,
+      boxAccentBlend: 0.10,
+    ),
     colors: const SudokuColors(
       boardInner: Color(0xFFFBFFFD),
       boardBorder: Color(0xFFC5DED2),
@@ -498,6 +588,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     onError: const Color(0xFFFFFFFF),
     outline: const Color(0xFF2A2A2A),
     outlineVariant: const Color(0xFF242424),
+    highlights: const BoardHighlightTheme(
+      rowColOverlayStrength: 0.12,
+      boxOverlayStrength: 0.16,
+      selectedOverlayStrength: 0.22,
+      boxAccentBlend: 0.06,
+    ),
     colors: const SudokuColors(
       boardInner: Color(0xFF1A1A1A),
       boardBorder: Color(0xFF2C2C2C),
@@ -711,6 +807,7 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
       ),
       extensions: [
         config.colors,
+        config.highlights,
         _comboThemes[theme]!,
       ],
     );
