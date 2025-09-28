@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -91,33 +93,41 @@ class _CellContent extends StatelessWidget {
   final List<int> notes;
   final bool incorrect;
   final double fontScale;
+  final int hintHighlightId;
 
   const _CellContent({
     required this.value,
     required this.notes,
     required this.incorrect,
     required this.fontScale,
+    required this.hintHighlightId,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final colors = theme.extension<SudokuColors>()!;
     final onSurface = cs.onSurface;
     if (value != 0) {
-      return Center(
-        child: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          style: TextStyle(
-            fontSize: 20 * fontScale,
-            fontWeight: FontWeight.w600,
-            color: incorrect ? cs.error : onSurface,
-          ),
-          child: Text(value.toString()),
+      Widget text = AnimatedDefaultTextStyle(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        style: TextStyle(
+          fontSize: 20 * fontScale,
+          fontWeight: FontWeight.w600,
+          color: incorrect ? cs.error : onSurface,
         ),
+        child: Text(value.toString()),
       );
+
+      if (hintHighlightId != 0) {
+        text = _HintValueAnimation(
+          animationId: hintHighlightId,
+          child: text,
+        );
+      }
+
+      return Center(child: text);
     }
 
     if (notes.isEmpty) {
@@ -129,6 +139,130 @@ class _CellContent extends StatelessWidget {
       fontScale: fontScale,
       key: ValueKey('notes-${notes.join('-')}'),
     );
+  }
+}
+
+class _HintValueAnimation extends StatelessWidget {
+  static const Duration _duration = Duration(milliseconds: 320);
+  static const double _minScale = 0.3;
+  static const double _overshootScale = 1.2;
+  static const double _finalScale = 1.0;
+  static const double _firstStagePortion = 0.6;
+
+  final Widget child;
+  final int animationId;
+
+  const _HintValueAnimation({
+    required this.child,
+    required this.animationId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('hint-value-$animationId'),
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: _duration,
+      builder: (context, value, child) {
+        final scale = _scaleForProgress(value);
+        final opacity = Curves.easeOutCubic.transform(value.clamp(0.0, 1.0));
+        return Opacity(
+          opacity: opacity,
+          child: Transform.scale(
+            scale: scale,
+            alignment: Alignment.center,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
+  double _scaleForProgress(double t) {
+    if (t <= 0) {
+      return _minScale;
+    }
+    if (t >= 1) {
+      return _finalScale;
+    }
+    if (t < _firstStagePortion) {
+      final stageProgress = (t / _firstStagePortion).clamp(0.0, 1.0);
+      final eased = Curves.easeOutCubic.transform(stageProgress);
+      return ui.lerpDouble(_minScale, _overshootScale, eased) ?? _finalScale;
+    }
+    final stageProgress =
+        ((t - _firstStagePortion) / (1 - _firstStagePortion)).clamp(0.0, 1.0);
+    final eased = Curves.easeInOut.transform(stageProgress);
+    return ui.lerpDouble(_overshootScale, _finalScale, eased) ?? _finalScale;
+  }
+}
+
+class _HintHighlightOverlay extends StatelessWidget {
+  static const Duration _duration = Duration(milliseconds: 900);
+  static const double _fadeInPortion = 0.18;
+
+  final int animationId;
+  final Color color;
+  final double scale;
+
+  const _HintHighlightOverlay({
+    required this.animationId,
+    required this.color,
+    required this.scale,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('hint-highlight-$animationId'),
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: _duration,
+      builder: (context, value, child) {
+        final intensity = _intensityFor(value);
+        if (intensity <= 0) {
+          return const SizedBox.shrink();
+        }
+        final borderWidth = ui.lerpDouble(0, 3.0 * scale, intensity) ?? 0;
+        final blurRadius = ui.lerpDouble(0, 26.0 * scale, intensity) ?? 0;
+        final spreadRadius = ui.lerpDouble(0, 6.0 * scale, intensity) ?? 0;
+        return IgnorePointer(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0 * scale),
+              border: Border.all(
+                color: color.withOpacity(0.55 * intensity),
+                width: borderWidth,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.35 * intensity),
+                  blurRadius: blurRadius,
+                  spreadRadius: spreadRadius,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  double _intensityFor(double t) {
+    if (t <= 0) {
+      return 0;
+    }
+    if (t >= 1) {
+      return 0;
+    }
+    if (t < _fadeInPortion) {
+      final progress = (t / _fadeInPortion).clamp(0.0, 1.0);
+      return Curves.easeOutCubic.transform(progress);
+    }
+    final fadeOutProgress =
+        ((t - _fadeInPortion) / (1 - _fadeInPortion)).clamp(0.0, 1.0);
+    final eased = Curves.easeOutQuad.transform(fadeOutProgress);
+    return (1 - eased).clamp(0.0, 1.0);
   }
 }
 
@@ -240,6 +374,7 @@ class _BoardCell extends StatelessWidget {
         final sameValue = app.isSameAsSelectedValue(index);
         final incorrect =
             !fixed && value != 0 && !app.isMoveValid(index, value);
+        final hintHighlightId = app.hintHighlightIdForCell(index);
         return _CellState(
           value: value,
           notes: notes,
@@ -250,6 +385,7 @@ class _BoardCell extends StatelessWidget {
           sameValue: sameValue,
           incorrect: incorrect,
           fontScale: app.fontScale,
+          hintHighlightId: hintHighlightId,
         );
       },
       shouldRebuild: (previous, next) => previous != next,
@@ -295,17 +431,31 @@ class _BoardCell extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => context.read<AppState>().selectCell(index),
-          child: Container(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              border: border,
-            ),
-            child: _CellContent(
-              value: cell.value,
-              notes: cell.notes,
-              incorrect: cell.incorrect,
-              fontScale: cell.fontScale,
-            ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (cell.hintHighlightId != 0)
+                Positioned.fill(
+                  child: _HintHighlightOverlay(
+                    animationId: cell.hintHighlightId,
+                    color: colors.hintHighlight,
+                    scale: scale,
+                  ),
+                ),
+              Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  border: border,
+                ),
+                child: _CellContent(
+                  value: cell.value,
+                  notes: cell.notes,
+                  incorrect: cell.incorrect,
+                  fontScale: cell.fontScale,
+                  hintHighlightId: cell.hintHighlightId,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -323,6 +473,7 @@ class _CellState {
   final bool sameValue;
   final bool incorrect;
   final double fontScale;
+  final int hintHighlightId;
 
   const _CellState({
     required this.value,
@@ -334,6 +485,7 @@ class _CellState {
     required this.sameValue,
     required this.incorrect,
     required this.fontScale,
+    required this.hintHighlightId,
   });
 
   @override
@@ -348,7 +500,8 @@ class _CellState {
             other.sameBlock == sameBlock &&
             other.sameValue == sameValue &&
             other.incorrect == incorrect &&
-            other.fontScale == fontScale;
+            other.fontScale == fontScale &&
+            other.hintHighlightId == hintHighlightId;
   }
 
   @override
@@ -362,5 +515,6 @@ class _CellState {
         sameValue,
         incorrect,
         fontScale,
+        hintHighlightId,
       );
 }
