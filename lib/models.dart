@@ -115,7 +115,7 @@ extension FontSizeOptionX on FontSizeOption {
 }
 
 /// Режим активной игры.
-enum GameMode { classic, daily, battle }
+enum GameMode { classic, daily, battle, championship }
 
 /// Состояние активной игры.
 class GameState {
@@ -934,7 +934,10 @@ class AppState extends ChangeNotifier {
   }
 
   /// Запуск новой игры выбранного уровня сложности.
-  void startGame(Difficulty diff) {
+  void startGame(
+    Difficulty diff, {
+    GameMode mode = GameMode.classic,
+  }) {
     final resolvedList =
         (puzzles[diff] ?? puzzles[Difficulty.novice]) ?? <Puzzle>[];
     if (resolvedList.isEmpty) {
@@ -974,7 +977,7 @@ class AppState extends ChangeNotifier {
 
     currentDifficulty = diff;
     featuredDifficulty = diff;
-    currentMode = GameMode.classic;
+    currentMode = mode;
     _sessionId++;
     currentScore = 0;
     selectedCell = null;
