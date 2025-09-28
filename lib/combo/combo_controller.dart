@@ -38,6 +38,7 @@ class ComboController implements ComboEventSink {
   AnimationController? _controller;
   Timer? _dismissTimer;
   Timer? _throttleTimer;
+  Timer? _pendingMoveTimer;
   bool _showing = false;
   DateTime? _lastShowStarted;
   final math.Random _random = math.Random();
@@ -200,6 +201,8 @@ class ComboController implements ComboEventSink {
     _lastStreakShown = 0;
     _pendingMoveTimestampMs = null;
     _pendingMoveToasts.clear();
+    _pendingMoveTimer?.cancel();
+    _pendingMoveTimer = null;
     _queue.clear();
     _dismissActive(immediate: true);
   }
@@ -210,6 +213,8 @@ class ComboController implements ComboEventSink {
     _throttleTimer?.cancel();
     _pendingMoveTimestampMs = null;
     _pendingMoveToasts.clear();
+    _pendingMoveTimer?.cancel();
+    _pendingMoveTimer = null;
   }
 
   void _emitPerfectToast(_ToastType type, Difficulty? difficulty) {
@@ -247,7 +252,10 @@ class ComboController implements ComboEventSink {
   void _startMoveAggregation(int timestampMs) {
     _pendingMoveTimestampMs = timestampMs;
     _pendingMoveToasts.clear();
-    Future.microtask(() => _finalizeMoveToasts(timestampMs));
+    _pendingMoveTimer?.cancel();
+    _pendingMoveTimer = Timer(Duration.zero, () {
+      _finalizeMoveToasts(timestampMs);
+    });
   }
 
   void _collectMoveToast(
@@ -282,32 +290,37 @@ class ComboController implements ComboEventSink {
     final pending = List<_PendingMoveToast>.from(_pendingMoveToasts);
     _pendingMoveTimestampMs = null;
     _pendingMoveToasts.clear();
+    _pendingMoveTimer?.cancel();
+    _pendingMoveTimer = null;
     if (pending.isEmpty) {
       return;
     }
-    if (pending.length == 1) {
-      final single = pending.single;
-      _enqueueToast(single.request, allowUpgrade: single.allowUpgrade);
-      return;
-    }
-    final comboEntries =
-        pending.where((entry) => entry.request.type == _ToastType.combo).toList();
-    final streakEntries = pending
-        .where((entry) => entry.request.type == _ToastType.streak)
-        .toList();
-    _PendingMoveToast selected;
-    if (comboEntries.isNotEmpty || streakEntries.isNotEmpty) {
-      if (comboEntries.isNotEmpty && streakEntries.isNotEmpty) {
-        selected =
-            _random.nextBool() ? comboEntries.last : streakEntries.last;
-      } else if (comboEntries.isNotEmpty) {
+    final triggeredTypes = pending.map((entry) => entry.request.type).toSet();
+    _PendingMoveToast? selected;
+    if (triggeredTypes.length >= 2) {
+      final comboEntries = pending
+          .where((entry) => entry.request.type == _ToastType.combo)
+          .toList();
+      final streakEntries = pending
+          .where((entry) => entry.request.type == _ToastType.streak)
+          .toList();
+      final hasCombo = comboEntries.isNotEmpty;
+      final hasStreak = streakEntries.isNotEmpty;
+      if (hasCombo && hasStreak) {
+        selected = _random.nextBool()
+            ? comboEntries.last
+            : streakEntries.last;
+      } else if (hasCombo) {
         selected = comboEntries.last;
-      } else {
+      } else if (hasStreak) {
         selected = streakEntries.last;
+      } else {
+        selected = pending[_random.nextInt(pending.length)];
       }
     } else {
       selected = pending.last;
     }
+    selected ??= pending.last;
     _enqueueToast(selected.request, allowUpgrade: selected.allowUpgrade);
   }
 
