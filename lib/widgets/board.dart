@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -198,6 +199,41 @@ class _PopBounceAnimation extends StatelessWidget {
   }
 }
 
+class _IncorrectShakeAnimation extends StatelessWidget {
+  static const Duration _duration = Duration(milliseconds: 300);
+  static const double _oscillations = 3.5;
+
+  final Widget child;
+  final int animationId;
+  final double scale;
+
+  const _IncorrectShakeAnimation({
+    required this.child,
+    required this.animationId,
+    required this.scale,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('incorrect-shake-$animationId'),
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: _duration,
+      builder: (context, value, child) {
+        final eased = Curves.easeOut.transform(value);
+        final damping = math.max(0, 1 - eased);
+        final amplitude = 3.0 * scale;
+        final offset = math.sin(eased * math.pi * _oscillations) * amplitude * damping;
+        return Transform.translate(
+          offset: Offset(offset, 0),
+          child: child,
+        );
+      },
+      child: child,
+    );
+  }
+}
+
 class _HintHighlightOverlay extends StatelessWidget {
   static const Duration _duration = Duration(milliseconds: 900);
   static const double _fadeInPortion = 0.18;
@@ -376,6 +412,7 @@ class _BoardCell extends StatelessWidget {
             !fixed && value != 0 && !app.isMoveValid(index, value);
         final hintHighlightId = app.hintHighlightIdForCell(index);
         final valueAnimationId = app.valueAnimationIdForCell(index);
+        final incorrectAnimationId = app.incorrectAnimationIdForCell(index);
         return _CellState(
           value: value,
           notes: notes,
@@ -388,6 +425,7 @@ class _BoardCell extends StatelessWidget {
           fontScale: app.fontScale,
           hintHighlightId: hintHighlightId,
           valueAnimationId: valueAnimationId,
+          incorrectAnimationId: incorrectAnimationId,
         );
       },
       shouldRebuild: (previous, next) => previous != next,
@@ -431,9 +469,7 @@ class _BoardCell extends StatelessWidget {
                         ? crosshairBackground
                         : baseInner;
 
-        return GestureDetector(
-          onTap: () => context.read<AppState>().selectCell(index),
-          child: Stack(
+        Widget content = Stack(
             fit: StackFit.expand,
             children: [
               if (cell.hintHighlightId != 0)
@@ -458,7 +494,19 @@ class _BoardCell extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          );
+
+        if (cell.incorrectAnimationId != 0) {
+          content = _IncorrectShakeAnimation(
+            animationId: cell.incorrectAnimationId,
+            scale: scale,
+            child: content,
+          );
+        }
+
+        return GestureDetector(
+          onTap: () => context.read<AppState>().selectCell(index),
+          child: content,
         );
       },
     );
@@ -477,6 +525,7 @@ class _CellState {
   final double fontScale;
   final int hintHighlightId;
   final int valueAnimationId;
+  final int incorrectAnimationId;
 
   const _CellState({
     required this.value,
@@ -490,6 +539,7 @@ class _CellState {
     required this.fontScale,
     required this.hintHighlightId,
     required this.valueAnimationId,
+    required this.incorrectAnimationId,
   });
 
   @override
@@ -506,7 +556,8 @@ class _CellState {
             other.incorrect == incorrect &&
             other.fontScale == fontScale &&
             other.hintHighlightId == hintHighlightId &&
-            other.valueAnimationId == valueAnimationId;
+            other.valueAnimationId == valueAnimationId &&
+            other.incorrectAnimationId == incorrectAnimationId;
   }
 
   @override
@@ -522,5 +573,6 @@ class _CellState {
         fontScale,
         hintHighlightId,
         valueAnimationId,
+        incorrectAnimationId,
       );
 }

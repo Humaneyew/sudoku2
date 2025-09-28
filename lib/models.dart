@@ -337,8 +337,10 @@ class AppState extends ChangeNotifier {
   ComboEventSink? _comboSink;
   final Map<int, int> _hintHighlights = <int, int>{};
   final Map<int, int> _valueAnimations = <int, int>{};
+  final Map<int, int> _incorrectAnimations = <int, int>{};
   int _hintHighlightCounter = 0;
   int _valueAnimationCounter = 0;
+  int _incorrectAnimationCounter = 0;
   bool _disposed = false;
 
   /// Загружаем сохранённые настройки и прогресс.
@@ -348,6 +350,7 @@ class AppState extends ChangeNotifier {
 
       _hintHighlights.clear();
       _valueAnimations.clear();
+      _incorrectAnimations.clear();
 
       _dailyChallengeDate = null;
       _currentGameId = null;
@@ -911,6 +914,7 @@ class AppState extends ChangeNotifier {
 
     _hintHighlights.clear();
     _valueAnimations.clear();
+    _incorrectAnimations.clear();
 
     current = GameState(
       board: List.of(puzzle.board),
@@ -963,6 +967,7 @@ class AppState extends ChangeNotifier {
       _currentGameId = null;
       _hintHighlights.clear();
       _valueAnimations.clear();
+      _incorrectAnimations.clear();
       currentMode = null;
       notifyListeners();
       return;
@@ -971,6 +976,7 @@ class AppState extends ChangeNotifier {
     _dailyChallengeDate = null;
     _hintHighlights.clear();
     _valueAnimations.clear();
+    _incorrectAnimations.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1029,6 +1035,7 @@ class AppState extends ChangeNotifier {
       _currentGameId = null;
       _hintHighlights.clear();
       _valueAnimations.clear();
+      _incorrectAnimations.clear();
       notifyListeners();
       return;
     }
@@ -1036,6 +1043,7 @@ class AppState extends ChangeNotifier {
     _dailyChallengeDate = null;
     _hintHighlights.clear();
     _valueAnimations.clear();
+    _incorrectAnimations.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1102,6 +1110,7 @@ class AppState extends ChangeNotifier {
     _history.clear();
     _hintHighlights.clear();
     _valueAnimations.clear();
+    _incorrectAnimations.clear();
     _sessionId++;
     _startedAt = DateTime.now();
     final diff = currentDifficulty;
@@ -1144,6 +1153,7 @@ class AppState extends ChangeNotifier {
 
   int hintHighlightIdForCell(int index) => _hintHighlights[index] ?? 0;
   int valueAnimationIdForCell(int index) => _valueAnimations[index] ?? 0;
+  int incorrectAnimationIdForCell(int index) => _incorrectAnimations[index] ?? 0;
 
   bool get isSolved {
     final game = current;
@@ -1246,6 +1256,20 @@ class AppState extends ChangeNotifier {
     });
   }
 
+  void _triggerIncorrectAnimation(int index) {
+    final id = ++_incorrectAnimationCounter;
+    _incorrectAnimations[index] = id;
+    Future.delayed(const Duration(milliseconds: 360), () {
+      if (_disposed) {
+        return;
+      }
+      if (_incorrectAnimations[index] == id) {
+        _incorrectAnimations.remove(index);
+        notifyListeners();
+      }
+    });
+  }
+
   void _checkPerfectGroups(GameState game, int index) {
     final diff = currentDifficulty;
     final row = index ~/ 9;
@@ -1326,6 +1350,7 @@ class AppState extends ChangeNotifier {
       consumedLife = true;
       _madeMistake = true;
       _handleMistakeFeedback();
+      _triggerIncorrectAnimation(index);
     } else {
       currentScore += 12;
       _handleCorrectFeedback();
