@@ -335,11 +335,16 @@ class AppState extends ChangeNotifier {
   final Set<int> _completedPerfectColumns = <int>{};
   final Set<int> _completedPerfectBoxes = <int>{};
   ComboEventSink? _comboSink;
+  final Map<int, int> _hintHighlights = <int, int>{};
+  int _hintHighlightCounter = 0;
+  bool _disposed = false;
 
   /// Загружаем сохранённые настройки и прогресс.
   Future<void> load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+
+      _hintHighlights.clear();
 
       _dailyChallengeDate = null;
       _currentGameId = null;
@@ -901,6 +906,8 @@ class AppState extends ChangeNotifier {
     final normalized = _dateOnly(date);
     final puzzle = generateDailyPuzzle(normalized);
 
+    _hintHighlights.clear();
+
     current = GameState(
       board: List.of(puzzle.board),
       solution: List.of(puzzle.solution),
@@ -950,12 +957,14 @@ class AppState extends ChangeNotifier {
       _history.clear();
       _clearSavedGame();
       _currentGameId = null;
+      _hintHighlights.clear();
       currentMode = null;
       notifyListeners();
       return;
     }
 
     _dailyChallengeDate = null;
+    _hintHighlights.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1012,11 +1021,13 @@ class AppState extends ChangeNotifier {
       _history.clear();
       _clearSavedGame();
       _currentGameId = null;
+      _hintHighlights.clear();
       notifyListeners();
       return;
     }
 
     _dailyChallengeDate = null;
+    _hintHighlights.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1081,6 +1092,7 @@ class AppState extends ChangeNotifier {
     _madeMistake = false;
     _gameCompleted = false;
     _history.clear();
+    _hintHighlights.clear();
     _sessionId++;
     _startedAt = DateTime.now();
     final diff = currentDifficulty;
@@ -1120,6 +1132,8 @@ class AppState extends ChangeNotifier {
   bool get hasUnfinishedGame => current != null && !_gameCompleted;
 
   bool get isOutOfLives => livesLeft <= 0;
+
+  int hintHighlightIdForCell(int index) => _hintHighlights[index] ?? 0;
 
   bool get isSolved {
     final game = current;
@@ -1191,6 +1205,20 @@ class AppState extends ChangeNotifier {
     }
     game.locked[index] = true;
     _history.removeWhere((move) => move.index == index);
+  }
+
+  void _markCellHinted(int index) {
+    final id = ++_hintHighlightCounter;
+    _hintHighlights[index] = id;
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_disposed) {
+        return;
+      }
+      if (_hintHighlights[index] == id) {
+        _hintHighlights.remove(index);
+        notifyListeners();
+      }
+    });
   }
 
   void _checkPerfectGroups(GameState game, int index) {
@@ -1381,6 +1409,7 @@ class AppState extends ChangeNotifier {
     game.notes[idx].clear();
     _lockCell(game, idx);
     _checkPerfectGroups(game, idx);
+    _markCellHinted(idx);
     hintsLeft = math.max(0, hintsLeft - 1);
     _hintsConsumed++;
     currentScore += 8;
@@ -1411,6 +1440,7 @@ class AppState extends ChangeNotifier {
       if (_hintsConsumed > 0) {
         _hintsConsumed--;
       }
+      _hintHighlights.remove(last.index);
     }
 
     if (last.consumedLife) {
@@ -1851,6 +1881,13 @@ class AppState extends ChangeNotifier {
     _persist((prefs) async {
       await prefs.remove('currentGame');
     });
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _saveDebounce?.cancel();
+    super.dispose();
   }
 
   void _persist(Future<void> Function(SharedPreferences prefs) save) {

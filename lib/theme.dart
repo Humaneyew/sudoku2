@@ -30,6 +30,7 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
   final Color sameNumberCell;
   final Color blockHighlight;
   final Color crosshairHighlight;
+  final Color hintHighlight;
   final Color noteColor;
   final Color headerButtonBackground;
   final Color headerButtonIcon;
@@ -61,6 +62,7 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     required this.sameNumberCell,
     required this.blockHighlight,
     required this.crosshairHighlight,
+    required this.hintHighlight,
     required this.noteColor,
     required this.headerButtonBackground,
     required this.headerButtonIcon,
@@ -94,6 +96,7 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
     Color? sameNumberCell,
     Color? blockHighlight,
     Color? crosshairHighlight,
+    Color? hintHighlight,
     Color? noteColor,
     Color? headerButtonBackground,
     Color? headerButtonIcon,
@@ -125,6 +128,7 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
       sameNumberCell: sameNumberCell ?? this.sameNumberCell,
       blockHighlight: blockHighlight ?? this.blockHighlight,
       crosshairHighlight: crosshairHighlight ?? this.crosshairHighlight,
+      hintHighlight: hintHighlight ?? this.hintHighlight,
       noteColor: noteColor ?? this.noteColor,
       headerButtonBackground:
           headerButtonBackground ?? this.headerButtonBackground,
@@ -192,6 +196,7 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
       sameNumberCell: _lerp(sameNumberCell, other.sameNumberCell),
       blockHighlight: _lerp(blockHighlight, other.blockHighlight),
       crosshairHighlight: _lerp(crosshairHighlight, other.crosshairHighlight),
+      hintHighlight: _lerp(hintHighlight, other.hintHighlight),
       noteColor: _lerp(noteColor, other.noteColor),
       headerButtonBackground:
           _lerp(headerButtonBackground, other.headerButtonBackground),
@@ -302,6 +307,7 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       sameNumberCell: Color(0x59A9CCE3),
       blockHighlight: Color(0x66EAF2F8),
       crosshairHighlight: Color(0x5FD6EAF8),
+      hintHighlight: Color(0xFF55C7FF),
       noteColor: Color(0xFF7C8CB2),
       headerButtonBackground: Color(0xFFFFFFFF),
       headerButtonIcon: Color(0xFF2563EB),
@@ -367,6 +373,7 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       sameNumberCell: Color(0x59F2E3BF),
       blockHighlight: Color(0x66F8EBD6),
       crosshairHighlight: Color(0x5FFDF5E6),
+      hintHighlight: Color(0xFF6FDDBF),
       noteColor: Color(0xFFB08F5A),
       headerButtonBackground: Color(0xFFFFFBF2),
       headerButtonIcon: Color(0xFF2F7457),
@@ -432,6 +439,7 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       sameNumberCell: Color(0x59E5F7EC),
       blockHighlight: Color(0x66ECF7F0),
       crosshairHighlight: Color(0x5FEFF9F3),
+      hintHighlight: Color(0xFF65E6C3),
       noteColor: Color(0xFF6F8F7F),
       headerButtonBackground: Color(0xFFFBFFFD),
       headerButtonIcon: Color(0xFF2F8D6A),
@@ -497,6 +505,7 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
       sameNumberCell: Color(0x59202B3D),
       blockHighlight: Color(0x662B374C),
       crosshairHighlight: Color(0x5F252F41),
+      hintHighlight: Color(0xFF4AA9FF),
       noteColor: Color(0xFFB3B9C6),
       headerButtonBackground: Color(0xFF1F2634),
       headerButtonIcon: Color(0xFF8EB6FF),
