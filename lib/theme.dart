@@ -3,6 +3,12 @@ import 'package:sudoku2/flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'combo/combo_theme.dart';
 
+const Color classicBg = Color(0xFFF8FAFF);
+const Color classicRowCol = Color(0xB3E8F1FF);
+const Color classicBlock = Color(0x73E8F1FF);
+const Color classicSelected = Color(0xFFC7D9FF);
+const Color classicSameDigits = Color(0xCCD9E5FF);
+
 /// Список доступных цветовых тем приложения.
 enum SudokuTheme { white, cream, green, black }
 
@@ -289,7 +295,7 @@ class _ThemeConfig {
 final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
   SudokuTheme.white: _ThemeConfig(
     brightness: Brightness.light,
-    background: const Color(0xFFF7FAFF),
+    background: classicBg,
     surface: const Color(0xFFFFFFFF),
     primary: const Color(0xFF2563EB),
     onPrimary: const Color(0xFFFFFFFF),
@@ -301,12 +307,12 @@ final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
     outline: const Color(0xFFDDE5F6),
     outlineVariant: const Color(0xFFE8EDF9),
     colors: const SudokuColors(
-      boardInner: Color(0xFFFFFFFF),
+      boardInner: classicBg,
       boardBorder: Color(0xFFC7D3F4),
-      selectedCell: Color(0xFF4A90E2),
-      sameNumberCell: Color(0x59A9CCE3),
-      blockHighlight: Color(0x66EAF2F8),
-      crosshairHighlight: Color(0x5FD6EAF8),
+      selectedCell: classicSelected,
+      sameNumberCell: classicSameDigits,
+      blockHighlight: classicBlock,
+      crosshairHighlight: classicRowCol,
       hintHighlight: Color(0xFF55C7FF),
       noteColor: Color(0xFF7C8CB2),
       headerButtonBackground: Color(0xFFFFFFFF),
