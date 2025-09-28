@@ -40,6 +40,10 @@ class ComboController implements ComboEventSink {
   Timer? _throttleTimer;
   bool _showing = false;
   DateTime? _lastShowStarted;
+  final math.Random _random = math.Random();
+
+  int? _pendingMoveTimestampMs;
+  final List<_PendingMoveToast> _pendingMoveToasts = <_PendingMoveToast>[];
 
   int _comboCount = 0;
   int _maxComboShown = 0;
@@ -65,6 +69,7 @@ class ComboController implements ComboEventSink {
     Difficulty? difficulty,
   }) {
     _currentDifficulty = difficulty;
+    _startMoveAggregation(timestampMs);
     final ts = DateTime.fromMillisecondsSinceEpoch(timestampMs);
     if (!correct) {
       _comboCount = 0;
@@ -89,7 +94,7 @@ class ComboController implements ComboEventSink {
         return;
       }
       final label = l10n.comboX(_comboCount);
-      _enqueueToast(
+      _collectMoveToast(
         _ToastRequest(
           type: _ToastType.combo,
           label: label,
@@ -134,7 +139,7 @@ class ComboController implements ComboEventSink {
           return;
         }
         final label = l10n.streakN(milestone);
-        _enqueueToast(
+        _collectMoveToast(
           _ToastRequest(
             type: _ToastType.streak,
             label: label,
@@ -193,6 +198,8 @@ class ComboController implements ComboEventSink {
     _lastComboTs = null;
     _noHintChain = 0;
     _lastStreakShown = 0;
+    _pendingMoveTimestampMs = null;
+    _pendingMoveToasts.clear();
     _queue.clear();
     _dismissActive(immediate: true);
   }
@@ -201,6 +208,8 @@ class ComboController implements ComboEventSink {
   void dispose() {
     _dismissActive(immediate: true);
     _throttleTimer?.cancel();
+    _pendingMoveTimestampMs = null;
+    _pendingMoveToasts.clear();
   }
 
   void _emitPerfectToast(_ToastType type, Difficulty? difficulty) {
@@ -225,7 +234,7 @@ class ComboController implements ComboEventSink {
     if (label.isEmpty) {
       return;
     }
-    _enqueueToast(
+    _collectMoveToast(
       _ToastRequest(
         type: type,
         label: label,
@@ -233,6 +242,73 @@ class ComboController implements ComboEventSink {
         difficulty: difficulty,
       ),
     );
+  }
+
+  void _startMoveAggregation(int timestampMs) {
+    _pendingMoveTimestampMs = timestampMs;
+    _pendingMoveToasts.clear();
+    Future.microtask(() => _finalizeMoveToasts(timestampMs));
+  }
+
+  void _collectMoveToast(
+    _ToastRequest request, {
+    bool allowUpgrade = false,
+  }) {
+    if (_pendingMoveTimestampMs == null) {
+      _enqueueToast(request, allowUpgrade: allowUpgrade);
+      return;
+    }
+    if (allowUpgrade) {
+      final index = _pendingMoveToasts.indexWhere(
+        (entry) => entry.request.type == request.type,
+      );
+      if (index != -1) {
+        final existing = _pendingMoveToasts[index];
+        if (request.level >= existing.request.level) {
+          _pendingMoveToasts[index] =
+              _PendingMoveToast(request, allowUpgrade: allowUpgrade);
+        }
+        return;
+      }
+    }
+    _pendingMoveToasts
+        .add(_PendingMoveToast(request, allowUpgrade: allowUpgrade));
+  }
+
+  void _finalizeMoveToasts(int timestampMs) {
+    if (_pendingMoveTimestampMs != timestampMs) {
+      return;
+    }
+    final pending = List<_PendingMoveToast>.from(_pendingMoveToasts);
+    _pendingMoveTimestampMs = null;
+    _pendingMoveToasts.clear();
+    if (pending.isEmpty) {
+      return;
+    }
+    if (pending.length == 1) {
+      final single = pending.single;
+      _enqueueToast(single.request, allowUpgrade: single.allowUpgrade);
+      return;
+    }
+    final comboEntries =
+        pending.where((entry) => entry.request.type == _ToastType.combo).toList();
+    final streakEntries = pending
+        .where((entry) => entry.request.type == _ToastType.streak)
+        .toList();
+    _PendingMoveToast selected;
+    if (comboEntries.isNotEmpty || streakEntries.isNotEmpty) {
+      if (comboEntries.isNotEmpty && streakEntries.isNotEmpty) {
+        selected =
+            _random.nextBool() ? comboEntries.last : streakEntries.last;
+      } else if (comboEntries.isNotEmpty) {
+        selected = comboEntries.last;
+      } else {
+        selected = streakEntries.last;
+      }
+    } else {
+      selected = pending.last;
+    }
+    _enqueueToast(selected.request, allowUpgrade: selected.allowUpgrade);
   }
 
   void _enqueueToast(
@@ -530,4 +606,11 @@ class _ToastRequest {
     this.level = 0,
     this.difficulty,
   });
+}
+
+class _PendingMoveToast {
+  final _ToastRequest request;
+  final bool allowUpgrade;
+
+  const _PendingMoveToast(this.request, {this.allowUpgrade = false});
 }
