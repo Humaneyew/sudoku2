@@ -93,14 +93,14 @@ class _CellContent extends StatelessWidget {
   final List<int> notes;
   final bool incorrect;
   final double fontScale;
-  final int hintHighlightId;
+  final int valueAnimationId;
 
   const _CellContent({
     required this.value,
     required this.notes,
     required this.incorrect,
     required this.fontScale,
-    required this.hintHighlightId,
+    required this.valueAnimationId,
   });
 
   @override
@@ -120,9 +120,9 @@ class _CellContent extends StatelessWidget {
         child: Text(value.toString()),
       );
 
-      if (hintHighlightId != 0) {
-        text = _HintValueAnimation(
-          animationId: hintHighlightId,
+      if (valueAnimationId != 0) {
+        text = _PopBounceAnimation(
+          animationId: valueAnimationId,
           child: text,
         );
       }
@@ -142,7 +142,7 @@ class _CellContent extends StatelessWidget {
   }
 }
 
-class _HintValueAnimation extends StatelessWidget {
+class _PopBounceAnimation extends StatelessWidget {
   static const Duration _duration = Duration(milliseconds: 320);
   static const double _minScale = 0.3;
   static const double _overshootScale = 1.2;
@@ -152,7 +152,7 @@ class _HintValueAnimation extends StatelessWidget {
   final Widget child;
   final int animationId;
 
-  const _HintValueAnimation({
+  const _PopBounceAnimation({
     required this.child,
     required this.animationId,
   });
@@ -160,7 +160,7 @@ class _HintValueAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
-      key: ValueKey('hint-value-$animationId'),
+      key: ValueKey('value-pop-$animationId'),
       tween: Tween<double>(begin: 0, end: 1),
       duration: _duration,
       builder: (context, value, child) {
@@ -375,6 +375,7 @@ class _BoardCell extends StatelessWidget {
         final incorrect =
             !fixed && value != 0 && !app.isMoveValid(index, value);
         final hintHighlightId = app.hintHighlightIdForCell(index);
+        final valueAnimationId = app.valueAnimationIdForCell(index);
         return _CellState(
           value: value,
           notes: notes,
@@ -386,6 +387,7 @@ class _BoardCell extends StatelessWidget {
           incorrect: incorrect,
           fontScale: app.fontScale,
           hintHighlightId: hintHighlightId,
+          valueAnimationId: valueAnimationId,
         );
       },
       shouldRebuild: (previous, next) => previous != next,
@@ -452,7 +454,7 @@ class _BoardCell extends StatelessWidget {
                   notes: cell.notes,
                   incorrect: cell.incorrect,
                   fontScale: cell.fontScale,
-                  hintHighlightId: cell.hintHighlightId,
+                  valueAnimationId: cell.valueAnimationId,
                 ),
               ),
             ],
@@ -474,6 +476,7 @@ class _CellState {
   final bool incorrect;
   final double fontScale;
   final int hintHighlightId;
+  final int valueAnimationId;
 
   const _CellState({
     required this.value,
@@ -486,6 +489,7 @@ class _CellState {
     required this.incorrect,
     required this.fontScale,
     required this.hintHighlightId,
+    required this.valueAnimationId,
   });
 
   @override
@@ -501,7 +505,8 @@ class _CellState {
             other.sameValue == sameValue &&
             other.incorrect == incorrect &&
             other.fontScale == fontScale &&
-            other.hintHighlightId == hintHighlightId;
+            other.hintHighlightId == hintHighlightId &&
+            other.valueAnimationId == valueAnimationId;
   }
 
   @override
@@ -516,5 +521,6 @@ class _CellState {
         incorrect,
         fontScale,
         hintHighlightId,
+        valueAnimationId,
       );
 }
