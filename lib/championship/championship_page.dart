@@ -70,7 +70,10 @@ class ChampionshipPage extends StatelessWidget {
     final difficulty = championship.recommendedDifficulty;
     championship.startRound(difficulty);
     final app = context.read<AppState>();
-    app.startGame(difficulty);
+    app.startGame(
+      difficulty,
+      mode: GameMode.championship,
+    );
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),

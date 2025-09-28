@@ -371,7 +371,7 @@ class _GamePageState extends State<GamePage>
       }
       int awardedDelta = 0;
       int? previousRank;
-      if (championship != null) {
+      if (championship != null && app.currentMode == GameMode.championship) {
         try {
           final difficulty = app.currentDifficulty ?? app.featuredDifficulty;
           final mistakes =
