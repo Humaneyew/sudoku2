@@ -64,18 +64,30 @@ class Board extends StatelessWidget {
                 decoration: innerDecoration,
                 child: ClipRRect(
                   borderRadius: innerRadius,
-                  child: GridView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 9,
-                    ),
-                    itemCount: 81,
-                    itemBuilder: (context, index) {
-                      return _BoardCell(
-                        key: ValueKey('board-cell-$index'),
-                        index: index,
-                        scale: scale,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final size = constraints.biggest;
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          _BoardHighlightLayer(size: size),
+                          GridView.builder(
+                            padding: EdgeInsets.zero,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 9,
+                            ),
+                            itemCount: 81,
+                            itemBuilder: (context, index) {
+                              return _BoardCell(
+                                key: ValueKey('board-cell-$index'),
+                                index: index,
+                                scale: scale,
+                              );
+                            },
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -232,6 +244,307 @@ class _IncorrectShakeAnimation extends StatelessWidget {
       child: child,
     );
   }
+}
+
+class _BoardHighlightLayer extends StatelessWidget {
+  final Size size;
+
+  const _BoardHighlightLayer({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<SudokuColors>()!;
+    final highlightTheme =
+        theme.extension<BoardHighlightTheme>() ?? const BoardHighlightTheme(
+              rowColOverlayStrength: 0.10,
+              boxOverlayStrength: 0.14,
+              selectedOverlayStrength: 0.20,
+            );
+    final boardSurface = colors.boardInner;
+    final textColor = theme.colorScheme.onSurface;
+    final accent = theme.colorScheme.primary;
+
+    return IgnorePointer(
+      child: Selector<AppState, _HighlightState>(
+        selector: (_, app) => _HighlightState(selectedIndex: app.selectedCell),
+        shouldRebuild: (previous, next) => previous != next,
+        builder: (context, highlight, _) {
+          Widget child;
+          if (highlight.selectedIndex == null) {
+            child = SizedBox.fromSize(
+              key: const ValueKey('highlight-empty'),
+              size: size,
+            );
+          } else {
+            final rowColStyle = _resolveOverlayStyle(
+              boardSurface: boardSurface,
+              textColor: textColor,
+              targetStrength: highlightTheme.rowColOverlayStrength,
+              accent: accent,
+              accentBlend: 0.0,
+            );
+            final boxStyle = _resolveOverlayStyle(
+              boardSurface: boardSurface,
+              textColor: textColor,
+              targetStrength: highlightTheme.boxOverlayStrength,
+              accent: accent,
+              accentBlend: highlightTheme.boxAccentBlend,
+            );
+            final selectedStyle = _resolveOverlayStyle(
+              boardSurface: boardSurface,
+              textColor: textColor,
+              targetStrength: highlightTheme.selectedOverlayStrength,
+              accent: accent,
+              accentBlend: 0.0,
+            );
+            child = SizedBox.fromSize(
+              key: ValueKey(highlight.selectedIndex),
+              size: size,
+              child: CustomPaint(
+                painter: _BoardHighlightPainter(
+                  highlight: highlight,
+                  rowColStyle: rowColStyle,
+                  boxStyle: boxStyle,
+                  selectedStyle: selectedStyle,
+                ),
+              ),
+            );
+          }
+
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 140),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeOut,
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+            layoutBuilder: (currentChild, previousChildren) {
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  ...previousChildren,
+                  if (currentChild != null) currentChild,
+                ],
+              );
+            },
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _BoardHighlightPainter extends CustomPainter {
+  final _HighlightState highlight;
+  final _OverlayStyle rowColStyle;
+  final _OverlayStyle boxStyle;
+  final _OverlayStyle selectedStyle;
+
+  const _BoardHighlightPainter({
+    required this.highlight,
+    required this.rowColStyle,
+    required this.boxStyle,
+    required this.selectedStyle,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final selectedIndex = highlight.selectedIndex;
+    if (selectedIndex == null) {
+      return;
+    }
+
+    final cellWidth = size.width / 9;
+    final cellHeight = size.height / 9;
+    final selectedRow = selectedIndex ~/ 9;
+    final selectedColumn = selectedIndex % 9;
+
+    final paths = <_OverlayStyle, Path>{};
+
+    for (var row = 0; row < 9; row++) {
+      for (var column = 0; column < 9; column++) {
+        final index = row * 9 + column;
+        if (index == selectedIndex) {
+          continue;
+        }
+
+        _OverlayStyle? style;
+        if (row == selectedRow || column == selectedColumn) {
+          style = _selectDominantStyle(style, rowColStyle);
+        }
+        if ((row ~/ 3 == selectedRow ~/ 3) &&
+            (column ~/ 3 == selectedColumn ~/ 3)) {
+          style = _selectDominantStyle(style, boxStyle);
+        }
+
+        if (style == null || style.strength <= 0) {
+          continue;
+        }
+
+        final rect = Rect.fromLTWH(
+          column * cellWidth,
+          row * cellHeight,
+          cellWidth,
+          cellHeight,
+        );
+        paths.putIfAbsent(style, Path.new).addRect(rect);
+      }
+    }
+
+    for (final entry in paths.entries) {
+      final paint = Paint()..color = entry.key.color;
+      canvas.drawPath(entry.value, paint);
+    }
+
+    if (selectedStyle.strength > 0) {
+      final rect = Rect.fromLTWH(
+        selectedColumn * cellWidth,
+        selectedRow * cellHeight,
+        cellWidth,
+        cellHeight,
+      );
+      final paint = Paint()..color = selectedStyle.color;
+      canvas.drawRect(rect, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _BoardHighlightPainter oldDelegate) {
+    return highlight != oldDelegate.highlight ||
+        rowColStyle != oldDelegate.rowColStyle ||
+        boxStyle != oldDelegate.boxStyle ||
+        selectedStyle != oldDelegate.selectedStyle;
+  }
+
+  _OverlayStyle? _selectDominantStyle(
+    _OverlayStyle? current,
+    _OverlayStyle candidate,
+  ) {
+    if (candidate.strength <= 0) {
+      return current;
+    }
+    if (current == null || candidate.opacity > current.opacity) {
+      return candidate;
+    }
+    return current;
+  }
+}
+
+class _HighlightState {
+  final int? selectedIndex;
+
+  const _HighlightState({required this.selectedIndex});
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is _HighlightState && other.selectedIndex == selectedIndex;
+  }
+
+  @override
+  int get hashCode => selectedIndex.hashCode;
+}
+
+class _OverlayStyle {
+  final Color color;
+  final double strength;
+
+  const _OverlayStyle({required this.color, required this.strength});
+
+  double get opacity => color.opacity;
+
+  static const none = _OverlayStyle(color: Color(0x00000000), strength: 0);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is _OverlayStyle &&
+            other.color.value == color.value &&
+            other.strength == strength;
+  }
+
+  @override
+  int get hashCode => Object.hash(color.value, strength);
+}
+
+const double _kContrastThreshold = 3.0;
+const double _kOverlayStep = 0.02;
+const double _kMinOverlayStrength = 0.06;
+
+_OverlayStyle _resolveOverlayStyle({
+  required Color boardSurface,
+  required Color textColor,
+  required double targetStrength,
+  required Color accent,
+  double accentBlend = 0.0,
+}) {
+  if (targetStrength <= 0) {
+    return _OverlayStyle.none;
+  }
+
+  var strength = math.max(targetStrength, _kMinOverlayStrength).clamp(0.0, 1.0);
+  while (true) {
+    final overlay = _buildOverlayColor(
+      boardSurface: boardSurface,
+      strength: strength,
+      accent: accent,
+      accentBlend: accentBlend,
+    );
+    final blended = Color.alphaBlend(overlay, boardSurface);
+    final contrast = _contrastRatio(textColor, blended);
+    if (contrast >= _kContrastThreshold || strength <= _kMinOverlayStrength) {
+      return _OverlayStyle(color: overlay, strength: strength);
+    }
+
+    final nextStrength = strength - _kOverlayStep;
+    strength = nextStrength < _kMinOverlayStrength
+        ? _kMinOverlayStrength
+        : nextStrength;
+  }
+}
+
+Color overlayFor(Color bg, double strength) {
+  final isLight = bg.computeLuminance() > 0.5;
+  final base = isLight ? Colors.black : Colors.white;
+  return base.withOpacity(strength);
+}
+
+Color tint(Color base, Color accent, double k) {
+  return Color.alphaBlend(accent.withOpacity(k), base);
+}
+
+Color _buildOverlayColor({
+  required Color boardSurface,
+  required double strength,
+  required Color accent,
+  double accentBlend = 0.0,
+}) {
+  var overlay = overlayFor(boardSurface, strength);
+  if (accentBlend <= 0) {
+    return overlay;
+  }
+  return _applyAccent(overlay, accent, accentBlend);
+}
+
+Color _applyAccent(Color overlay, Color accent, double amount) {
+  final opacity = overlay.opacity;
+  final tinted = tint(
+    overlay.withOpacity(1),
+    accent,
+    amount.clamp(0.0, 1.0),
+  );
+  return tinted.withOpacity(opacity);
+}
+
+double _contrastRatio(Color a, Color b) {
+  final l1 = a.computeLuminance();
+  final l2 = b.computeLuminance();
+  final brightest = math.max(l1, l2);
+  final darkest = math.min(l1, l2);
+  return (brightest + 0.05) / (darkest + 0.05);
 }
 
 class _HintHighlightOverlay extends StatelessWidget {
@@ -396,17 +709,6 @@ class _BoardCell extends StatelessWidget {
         final fixed = game.given[index] || game.locked[index];
         final selected = app.selectedCell;
         final isSelected = selected == index;
-        final row = index ~/ 9;
-        final column = index % 9;
-        final selectedRow = selected != null ? selected ~/ 9 : null;
-        final selectedColumn = selected != null ? selected % 9 : null;
-        final sameRow = selectedRow != null && selectedRow == row;
-        final sameColumn =
-            selectedColumn != null && selectedColumn == column;
-        final sameBlock = selectedRow != null &&
-            selectedColumn != null &&
-            (selectedRow ~/ 3) == (row ~/ 3) &&
-            (selectedColumn ~/ 3) == (column ~/ 3);
         final sameValue = app.isSameAsSelectedValue(index);
         final incorrect =
             !fixed && value != 0 && !app.isMoveValid(index, value);
@@ -417,9 +719,6 @@ class _BoardCell extends StatelessWidget {
           value: value,
           notes: notes,
           isSelected: isSelected,
-          sameRow: sameRow,
-          sameColumn: sameColumn,
-          sameBlock: sameBlock,
           sameValue: sameValue,
           incorrect: incorrect,
           fontScale: app.fontScale,
@@ -449,25 +748,10 @@ class _BoardCell extends StatelessWidget {
         final border = _cellBorder(index, scale, thinColor, boldColor);
         final highlightSameValue =
             cell.value != 0 && cell.sameValue && !cell.isSelected;
-        final highlightBlock = cell.sameBlock && !cell.isSelected;
-        final highlightCrosshair =
-            (cell.sameRow || cell.sameColumn) && !cell.isSelected;
-        final selectedBackground = colors.selectedCell;
         final sameNumberBackground =
             Color.alphaBlend(colors.sameNumberCell, baseInner);
-        final blockBackground =
-            Color.alphaBlend(colors.blockHighlight, baseInner);
-        final crosshairBackground =
-            Color.alphaBlend(colors.crosshairHighlight, baseInner);
-        final backgroundColor = cell.isSelected
-            ? selectedBackground
-            : highlightSameValue
-                ? sameNumberBackground
-                : highlightBlock
-                    ? blockBackground
-                    : highlightCrosshair
-                        ? crosshairBackground
-                        : baseInner;
+        final backgroundColor =
+            highlightSameValue ? sameNumberBackground : null;
 
         Widget content = Stack(
             fit: StackFit.expand,
@@ -479,7 +763,7 @@ class _BoardCell extends StatelessWidget {
                     color: colors.hintHighlight,
                     scale: scale,
                   ),
-                ),
+              ),
               Container(
                 decoration: BoxDecoration(
                   color: backgroundColor,
@@ -517,9 +801,6 @@ class _CellState {
   final int value;
   final List<int> notes;
   final bool isSelected;
-  final bool sameRow;
-  final bool sameColumn;
-  final bool sameBlock;
   final bool sameValue;
   final bool incorrect;
   final double fontScale;
@@ -531,9 +812,6 @@ class _CellState {
     required this.value,
     required this.notes,
     required this.isSelected,
-    required this.sameRow,
-    required this.sameColumn,
-    required this.sameBlock,
     required this.sameValue,
     required this.incorrect,
     required this.fontScale,
@@ -549,9 +827,6 @@ class _CellState {
             other.value == value &&
             listEquals(other.notes, notes) &&
             other.isSelected == isSelected &&
-            other.sameRow == sameRow &&
-            other.sameColumn == sameColumn &&
-            other.sameBlock == sameBlock &&
             other.sameValue == sameValue &&
             other.incorrect == incorrect &&
             other.fontScale == fontScale &&
@@ -565,9 +840,6 @@ class _CellState {
         value,
         Object.hashAll(notes),
         isSelected,
-        sameRow,
-        sameColumn,
-        sameBlock,
         sameValue,
         incorrect,
         fontScale,
