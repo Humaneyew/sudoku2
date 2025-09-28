@@ -222,7 +222,7 @@ class _IncorrectShakeAnimation extends StatelessWidget {
       builder: (context, value, child) {
         final eased = Curves.easeOut.transform(value);
         final damping = math.max(0, 1 - eased);
-        final amplitude = 3.0 * scale;
+        final amplitude = 6.0 * scale;
         final offset = math.sin(eased * math.pi * _oscillations) * amplitude * damping;
         return Transform.translate(
           offset: Offset(offset, 0),
