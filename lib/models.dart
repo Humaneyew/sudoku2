@@ -336,7 +336,9 @@ class AppState extends ChangeNotifier {
   final Set<int> _completedPerfectBoxes = <int>{};
   ComboEventSink? _comboSink;
   final Map<int, int> _hintHighlights = <int, int>{};
+  final Map<int, int> _valueAnimations = <int, int>{};
   int _hintHighlightCounter = 0;
+  int _valueAnimationCounter = 0;
   bool _disposed = false;
 
   /// Загружаем сохранённые настройки и прогресс.
@@ -345,6 +347,7 @@ class AppState extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
 
       _hintHighlights.clear();
+      _valueAnimations.clear();
 
       _dailyChallengeDate = null;
       _currentGameId = null;
@@ -907,6 +910,7 @@ class AppState extends ChangeNotifier {
     final puzzle = generateDailyPuzzle(normalized);
 
     _hintHighlights.clear();
+    _valueAnimations.clear();
 
     current = GameState(
       board: List.of(puzzle.board),
@@ -958,6 +962,7 @@ class AppState extends ChangeNotifier {
       _clearSavedGame();
       _currentGameId = null;
       _hintHighlights.clear();
+      _valueAnimations.clear();
       currentMode = null;
       notifyListeners();
       return;
@@ -965,6 +970,7 @@ class AppState extends ChangeNotifier {
 
     _dailyChallengeDate = null;
     _hintHighlights.clear();
+    _valueAnimations.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1022,12 +1028,14 @@ class AppState extends ChangeNotifier {
       _clearSavedGame();
       _currentGameId = null;
       _hintHighlights.clear();
+      _valueAnimations.clear();
       notifyListeners();
       return;
     }
 
     _dailyChallengeDate = null;
     _hintHighlights.clear();
+    _valueAnimations.clear();
 
     final List<Puzzle> available;
     if (diff == Difficulty.novice &&
@@ -1093,6 +1101,7 @@ class AppState extends ChangeNotifier {
     _gameCompleted = false;
     _history.clear();
     _hintHighlights.clear();
+    _valueAnimations.clear();
     _sessionId++;
     _startedAt = DateTime.now();
     final diff = currentDifficulty;
@@ -1134,6 +1143,7 @@ class AppState extends ChangeNotifier {
   bool get isOutOfLives => livesLeft <= 0;
 
   int hintHighlightIdForCell(int index) => _hintHighlights[index] ?? 0;
+  int valueAnimationIdForCell(int index) => _valueAnimations[index] ?? 0;
 
   bool get isSolved {
     final game = current;
@@ -1210,12 +1220,27 @@ class AppState extends ChangeNotifier {
   void _markCellHinted(int index) {
     final id = ++_hintHighlightCounter;
     _hintHighlights[index] = id;
+    _triggerValueAnimation(index);
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (_disposed) {
         return;
       }
       if (_hintHighlights[index] == id) {
         _hintHighlights.remove(index);
+        notifyListeners();
+      }
+    });
+  }
+
+  void _triggerValueAnimation(int index) {
+    final id = ++_valueAnimationCounter;
+    _valueAnimations[index] = id;
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (_disposed) {
+        return;
+      }
+      if (_valueAnimations[index] == id) {
+        _valueAnimations.remove(index);
         notifyListeners();
       }
     });
@@ -1319,6 +1344,7 @@ class AppState extends ChangeNotifier {
 
     if (correct && value != 0) {
       _lockCell(game, index);
+      _triggerValueAnimation(index);
       _checkPerfectGroups(game, index);
     }
 
