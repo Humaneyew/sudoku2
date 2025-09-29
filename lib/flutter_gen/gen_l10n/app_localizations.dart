@@ -5368,7 +5368,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get confirmFlagSelectionMessage => "Вы уверены, что хотите выбрать этот флаг? Флаг можно будет изменить в настройках игры.";
 
   @override
-  String get confirmFlagSelectionConfirm => "Подтверждаю";
+  String get confirmFlagSelectionConfirm => "Принять";
 
   @override
   String get startAction => "Начать";
@@ -5905,7 +5905,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get confirmFlagSelectionMessage => "Ти впевнений, що хочеш обрати цей прапор? Ти зможеш змінити прапор пізніше в налаштуваннях гри.";
 
   @override
-  String get confirmFlagSelectionConfirm => "Підтверджую";
+  String get confirmFlagSelectionConfirm => "Приймаю";
 
   @override
   String get startAction => "Почати";

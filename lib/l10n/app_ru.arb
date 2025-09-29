@@ -92,7 +92,7 @@
   "selectPlayerFlag": "Выбери свой флаг",
   "confirmFlagSelectionTitle": "Подтвердите флаг",
   "confirmFlagSelectionMessage": "Вы уверены, что хотите выбрать этот флаг? Флаг можно будет изменить в настройках игры.",
-  "confirmFlagSelectionConfirm": "Подтверждаю",
+  "confirmFlagSelectionConfirm": "Принять",
   "startAction": "Начать",
   "levelHeading": "Уровень {level} — {difficulty}",
   "@levelHeading": {
