@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "完美行",
-  "perfect_col": "完美列",
-  "perfect_box": "完美宫",
   "speed_bonus": "极速奖励 {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "完美行",
-  "perfectCol": "完美列",
-  "perfectBox": "完美宫",
   "noActiveGameMessage": "没有进行中的游戏。返回主界面。",
   "victoryTitle": "恭喜！",
   "victoryMessage": "在 {time} 内完成谜题。",

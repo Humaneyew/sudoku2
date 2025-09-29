@@ -16,14 +16,13 @@ abstract class ComboHost {
   double get fontScale;
 }
 
-enum _ToastType { combo, streak, perfectRow, perfectColumn, perfectBox, speed }
+enum _ToastType { combo, streak, speed }
 
 class ComboController implements ComboEventSink {
   ComboController({required this.host});
 
   static const _comboIcon = 'assets/icons/combos/combo.svg';
   static const _streakIcon = 'assets/icons/combos/streak.svg';
-  static const _perfectIcon = 'assets/icons/combos/perfect.svg';
   static const _speedIcon = 'assets/icons/combos/speed.svg';
 
   final ComboHost host;
@@ -110,21 +109,6 @@ class ComboController implements ComboEventSink {
         _maybeHaptic();
       }
     }
-  }
-
-  @override
-  void onPerfectRow(Difficulty? difficulty) {
-    _emitPerfectToast(_ToastType.perfectRow, difficulty);
-  }
-
-  @override
-  void onPerfectColumn(Difficulty? difficulty) {
-    _emitPerfectToast(_ToastType.perfectColumn, difficulty);
-  }
-
-  @override
-  void onPerfectBox(Difficulty? difficulty) {
-    _emitPerfectToast(_ToastType.perfectBox, difficulty);
   }
 
   @override
@@ -215,38 +199,6 @@ class ComboController implements ComboEventSink {
     _pendingMoveToasts.clear();
     _pendingMoveTimer?.cancel();
     _pendingMoveTimer = null;
-  }
-
-  void _emitPerfectToast(_ToastType type, Difficulty? difficulty) {
-    final l10n = AppLocalizations.of(host.context);
-    if (l10n == null) {
-      return;
-    }
-    String label;
-    switch (type) {
-      case _ToastType.perfectRow:
-        label = l10n.perfectRow;
-        break;
-      case _ToastType.perfectColumn:
-        label = l10n.perfectCol;
-        break;
-      case _ToastType.perfectBox:
-        label = l10n.perfectBox;
-        break;
-      default:
-        label = '';
-    }
-    if (label.isEmpty) {
-      return;
-    }
-    _collectMoveToast(
-      _ToastRequest(
-        type: type,
-        label: label,
-        iconAsset: _perfectIcon,
-        difficulty: difficulty,
-      ),
-    );
   }
 
   void _startMoveAggregation(int timestampMs) {
@@ -451,15 +403,11 @@ class ComboController implements ComboEventSink {
                   begin: Offset(0, comboTheme.offsetY / -56.0),
                   end: Offset.zero,
                 ).animate(animation);
-          final safeTop = media.padding.top;
           final maxWidth = math.min(media.size.width * 0.9, 360.0);
-          return Positioned(
-            top: safeTop + comboTheme.offsetY,
-            left: 0,
-            right: 0,
+          return Positioned.fill(
             child: IgnorePointer(
               child: Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.center,
                 child: FadeTransition(
                   opacity: fade,
                   child: SlideTransition(

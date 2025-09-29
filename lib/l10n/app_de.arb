@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Perfekte Zeile",
-  "perfect_col": "Perfekte Spalte",
-  "perfect_box": "Perfekter Block",
   "speed_bonus": "Tempo-Bonus {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Perfekte Zeile",
-  "perfectCol": "Perfekte Spalte",
-  "perfectBox": "Perfekter Block",
   "noActiveGameMessage": "Kein aktives Spiel. Kehre zum Startbildschirm zurück.",
   "victoryTitle": "Glückwunsch!",
   "victoryMessage": "Rätsel gelöst in {time}.",

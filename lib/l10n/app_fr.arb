@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Ligne parfaite",
-  "perfect_col": "Colonne parfaite",
-  "perfect_box": "Bloc parfait",
   "speed_bonus": "Bonus de vitesse {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Ligne parfaite",
-  "perfectCol": "Colonne parfaite",
-  "perfectBox": "Bloc parfait",
   "noActiveGameMessage": "Aucune partie en cours. Revenez à l'écran d'accueil.",
   "victoryTitle": "Félicitations !",
   "victoryMessage": "Énigme résolue en {time}.",

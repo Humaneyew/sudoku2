@@ -143,9 +143,6 @@ abstract class ComboEventSink {
     required int timestampMs,
     Difficulty? difficulty,
   });
-  void onPerfectRow(Difficulty? difficulty);
-  void onPerfectColumn(Difficulty? difficulty);
-  void onPerfectBox(Difficulty? difficulty);
   void onNoHintStep(Difficulty? difficulty);
   void onHintUsed();
   void onLevelFinished({
@@ -331,9 +328,6 @@ class AppState extends ChangeNotifier {
 
   final List<_Move> _history = [];
   Timer? _saveDebounce;
-  final Set<int> _completedPerfectRows = <int>{};
-  final Set<int> _completedPerfectColumns = <int>{};
-  final Set<int> _completedPerfectBoxes = <int>{};
   final Set<int> _completedNumbers = <int>{};
   ComboEventSink? _comboSink;
   final Map<int, int> _hintHighlights = <int, int>{};
@@ -867,9 +861,6 @@ class AppState extends ChangeNotifier {
   }
 
   void _resetComboTracking({bool resetSink = true}) {
-    _completedPerfectRows.clear();
-    _completedPerfectColumns.clear();
-    _completedPerfectBoxes.clear();
     _completedNumbers.clear();
     if (resetSink) {
       _comboSink?.reset();
@@ -1317,61 +1308,6 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void _checkPerfectGroups(GameState game, int index) {
-    final diff = currentDifficulty;
-    final row = index ~/ 9;
-    final column = index % 9;
-    final box = (row ~/ 3) * 3 + (column ~/ 3);
-
-    if (!_completedPerfectRows.contains(row) && _isRowPerfect(game, row)) {
-      _completedPerfectRows.add(row);
-      _comboSink?.onPerfectRow(diff);
-    }
-    if (!_completedPerfectColumns.contains(column) &&
-        _isColumnPerfect(game, column)) {
-      _completedPerfectColumns.add(column);
-      _comboSink?.onPerfectColumn(diff);
-    }
-    if (!_completedPerfectBoxes.contains(box) && _isBoxPerfect(game, box)) {
-      _completedPerfectBoxes.add(box);
-      _comboSink?.onPerfectBox(diff);
-    }
-  }
-
-  bool _isRowPerfect(GameState game, int row) {
-    for (var col = 0; col < 9; col++) {
-      final idx = row * 9 + col;
-      if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool _isColumnPerfect(GameState game, int column) {
-    for (var row = 0; row < 9; row++) {
-      final idx = row * 9 + column;
-      if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool _isBoxPerfect(GameState game, int box) {
-    final startRow = (box ~/ 3) * 3;
-    final startCol = (box % 3) * 3;
-    for (var r = 0; r < 3; r++) {
-      for (var c = 0; c < 3; c++) {
-        final idx = (startRow + r) * 9 + startCol + c;
-        if (game.board[idx] == 0 || game.board[idx] != game.solution[idx]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
   void makeMove(int index, int value) {
     final game = current;
     if (game == null) return;
@@ -1422,7 +1358,6 @@ class AppState extends ChangeNotifier {
       if (!triggeredGroup) {
         _triggerValueAnimation(index);
       }
-      _checkPerfectGroups(game, index);
     }
 
     scheduleSave();
@@ -1513,7 +1448,6 @@ class AppState extends ChangeNotifier {
     game.notes[idx].clear();
     _refreshNumberCompletion(game, previousValue);
     _lockCell(game, idx);
-    _checkPerfectGroups(game, idx);
     _markCellHinted(idx);
     hintsLeft = math.max(0, hintsLeft - 1);
     _hintsConsumed++;

@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Riga perfetta",
-  "perfect_col": "Colonna perfetta",
-  "perfect_box": "Box perfetto",
   "speed_bonus": "Bonus velocità {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Riga perfetta",
-  "perfectCol": "Colonna perfetta",
-  "perfectBox": "Box perfetto",
   "noActiveGameMessage": "Nessun gioco attivo. Torna alla schermata principale.",
   "victoryTitle": "Congratulazioni!",
   "victoryMessage": "Schema risolto in {time}.",
