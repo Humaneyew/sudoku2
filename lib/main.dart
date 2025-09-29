@@ -53,11 +53,9 @@ class SudokuApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.watch<models.AppState>();
     final activeTheme = app.resolvedTheme();
-    final theme = buildSudokuTheme(
-      activeTheme,
-    ).copyWith(
+    final baseTheme = buildSudokuTheme(activeTheme);
+    final theme = baseTheme.copyWith(
       pageTransitionsTheme: _pageTransitionsTheme,
-      fontFamily: 'SF Pro',
     );
 
     return MaterialApp(
