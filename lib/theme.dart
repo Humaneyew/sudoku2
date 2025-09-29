@@ -645,11 +645,11 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
       brightness: config.brightness,
       scaffoldBackgroundColor: config.background,
       shadowColor: config.colors.shadowColor,
+      fontFamily: 'SF Pro',
     );
 
     return base.copyWith(
       textTheme: base.textTheme.apply(
-        fontFamily: 'SF Pro Display',
         bodyColor: config.onSurface,
         displayColor: config.onSurface,
       ),
