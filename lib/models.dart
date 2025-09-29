@@ -334,6 +334,7 @@ class AppState extends ChangeNotifier {
   final Set<int> _completedPerfectRows = <int>{};
   final Set<int> _completedPerfectColumns = <int>{};
   final Set<int> _completedPerfectBoxes = <int>{};
+  final Set<int> _completedNumbers = <int>{};
   ComboEventSink? _comboSink;
   final Map<int, int> _hintHighlights = <int, int>{};
   final Map<int, int> _valueAnimations = <int, int>{};
@@ -869,6 +870,7 @@ class AppState extends ChangeNotifier {
     _completedPerfectRows.clear();
     _completedPerfectColumns.clear();
     _completedPerfectBoxes.clear();
+    _completedNumbers.clear();
     if (resetSink) {
       _comboSink?.reset();
     }
@@ -1230,7 +1232,13 @@ class AppState extends ChangeNotifier {
   void _markCellHinted(int index) {
     final id = ++_hintHighlightCounter;
     _hintHighlights[index] = id;
-    _triggerValueAnimation(index);
+    final game = current;
+    final value = game?.board[index] ?? 0;
+    final triggeredGroup =
+        game != null ? _handleNumberCompletion(game, value) : false;
+    if (!triggeredGroup) {
+      _triggerValueAnimation(index);
+    }
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (_disposed) {
         return;
@@ -1268,6 +1276,45 @@ class AppState extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  void _triggerValueAnimations(Iterable<int> indices) {
+    for (final index in indices) {
+      _triggerValueAnimation(index);
+    }
+  }
+
+  bool _handleNumberCompletion(GameState game, int value) {
+    if (value < 1 || value > 9) {
+      return false;
+    }
+    if (!_isNumberCompleted(game, value)) {
+      _completedNumbers.remove(value);
+      return false;
+    }
+    final isNewCompletion = _completedNumbers.add(value);
+    if (!isNewCompletion) {
+      return false;
+    }
+    final indices = <int>[];
+    for (var i = 0; i < game.board.length; i++) {
+      if (game.solution[i] == value) {
+        indices.add(i);
+      }
+    }
+    _triggerValueAnimations(indices);
+    return true;
+  }
+
+  void _refreshNumberCompletion(GameState game, int value) {
+    if (value < 1 || value > 9) {
+      return;
+    }
+    if (_isNumberCompleted(game, value)) {
+      _completedNumbers.add(value);
+    } else {
+      _completedNumbers.remove(value);
+    }
   }
 
   void _checkPerfectGroups(GameState game, int index) {
@@ -1367,9 +1414,14 @@ class AppState extends ChangeNotifier {
     game.board[index] = value;
     game.notes[index].clear();
 
+    _refreshNumberCompletion(game, previousValue);
+
     if (correct && value != 0) {
       _lockCell(game, index);
-      _triggerValueAnimation(index);
+      final triggeredGroup = _handleNumberCompletion(game, value);
+      if (!triggeredGroup) {
+        _triggerValueAnimation(index);
+      }
       _checkPerfectGroups(game, index);
     }
 
@@ -1419,6 +1471,7 @@ class AppState extends ChangeNotifier {
 
     game.board[idx] = 0;
     game.notes[idx].clear();
+    _refreshNumberCompletion(game, previousValue);
     scheduleSave();
     notifyListeners();
   }
@@ -1458,6 +1511,7 @@ class AppState extends ChangeNotifier {
 
     game.board[idx] = correct;
     game.notes[idx].clear();
+    _refreshNumberCompletion(game, previousValue);
     _lockCell(game, idx);
     _checkPerfectGroups(game, idx);
     _markCellHinted(idx);
@@ -1481,6 +1535,7 @@ class AppState extends ChangeNotifier {
     if (game == null || _history.isEmpty) return;
 
     final last = _history.removeLast();
+    final currentValue = game.board[last.index];
     game.board[last.index] = last.previousValue;
     game.notes[last.index]
       ..clear()
@@ -1497,6 +1552,9 @@ class AppState extends ChangeNotifier {
     if (last.consumedLife) {
       livesLeft = math.min(_maxLives, livesLeft + 1);
     }
+
+    _refreshNumberCompletion(game, currentValue);
+    _refreshNumberCompletion(game, last.previousValue);
 
     selectedCell = last.index;
     scheduleSave();
@@ -1647,14 +1705,23 @@ class AppState extends ChangeNotifier {
   bool isNumberCompleted(int number) {
     final game = current;
     if (game == null) return false;
-    final occurrences = game.board.where((v) => v == number).length;
-    if (occurrences != 9) return false;
+    return _isNumberCompleted(game, number);
+  }
+
+  bool _isNumberCompleted(GameState game, int number) {
+    if (number < 1 || number > 9) {
+      return false;
+    }
+    var count = 0;
     for (var i = 0; i < game.board.length; i++) {
-      if (game.solution[i] == number && game.board[i] != number) {
-        return false;
+      if (game.solution[i] == number) {
+        if (game.board[i] != number) {
+          return false;
+        }
+        count++;
       }
     }
-    return true;
+    return count == 9;
   }
 
   bool get canUndoMove => _history.isNotEmpty;
