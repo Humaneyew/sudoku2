@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "სრულყოფილი რიგი",
-  "perfect_col": "სრულყოფილი სვეტი",
-  "perfect_box": "სრულყოფილი ბლოკი",
   "speed_bonus": "სისწრაფის ბონუსი {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "სრულყოფილი რიგი",
-  "perfectCol": "სრულყოფილი სვეტი",
-  "perfectBox": "სრულყოფილი ბლოკი",
   "noActiveGameMessage": "აქტიური თამაში არ არის. დაბრუნდით მთავარ ეკრანზე.",
   "victoryTitle": "გილოცავთ!",
   "victoryMessage": "თავსატეხი ამოხსნილია {time}-ში.",

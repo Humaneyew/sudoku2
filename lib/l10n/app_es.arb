@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Fila perfecta",
-  "perfect_col": "Columna perfecta",
-  "perfect_box": "Cuadro perfecto",
   "speed_bonus": "Bonificación de velocidad {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Fila perfecta",
-  "perfectCol": "Columna perfecta",
-  "perfectBox": "Cuadro perfecto",
   "noActiveGameMessage": "No hay juego activo. Regrese a la pantalla de inicio.",
   "victoryTitle": "¡Felicidades!",
   "victoryMessage": "Rompecabezas resuelto en {time}.",

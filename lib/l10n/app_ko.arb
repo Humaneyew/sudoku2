@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "완벽한 행",
-  "perfect_col": "완벽한 열",
-  "perfect_box": "완벽한 박스",
   "speed_bonus": "속도 보너스 {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "완벽한 행",
-  "perfectCol": "완벽한 열",
-  "perfectBox": "완벽한 박스",
   "noActiveGameMessage": "능동적 인 게임이 없습니다. 홈 화면으로 돌아갑니다.",
   "victoryTitle": "축하해요!",
   "victoryMessage": "퍼즐을 {time}에 해결했습니다.",

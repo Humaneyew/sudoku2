@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Идеальная строка",
-  "perfect_col": "Идеальный столбец",
-  "perfect_box": "Идеальный блок",
   "speed_bonus": "Бонус скорости {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Идеальная строка",
-  "perfectCol": "Идеальный столбец",
-  "perfectBox": "Идеальный блок",
   "noActiveGameMessage": "Нет активной игры. Вернитесь на главный экран.",
   "victoryTitle": "Поздравляем!",
   "victoryMessage": "Головоломка решена за {time}.",

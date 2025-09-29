@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "परफ़ेक्ट पंक्ति",
-  "perfect_col": "परफ़ेक्ट स्तंभ",
-  "perfect_box": "परफ़ेक्ट बॉक्स",
   "speed_bonus": "स्पीड बोनस {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "परफ़ेक्ट पंक्ति",
-  "perfectCol": "परफ़ेक्ट स्तंभ",
-  "perfectBox": "परफ़ेक्ट बॉक्स",
   "noActiveGameMessage": "कोई सक्रिय खेल नहीं। होम स्क्रीन पर लौटें।",
   "victoryTitle": "बधाई!",
   "victoryMessage": "{time} में पहेली हल हुई।",

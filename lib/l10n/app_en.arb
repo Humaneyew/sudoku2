@@ -198,9 +198,6 @@
       }
     }
   },
-  "perfect_row": "Perfect Row",
-  "perfect_col": "Perfect Column",
-  "perfect_box": "Perfect Box",
   "speed_bonus": "Speed Bonus {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -236,9 +233,6 @@
       }
     }
   },
-  "perfectRow": "Perfect Row",
-  "perfectCol": "Perfect Column",
-  "perfectBox": "Perfect Box",
   "noActiveGameMessage": "No active game. Return to the home screen.",
   "victoryTitle": "Congratulations!",
   "victoryMessage": "Puzzle solved in {time}.",

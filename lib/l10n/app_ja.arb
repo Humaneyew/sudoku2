@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "パーフェクト行",
-  "perfect_col": "パーフェクト列",
-  "perfect_box": "パーフェクトブロック",
   "speed_bonus": "スピードボーナス {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "パーフェクト行",
-  "perfectCol": "パーフェクト列",
-  "perfectBox": "パーフェクトブロック",
   "noActiveGameMessage": "アクティブなゲームはありません。ホーム画面に戻ります。",
   "victoryTitle": "おめでとう！",
   "victoryMessage": "パズルを {time} で解きました。",

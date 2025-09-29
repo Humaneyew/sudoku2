@@ -197,9 +197,6 @@
       }
     }
   },
-  "perfect_row": "Ідеальний рядок",
-  "perfect_col": "Ідеальний стовпець",
-  "perfect_box": "Ідеальний блок",
   "speed_bonus": "Бонус швидкості {time}",
   "@speed_bonus": {
     "placeholders": {
@@ -235,9 +232,6 @@
       }
     }
   },
-  "perfectRow": "Ідеальний рядок",
-  "perfectCol": "Ідеальний стовпець",
-  "perfectBox": "Ідеальний блок",
   "noActiveGameMessage": "Немає активної гри. Поверніться на головний екран.",
   "victoryTitle": "Вітаємо!",
   "victoryMessage": "Головоломку розв'язано за {time}.",
