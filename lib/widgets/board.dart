@@ -533,7 +533,12 @@ class _BoardCell extends StatelessWidget {
                         ? crosshairBackground
                         : baseInner;
 
-        Widget content = Stack(
+        Widget content = Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            border: border,
+          ),
+          child: Stack(
             fit: StackFit.expand,
             children: [
               if (cell.hintHighlightId != 0)
@@ -544,21 +549,16 @@ class _BoardCell extends StatelessWidget {
                     scale: scale,
                   ),
                 ),
-              Container(
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  border: border,
-                ),
-                child: _CellContent(
-                  value: cell.value,
-                  notes: cell.notes,
-                  incorrect: cell.incorrect,
-                  fontScale: cell.fontScale,
-                  valueAnimationId: cell.valueAnimationId,
-                ),
+              _CellContent(
+                value: cell.value,
+                notes: cell.notes,
+                incorrect: cell.incorrect,
+                fontScale: cell.fontScale,
+                valueAnimationId: cell.valueAnimationId,
               ),
             ],
-          );
+          ),
+        );
 
         if (cell.incorrectAnimationId != 0) {
           content = _IncorrectShakeAnimation(
