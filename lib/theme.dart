@@ -6,6 +6,26 @@ import 'combo/combo_theme.dart';
 /// Список доступных цветовых тем приложения.
 enum SudokuTheme { white, cream, green, black }
 
+const double _themeBrightnessBoost = 0.1;
+
+Color _brightenColor(Color color, double amount) {
+  final hsl = HSLColor.fromColor(color);
+  final lightness = (hsl.lightness + amount).clamp(0.0, 1.0);
+  return hsl.withLightness(lightness).toColor();
+}
+
+LinearGradient _brightenGradient(LinearGradient gradient, double amount) {
+  return LinearGradient(
+    colors:
+        gradient.colors.map((color) => _brightenColor(color, amount)).toList(),
+    begin: gradient.begin,
+    end: gradient.end,
+    stops: gradient.stops,
+    tileMode: gradient.tileMode,
+    transform: gradient.transform,
+  );
+}
+
 extension SudokuThemeL10n on SudokuTheme {
   /// Название темы для отображения пользователю.
   String label(AppLocalizations l10n) {
@@ -252,6 +272,46 @@ class SudokuColors extends ThemeExtension<SudokuColors> {
           _lerpGradient(failureBadgeGradient, other.failureBadgeGradient),
     );
   }
+
+  SudokuColors brighten(double amount) {
+    Color brighten(Color color) => _brightenColor(color, amount);
+
+    return SudokuColors(
+      boardInner: brighten(boardInner),
+      boardBorder: brighten(boardBorder),
+      selectedCell: brighten(selectedCell),
+      sameNumberCell: brighten(sameNumberCell),
+      blockHighlight: brighten(blockHighlight),
+      crosshairHighlight: brighten(crosshairHighlight),
+      hintHighlight: brighten(hintHighlight),
+      noteColor: brighten(noteColor),
+      headerButtonBackground: brighten(headerButtonBackground),
+      headerButtonIcon: brighten(headerButtonIcon),
+      actionButtonActiveBackground: brighten(actionButtonActiveBackground),
+      actionButtonActiveBorder: brighten(actionButtonActiveBorder),
+      actionButtonBadgeColor: brighten(actionButtonBadgeColor),
+      numberPadBackground: brighten(numberPadBackground),
+      numberPadBorder: brighten(numberPadBorder),
+      numberPadSelectedBackground: brighten(numberPadSelectedBackground),
+      numberPadSelectedBorder: brighten(numberPadSelectedBorder),
+      numberPadHighlightBackground: brighten(numberPadHighlightBackground),
+      numberPadHighlightBorder: brighten(numberPadHighlightBorder),
+      numberPadDisabledBackground: brighten(numberPadDisabledBackground),
+      numberPadDisabledText: brighten(numberPadDisabledText),
+      numberPadRemaining: brighten(numberPadRemaining),
+      numberPadRemainingHighlight: brighten(numberPadRemainingHighlight),
+      shadowColor: brighten(shadowColor),
+      dailyChallengeGradient:
+          _brightenGradient(dailyChallengeGradient, amount),
+      championshipChallengeGradient:
+          _brightenGradient(championshipChallengeGradient, amount),
+      battleChallengeGradient:
+          _brightenGradient(battleChallengeGradient, amount),
+      dailyHeroGradient: _brightenGradient(dailyHeroGradient, amount),
+      victoryBadgeGradient: _brightenGradient(victoryBadgeGradient, amount),
+      failureBadgeGradient: _brightenGradient(failureBadgeGradient, amount),
+    );
+  }
 }
 
 class _ThemeConfig {
@@ -284,6 +344,26 @@ class _ThemeConfig {
     required this.outlineVariant,
     required this.colors,
   });
+
+  _ThemeConfig brighten(double amount) {
+    Color brighten(Color color) => _brightenColor(color, amount);
+
+    return _ThemeConfig(
+      brightness: brightness,
+      background: brighten(background),
+      surface: brighten(surface),
+      primary: brighten(primary),
+      onPrimary: brighten(onPrimary),
+      onSurface: brighten(onSurface),
+      secondary: brighten(secondary),
+      onSecondary: brighten(onSecondary),
+      error: brighten(error),
+      onError: brighten(onError),
+      outline: brighten(outline),
+      outlineVariant: brighten(outlineVariant),
+      colors: colors.brighten(amount),
+    );
+  }
 }
 
 final Map<SudokuTheme, _ThemeConfig> _themeConfigs = {
@@ -612,7 +692,7 @@ final Map<SudokuTheme, ThemeData> _themeCache = {};
 
 ThemeData buildSudokuTheme(SudokuTheme theme) {
   return _themeCache.putIfAbsent(theme, () {
-    final config = _themeConfigs[theme]!;
+    final config = _themeConfigs[theme]!.brighten(_themeBrightnessBoost);
     final scheme = ColorScheme.fromSeed(
       seedColor: config.primary,
       brightness: config.brightness,
@@ -719,13 +799,14 @@ ThemeData buildSudokuTheme(SudokuTheme theme) {
 
 /// Цвет, который используется для предпросмотра темы в меню выбора.
 Color themePreviewColor(SudokuTheme theme) {
+  final config = _themeConfigs[theme]!.brighten(_themeBrightnessBoost);
   switch (theme) {
     case SudokuTheme.black:
-      return const Color(0xFF000000);
+      return config.background;
     case SudokuTheme.cream:
-      return const Color(0xFFFFF5E1);
+      return config.surface;
     default:
-      return _themeConfigs[theme]!.primary;
+      return config.primary;
   }
 }
 
