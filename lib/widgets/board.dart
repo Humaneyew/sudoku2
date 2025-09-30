@@ -263,20 +263,14 @@ class _HintHighlightOverlay extends StatelessWidget {
         final blurRadius = ui.lerpDouble(0, 26.0 * scale, intensity) ?? 0;
         final spreadRadius = ui.lerpDouble(0, 6.0 * scale, intensity) ?? 0;
         return IgnorePointer(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0 * scale),
-              border: Border.all(
-                color: color.withOpacity(0.55 * intensity),
-                width: borderWidth,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.35 * intensity),
-                  blurRadius: blurRadius,
-                  spreadRadius: spreadRadius,
-                ),
-              ],
+          child: CustomPaint(
+            painter: _HintHighlightPainter(
+              color: color,
+              intensity: intensity,
+              scale: scale,
+              borderWidth: borderWidth,
+              blurRadius: blurRadius,
+              spreadRadius: spreadRadius,
             ),
           ),
         );
@@ -299,6 +293,76 @@ class _HintHighlightOverlay extends StatelessWidget {
         ((t - _fadeInPortion) / (1 - _fadeInPortion)).clamp(0.0, 1.0);
     final eased = Curves.easeOutQuad.transform(fadeOutProgress);
     return (1 - eased).clamp(0.0, 1.0);
+  }
+}
+
+class _HintHighlightPainter extends CustomPainter {
+  final Color color;
+  final double intensity;
+  final double scale;
+  final double borderWidth;
+  final double blurRadius;
+  final double spreadRadius;
+
+  const _HintHighlightPainter({
+    required this.color,
+    required this.intensity,
+    required this.scale,
+    required this.borderWidth,
+    required this.blurRadius,
+    required this.spreadRadius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final borderRadius = Radius.circular(8.0 * scale + spreadRadius);
+    final rrect = RRect.fromRectAndRadius(rect.inflate(spreadRadius), borderRadius);
+
+    canvas.save();
+    canvas.clipRRect(RRect.fromRectAndRadius(rect, Radius.circular(8.0 * scale)));
+
+    final center = rect.center;
+    final maxRadius =
+        math.sqrt(size.width * size.width + size.height * size.height) / 2 + spreadRadius;
+    final minRadius = maxRadius * 0.25;
+    final radius = ui.lerpDouble(minRadius, maxRadius, intensity.clamp(0.0, 1.0)) ?? maxRadius;
+    final innerOpacity = 0.35 * intensity;
+
+    if (innerOpacity > 0) {
+      final paint = Paint()
+        ..shader = RadialGradient(
+          colors: [
+            color.withOpacity(innerOpacity),
+            color.withOpacity(0),
+          ],
+        ).createShader(Rect.fromCircle(center: center, radius: radius));
+      canvas.drawRect(rect, paint);
+    }
+
+    canvas.restore();
+
+    if (borderWidth > 0) {
+      final sigma = blurRadius > 0
+          ? (blurRadius * 0.57735 + 0.5)
+          : 0;
+      final borderPaint = Paint()
+        ..color = color.withOpacity(0.55 * intensity)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth
+        ..maskFilter = sigma > 0 ? ui.MaskFilter.blur(ui.BlurStyle.outer, sigma) : null;
+      canvas.drawRRect(rrect, borderPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HintHighlightPainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.intensity != intensity ||
+        oldDelegate.scale != scale ||
+        oldDelegate.borderWidth != borderWidth ||
+        oldDelegate.blurRadius != blurRadius ||
+        oldDelegate.spreadRadius != spreadRadius;
   }
 }
 
