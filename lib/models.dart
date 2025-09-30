@@ -1437,21 +1437,17 @@ class AppState extends ChangeNotifier {
     if (game == null) return;
     if (hintsLeft <= 0) return;
 
-    int? idx = selectedCell;
-    if (idx == null) {
-      final available = <int>[];
-      for (var i = 0; i < game.board.length; i++) {
-        if (!_isFixedCell(game, i) && game.board[i] == 0) {
-          available.add(i);
-        }
+    final available = <int>[];
+    for (var i = 0; i < game.board.length; i++) {
+      if (!_isFixedCell(game, i) && game.board[i] != game.solution[i]) {
+        available.add(i);
       }
-      if (available.isEmpty) {
-        return;
-      }
-      idx = available[_random.nextInt(available.length)];
+    }
+    if (available.isEmpty) {
+      return;
     }
 
-    if (_isFixedCell(game, idx)) return;
+    final idx = available[_random.nextInt(available.length)];
 
     final previousValue = game.board[idx];
     final previousNotes = _cloneNotes(idx);
