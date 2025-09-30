@@ -1275,6 +1275,17 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  Map<int, Set<int>> _clearNotesForNumber(GameState game, int value) {
+    final removed = <int, Set<int>>{};
+    for (var i = 0; i < game.notes.length; i++) {
+      final notes = game.notes[i];
+      if (notes.remove(value)) {
+        removed[i] = <int>{value};
+      }
+    }
+    return removed;
+  }
+
   bool _handleNumberCompletion(GameState game, int value) {
     if (value < 1 || value > 9) {
       return false;
@@ -1286,6 +1297,13 @@ class AppState extends ChangeNotifier {
     final isNewCompletion = _completedNumbers.add(value);
     if (!isNewCompletion) {
       return false;
+    }
+    final removedNotes = _clearNotesForNumber(game, value);
+    if (removedNotes.isNotEmpty && _history.isNotEmpty) {
+      final lastMove = _history.last;
+      removedNotes.forEach((index, values) {
+        lastMove.removedNotes.putIfAbsent(index, () => <int>{}).addAll(values);
+      });
     }
     final indices = <int>[];
     for (var i = 0; i < game.board.length; i++) {
@@ -1345,6 +1363,7 @@ class AppState extends ChangeNotifier {
       previousValue: previousValue,
       previousNotes: previousNotes,
       consumedLife: consumedLife,
+      removedNotes: <int, Set<int>>{},
     ));
 
     game.board[index] = value;
@@ -1382,6 +1401,7 @@ class AppState extends ChangeNotifier {
       previousValue: game.board[index],
       previousNotes: previousNotes,
       noteChange: true,
+      removedNotes: <int, Set<int>>{},
     ));
 
     scheduleSave();
@@ -1402,6 +1422,7 @@ class AppState extends ChangeNotifier {
       index: idx,
       previousValue: previousValue,
       previousNotes: previousNotes,
+      removedNotes: <int, Set<int>>{},
     ));
 
     game.board[idx] = 0;
@@ -1442,6 +1463,7 @@ class AppState extends ChangeNotifier {
       previousValue: previousValue,
       previousNotes: previousNotes,
       consumedHint: true,
+      removedNotes: <int, Set<int>>{},
     ));
 
     game.board[idx] = correct;
@@ -1485,6 +1507,12 @@ class AppState extends ChangeNotifier {
 
     if (last.consumedLife) {
       livesLeft = math.min(_maxLives, livesLeft + 1);
+    }
+
+    if (last.removedNotes.isNotEmpty) {
+      last.removedNotes.forEach((index, values) {
+        game.notes[index].addAll(values);
+      });
     }
 
     _refreshNumberCompletion(game, currentValue);
@@ -1954,6 +1982,7 @@ class _Move {
   final bool consumedHint;
   final bool consumedLife;
   final bool noteChange;
+  final Map<int, Set<int>> removedNotes;
 
   _Move({
     required this.index,
@@ -1962,7 +1991,13 @@ class _Move {
     this.consumedHint = false,
     this.consumedLife = false,
     this.noteChange = false,
-  });
+    Map<int, Set<int>>? removedNotes,
+  }) : removedNotes = removedNotes != null
+            ? {
+                for (final entry in removedNotes.entries)
+                  entry.key: Set<int>.from(entry.value),
+              }
+            : <int, Set<int>>{};
 
   Map<String, dynamic> toJson() => {
         'index': index,
@@ -1971,6 +2006,9 @@ class _Move {
         'consumedHint': consumedHint,
         'consumedLife': consumedLife,
         'noteChange': noteChange,
+        'removedNotes': removedNotes.map(
+          (key, value) => MapEntry(key.toString(), value.toList()),
+        ),
       };
 
   factory _Move.fromJson(Map<String, dynamic> json) => _Move(
@@ -1983,6 +2021,25 @@ class _Move {
         consumedHint: json['consumedHint'] as bool? ?? false,
         consumedLife: json['consumedLife'] as bool? ?? false,
         noteChange: json['noteChange'] as bool? ?? false,
+        removedNotes: () {
+          final raw = json['removedNotes'];
+          if (raw is Map) {
+            final result = <int, Set<int>>{};
+            raw.forEach((key, value) {
+              final index = int.tryParse(key.toString());
+              if (index == null || index < 0) {
+                return;
+              }
+              final values = (value as List?)
+                      ?.map((e) => (e as num).toInt())
+                      .toSet() ??
+                  <int>{};
+              result[index] = values;
+            });
+            return result;
+          }
+          return <int, Set<int>>{};
+        }(),
       );
 }
 
