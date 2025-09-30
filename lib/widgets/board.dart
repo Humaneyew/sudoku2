@@ -345,7 +345,7 @@ class _HintHighlightPainter extends CustomPainter {
     if (borderWidth > 0) {
       final sigma = blurRadius > 0
           ? (blurRadius * 0.57735 + 0.5)
-          : 0;
+          : 0.0;
       final borderPaint = Paint()
         ..color = color.withOpacity(0.55 * intensity)
         ..style = PaintingStyle.stroke
