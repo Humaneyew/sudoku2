@@ -1652,32 +1652,44 @@ class _DifficultyProgressBar extends StatelessWidget {
 
     return SizedBox(
       height: height,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(height / 2),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final targetWidth = constraints.maxWidth * clampedProgress;
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: trackColor),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final borderWidth = (1.5 * scale).clamp(0.0, height / 2);
+          final innerWidth =
+              (constraints.maxWidth - borderWidth * 2).clamp(0.0, double.infinity);
+          final targetWidth = innerWidth * clampedProgress;
+          final fillRadius =
+              ((height - borderWidth * 2).clamp(0.0, double.infinity)) / 2;
+
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(height / 2),
+                    border: Border.all(color: trackColor, width: borderWidth),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
+              ),
+              if (targetWidth > 0)
+                Positioned(
+                  left: borderWidth,
+                  right: null,
+                  top: borderWidth,
+                  bottom: borderWidth,
                   child: AnimatedContainer(
                     duration: _difficultyProgressAnimationDuration,
                     curve: Curves.easeInOut,
                     width: targetWidth,
-                    height: height,
-                    decoration: BoxDecoration(color: fillColor),
+                    decoration: BoxDecoration(
+                      color: fillColor,
+                      borderRadius: BorderRadius.circular(fillRadius),
+                    ),
                   ),
                 ),
-              ],
-            );
-          },
-        ),
+            ],
+          );
+        },
       ),
     );
   }
