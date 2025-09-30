@@ -122,21 +122,36 @@ class _GamePageState extends State<GamePage>
   }
 
   void _startTimer(AppState app, int startMs) {
-    _t?.cancel();
+    _pauseTimer();
     _elapsedVN.value = startMs;
     final current = app.current;
     if (current != null) {
       current.elapsedMs = startMs;
+    }
+    _resumeTimer(app);
+  }
+
+  void _resumeTimer(AppState app) {
+    if (_t != null) {
+      return;
+    }
+    if (app.current == null) {
+      return;
     }
     _t = Timer.periodic(const Duration(seconds: 1), (_) {
       _elapsedVN.value += 1000;
     });
   }
 
+  void _pauseTimer() {
+    _t?.cancel();
+    _t = null;
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _t?.cancel();
+    _pauseTimer();
 
     final app = _appState;
     if (app != null) {
@@ -160,12 +175,27 @@ class _GamePageState extends State<GamePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      final app = _appState ?? context.read<AppState>();
-      if (app.current != null) {
-        app.current!.elapsedMs = _elapsedVN.value;
-        unawaited(app.save());
-      }
+    final app = _appState ?? context.read<AppState>();
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _resumeTimer(app);
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        _pauseTimer();
+        if (app.current != null) {
+          app.current!.elapsedMs = _elapsedVN.value;
+          unawaited(app.save());
+        }
+        break;
+      default:
+        _pauseTimer();
+        if (app.current != null) {
+          app.current!.elapsedMs = _elapsedVN.value;
+          unawaited(app.save());
+        }
+        break;
     }
   }
 

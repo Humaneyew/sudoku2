@@ -35,6 +35,11 @@ class _BattlePageState extends State<BattlePage>
   final ValueNotifier<int> _elapsedVN = ValueNotifier<int>(0);
   Timer? _timer;
   Ticker? _opponentTicker;
+  static const Duration _kBattleBackgroundForfeitDuration = Duration(seconds: 10);
+  Timer? _battleLossTimer;
+  DateTime? _backgroundedAt;
+  bool _pendingBattleDefeatDialog = false;
+  bool _battleForfeitHandled = false;
 
   AppState? _appState;
   late final VoidCallback _appStateListener;
@@ -235,6 +240,7 @@ class _BattlePageState extends State<BattlePage>
   }
 
   void _startTimer(AppState app, int startMs) {
+    _resetBattleForfeitState();
     _timer?.cancel();
     _elapsedVN.value = startMs;
     final current = app.current;
@@ -243,6 +249,71 @@ class _BattlePageState extends State<BattlePage>
     }
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _elapsedVN.value += 1000;
+    });
+  }
+
+  void _resetBattleForfeitState() {
+    _battleForfeitHandled = false;
+    _pendingBattleDefeatDialog = false;
+    _backgroundedAt = null;
+    _cancelBattleLossCountdown();
+  }
+
+  void _startBattleLossCountdown() {
+    if (_battleForfeitHandled) {
+      return;
+    }
+    _backgroundedAt = DateTime.now();
+    _battleLossTimer?.cancel();
+    _battleLossTimer =
+        Timer(_kBattleBackgroundForfeitDuration, _handleBattleForfeit);
+  }
+
+  void _cancelBattleLossCountdown() {
+    _battleLossTimer?.cancel();
+    _battleLossTimer = null;
+  }
+
+  void _handleBattleForfeit() {
+    if (_battleForfeitHandled) {
+      return;
+    }
+    _battleForfeitHandled = true;
+    _cancelBattleLossCountdown();
+    final app = _appState ?? context.read<AppState>();
+    if (app.current != null) {
+      app.current!.elapsedMs = _elapsedVN.value;
+      unawaited(app.save());
+    }
+    _timer?.cancel();
+    _opponentTicker?.stop();
+    _defeatShown = true;
+    if (!_battleLossRecorded) {
+      _battleLossRecorded = true;
+      app.loseBattle();
+    }
+    _pendingBattleDefeatDialog = true;
+    if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
+      _showPendingBattleDefeatDialog(app);
+    }
+  }
+
+  void _showPendingBattleDefeatDialog(AppState app) {
+    if (!_pendingBattleDefeatDialog || !mounted) {
+      return;
+    }
+    if (!(ModalRoute.of(context)?.isCurrent ?? false)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showPendingBattleDefeatDialog(app);
+      });
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_pendingBattleDefeatDialog) {
+        return;
+      }
+      _pendingBattleDefeatDialog = false;
+      _showDefeatDialog(app);
     });
   }
 
@@ -549,6 +620,7 @@ class _BattlePageState extends State<BattlePage>
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _opponentTicker?.dispose();
+    _cancelBattleLossCountdown();
 
     final app = _appState;
     if (app != null) {
@@ -569,12 +641,40 @@ class _BattlePageState extends State<BattlePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      final app = _appState ?? context.read<AppState>();
-      if (app.current != null) {
-        app.current!.elapsedMs = _elapsedVN.value;
-        unawaited(app.save());
-      }
+    final app = _appState ?? context.read<AppState>();
+    switch (state) {
+      case AppLifecycleState.resumed:
+        final pausedAt = _backgroundedAt;
+        _backgroundedAt = null;
+        _cancelBattleLossCountdown();
+        if (!_battleForfeitHandled &&
+            pausedAt != null &&
+            DateTime.now().difference(pausedAt) >=
+                _kBattleBackgroundForfeitDuration) {
+          _handleBattleForfeit();
+        }
+        if (_pendingBattleDefeatDialog) {
+          _showPendingBattleDefeatDialog(app);
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        _startBattleLossCountdown();
+        if (app.current != null) {
+          app.current!.elapsedMs = _elapsedVN.value;
+          unawaited(app.save());
+        }
+        break;
+      case AppLifecycleState.detached:
+        _handleBattleForfeit();
+        break;
+      default:
+        _startBattleLossCountdown();
+        if (app.current != null) {
+          app.current!.elapsedMs = _elapsedVN.value;
+          unawaited(app.save());
+        }
+        break;
     }
   }
 
@@ -898,6 +998,8 @@ class _BattlePageState extends State<BattlePage>
     _victoryShown = false;
     _defeatShown = false;
     _battleLossRecorded = false;
+    _battleForfeitHandled = false;
+    _pendingBattleDefeatDialog = false;
   }
 }
 
