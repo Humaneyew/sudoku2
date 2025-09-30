@@ -235,7 +235,7 @@ class _IncorrectShakeAnimation extends StatelessWidget {
 }
 
 class _HintHighlightOverlay extends StatelessWidget {
-  static const Duration _duration = Duration(milliseconds: 900);
+  static const Duration _duration = Duration(milliseconds: 990);
   static const double _fadeInPortion = 0.18;
 
   final int animationId;
@@ -327,7 +327,8 @@ class _HintHighlightPainter extends CustomPainter {
         math.sqrt(size.width * size.width + size.height * size.height) / 2 + spreadRadius;
     final minRadius = maxRadius * 0.25;
     final radius = ui.lerpDouble(minRadius, maxRadius, intensity.clamp(0.0, 1.0)) ?? maxRadius;
-    final innerOpacity = 0.35 * intensity;
+    final brightnessBoost = 1.07;
+    final innerOpacity = (0.35 * intensity * brightnessBoost).clamp(0.0, 1.0);
 
     if (innerOpacity > 0) {
       final paint = Paint()
@@ -347,7 +348,7 @@ class _HintHighlightPainter extends CustomPainter {
           ? (blurRadius * 0.57735 + 0.5)
           : 0.0;
       final borderPaint = Paint()
-        ..color = color.withOpacity(0.55 * intensity)
+        ..color = color.withOpacity((0.55 * intensity * brightnessBoost).clamp(0.0, 1.0))
         ..style = PaintingStyle.stroke
         ..strokeWidth = borderWidth
         ..maskFilter = sigma > 0 ? ui.MaskFilter.blur(ui.BlurStyle.outer, sigma) : null;
