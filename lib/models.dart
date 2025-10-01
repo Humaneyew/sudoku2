@@ -285,6 +285,7 @@ class AppState extends ChangeNotifier {
   Difficulty? currentDifficulty;
   GameMode? currentMode;
   Difficulty featuredDifficulty = Difficulty.novice;
+  bool _isFeaturedDailyChallenge = false;
 
   String? playerFlag;
   bool tutorialSeen = false;
@@ -350,6 +351,7 @@ class AppState extends ChangeNotifier {
       _dailyChallengeDate = null;
       _currentGameId = null;
       _lastVictoryDate = null;
+      _isFeaturedDailyChallenge = false;
 
       final completedDaily = prefs.getStringList('dailyCompleted');
       if (completedDaily != null) {
@@ -592,6 +594,8 @@ class AppState extends ChangeNotifier {
                 : DateTime.tryParse(dailyDateString);
             _dailyChallengeDate =
                 parsedDailyDate == null ? null : _dateOnly(parsedDailyDate);
+            _isFeaturedDailyChallenge = currentMode == GameMode.daily ||
+                _dailyChallengeDate != null;
 
             _currentGameId = (map['gameId'] as String?)?.trim();
             if (diff != null && (_currentGameId == null || _currentGameId!.isEmpty)) {
@@ -919,6 +923,7 @@ class AppState extends ChangeNotifier {
     currentDifficulty = Difficulty.medium;
     featuredDifficulty = Difficulty.medium;
     currentMode = GameMode.daily;
+    _isFeaturedDailyChallenge = true;
     _dailyChallengeDate = normalized;
     _sessionId++;
     currentScore = 0;
@@ -946,6 +951,7 @@ class AppState extends ChangeNotifier {
     Difficulty diff, {
     GameMode mode = GameMode.classic,
   }) {
+    _isFeaturedDailyChallenge = false;
     final resolvedList =
         (puzzles[diff] ?? puzzles[Difficulty.novice]) ?? <Puzzle>[];
     if (resolvedList.isEmpty) {
@@ -1185,6 +1191,8 @@ class AppState extends ChangeNotifier {
     }
     return featuredDifficulty;
   }
+
+  bool get isFeaturedDailyChallenge => _isFeaturedDailyChallenge;
 
   void selectCell(int index) {
     if (current == null) return;
