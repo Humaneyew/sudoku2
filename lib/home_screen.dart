@@ -1559,81 +1559,72 @@ class _DifficultyTile extends StatelessWidget {
           color: background,
           borderRadius: borderRadius,
         ),
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                17 * scale,
-                12.75 * scale,
-                17 * scale,
-                12.75 * scale + _difficultyProgressHeight * scale + 10 * scale,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 17 * scale,
+            vertical: 12.75 * scale,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: titleStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(width: 14 * scale),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12 * scale,
+                          vertical: 5 * scale,
+                        ),
+                        decoration: BoxDecoration(
+                          color: rankBackground,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(999 * scale),
+                          ),
+                        ),
                         child: Text(
-                          title,
-                          style: titleStyle,
+                          rankLabel,
+                          style: rankStyle,
+                        ),
+                      ),
+                      if (progressText != null) ...[
+                        SizedBox(height: 4 * scale),
+                        Text(
+                          progressText,
+                          style: progressStyle,
+                          textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      SizedBox(width: 14 * scale),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12 * scale,
-                              vertical: 5 * scale,
-                            ),
-                            decoration: BoxDecoration(
-                              color: rankBackground,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(999 * scale),
-                              ),
-                            ),
-                            child: Text(
-                              rankLabel,
-                              style: rankStyle,
-                            ),
-                          ),
-                          if (progressText != null) ...[
-                            SizedBox(height: 4 * scale),
-                            Text(
-                              progressText,
-                              style: progressStyle,
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ],
-                      ),
+                      ],
                     ],
                   ),
                 ],
               ),
-            ),
-            if (progressText != null)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 12.75 * scale,
-                child: _DifficultyProgressBar(
+              if (progressText != null) ...[
+                SizedBox(height: 10 * scale),
+                _DifficultyProgressBar(
                   progress: progressValue,
                   trackColor: trackColor,
                   fillColor: fillColor,
                   scale: scale,
                 ),
-              ),
-          ],
+              ],
+            ],
+          ),
         ),
       ),
     );
