@@ -1386,7 +1386,7 @@ class _ProgressCard extends StatelessWidget {
 }
 
 const double _difficultyTileRadiusValue = 20.0;
-const double _difficultyTileHeightScale = 0.95;
+const double _difficultyTileHeightScale = 0.855;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
 
