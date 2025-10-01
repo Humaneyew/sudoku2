@@ -1720,8 +1720,12 @@ class _DifficultyTile extends StatelessWidget {
                               _difficultyProgressAnimationDuration,
                           curve: Curves.easeInOut,
                           width: targetWidth,
-                          decoration: BoxDecoration(
-                            color: fillColor,
+                          height: constraints.maxHeight,
+                          child: ClipPath(
+                            clipper: const _RankProgressClipper(),
+                            child: Container(
+                              color: fillColor,
+                            ),
                           ),
                         ),
                       );
@@ -1795,6 +1799,34 @@ class _DifficultyTile extends StatelessWidget {
       ),
     );
   }
+}
+
+class _RankProgressClipper extends CustomClipper<Path> {
+  const _RankProgressClipper();
+
+  @override
+  Path getClip(Size size) {
+    final width = size.width;
+    final height = size.height;
+
+    if (width <= 0 || height <= 0) {
+      return Path();
+    }
+
+    final tailWidth = math.min(width, height * 0.45);
+    final cutStart = math.max(0.0, width - tailWidth);
+
+    return Path()
+      ..moveTo(0, 0)
+      ..lineTo(cutStart, 0)
+      ..lineTo(width, height / 2)
+      ..lineTo(cutStart, height)
+      ..lineTo(0, height)
+      ..close();
+  }
+
+  @override
+  bool shouldReclip(covariant _RankProgressClipper oldClipper) => true;
 }
 
 class _DailyChallengesTab extends StatefulWidget {
