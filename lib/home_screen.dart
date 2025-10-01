@@ -318,6 +318,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         final isDailyActive =
             app.activeDailyChallengeDate == normalizedToday ? true : false;
 
+        var isTapLocked = false;
         final tiles = <Widget>[];
         tiles.add(
           _DailyChallengeTile(
@@ -328,6 +329,10 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             isActive: isDailyActive,
             palette: palette,
             onTap: () {
+              if (isTapLocked) {
+                return;
+              }
+              isTapLocked = true;
               if (context.mounted) {
                 Navigator.pop(
                   context,
@@ -351,7 +356,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               progressTarget: stats.progressTarget,
               isActive: diff == selected,
               palette: palette,
-              onTap: () {
+              onSubmit: () {
                 if (context.mounted) {
                   Navigator.pop(
                     context,
@@ -359,6 +364,8 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   );
                 }
               },
+              isTapLocked: () => isTapLocked,
+              lockTap: () => isTapLocked = true,
               scale: scale,
             ),
           );
@@ -1387,8 +1394,7 @@ class _ProgressCard extends StatelessWidget {
 
 const double _difficultyTileRadiusValue = 20.0;
 const double _difficultyTileHeightScale = 0.855;
-const Duration _difficultyProgressAnimationDuration =
-    Duration(milliseconds: 320);
+const Duration _difficultyTapAnimationDuration = Duration(milliseconds: 820);
 
 class _DifficultySheetPalette {
   final Color tileBackground;
@@ -1606,14 +1612,16 @@ class _DailyChallengeTile extends StatelessWidget {
   }
 }
 
-class _DifficultyTile extends StatelessWidget {
+class _DifficultyTile extends StatefulWidget {
   final String title;
   final String rankLabel;
   final int progressCurrent;
   final int progressTarget;
   final bool isActive;
   final _DifficultySheetPalette palette;
-  final VoidCallback onTap;
+  final VoidCallback onSubmit;
+  final bool Function() isTapLocked;
+  final VoidCallback lockTap;
   final double scale;
 
   const _DifficultyTile({
@@ -1624,27 +1632,152 @@ class _DifficultyTile extends StatelessWidget {
     required this.progressTarget,
     required this.isActive,
     required this.palette,
-    required this.onTap,
+    required this.onSubmit,
+    required this.isTapLocked,
+    required this.lockTap,
     required this.scale,
   });
 
   @override
+  State<_DifficultyTile> createState() => _DifficultyTileState();
+}
+
+class _DifficultyTileState extends State<_DifficultyTile>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late Animation<double> _progressAnimation;
+  bool _isAnimating = false;
+  bool _didSubmit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: _difficultyTapAnimationDuration,
+    );
+    _controller.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _notifySubmit();
+      }
+    });
+    _configureAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant _DifficultyTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.progressCurrent != widget.progressCurrent ||
+        oldWidget.progressTarget != widget.progressTarget ||
+        oldWidget.isActive != widget.isActive) {
+      _configureAnimation();
+    }
+  }
+
+  void _configureAnimation() {
+    final begin = _clampedProgress;
+    _progressAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: begin, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeInOutCubic)),
+        weight: 55,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 45,
+      ),
+    ]).animate(_controller);
+  }
+
+  double get _clampedProgress {
+    final target = _safeTarget;
+    if (target == 0) {
+      return 0;
+    }
+    final current = _safeCurrent;
+    return current / target;
+  }
+
+  int get _safeTarget => widget.progressTarget <= 0 ? 0 : widget.progressTarget;
+
+  int get _safeCurrent {
+    final target = _safeTarget;
+    if (target == 0) {
+      return 0;
+    }
+    final current = widget.progressCurrent;
+    if (current <= 0) {
+      return 0;
+    }
+    if (current >= target) {
+      return target;
+    }
+    return current;
+  }
+
+  bool get _hasRankProgress => _safeTarget > 0;
+
+  double get _displayProgress {
+    if (_isAnimating) {
+      return _progressAnimation.value.clamp(0.0, 1.0);
+    }
+    final value = _clampedProgress;
+    if (value.isNaN) {
+      return 0.0;
+    }
+    return value.clamp(0.0, 1.0);
+  }
+
+  void _notifySubmit() {
+    if (_didSubmit) {
+      return;
+    }
+    _didSubmit = true;
+    widget.onSubmit();
+  }
+
+  Future<void> _handleTap() async {
+    if (widget.isTapLocked()) {
+      return;
+    }
+    widget.lockTap();
+    _didSubmit = false;
+    if (!_hasRankProgress) {
+      _notifySubmit();
+      return;
+    }
+    setState(() {
+      _isAnimating = true;
+    });
+    _configureAnimation();
+    await _controller.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scale = widget.scale;
 
-    final safeTarget = progressTarget <= 0 ? 0 : progressTarget;
-    final safeCurrent = safeTarget == 0
-        ? 0
-        : progressCurrent < 0
-            ? 0
-            : (progressCurrent > safeTarget ? safeTarget : progressCurrent);
-    final progressText = safeTarget == 0 ? null : '$safeCurrent / $safeTarget';
-    final progressValue =
-        safeTarget == 0 ? 0.0 : safeCurrent / safeTarget;
+    final target = _safeTarget;
+    final current = _safeCurrent;
+    final progressText = target == 0 ? null : '$current / $target';
 
-    final background =
-        isActive ? palette.tileActiveBackground : palette.tileBackground;
-    final titleColor = palette.titleColor;
+    final background = widget.isActive
+        ? widget.palette.tileActiveBackground
+        : widget.palette.tileBackground;
+    final titleColor = widget.palette.titleColor;
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: titleColor,
@@ -1657,10 +1790,12 @@ class _DifficultyTile extends StatelessWidget {
           color: titleColor,
         );
 
-    final rankBackground =
-        isActive ? palette.badgeActiveBackground : palette.badgeBackground;
-    final rankColor =
-        isActive ? palette.badgeActiveTextColor : palette.badgeTextColor;
+    final rankBackground = widget.isActive
+        ? widget.palette.badgeActiveBackground
+        : widget.palette.badgeBackground;
+    final rankColor = widget.isActive
+        ? widget.palette.badgeActiveTextColor
+        : widget.palette.badgeTextColor;
     final rankStyle = theme.textTheme.labelLarge?.copyWith(
           color: rankColor,
           fontWeight: FontWeight.w700,
@@ -1673,7 +1808,7 @@ class _DifficultyTile extends StatelessWidget {
           color: rankColor,
         );
 
-    final progressColor = palette.progressTextColor;
+    final progressColor = widget.palette.progressTextColor;
     final progressStyle = theme.textTheme.bodySmall?.copyWith(
           color: progressColor,
           fontWeight: FontWeight.w600,
@@ -1686,18 +1821,22 @@ class _DifficultyTile extends StatelessWidget {
           color: progressColor,
         );
 
-    final clampedProgress = progressValue.isNaN
-        ? 0.0
-        : progressValue.clamp(0.0, 1.0).toDouble();
-    final fillColor =
-        isActive ? palette.progressFillActiveColor : palette.progressFillColor;
+    final fillColor = _isAnimating
+        ? widget.palette.progressFillActiveColor
+        : widget.isActive
+            ? widget.palette.progressFillActiveColor
+            : widget.palette.progressFillColor;
 
     final borderRadius =
         BorderRadius.circular(_difficultyTileRadiusValue * scale);
 
+    final shouldShowProgress =
+        (_isAnimating && _hasRankProgress) ||
+            (progressText != null && _displayProgress > 0 && widget.isActive);
+
     return InkWell(
       borderRadius: borderRadius,
-      onTap: onTap,
+      onTap: _handleTap,
       child: Ink(
         decoration: BoxDecoration(
           color: background,
@@ -1707,18 +1846,15 @@ class _DifficultyTile extends StatelessWidget {
           borderRadius: borderRadius,
           child: Stack(
             children: [
-              if (progressText != null && clampedProgress > 0 && isActive)
+              if (shouldShowProgress)
                 Positioned.fill(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final targetWidth =
-                          constraints.maxWidth * clampedProgress;
+                          constraints.maxWidth * _displayProgress;
                       return Align(
                         alignment: Alignment.centerLeft,
-                        child: AnimatedContainer(
-                          duration:
-                              _difficultyProgressAnimationDuration,
-                          curve: Curves.easeInOut,
+                        child: Container(
                           width: targetWidth,
                           decoration: BoxDecoration(
                             color: fillColor,
@@ -1742,7 +1878,7 @@ class _DifficultyTile extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            title,
+                            widget.title,
                             style: titleStyle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -1766,7 +1902,7 @@ class _DifficultyTile extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                rankLabel,
+                                widget.rankLabel,
                                 style: rankStyle,
                               ),
                             ),
