@@ -293,6 +293,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
     final bottomSheetScale = context.layoutScale;
+    final items = Difficulty.values;
+    final tileKeys = <Difficulty, GlobalKey<_DifficultyTileState>>{
+      for (final diff in items)
+        diff: GlobalKey<_DifficultyTileState>(debugLabel: _difficultyKey(diff)),
+    };
     final result = await showModalBottomSheet<_DifficultySheetResult>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -306,7 +311,6 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         final theme = Theme.of(context);
         final palette = _DifficultySheetPalette.fromTheme(theme);
         final scale = context.layoutScale;
-        final items = Difficulty.values;
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
 
@@ -347,7 +351,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
           final stats = app.statsFor(diff);
           tiles.add(
             _DifficultyTile(
-              key: ValueKey(_difficultyKey(diff)),
+              key: tileKeys[diff]!,
               title: diff.title(sheetL10n),
               rankLabel: sheetL10n.rankLabel(stats.rank),
               progressCurrent: stats.progressCurrent,
@@ -365,6 +369,17 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               isTapLocked: () => isTapLocked,
               lockTap: () => isTapLocked = true,
               scale: scale,
+              onTapped: (state) async {
+                if (diff == selected) {
+                  await state.playSelectionAnimation();
+                  return;
+                }
+                final activeState = tileKeys[selected]?.currentState;
+                if (activeState != null) {
+                  await activeState.playResetAnimation();
+                }
+                await state.playSelectionAnimation();
+              },
             ),
           );
           if (index < items.length - 1) {
@@ -1716,6 +1731,7 @@ class _DifficultyTile extends StatefulWidget {
   final bool Function() isTapLocked;
   final VoidCallback lockTap;
   final double scale;
+  final Future<void> Function(_DifficultyTileState state)? onTapped;
 
   const _DifficultyTile({
     super.key,
@@ -1729,6 +1745,7 @@ class _DifficultyTile extends StatefulWidget {
     required this.isTapLocked,
     required this.lockTap,
     required this.scale,
+    this.onTapped,
   });
 
   @override
@@ -1737,10 +1754,15 @@ class _DifficultyTile extends StatefulWidget {
 
 class _DifficultyTileState extends State<_DifficultyTile>
     with SingleTickerProviderStateMixin {
+  static const double _resetWeight = 55;
+  static const double _fillWeight = 45;
+
   late final AnimationController _controller;
   late Animation<double> _progressAnimation;
   bool _isAnimating = false;
   bool _didSubmit = false;
+  bool _suppressSubmit = false;
+  double? _overrideProgress;
 
   @override
   void initState() {
@@ -1756,10 +1778,17 @@ class _DifficultyTileState extends State<_DifficultyTile>
     });
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        _notifySubmit();
+        if (!_suppressSubmit) {
+          _notifySubmit();
+        }
+        if (mounted) {
+          setState(() {
+            _isAnimating = false;
+          });
+        }
       }
     });
-    _configureAnimation();
+    _configureAnimation(includeReset: widget.isActive, includeFill: true);
   }
 
   @override
@@ -1768,24 +1797,43 @@ class _DifficultyTileState extends State<_DifficultyTile>
     if (oldWidget.progressCurrent != widget.progressCurrent ||
         oldWidget.progressTarget != widget.progressTarget ||
         oldWidget.isActive != widget.isActive) {
-      _configureAnimation();
+      _configureAnimation(includeReset: widget.isActive, includeFill: true);
     }
   }
 
-  void _configureAnimation() {
-    final begin = widget.isActive ? _clampedProgress : 0.0;
-    _progressAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: begin, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeInOutCubic)),
-        weight: 55,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.0, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeOutCubic)),
-        weight: 45,
-      ),
-    ]).animate(_controller);
+  void _configureAnimation({
+    required bool includeReset,
+    required bool includeFill,
+    double? resetBegin,
+  }) {
+    _overrideProgress = null;
+    final begin = resetBegin ?? (widget.isActive ? _clampedProgress : 0.0);
+    final sequence = <TweenSequenceItem<double>>[];
+    if (includeReset && begin > 0) {
+      sequence.add(
+        TweenSequenceItem(
+          tween: Tween<double>(begin: begin, end: 0.0)
+              .chain(CurveTween(curve: Curves.easeInOutCubic)),
+          weight: _resetWeight,
+        ),
+      );
+    }
+    if (includeFill && _hasRankProgress) {
+      sequence.add(
+        TweenSequenceItem(
+          tween: Tween<double>(begin: 0.0, end: 1.0)
+              .chain(CurveTween(curve: Curves.easeOutCubic)),
+          weight: _fillWeight,
+        ),
+      );
+    }
+    if (sequence.isEmpty) {
+      _progressAnimation = AlwaysStoppedAnimation<double>(
+        includeReset ? begin.clamp(0.0, 1.0) : 0.0,
+      );
+    } else {
+      _progressAnimation = TweenSequence<double>(sequence).animate(_controller);
+    }
   }
 
   double get _clampedProgress {
@@ -1817,6 +1865,10 @@ class _DifficultyTileState extends State<_DifficultyTile>
   bool get _hasRankProgress => _safeTarget > 0;
 
   double get _displayProgress {
+    final override = _overrideProgress;
+    if (override != null) {
+      return override.clamp(0.0, 1.0);
+    }
     if (_isAnimating) {
       return _progressAnimation.value.clamp(0.0, 1.0);
     }
@@ -1841,21 +1893,61 @@ class _DifficultyTileState extends State<_DifficultyTile>
     }
     widget.lockTap();
     _didSubmit = false;
-    if (!_hasRankProgress) {
-      _notifySubmit();
+    if (widget.onTapped != null) {
+      await widget.onTapped!(this);
       return;
     }
-    setState(() {
-      _isAnimating = true;
-    });
-    _configureAnimation();
-    await _controller.forward(from: 0);
+    await playSelectionAnimation();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> playSelectionAnimation() async {
+    if (!_hasRankProgress) {
+      _notifySubmit();
+      return;
+    }
+    setState(() {
+      _suppressSubmit = false;
+      _isAnimating = true;
+    });
+    _configureAnimation(includeReset: widget.isActive, includeFill: true);
+    await _controller.forward(from: 0);
+  }
+
+  Future<void> playResetAnimation() async {
+    if (!_hasRankProgress) {
+      setState(() {
+        _overrideProgress = 0.0;
+      });
+      return;
+    }
+    final begin = _clampedProgress;
+    if (begin <= 0) {
+      setState(() {
+        _overrideProgress = 0.0;
+      });
+      return;
+    }
+    setState(() {
+      _suppressSubmit = true;
+      _isAnimating = true;
+    });
+    _configureAnimation(includeReset: true, includeFill: false, resetBegin: begin);
+    await _controller.forward(from: 0);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _isAnimating = false;
+      _overrideProgress = 0.0;
+      _suppressSubmit = false;
+    });
+    _controller.reset();
   }
 
   @override
