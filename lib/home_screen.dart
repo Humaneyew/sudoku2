@@ -1395,9 +1395,6 @@ class _ProgressCard extends StatelessWidget {
 const double _difficultyTileRadiusValue = 20.0;
 const double _difficultyTileHeightScale = 0.855;
 const Duration _difficultyTapAnimationDuration = Duration(milliseconds: 820);
-const Color _rankBadgeBackgroundColor = Color(0xFF3B73ED);
-const Color _rankBadgeTextColor = Color(0xFFFFFFFF);
-
 class _DifficultySheetPalette {
   final Color tileBackground;
   final Color tileActiveBackground;
@@ -1439,10 +1436,10 @@ class _DifficultySheetPalette {
       return _DifficultySheetPalette(
         tileBackground: overlay(cs.onSurface, 0.12),
         tileActiveBackground: overlay(cs.primary, 0.32),
-        badgeBackground: _rankBadgeBackgroundColor,
-        badgeActiveBackground: _rankBadgeBackgroundColor,
-        badgeTextColor: _rankBadgeTextColor,
-        badgeActiveTextColor: _rankBadgeTextColor,
+        badgeBackground: overlay(cs.onSurface, 0.18),
+        badgeActiveBackground: cs.primary,
+        badgeTextColor: cs.onSurface.withOpacity(0.75),
+        badgeActiveTextColor: cs.onPrimary,
         progressTextColor: cs.onSurfaceVariant,
         titleColor: cs.onSurface,
         closeBackground: overlay(cs.onSurface, 0.16),
@@ -1455,10 +1452,10 @@ class _DifficultySheetPalette {
     return _DifficultySheetPalette(
       tileBackground: overlay(cs.onSurface, 0.04),
       tileActiveBackground: overlay(cs.primary, 0.18),
-      badgeBackground: _rankBadgeBackgroundColor,
-      badgeActiveBackground: _rankBadgeBackgroundColor,
-      badgeTextColor: _rankBadgeTextColor,
-      badgeActiveTextColor: _rankBadgeTextColor,
+      badgeBackground: overlay(cs.onSurface, 0.06),
+      badgeActiveBackground: cs.primary,
+      badgeTextColor: cs.onSurface.withOpacity(0.65),
+      badgeActiveTextColor: cs.onPrimary,
       progressTextColor: cs.onSurface.withOpacity(0.6),
       titleColor: cs.onSurface,
       closeBackground: overlay(cs.onSurface, 0.05),
