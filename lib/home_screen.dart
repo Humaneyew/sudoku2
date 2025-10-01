@@ -1813,14 +1813,32 @@ class _RankProgressClipper extends CustomClipper<Path> {
       return Path();
     }
 
-    final tailWidth = math.min(width, height * 0.45);
+    final tailWidth = math.min(width * 0.6, height * 0.9);
     final cutStart = math.max(0.0, width - tailWidth);
+
+    final topControlX = cutStart + tailWidth * 0.55;
+    final bottomControlX = topControlX;
+    final tipControlX = width - tailWidth * 0.25;
 
     return Path()
       ..moveTo(0, 0)
       ..lineTo(cutStart, 0)
-      ..lineTo(width, height / 2)
-      ..lineTo(cutStart, height)
+      ..cubicTo(
+        topControlX,
+        0,
+        tipControlX,
+        height * 0.25,
+        width,
+        height * 0.5,
+      )
+      ..cubicTo(
+        tipControlX,
+        height * 0.75,
+        bottomControlX,
+        height,
+        cutStart,
+        height,
+      )
       ..lineTo(0, height)
       ..close();
   }
