@@ -293,7 +293,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
   Future<void> _openDifficultySheet(BuildContext context) async {
     final app = context.read<AppState>();
     final bottomSheetScale = context.layoutScale;
-    final result = await showModalBottomSheet<Difficulty>(
+    final result = await showModalBottomSheet<_DifficultySheetResult>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
       isScrollControlled: true,
@@ -310,7 +310,35 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         final selected = app.featuredStatsDifficulty;
         final sheetL10n = AppLocalizations.of(context)!;
 
+        final today = DateTime.now();
+        final normalizedToday = DateTime(today.year, today.month, today.day);
+        final todayLabel = DateFormat('d MMMM', sheetL10n.localeName)
+            .format(normalizedToday);
+        final isDailyCompleted = app.isDailyCompleted(normalizedToday);
+        final isDailyActive =
+            app.activeDailyChallengeDate == normalizedToday ? true : false;
+
         final tiles = <Widget>[];
+        tiles.add(
+          _DailyChallengeTile(
+            key: const ValueKey('difficulty-sheet-daily-challenge'),
+            title: sheetL10n.selectDifficultyDailyChallenge,
+            subtitle: todayLabel,
+            isCompleted: isDailyCompleted,
+            isActive: isDailyActive,
+            palette: palette,
+            onTap: () {
+              if (context.mounted) {
+                Navigator.pop(
+                  context,
+                  const _DifficultySheetResult.dailyChallenge(),
+                );
+              }
+            },
+            scale: scale,
+          ),
+        );
+        tiles.add(SizedBox(height: 12 * scale));
         for (var index = 0; index < items.length; index++) {
           final diff = items[index];
           final stats = app.statsFor(diff);
@@ -327,7 +355,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                 if (context.mounted) {
                   Navigator.pop(
                     context,
-                    diff,
+                    _DifficultySheetResult.difficulty(diff),
                   );
                 }
               },
@@ -384,7 +412,21 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
 
     if (!context.mounted || result == null) return;
 
-    app.startGame(result);
+    if (result.isDailyChallenge) {
+      final today = DateTime.now();
+      _startDailyChallengeGame(
+        context,
+        DateTime(today.year, today.month, today.day),
+      );
+      return;
+    }
+
+    final difficulty = result.difficulty;
+    if (difficulty == null) {
+      return;
+    }
+
+    app.startGame(difficulty);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const GamePage()),
@@ -1447,6 +1489,116 @@ class _DifficultySheetCloseButton extends StatelessWidget {
             Icons.close_rounded,
             size: 18 * scale,
             color: palette.closeIconColor,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DifficultySheetResult {
+  final Difficulty? difficulty;
+  final bool isDailyChallenge;
+
+  const _DifficultySheetResult._(this.difficulty, this.isDailyChallenge);
+
+  const _DifficultySheetResult.difficulty(Difficulty difficulty)
+      : this._(difficulty, false);
+
+  const _DifficultySheetResult.dailyChallenge()
+      : this._(null, true);
+}
+
+class _DailyChallengeTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final bool isCompleted;
+  final bool isActive;
+  final _DifficultySheetPalette palette;
+  final VoidCallback onTap;
+  final double scale;
+
+  const _DailyChallengeTile({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.isCompleted,
+    required this.isActive,
+    required this.palette,
+    required this.onTap,
+    required this.scale,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final background =
+        isActive ? palette.tileActiveBackground : palette.tileBackground;
+    final titleStyle = theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: palette.titleColor,
+          fontSize: (theme.textTheme.titleMedium?.fontSize ?? 18) * scale,
+        ) ??
+        TextStyle(
+          fontSize: 16 * scale,
+          fontWeight: FontWeight.w600,
+          color: palette.titleColor,
+        );
+
+    final subtitleStyle = theme.textTheme.bodyMedium?.copyWith(
+          color: palette.progressTextColor,
+          fontWeight: FontWeight.w500,
+          fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * scale,
+        ) ??
+        TextStyle(
+          fontSize: 14 * scale,
+          fontWeight: FontWeight.w500,
+          color: palette.progressTextColor,
+        );
+
+    final iconColor = isCompleted
+        ? palette.progressFillActiveColor
+        : palette.progressTextColor;
+    final iconData = isCompleted ? Icons.star_rounded : Icons.event_note;
+
+    final borderRadius =
+        BorderRadius.circular(_difficultyTileRadiusValue * scale);
+
+    return InkWell(
+      borderRadius: borderRadius,
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: borderRadius,
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 18 * scale,
+            vertical: 18 * scale,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(title, style: titleStyle),
+                    SizedBox(height: 6 * scale),
+                    Text(subtitle, style: subtitleStyle),
+                  ],
+                ),
+              ),
+              SizedBox(width: 12 * scale),
+              Icon(
+                iconData,
+                size: 28 * scale,
+                color: iconColor,
+              ),
+            ],
           ),
         ),
       ),
