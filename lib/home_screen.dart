@@ -1773,7 +1773,7 @@ class _DifficultyTileState extends State<_DifficultyTile>
   }
 
   void _configureAnimation() {
-    final begin = _clampedProgress;
+    final begin = widget.isActive ? _clampedProgress : 0.0;
     _progressAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: begin, end: 0.0)
