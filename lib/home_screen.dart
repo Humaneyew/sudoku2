@@ -1344,7 +1344,6 @@ class _ProgressCard extends StatelessWidget {
 }
 
 const double _difficultyTileRadiusValue = 20.0;
-const double _difficultyProgressHeight = 6.0;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
 
@@ -1359,8 +1358,6 @@ class _DifficultySheetPalette {
   final Color titleColor;
   final Color closeBackground;
   final Color closeIconColor;
-  final Color progressTrackColor;
-  final Color progressTrackActiveColor;
   final Color progressFillColor;
   final Color progressFillActiveColor;
 
@@ -1375,8 +1372,6 @@ class _DifficultySheetPalette {
     required this.titleColor,
     required this.closeBackground,
     required this.closeIconColor,
-    required this.progressTrackColor,
-    required this.progressTrackActiveColor,
     required this.progressFillColor,
     required this.progressFillActiveColor,
   });
@@ -1401,8 +1396,6 @@ class _DifficultySheetPalette {
         titleColor: cs.onSurface,
         closeBackground: overlay(cs.onSurface, 0.16),
         closeIconColor: cs.onSurfaceVariant,
-        progressTrackColor: overlay(cs.onSurfaceVariant, 0.26),
-        progressTrackActiveColor: overlay(cs.primary, 0.34),
         progressFillColor: cs.onSurface.withOpacity(0.55),
         progressFillActiveColor: cs.primary,
       );
@@ -1419,8 +1412,6 @@ class _DifficultySheetPalette {
       titleColor: cs.onSurface,
       closeBackground: overlay(cs.onSurface, 0.05),
       closeIconColor: cs.onSurfaceVariant,
-      progressTrackColor: overlay(cs.onSurfaceVariant, 0.12),
-      progressTrackActiveColor: overlay(cs.primary, 0.24),
       progressFillColor: overlay(cs.onSurface, 0.14),
       progressFillActiveColor: cs.primary,
     );
@@ -1542,9 +1533,9 @@ class _DifficultyTile extends StatelessWidget {
           color: progressColor,
         );
 
-    final trackColor = isActive
-        ? palette.progressTrackActiveColor
-        : palette.progressTrackColor;
+    final clampedProgress = progressValue.isNaN
+        ? 0.0
+        : progressValue.clamp(0.0, 1.0).toDouble();
     final fillColor =
         isActive ? palette.progressFillActiveColor : palette.progressFillColor;
 
@@ -1559,70 +1550,89 @@ class _DifficultyTile extends StatelessWidget {
           color: background,
           borderRadius: borderRadius,
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 17 * scale,
-            vertical: 12.75 * scale,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Stack(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: titleStyle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(width: 14 * scale),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12 * scale,
-                          vertical: 5 * scale,
-                        ),
-                        decoration: BoxDecoration(
-                          color: rankBackground,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(999 * scale),
+              if (progressText != null && clampedProgress > 0)
+                Positioned.fill(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final targetWidth =
+                          constraints.maxWidth * clampedProgress;
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: AnimatedContainer(
+                          duration:
+                              _difficultyProgressAnimationDuration,
+                          curve: Curves.easeInOut,
+                          width: targetWidth,
+                          decoration: BoxDecoration(
+                            color: fillColor,
                           ),
                         ),
-                        child: Text(
-                          rankLabel,
-                          style: rankStyle,
+                      );
+                    },
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 17 * scale,
+                  vertical: 12.75 * scale,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: titleStyle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      if (progressText != null) ...[
-                        SizedBox(height: 4 * scale),
-                        Text(
-                          progressText,
-                          style: progressStyle,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        SizedBox(width: 14 * scale),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12 * scale,
+                                vertical: 5 * scale,
+                              ),
+                              decoration: BoxDecoration(
+                                color: rankBackground,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(999 * scale),
+                                ),
+                              ),
+                              child: Text(
+                                rankLabel,
+                                style: rankStyle,
+                              ),
+                            ),
+                            if (progressText != null) ...[
+                              SizedBox(height: 4 * scale),
+                              Text(
+                                progressText,
+                                style: progressStyle,
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ],
                         ),
                       ],
-                    ],
-                  ),
-                ],
-              ),
-              if (progressText != null) ...[
-                SizedBox(height: 10 * scale),
-                _DifficultyProgressBar(
-                  progress: progressValue,
-                  trackColor: trackColor,
-                  fillColor: fillColor,
-                  scale: scale,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ],
           ),
         ),
@@ -1630,59 +1640,6 @@ class _DifficultyTile extends StatelessWidget {
     );
   }
 }
-
-class _DifficultyProgressBar extends StatelessWidget {
-  final double progress;
-  final Color trackColor;
-  final Color fillColor;
-  final double scale;
-
-  const _DifficultyProgressBar({
-    required this.progress,
-    required this.trackColor,
-    required this.fillColor,
-    required this.scale,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final clampedProgress =
-        progress.isNaN ? 0.0 : progress.clamp(0.0, 1.0).toDouble();
-    final height = _difficultyProgressHeight * scale;
-
-    return SizedBox(
-      height: height,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(height / 2),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final targetWidth = constraints.maxWidth * clampedProgress;
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: trackColor),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: AnimatedContainer(
-                    duration: _difficultyProgressAnimationDuration,
-                    curve: Curves.easeInOut,
-                    width: targetWidth,
-                    height: height,
-                    decoration: BoxDecoration(color: fillColor),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
 
 class _DailyChallengesTab extends StatefulWidget {
   const _DailyChallengesTab();
