@@ -1582,7 +1582,7 @@ class _DailyChallengeTile extends StatefulWidget {
 class _DailyChallengeTileState extends State<_DailyChallengeTile>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _progressAnimation;
+  late Animation<double> _progressAnimation;
   bool _isAnimating = false;
   bool _didSubmit = false;
   bool _suppressSubmit = false;
