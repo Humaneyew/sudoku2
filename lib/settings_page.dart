@@ -13,7 +13,7 @@ import 'widgets/privacy_policy_dialog.dart';
 import 'widgets/theme_menu.dart';
 import 'layout/layout_scale.dart';
 
-const _appVersion = '1.0.1';
+const _appVersion = '1.0.4';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
