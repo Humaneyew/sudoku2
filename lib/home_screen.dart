@@ -1344,6 +1344,7 @@ class _ProgressCard extends StatelessWidget {
 }
 
 const double _difficultyTileRadiusValue = 20.0;
+const double _difficultyTileHeightScale = 0.95;
 const Duration _difficultyProgressAnimationDuration =
     Duration(milliseconds: 320);
 
@@ -1554,7 +1555,7 @@ class _DifficultyTile extends StatelessWidget {
           borderRadius: borderRadius,
           child: Stack(
             children: [
-              if (progressText != null && clampedProgress > 0)
+              if (progressText != null && clampedProgress > 0 && isActive)
                 Positioned.fill(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -1578,7 +1579,7 @@ class _DifficultyTile extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 17 * scale,
-                  vertical: 12.75 * scale,
+                  vertical: 12.75 * _difficultyTileHeightScale * scale,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1603,7 +1604,8 @@ class _DifficultyTile extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 12 * scale,
-                                vertical: 5 * scale,
+                                vertical:
+                                    5 * _difficultyTileHeightScale * scale,
                               ),
                               decoration: BoxDecoration(
                                 color: rankBackground,
@@ -1617,7 +1619,9 @@ class _DifficultyTile extends StatelessWidget {
                               ),
                             ),
                             if (progressText != null) ...[
-                              SizedBox(height: 4 * scale),
+                              SizedBox(
+                                  height:
+                                      4 * _difficultyTileHeightScale * scale),
                               Text(
                                 progressText,
                                 style: progressStyle,
