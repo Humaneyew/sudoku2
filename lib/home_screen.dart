@@ -328,11 +328,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             isCompleted: isDailyCompleted,
             isActive: isDailyActive,
             palette: palette,
-            onTap: () {
-              if (isTapLocked) {
-                return;
-              }
-              isTapLocked = true;
+            onSubmit: () {
               if (context.mounted) {
                 Navigator.pop(
                   context,
@@ -340,6 +336,8 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                 );
               }
             },
+            isTapLocked: () => isTapLocked,
+            lockTap: () => isTapLocked = true,
             scale: scale,
           ),
         );
@@ -1393,8 +1391,9 @@ class _ProgressCard extends StatelessWidget {
 }
 
 const double _difficultyTileRadiusValue = 20.0;
-const double _difficultyTileHeightScale = 0.855;
+const double _difficultyTileHeightScale = 0.855 * 0.93;
 const Duration _difficultyTapAnimationDuration = Duration(milliseconds: 820);
+const double _dailyChallengeTileHeightScale = 0.93;
 class _DifficultySheetPalette {
   final Color tileBackground;
   final Color tileActiveBackground;
@@ -1514,13 +1513,15 @@ class _DifficultySheetResult {
       : this._(null, true);
 }
 
-class _DailyChallengeTile extends StatelessWidget {
+class _DailyChallengeTile extends StatefulWidget {
   final String title;
   final String subtitle;
   final bool isCompleted;
   final bool isActive;
   final _DifficultySheetPalette palette;
-  final VoidCallback onTap;
+  final VoidCallback onSubmit;
+  final bool Function() isTapLocked;
+  final VoidCallback lockTap;
   final double scale;
 
   const _DailyChallengeTile({
@@ -1530,78 +1531,171 @@ class _DailyChallengeTile extends StatelessWidget {
     required this.isCompleted,
     required this.isActive,
     required this.palette,
-    required this.onTap,
+    required this.onSubmit,
+    required this.isTapLocked,
+    required this.lockTap,
     required this.scale,
   });
+
+  @override
+  State<_DailyChallengeTile> createState() => _DailyChallengeTileState();
+}
+
+class _DailyChallengeTileState extends State<_DailyChallengeTile>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _progressAnimation;
+  bool _isAnimating = false;
+  bool _didSubmit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: _difficultyTapAnimationDuration,
+    );
+    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0)
+        .chain(CurveTween(curve: Curves.easeInOutCubic))
+        .animate(_controller);
+    _controller.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _notifySubmit();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _notifySubmit() {
+    if (_didSubmit) {
+      return;
+    }
+    _didSubmit = true;
+    widget.onSubmit();
+  }
+
+  Future<void> _handleTap() async {
+    if (widget.isTapLocked()) {
+      return;
+    }
+    widget.lockTap();
+    _didSubmit = false;
+    setState(() {
+      _isAnimating = true;
+    });
+    await _controller.forward(from: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final background =
-        isActive ? palette.tileActiveBackground : palette.tileBackground;
+    final background = widget.isActive
+        ? widget.palette.tileActiveBackground
+        : widget.palette.tileBackground;
     final titleStyle = theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: palette.titleColor,
-          fontSize: (theme.textTheme.titleMedium?.fontSize ?? 18) * scale,
+          color: widget.palette.titleColor,
+          fontSize:
+              (theme.textTheme.titleMedium?.fontSize ?? 18) * widget.scale,
         ) ??
         TextStyle(
-          fontSize: 16 * scale,
+          fontSize: 16 * widget.scale,
           fontWeight: FontWeight.w600,
-          color: palette.titleColor,
+          color: widget.palette.titleColor,
         );
 
     final subtitleStyle = theme.textTheme.bodyMedium?.copyWith(
-          color: palette.progressTextColor,
+          color: widget.palette.progressTextColor,
           fontWeight: FontWeight.w500,
-          fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * scale,
+          fontSize:
+              (theme.textTheme.bodyMedium?.fontSize ?? 14) * widget.scale,
         ) ??
         TextStyle(
-          fontSize: 14 * scale,
+          fontSize: 14 * widget.scale,
           fontWeight: FontWeight.w500,
-          color: palette.progressTextColor,
+          color: widget.palette.progressTextColor,
         );
 
-    final iconColor = isCompleted
-        ? palette.progressFillActiveColor
-        : palette.progressTextColor;
-    final iconData = isCompleted ? Icons.star_rounded : Icons.event_note;
+    final iconColor = widget.isCompleted
+        ? widget.palette.progressFillActiveColor
+        : widget.palette.progressTextColor;
+    final iconData =
+        widget.isCompleted ? Icons.star_rounded : Icons.event_note;
 
     final borderRadius =
-        BorderRadius.circular(_difficultyTileRadiusValue * scale);
+        BorderRadius.circular(_difficultyTileRadiusValue * widget.scale);
+
+    final fillColor = widget.palette.progressFillActiveColor;
 
     return InkWell(
       borderRadius: borderRadius,
-      onTap: onTap,
+      onTap: _handleTap,
       child: Ink(
         decoration: BoxDecoration(
           color: background,
           borderRadius: borderRadius,
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 18 * scale,
-            vertical: 18 * scale,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Stack(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+              if (_isAnimating)
+                Positioned.fill(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final targetWidth =
+                          constraints.maxWidth * _progressAnimation.value;
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          width: targetWidth,
+                          color: fillColor,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 18 * widget.scale,
+                  vertical:
+                      18 * _dailyChallengeTileHeightScale * widget.scale,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(title, style: titleStyle),
-                    SizedBox(height: 6 * scale),
-                    Text(subtitle, style: subtitleStyle),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(widget.title, style: titleStyle),
+                          SizedBox(
+                              height:
+                                  6 * _dailyChallengeTileHeightScale * widget.scale),
+                          Text(widget.subtitle, style: subtitleStyle),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 12 * widget.scale),
+                    Icon(
+                      iconData,
+                      size: 28 * _dailyChallengeTileHeightScale * widget.scale,
+                      color: iconColor,
+                    ),
                   ],
                 ),
-              ),
-              SizedBox(width: 12 * scale),
-              Icon(
-                iconData,
-                size: 28 * scale,
-                color: iconColor,
               ),
             ],
           ),
