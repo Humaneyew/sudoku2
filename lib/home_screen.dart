@@ -315,6 +315,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         final palette = _DifficultySheetPalette.fromTheme(theme);
         final scale = context.layoutScale;
         final selected = app.featuredStatsDifficulty;
+        final isDailySelected = app.isFeaturedDailyChallenge;
         final sheetL10n = AppLocalizations.of(context)!;
 
         final today = DateTime.now();
@@ -333,7 +334,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             title: sheetL10n.selectDifficultyDailyChallenge,
             subtitle: todayLabel,
             isCompleted: isDailyCompleted,
-            isActive: isDailyActive,
+            isActive: isDailyActive || isDailySelected,
             palette: palette,
             onSubmit: () {
               if (context.mounted) {
@@ -347,7 +348,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             lockTap: () => isTapLocked = true,
             scale: scale,
             onTapped: (state) async {
-              if (isDailyActive) {
+              if (isDailyActive || isDailySelected) {
                 await state.playSelectionAnimation();
                 return;
               }
@@ -370,7 +371,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               rankLabel: sheetL10n.rankLabel(stats.rank),
               progressCurrent: stats.progressCurrent,
               progressTarget: stats.progressTarget,
-              isActive: diff == selected,
+              isActive: !isDailySelected && diff == selected,
               palette: palette,
               onSubmit: () {
                 if (context.mounted) {
@@ -384,11 +385,11 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
               lockTap: () => isTapLocked = true,
               scale: scale,
               onTapped: (state) async {
-                if (diff == selected) {
+                if (!isDailySelected && diff == selected) {
                   await state.playSelectionAnimation();
                   return;
                 }
-                if (isDailyActive) {
+                if (isDailyActive || isDailySelected) {
                   final dailyState = dailyTileKey.currentState;
                   if (dailyState != null) {
                     await dailyState.playResetAnimation();
