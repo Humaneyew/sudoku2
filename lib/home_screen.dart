@@ -298,6 +298,9 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
       for (final diff in items)
         diff: GlobalKey<_DifficultyTileState>(debugLabel: _difficultyKey(diff)),
     };
+    final dailyTileKey = GlobalKey<_DailyChallengeTileState>(
+      debugLabel: 'difficulty-sheet-daily-challenge',
+    );
     final result = await showModalBottomSheet<_DifficultySheetResult>(
       context: context,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -326,7 +329,7 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
         final tiles = <Widget>[];
         tiles.add(
           _DailyChallengeTile(
-            key: const ValueKey('difficulty-sheet-daily-challenge'),
+            key: dailyTileKey,
             title: sheetL10n.selectDifficultyDailyChallenge,
             subtitle: todayLabel,
             isCompleted: isDailyCompleted,
@@ -343,6 +346,17 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
             isTapLocked: () => isTapLocked,
             lockTap: () => isTapLocked = true,
             scale: scale,
+            onTapped: (state) async {
+              if (isDailyActive) {
+                await state.playSelectionAnimation();
+                return;
+              }
+              final activeState = tileKeys[selected]?.currentState;
+              if (activeState != null) {
+                await activeState.playResetAnimation();
+              }
+              await state.playSelectionAnimation();
+            },
           ),
         );
         tiles.add(SizedBox(height: 12 * scale));
@@ -374,9 +388,16 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
                   await state.playSelectionAnimation();
                   return;
                 }
-                final activeState = tileKeys[selected]?.currentState;
-                if (activeState != null) {
-                  await activeState.playResetAnimation();
+                if (isDailyActive) {
+                  final dailyState = dailyTileKey.currentState;
+                  if (dailyState != null) {
+                    await dailyState.playResetAnimation();
+                  }
+                } else {
+                  final activeState = tileKeys[selected]?.currentState;
+                  if (activeState != null) {
+                    await activeState.playResetAnimation();
+                  }
                 }
                 await state.playSelectionAnimation();
               },
@@ -1538,6 +1559,7 @@ class _DailyChallengeTile extends StatefulWidget {
   final bool Function() isTapLocked;
   final VoidCallback lockTap;
   final double scale;
+  final Future<void> Function(_DailyChallengeTileState state)? onTapped;
 
   const _DailyChallengeTile({
     super.key,
@@ -1550,6 +1572,7 @@ class _DailyChallengeTile extends StatefulWidget {
     required this.isTapLocked,
     required this.lockTap,
     required this.scale,
+    this.onTapped,
   });
 
   @override
@@ -1562,6 +1585,7 @@ class _DailyChallengeTileState extends State<_DailyChallengeTile>
   late final Animation<double> _progressAnimation;
   bool _isAnimating = false;
   bool _didSubmit = false;
+  bool _suppressSubmit = false;
 
   @override
   void initState() {
@@ -1580,7 +1604,14 @@ class _DailyChallengeTileState extends State<_DailyChallengeTile>
     });
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        _notifySubmit();
+        if (!_suppressSubmit) {
+          _notifySubmit();
+        }
+        if (mounted) {
+          setState(() {
+            _isAnimating = false;
+          });
+        }
       }
     });
   }
@@ -1605,10 +1636,11 @@ class _DailyChallengeTileState extends State<_DailyChallengeTile>
     }
     widget.lockTap();
     _didSubmit = false;
-    setState(() {
-      _isAnimating = true;
-    });
-    await _controller.forward(from: 0);
+    if (widget.onTapped != null) {
+      await widget.onTapped!(this);
+      return;
+    }
+    await playSelectionAnimation();
   }
 
   @override
@@ -1717,6 +1749,50 @@ class _DailyChallengeTileState extends State<_DailyChallengeTile>
         ),
       ),
     );
+  }
+
+  Future<void> playSelectionAnimation() async {
+    setState(() {
+      _suppressSubmit = false;
+      _isAnimating = true;
+      _didSubmit = false;
+      _progressAnimation = Tween<double>(begin: 0.0, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOutCubic))
+          .animate(_controller);
+    });
+    await _controller.forward(from: 0);
+  }
+
+  Future<void> playResetAnimation() async {
+    final begin = _progressAnimation.value;
+    if (begin <= 0) {
+      if (mounted) {
+        setState(() {
+          _isAnimating = false;
+          _suppressSubmit = false;
+          _progressAnimation = const AlwaysStoppedAnimation<double>(0.0);
+        });
+      }
+      _controller.reset();
+      return;
+    }
+    setState(() {
+      _suppressSubmit = true;
+      _isAnimating = true;
+      _progressAnimation = Tween<double>(begin: begin, end: 0.0)
+          .chain(CurveTween(curve: Curves.easeInOutCubic))
+          .animate(_controller);
+    });
+    await _controller.forward(from: 0);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _isAnimating = false;
+      _suppressSubmit = false;
+      _progressAnimation = const AlwaysStoppedAnimation<double>(0.0);
+    });
+    _controller.reset();
   }
 }
 
