@@ -1529,9 +1529,8 @@ class _DifficultyTile extends StatelessWidget {
           color: rankColor,
         );
 
-    final progressColor = palette.progressTextColor;
     final progressStyle = theme.textTheme.bodySmall?.copyWith(
-          color: progressColor,
+          color: rankColor,
           fontWeight: FontWeight.w600,
           fontSize:
               (theme.textTheme.bodySmall?.fontSize ?? 12) * scale,
@@ -1539,7 +1538,7 @@ class _DifficultyTile extends StatelessWidget {
         TextStyle(
           fontSize: 12 * scale,
           fontWeight: FontWeight.w600,
-          color: progressColor,
+          color: rankColor,
         );
 
     final trackColor = isActive
@@ -1580,37 +1579,41 @@ class _DifficultyTile extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 14 * scale),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12 * scale,
-                          vertical: 5 * scale,
-                        ),
-                        decoration: BoxDecoration(
-                          color: rankBackground,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(999 * scale),
-                          ),
-                        ),
-                        child: Text(
-                          rankLabel,
-                          style: rankStyle,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: 112 * scale),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12 * scale,
+                        vertical: 8 * scale,
+                      ),
+                      decoration: BoxDecoration(
+                        color: rankBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(16 * scale),
                         ),
                       ),
-                      if (progressText != null) ...[
-                        SizedBox(height: 4 * scale),
-                        Text(
-                          progressText,
-                          style: progressStyle,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            rankLabel,
+                            style: rankStyle,
+                            textAlign: TextAlign.center,
+                          ),
+                          if (progressText != null) ...[
+                            SizedBox(height: 4 * scale),
+                            Text(
+                              progressText,
+                              style: progressStyle,
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
