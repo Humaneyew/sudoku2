@@ -14,6 +14,7 @@ import 'screens/intro_screen.dart';
 import 'theme.dart';
 import 'hint_ad_controller.dart';
 import 'life_ad_controller.dart';
+import 'notifications/notification_scheduler.dart';
 import 'undo_reward_controller.dart';
 
 Future<void> main() async {
@@ -23,6 +24,8 @@ Future<void> main() async {
 
   final appState = models.AppState();
   await appState.load();
+
+  await NotificationScheduler().initialize();
 
   runApp(
     MultiProvider(
