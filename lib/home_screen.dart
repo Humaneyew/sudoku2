@@ -471,7 +471,12 @@ class _HomeTabState extends State<_HomeTab> with AutomaticKeepAliveClientMixin {
     app.startGame(difficulty);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const GamePage()),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const GamePage(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        transitionsBuilder: (_, __, ___, child) => child,
+      ),
     );
   }
 
