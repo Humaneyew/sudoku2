@@ -150,26 +150,6 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           ListTile(
-            key: const ValueKey('settings-test-alert'),
-            leading: Icon(Icons.notification_add_outlined, size: iconSize),
-            title: const Text('Test notification'),
-            onTap: () {
-              showDialog<void>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Test notification'),
-                  content: const Text('Это тестовое оповещение.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(l10n.done),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          ListTile(
             key: const ValueKey('settings-about'),
             leading: Icon(Icons.info_outline, size: iconSize),
             title: Text(l10n.aboutApp),
