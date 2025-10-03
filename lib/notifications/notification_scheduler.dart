@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
+import 'timezone_provider.dart';
 
 /// Handles scheduling of local notifications that remind players to solve
 /// Sudoku puzzles.
@@ -62,7 +62,7 @@ class NotificationScheduler {
   Future<void> _configureLocalTimeZone() async {
     tzdata.initializeTimeZones();
     try {
-      final timeZoneName = await FlutterTimezone.getLocalTimezone();
+      final timeZoneName = await TimezoneProvider.getLocalTimezone();
       final location = tz.getLocation(timeZoneName);
       tz.setLocalLocation(location);
     } catch (_) {
